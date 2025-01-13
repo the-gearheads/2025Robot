@@ -2,7 +2,6 @@ package frc.robot.subsystems.vision;
 
 import java.util.Optional;
 import java.util.ArrayList;
-import java.util.List;
 
 import org.littletonrobotics.junction.Logger;
 import org.photonvision.EstimatedRobotPose;
@@ -23,10 +22,6 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
-import frc.robot.util.GtsamInterface;
-import frc.robot.util.TagDetection;
-
-import static frc.robot.Constants.FieldConstants.FIELD;
 
 public class Camera {
 
@@ -50,25 +45,19 @@ public class Camera {
 
   private final AprilTagFieldLayout field;
 
-  private final GtsamInterface gtsam;
-  private final String memePath;
 
-
-  public Camera(AprilTagFieldLayout field, String name, Transform3d transform, CameraIntrinsics intrinsics, GtsamInterface gtsam) {
+  public Camera(AprilTagFieldLayout field, String name, Transform3d transform, CameraIntrinsics intrinsics) {
     this.name = name;
     this.transform = transform;
     this.intrinsics = intrinsics;
     this.field = field;
-    this.gtsam = gtsam;
     path = "Vision/" + name.replace("_", "");
-    memePath = "/meme/" + name + "/measured_corners";
 
     camera = new PhotonCamera(name);
 
     var strategy = PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR;
 
     estimator = new PhotonPoseEstimator(this.field, strategy, transform);
-    gtsam.setCamIntrinsics(name, Optional.of(intrinsics.getCameraMatrix()), Optional.of(intrinsics.getDistCoeffsMatrix()));
   }
 
   public Pair<Optional<EstimatedRobotPose>, PhotonPipelineResult> getGlobalPose() {
@@ -86,9 +75,10 @@ public class Camera {
     if (Math.abs(pitch) > MAX_PITCHROLL || Math.abs(roll) > MAX_PITCHROLL || Math.abs(estPose.getTranslation().getZ()) > MAX_Z) {
       return Optional.empty();
     }
-    if (!FIELD.contains(estPose.toPose2d())) {
-      return Optional.empty();
-    }
+    // TODO: readd
+    // if (!FIELD.contains(estPose.toPose2d())) {
+    //  return Optional.empty();
+    // }
     Logger.recordOutput(path + "/EstPose", estPose);
 
 
@@ -122,7 +112,6 @@ public class Camera {
       Logger.recordOutput(path + "/EstPoseUnfiltered", new Pose3d(new Translation3d(-100, -100, -100), new Rotation3d()));
       Logger.recordOutput(path + "/EstPose", new Pose3d(new Translation3d(-100, -100, -100), new Rotation3d()));
       Logger.recordOutput(path + "/TagPoses", new Pose3d[0]);
-      feedGtsam(false, null, gtsam, (long)lastResult.getTimestampSeconds() * (long)1e6);
       return false;
     }
 
@@ -131,7 +120,6 @@ public class Camera {
     Pose2d estPose = estimatedRobotPose.estimatedPose.toPose2d();
 
     var updated = result.getSecond();
-    feedGtsam(true, updated, gtsam, (long)lastResult.getTimestampSeconds() * (long)1e6);
     int numTargets = updated.targets.size();
     double avgDistToTarget = 0;
     for(var target: updated.targets) {
@@ -155,30 +143,6 @@ public class Camera {
     return true;
   }
 
-  PhotonPipelineResult lastResult = new PhotonPipelineResult();
-
-  private void feedGtsam(boolean areResults, PhotonPipelineResult results, GtsamInterface gtsam, long zeTime) {
-    List<TagDetection> dets = new ArrayList<>();
-    if(areResults && results.getTimestampSeconds() != lastResult.getTimestampSeconds()) {
-      lastResult = results;
-      for(var target: results.targets) {
-        dets.add(new TagDetection(target.getFiducialId(), target.getDetectedCorners()));
-      }
-
-      // Publish debug info to NT
-      // List<Double> corns = new ArrayList<>();
-      // for (var d : dets) {
-      //   for (var c : d.corners) {
-      //     corns.add(c.x);
-      //     corns.add(c.y);
-      //   }
-      // }
-      // SmartDashboard.putNumberArray(name, corns.toArray(new Double[0]));
-    }
-    gtsam.sendVisionUpdate(name, zeTime, dets, transform);
-  }
-
-
   public SimCameraProperties getSimProperties() {
     SimCameraProperties properties = new SimCameraProperties();
     properties.setCalibration(1280, 720, intrinsics.getCameraMatrix(), intrinsics.getDistCoeffs());
@@ -194,4 +158,3 @@ public class Camera {
     return properties;
   }
 }
-// 

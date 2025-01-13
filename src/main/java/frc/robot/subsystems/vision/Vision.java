@@ -5,22 +5,16 @@
 package frc.robot.subsystems.vision;
 
 import java.io.IOException;
-import java.util.List;
-
-import org.littletonrobotics.junction.Logger;
 import org.photonvision.PhotonCamera;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
-import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.util.WPIUtilJNI;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Robot;
 import frc.robot.subsystems.swerve.Swerve;
-import frc.robot.util.GtsamInterface;
 
-import static frc.robot.Constants.VisionConstants.*;
+import static frc.robot.constants.VisionConstants.*;
 
 public class Vision extends SubsystemBase {
   private AprilTagFieldLayout field;
@@ -28,8 +22,6 @@ public class Vision extends SubsystemBase {
   private Swerve swerve;
 
   private final Camera frontLeft, frontRight, backLeft;
-
-  private final GtsamInterface gtsam = new GtsamInterface(List.of(FRONT_LEFT_NAME, FRONT_RIGHT_NAME, BACK_LEFT_NAME));
 
   public Vision(Swerve swerve) {
     this.swerve = swerve;
@@ -44,9 +36,9 @@ public class Vision extends SubsystemBase {
       System.out.println(AprilTagFields.k2024Crescendo.m_resourceFile);
     }
 
-    frontLeft = new Camera(field, FRONT_LEFT_NAME, FRONT_LEFT_TRANSFORM, FRONT_LEFT_INTRINSICS, gtsam);
-    frontRight = new Camera(field, FRONT_RIGHT_NAME, FRONT_RIGHT_TRANSFORM, FRONT_RIGHT_INTRINSICS, gtsam);
-    backLeft = new Camera(field, BACK_LEFT_NAME, BACK_LEFT_TRANSFORM, BACK_LEFT_INTRINSICS, gtsam);
+    frontLeft = new Camera(field, FRONT_LEFT_NAME, FRONT_LEFT_TRANSFORM, FRONT_LEFT_INTRINSICS);
+    frontRight = new Camera(field, FRONT_RIGHT_NAME, FRONT_RIGHT_TRANSFORM, FRONT_RIGHT_INTRINSICS);
+    backLeft = new Camera(field, BACK_LEFT_NAME, BACK_LEFT_TRANSFORM, BACK_LEFT_INTRINSICS);
 
     sim = new VisionSim();
     sim.addCamera(frontLeft);
@@ -54,23 +46,18 @@ public class Vision extends SubsystemBase {
     sim.addCamera(backLeft);
   }
 
+  /**
+   * Updates the passed pose estimator with vision estimates.
+   * @param poseEstimator
+   * @return Whether a vision measurement was added
+   */
   public boolean feedPoseEstimator(SwerveDrivePoseEstimator poseEstimator) {
-    long time = WPIUtilJNI.now();
-
-    var guess = new Pose3d(swerve.getPose());
-    gtsam.sendOdomUpdate(time, swerve.getTwist3d(), guess);
-
     boolean tfl = frontLeft.feedPoseEstimator(poseEstimator);
     boolean tfr = frontRight.feedPoseEstimator(poseEstimator);
     boolean tbl = backLeft.feedPoseEstimator(poseEstimator);
 
-    Logger.recordOutput("Swerve/pose_est1", gtsam.getLatencyCompensatedPoseEstimate());
-    Logger.recordOutput("Swerve/pose_est2", swerve.getPose());
-
     return tfl || tfr || tbl;
-    // return tfr;
   }
-
 
   @Override
   public void periodic() {
