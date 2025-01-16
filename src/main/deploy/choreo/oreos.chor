@@ -3,7 +3,15 @@
  "version":1,
  "type":"Swerve",
  "variables":{
-  "expressions":{},
+  "expressions":{
+   "Fred":{
+    "dimension":"Angle",
+    "var":{
+     "exp":"-120 deg",
+     "val":-2.0943951023931953
+    }
+   }
+  },
   "poses":{}
  },
  "config":{
@@ -44,8 +52,8 @@
    "val":0.038099999999999995
   },
   "vmax":{
-   "exp":"6784 rpm",
-   "val":710.4188187317718
+   "exp":"6000 rpm",
+   "val":628.3185307179587
   },
   "tmax":{
    "exp":"1.1 N * m",
