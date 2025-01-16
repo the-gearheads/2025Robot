@@ -1,7 +1,8 @@
 package frc.robot.subsystems.swerve;
 
+import static frc.robot.constants.SwerveConstants.*;
+
 import edu.wpi.first.math.geometry.Rotation2d;
-import static frc.robot.subsystems.swerve.SwerveConstants.*;
 
 public class SwerveModule {
     Rotation2d offset;
