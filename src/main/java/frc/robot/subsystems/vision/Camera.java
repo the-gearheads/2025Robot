@@ -3,6 +3,7 @@ package frc.robot.subsystems.vision;
 import java.util.Optional;
 import java.util.ArrayList;
 
+import org.littletonrobotics.junction.AutoLog;
 import org.littletonrobotics.junction.Logger;
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
@@ -156,5 +157,21 @@ public class Camera {
     properties.setLatencyStdDevMs(7);
 
     return properties;
+  }
+
+  @AutoLog
+  class CameraIO {
+    public record CameraObservation(
+      double xyStdDev,
+      double thetaStdDev,
+      double timestampSeconds,
+      double numTargets,
+      double avgDistToTarget,
+      Pose3d estPose,
+      Pose3d estPoseUnfiltered,
+      Pose3d[] tagPoses
+    ) {}
+
+    public CameraObservation[] observations;
   }
 }
