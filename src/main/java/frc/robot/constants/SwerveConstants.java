@@ -1,5 +1,6 @@
 package frc.robot.constants;
 
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Translation2d;
 
 public final class SwerveConstants {
@@ -27,6 +28,31 @@ public final class SwerveConstants {
     public static final double WHEEL_DIAMETER = 0.073800;
     public static final double WHEEL_CIRCUMFERENCE = Math.PI * WHEEL_DIAMETER;
     public static final double MODULE_RADIUS = WHEEL_DIAMETER / 2.0;
+
+    public static final double DRIVE_PINION_TOOTH_COUNT = 14;
+    // 45 teeth on the wheel's bevel gear, 22 teeth on the first-stage spur gear, 15 teeth on the bevel pinion
+    public static final double DRIVE_RATIO = (45.0 * 22) / (DRIVE_PINION_TOOTH_COUNT * 15);
+
+    public static final double ODOMETRY_FREQUENCY = 50;
+
+    // Throughbore encoder is directly on the output steer shaft
+    public static final double STEER_RATIO = 1;
+
+    public static final double DRIVE_POS_FACTOR = WHEEL_CIRCUMFERENCE / DRIVE_RATIO; // rotations -> gear ratio adjusted rotations -> meters
+    public static final double DRIVE_VEL_FACTOR = WHEEL_CIRCUMFERENCE / DRIVE_RATIO / 60.0; // rpm -> gear ratio adjusted rpm -> meters/min -> meters/sec 
+
+    public static final double DRIVE_FREE_RPM = 6784;
+    public static final double DRIVE_FREE_SPD = DRIVE_FREE_RPM * DRIVE_VEL_FACTOR; // Convert max neo free speed to max free wheel speed
+
+    public static final double STEER_POS_FACTOR = 2 * Math.PI; // rotations -> radians
+    public static final double STEER_VEL_FACTOR = (2 * Math.PI) / 60.0; // rpm -> rad/sec
+
+    public static final double[] STEER_PIDF = {1, 0, 0, 0}; // apparently just a P value of 1 worked for us??? i wanna test that a bit more throughly
+    public static final double[] DRIVE_PID = {0.04, 0, 0};
+    public static final SimpleMotorFeedforward DRIVE_FEEDFORWARD = new SimpleMotorFeedforward(0.25521, 2.0821, 0.10605);
+
+    public static final int DRIVE_CURRENT_LIMIT = 50;
+    public static final int STEER_CURRENT_LIMIT = 20;
 
     // -----------------
 }
