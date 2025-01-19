@@ -5,6 +5,8 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.controllers.Controllers;
 
 public class RobotContainer {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -14,6 +16,17 @@ public class RobotContainer {
   }
 
   private void configureBindings() {
+    if (!Controllers.didControllersChange())
+      return;
+    
+        // Clear buttons
+    CommandScheduler.getInstance().getActiveButtonLoop().clear();
+
+    // Find new controllers
+    Controllers.updateActiveControllerInstance();
+
+    // teleop controlls
+
   }
 
   /**

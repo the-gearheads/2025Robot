@@ -2,11 +2,14 @@ package frc.robot.subsystems.swerve;
 
 import static frc.robot.constants.SwerveConstants.*;
 
+import java.nio.channels.NetworkChannel;
 import java.util.Queue;
 
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
+import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
@@ -18,7 +21,6 @@ import com.revrobotics.spark.config.SparkFlexConfig;
 import edu.wpi.first.math.geometry.Rotation2d;
 
 public class SwerveModuleIOSpark implements SwerveModuleIO {
-    private final Rotation2d offset;
     private final int modIndex;
 
     public SparkFlex drive;
@@ -30,6 +32,7 @@ public class SwerveModuleIOSpark implements SwerveModuleIO {
     public SparkFlexConfig steerConfig = new SparkFlexConfig();
     public RelativeEncoder steerEncoder;
     public SparkClosedLoopController steerPid;
+    public Rotation2d offset;
 
     private final Queue<Double> timestampQueue;
     private final Queue<Double> drivePositionQueue;
@@ -37,7 +40,6 @@ public class SwerveModuleIOSpark implements SwerveModuleIO {
 
     public SwerveModuleIOSpark(int modIndex, String moduleName) {
         this.modIndex = modIndex;
-        offset = Rotation2d.fromDegrees(WHEEL_OFFSETS[modIndex]);
         drive = new SparkFlex(MOTOR_IDS[modIndex][0], MotorType.kBrushless);
         steer = new SparkMax(MOTOR_IDS[modIndex][1], MotorType.kBrushless);
 
@@ -45,6 +47,7 @@ public class SwerveModuleIOSpark implements SwerveModuleIO {
         steerEncoder = steer.getAlternateEncoder();
         drivePid = drive.getClosedLoopController();
         steerPid = steer.getClosedLoopController();
+        this.offset = new Rotation2d(WHEEL_OFFSETS[modIndex]);
         
         configureDrive();
         configureSteer();
@@ -56,20 +59,36 @@ public class SwerveModuleIOSpark implements SwerveModuleIO {
 
     @Override
     public void updateInputs(SwerveModuleIOInputs inputs) {
-        inputs.odometryTimestamps =
-            timestampQueue.stream().mapToDouble((Double value) -> value).toArray();
-        inputs.odometryDrivePositionsRad =
-            drivePositionQueue.stream().mapToDouble((Double value) -> value).toArray();
-        inputs.odometryTurnPositions =
-            turnPositionQueue.stream()
-                .map((Double value) -> new Rotation2d(value).minus(offset))
-                .toArray(Rotation2d[]::new);
+    // odometry
+    inputs.odometryTimestamps =
+        timestampQueue.stream().mapToDouble((Double value) -> value).toArray();
+    inputs.odometryDrivePositionsRad =
+        drivePositionQueue.stream().mapToDouble((Double value) -> value).toArray();
+    inputs.odometryTurnPositions =
+        turnPositionQueue.stream()
+            .map((Double value) -> new Rotation2d(value))
+            .toArray(Rotation2d[]::new);
+    
+    // drive
+    inputs.driveAppliedVolts = drive.getAppliedOutput() * drive.getBusVoltage();
+    inputs.drivePositionRad = driveEncoder.getPosition();
+    inputs.driveVelocityRadPerSec = driveEncoder.getVelocity();
+    inputs.driveTemperature = drive.getMotorTemperature();
+    inputs.driveCurrentAmps = drive.getOutputCurrent();
+
+    // steer
+    inputs.steerAngle = new Rotation2d(steerEncoder.getPosition()).plus(offset);
+    inputs.steerVelocityRadPerSec = steerEncoder.getVelocity();
+    inputs.steerAppliedVolts = steer.getAppliedOutput() * steer.getBusVoltage();
+    inputs.steerCurrentAmps = steer.getOutputCurrent();
+
     timestampQueue.clear();
     drivePositionQueue.clear();
     turnPositionQueue.clear();
 
     }
 
+    @Override
     public void configureDrive() {
         drive.setCANTimeout(250);
         driveConfig.smartCurrentLimit(DRIVE_CURRENT_LIMIT);
@@ -92,6 +111,7 @@ public class SwerveModuleIOSpark implements SwerveModuleIO {
         drive.setCANTimeout(0);
     }
 
+    @Override
     public void configureSteer() {
         steer.setCANTimeout(250); 
         driveConfig.smartCurrentLimit(STEER_CURRENT_LIMIT);
@@ -123,22 +143,34 @@ public class SwerveModuleIOSpark implements SwerveModuleIO {
         steer.setCANTimeout(0);
     }
 
+    @Override
     public void setDriveVolts(double volts) {
         drive.setVoltage(volts);
     }
 
+    @Override
     public void setSteerVolts(double volts) {
         steer.setVoltage(volts);
     }
 
+    @Override
     public void resetDriveEncoder() {
         driveEncoder.setPosition(0);
     }
 
+    @Override
     public void resetSteerEncoder() {
         steerEncoder.setPosition(0);
     }
 
-    
+    @Override
+    public void setDriveVelocity(double velRadPerSec) {
+        drivePid.setReference(velRadPerSec, ControlType.kVelocity, ClosedLoopSlot.kSlot0, DRIVE_FEEDFORWARD.calculate(velRadPerSec));
+    }
+
+    @Override
+    public void setAngle(Rotation2d angle) {
+        steerPid.setReference(angle.plus(offset).getRadians(), ControlType.kPosition);
+    }
 
 }
