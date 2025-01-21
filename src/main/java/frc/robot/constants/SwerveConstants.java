@@ -5,10 +5,10 @@ import edu.wpi.first.math.geometry.Translation2d;
 
 public final class SwerveConstants {
     public static final int[][] MOTOR_IDS = {
-        {0, 1}, // TODO: placeholder
-        {2, 3}, // placeholder
-        {4, 5}, // placeholder
-        {6, 7}  // placeholder
+      {6, 26}, // FL
+      {8, 28}, // FR
+      {2, 22}, // BL
+      {4, 24}  // BR
     };
 
     public static final Translation2d[] WHEEL_POSITIONS = {

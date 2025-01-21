@@ -16,6 +16,8 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.swerve.Gyro.GyroIO;
@@ -35,17 +37,24 @@ public class Swerve extends SubsystemBase {
   };
 
   SwerveDriveKinematics kinematics = new SwerveDriveKinematics(WHEEL_POSITIONS);
+  Field2d field = new Field2d();
   SwerveDrivePoseEstimator multitagPoseEstimator;
 
-  Field2d field = new Field2d();
-  
   public Swerve(GyroIO gyro, SwerveModuleIO flModule, SwerveModuleIO frModule, SwerveModuleIO blModule, SwerveModuleIO brModule) {
     this.gyro = gyro;
     modules[0] = new SwerveModule(flModule, 0, "Front Left");
     modules[1] = new SwerveModule(frModule, 0, "Front Right");
     modules[2] = new SwerveModule(blModule, 0, "Back Left");
     modules[3] = new SwerveModule(brModule, 0, "Back Right");
-    
+
+    // need to initalize pose est with wheel positions and gyro
+    gyro.updateInputs(gyroInputs);
+    Logger.processInputs("Swerve/Gyro", gyroInputs);
+    for (SwerveModule module : modules) {
+      module.periodic();
+    }
+
+    multitagPoseEstimator = new SwerveDrivePoseEstimator(kinematics, gyroInputs.yaw, getModulePositions(), new Pose2d());
     SparkOdometryThread.getInstance().start();
   }
 
@@ -100,7 +109,7 @@ public class Swerve extends SubsystemBase {
     multitagPoseEstimator.resetPosition(pose.getRotation(), getModulePositions(), pose);
   }
 
-  public void runVelocity(ChassisSpeeds speeds) {
+  public void drive(ChassisSpeeds speeds) {
     // Calculate module setpoints
     ChassisSpeeds discreteSpeeds = ChassisSpeeds.discretize(speeds, 0.02);
     SwerveModuleState[] setpointStates = kinematics.toSwerveModuleStates(discreteSpeeds);
@@ -120,8 +129,9 @@ public class Swerve extends SubsystemBase {
   }
 
   public void stop() {
-    runVelocity(new ChassisSpeeds());
+    drive(new ChassisSpeeds());
   }
+
   /** Returns the module states (turn angles and drive velocities) for all of the modules. */
   @AutoLogOutput(key = "SwerveStates/Measured")
   private SwerveModuleState[] getModuleStates() {
@@ -141,12 +151,12 @@ public class Swerve extends SubsystemBase {
     return states;
   }
 
-  public void drive(ChassisSpeeds speeds) {
-    ChassisSpeeds discretized = ChassisSpeeds.discretize(speeds, 0.02);
-    SwerveModuleState[] moduleStates = kinematics.toSwerveModuleStates(discretized);
-
-    for (int i = 0; i < modules.length; i++) {
-      modules[i].setState(moduleStates[i]);
+  public void driveFieldRelative(ChassisSpeeds speeds) {
+    var rot = getPose().getRotation();
+    if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red) {
+      rot = rot.rotateBy(Rotation2d.fromDegrees(180));
     }
+    drive(ChassisSpeeds.fromFieldRelativeSpeeds(speeds, rot));
   }
+
 }

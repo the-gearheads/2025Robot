@@ -25,7 +25,6 @@ public class SwerveModule {
     public void periodic() {
         io.updateInputs(inputs);
         Logger.processInputs(modulePath, inputs);
-        
         int sampleCount = inputs.odometryTimestamps.length; // All signals are sampled together
         odometryPositions = new SwerveModulePosition[sampleCount];
         for (int i = 0; i < sampleCount; i++) {
@@ -37,9 +36,10 @@ public class SwerveModule {
 
     public void setState(SwerveModuleState state) {
         state.optimize(getAngle());
-        state.cosineScale(getAngle());
+        // state.cosineScale(getAngle());  // TODO: cosine scaling
 
-        
+        Logger.recordOutput(modulePath + "/desiredState", state);
+
         io.setDriveVelocity(state.speedMetersPerSecond);
         io.setAngle(state.angle);
     }

@@ -6,12 +6,17 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.commands.Teleop;
 import frc.robot.controllers.Controllers;
+import frc.robot.subsystems.swerve.Swerve;
+import frc.robot.subsystems.swerve.SwerveModuleIOSpark;
+import frc.robot.subsystems.swerve.Gyro.GyroIONavX;
 
 public class RobotContainer {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
+  private final Swerve swerve = new Swerve(new GyroIONavX(), new SwerveModuleIOSpark(0, "FL"), new SwerveModuleIOSpark(1, "FR"), new SwerveModuleIOSpark(2, "BL"), new SwerveModuleIOSpark(3, "BR"));
   public RobotContainer() {
-    // Configure the trigger bindings
+    swerve.setDefaultCommand(new Teleop(swerve));
     configureBindings();
   }
 

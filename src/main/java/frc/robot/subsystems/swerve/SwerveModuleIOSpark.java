@@ -2,14 +2,14 @@ package frc.robot.subsystems.swerve;
 
 import static frc.robot.constants.SwerveConstants.*;
 
-import java.nio.channels.NetworkChannel;
 import java.util.Queue;
 
-import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.ClosedLoopSlot;
+import com.revrobotics.spark.SparkAbsoluteEncoder;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
@@ -17,22 +17,23 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
+import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 
 public class SwerveModuleIOSpark implements SwerveModuleIO {
     private final int modIndex;
 
-    public SparkFlex drive;
-    public SparkFlexConfig driveConfig = new SparkFlexConfig();
-    public RelativeEncoder driveEncoder;
-    public SparkClosedLoopController drivePid;
-
-    public SparkMax steer;
-    public SparkFlexConfig steerConfig = new SparkFlexConfig();
-    public RelativeEncoder steerEncoder;
-    public SparkClosedLoopController steerPid;
-    public Rotation2d offset;
+    private final SparkFlex drive;
+    private final SparkFlexConfig driveConfig = new SparkFlexConfig();
+    private final RelativeEncoder driveEncoder;
+    private final SparkClosedLoopController drivePid;
+     
+    private final SparkMax steer;
+    private final SparkMaxConfig steerConfig = new SparkMaxConfig();
+    private final SparkAbsoluteEncoder steerEncoder;
+    private final SparkClosedLoopController steerPid;
+    private final Rotation2d offset;
 
     private final Queue<Double> timestampQueue;
     private final Queue<Double> drivePositionQueue;
@@ -44,7 +45,7 @@ public class SwerveModuleIOSpark implements SwerveModuleIO {
         steer = new SparkMax(MOTOR_IDS[modIndex][1], MotorType.kBrushless);
 
         driveEncoder = drive.getEncoder();
-        steerEncoder = steer.getAlternateEncoder();
+        steerEncoder = steer.getAbsoluteEncoder();
         drivePid = drive.getClosedLoopController();
         steerPid = steer.getClosedLoopController();
         this.offset = new Rotation2d(WHEEL_OFFSETS[modIndex]);
@@ -54,7 +55,15 @@ public class SwerveModuleIOSpark implements SwerveModuleIO {
 
         timestampQueue = SparkOdometryThread.getInstance().makeTimestampQueue();
         drivePositionQueue = SparkOdometryThread.getInstance().registerSignal(driveEncoder::getPosition);
-        turnPositionQueue = SparkOdometryThread.getInstance().registerSignal(steerEncoder::getPosition);
+        turnPositionQueue = SparkOdometryThread.getInstance().registerSignal(this::getAngleRad);
+    }
+
+    public Rotation2d getAngle() {
+        return new Rotation2d(steerEncoder.getPosition()).minus(offset);
+    }
+
+    public double getAngleRad() {
+        return getAngle().getRadians();
     }
 
     @Override
@@ -77,7 +86,7 @@ public class SwerveModuleIOSpark implements SwerveModuleIO {
     inputs.driveCurrentAmps = drive.getOutputCurrent();
 
     // steer
-    inputs.steerAngle = new Rotation2d(steerEncoder.getPosition()).plus(offset);
+    inputs.steerAngle = getAngle();
     inputs.steerVelocityRadPerSec = steerEncoder.getVelocity();
     inputs.steerAppliedVolts = steer.getAppliedOutput() * steer.getBusVoltage();
     inputs.steerCurrentAmps = steer.getOutputCurrent();
@@ -114,32 +123,32 @@ public class SwerveModuleIOSpark implements SwerveModuleIO {
     @Override
     public void configureSteer() {
         steer.setCANTimeout(250); 
-        driveConfig.smartCurrentLimit(STEER_CURRENT_LIMIT);
-        driveConfig.idleMode(IdleMode.kBrake);
+        steerConfig.smartCurrentLimit(STEER_CURRENT_LIMIT);
+        steerConfig.idleMode(IdleMode.kBrake);
 
-        driveConfig.absoluteEncoder.positionConversionFactor(STEER_POS_FACTOR);
-        driveConfig.absoluteEncoder.velocityConversionFactor(STEER_VEL_FACTOR);
-        driveConfig.absoluteEncoder.inverted(true);
+        steerConfig.absoluteEncoder.positionConversionFactor(STEER_POS_FACTOR);
+        steerConfig.absoluteEncoder.velocityConversionFactor(STEER_VEL_FACTOR);
+        steerConfig.absoluteEncoder.inverted(true);
 
-        driveConfig.closedLoop.positionWrappingEnabled(true);
-        driveConfig.closedLoop.positionWrappingMinInput(0);
-        driveConfig.closedLoop.positionWrappingMaxInput(Math.PI * 2);
+        steerConfig.closedLoop.positionWrappingEnabled(true);
+        steerConfig.closedLoop.positionWrappingMinInput(0);
+        steerConfig.closedLoop.positionWrappingMaxInput(Math.PI * 2);
 
-        driveConfig.closedLoop.pidf(STEER_PIDF[0], STEER_PIDF[1], STEER_PIDF[2], STEER_PIDF[3]);
-        driveConfig.closedLoop.feedbackSensor(FeedbackSensor.kAbsoluteEncoder);
+        steerConfig.closedLoop.pidf(STEER_PIDF[0], STEER_PIDF[1], STEER_PIDF[2], STEER_PIDF[3]);
+        steerConfig.closedLoop.feedbackSensor(FeedbackSensor.kAbsoluteEncoder);
 
 
         // I currently do not know whether revlib takes the minumum of all signals in a status frame including or excluding defaults.
-        driveConfig.signals.appliedOutputPeriodMs(20);
-        driveConfig.signals.primaryEncoderPositionAlwaysOn(false);
-        driveConfig.signals.primaryEncoderVelocityPeriodMs(40);
+        steerConfig.signals.appliedOutputPeriodMs(20);
+        steerConfig.signals.primaryEncoderPositionAlwaysOn(false);
+        steerConfig.signals.primaryEncoderVelocityPeriodMs(40);
 
-        driveConfig.signals.absoluteEncoderPositionAlwaysOn(true);
-        driveConfig.signals.absoluteEncoderPositionPeriodMs((int)(1000.0 / ODOMETRY_FREQUENCY));
-        driveConfig.signals.absoluteEncoderVelocityAlwaysOn(true);
-        driveConfig.signals.absoluteEncoderVelocityPeriodMs(20);
+        steerConfig.signals.absoluteEncoderPositionAlwaysOn(true);
+        steerConfig.signals.absoluteEncoderPositionPeriodMs((int)(1000.0 / ODOMETRY_FREQUENCY));
+        steerConfig.signals.absoluteEncoderVelocityAlwaysOn(true);
+        steerConfig.signals.absoluteEncoderVelocityPeriodMs(20);
 
-        steer.configure(driveConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
+        steer.configure(steerConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
         steer.setCANTimeout(0);
     }
 
@@ -156,11 +165,6 @@ public class SwerveModuleIOSpark implements SwerveModuleIO {
     @Override
     public void resetDriveEncoder() {
         driveEncoder.setPosition(0);
-    }
-
-    @Override
-    public void resetSteerEncoder() {
-        steerEncoder.setPosition(0);
     }
 
     @Override
