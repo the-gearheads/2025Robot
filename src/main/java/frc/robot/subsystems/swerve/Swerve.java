@@ -127,6 +127,14 @@ public class Swerve extends SubsystemBase {
     // Log optimized setpoints (runSetpoint mutates each state)
     Logger.recordOutput("SwerveStates/SetpointsOptimized", setpointStates);
   }
+  
+  public void driveFieldRelative(ChassisSpeeds speeds) {
+    var rot = getPose().getRotation();
+    if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red) {
+      rot = rot.rotateBy(Rotation2d.fromDegrees(180));
+    }
+    drive(ChassisSpeeds.fromFieldRelativeSpeeds(speeds, rot));
+  }
 
   public void stop() {
     drive(new ChassisSpeeds());
@@ -149,14 +157,6 @@ public class Swerve extends SubsystemBase {
       states[i] = modules[i].getPosition();
     }
     return states;
-  }
-
-  public void driveFieldRelative(ChassisSpeeds speeds) {
-    var rot = getPose().getRotation();
-    if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red) {
-      rot = rot.rotateBy(Rotation2d.fromDegrees(180));
-    }
-    drive(ChassisSpeeds.fromFieldRelativeSpeeds(speeds, rot));
   }
 
 }

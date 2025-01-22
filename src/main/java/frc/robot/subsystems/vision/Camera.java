@@ -157,20 +157,4 @@ public class Camera {
 
     return properties;
   }
-
-  // @AutoLog
-  // class CameraIO {
-  //   public record CameraObservation(
-  //     double xyStdDev,
-  //     double thetaStdDev,
-  //     double timestampSeconds,
-  //     double numTargets,
-  //     double avgDistToTarget,
-  //     Pose3d estPose,
-  //     Pose3d estPoseUnfiltered,
-  //     Pose3d[] tagPoses
-  //   ) {}
-
-  //   public CameraObservation[] observations;
-  // }
 }
