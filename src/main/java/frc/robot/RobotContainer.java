@@ -4,23 +4,21 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.commands.Teleop;
 import frc.robot.controllers.Controllers;
 import frc.robot.subsystems.swerve.Swerve;
-import frc.robot.subsystems.swerve.SwerveModuleIOSpark;
-import frc.robot.subsystems.swerve.Gyro.GyroIONavX;
 
 public class RobotContainer {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
-  private final Swerve swerve = new Swerve(new GyroIONavX(), new SwerveModuleIOSpark(0, "FL"), new SwerveModuleIOSpark(1, "FR"), new SwerveModuleIOSpark(2, "BL"), new SwerveModuleIOSpark(3, "BR"));
+  private final Swerve swerve = new Swerve();
   public RobotContainer() {
     swerve.setDefaultCommand(new Teleop(swerve));
-    configureBindings();
   }
 
-  private void configureBindings() {
+  public void configureBindings() {
     if (!Controllers.didControllersChange())
       return;
     
@@ -31,7 +29,7 @@ public class RobotContainer {
     Controllers.updateActiveControllerInstance();
 
     // teleop controlls
-
+    
   }
 
   /**
@@ -41,7 +39,9 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    return null;
+    return swerve.run(
+      () -> {swerve.drive(new ChassisSpeeds(1, 0, 0));}
+      );
   }
 }
 // peepee poopoo

@@ -22,7 +22,7 @@ public final class SwerveConstants {
     public static final double WHEEL_BASE = WHEEL_POSITIONS[0].getX() - WHEEL_POSITIONS[2].getX();
     public static final double TRACK_WIDTH = WHEEL_POSITIONS[0].getY() - WHEEL_POSITIONS[1].getY();
 
-    public static final double[] WHEEL_OFFSETS = {90, 0, 0, 90};
+    public static final double[] WHEEL_OFFSETS = {0, 0, 0, 0};
     public static final boolean[] IS_INVERTED = {true, false, true, false};
 
     public static final double WHEEL_DIAMETER = 0.073800;
@@ -58,6 +58,6 @@ public final class SwerveConstants {
     public static final double MAX_ROBOT_TRANS_SPEED = DRIVE_FEEDFORWARD.maxAchievableVelocity(12, 0.1); // m/s
     public static final double MAX_ROBOT_ROT_SPEED = MAX_ROBOT_TRANS_SPEED / 0.4585738763; // rad/s, 0.45 is radius of robot, spd/r is rad/s
 
+    public static final double HEADING_CONTROLLER_TOLERANCE = 0.005;  // rad
 
-    // -----------------
 }
