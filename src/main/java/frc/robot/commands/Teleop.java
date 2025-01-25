@@ -1,5 +1,8 @@
 package frc.robot.commands;
 
+import static frc.robot.constants.SwerveConstants.MAX_ROBOT_ROT_SPEED;
+import static frc.robot.constants.SwerveConstants.MAX_ROBOT_TRANS_SPEED;
+
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.controllers.Controllers;
@@ -20,12 +23,12 @@ public class Teleop extends Command {
 
     @Override
     public void execute() {
-        double x = Controllers.driverController.getTranslateXAxis();
-        double y = Controllers.driverController.getTranslateYAxis();
-        double rot = Controllers.driverController.getRotateAxis();
+        double x = Controllers.driverController.getTranslateXAxis() * MAX_ROBOT_TRANS_SPEED;
+        double y = Controllers.driverController.getTranslateYAxis() * MAX_ROBOT_TRANS_SPEED;
+        double rot = Controllers.driverController.getRotateAxis() * MAX_ROBOT_ROT_SPEED;
 
         var speeds = new ChassisSpeeds(x, y, rot);
 
-        swerve.driveFieldRelative(speeds);    
+        swerve.driveFieldRelative(speeds);
     }
 }

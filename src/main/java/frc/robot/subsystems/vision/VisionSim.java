@@ -21,7 +21,7 @@ public class VisionSim {
     if(Robot.isReal()) return;
     AprilTagFieldLayout tagLayout = null;
     try {
-      tagLayout = AprilTagFieldLayout.loadFromResource(AprilTagFields.k2024Crescendo.m_resourceFile);
+      tagLayout = AprilTagFieldLayout.loadFromResource(AprilTagFields.k2025Reefscape.m_resourceFile);
     } catch (IOException e) {
       e.printStackTrace();
     }

@@ -38,5 +38,9 @@ public class SteerMotorSim extends SteerMotor {
     this.angle = angle;
   }
 
+  @Override
+  public double getCurrent() {
+    return 0;
+  }
   
 }

@@ -129,4 +129,8 @@ public class SteerMotor {
     var updatedConfig = new SparkMaxConfig().idleMode(willBrake ? IdleMode.kBrake : IdleMode.kCoast);
     max.configure(updatedConfig, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
   }
+
+  public double getCurrent() {
+    return max.getOutputCurrent();
+  }
 }

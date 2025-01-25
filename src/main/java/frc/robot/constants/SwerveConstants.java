@@ -53,7 +53,7 @@ public final class SwerveConstants {
 
     public static final int DRIVE_CURRENT_LIMIT = 50;
     public static final int STEER_CURRENT_LIMIT = 20;
-
+    
     public static final double MAX_MOD_SPEED = DRIVE_FREE_SPD;  // m/s, placeholders
     public static final double MAX_ROBOT_TRANS_SPEED = DRIVE_FEEDFORWARD.maxAchievableVelocity(12, 0.1); // m/s
     public static final double MAX_ROBOT_ROT_SPEED = MAX_ROBOT_TRANS_SPEED / 0.4585738763; // rad/s, 0.45 is radius of robot, spd/r is rad/s

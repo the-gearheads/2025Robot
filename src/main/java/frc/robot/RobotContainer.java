@@ -4,9 +4,11 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.commands.Teleop;
 import frc.robot.controllers.Controllers;
 import frc.robot.subsystems.swerve.Swerve;
@@ -39,9 +41,12 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    return swerve.run(
+    return new InstantCommand(()-> swerve.setPose(new Pose2d())).andThen(swerve.run(
       () -> {swerve.drive(new ChassisSpeeds(1, 0, 0));}
-      ).withTimeout(3);
+      ));
+  }
+
+  public double getCurrentDrawSim() {
+    return swerve.getCurrentDraw();
   }
 }
-// peepee poopoo

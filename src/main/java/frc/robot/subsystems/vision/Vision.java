@@ -18,10 +18,10 @@ import static frc.robot.constants.VisionConstants.*;
 
 public class Vision extends SubsystemBase {
   private AprilTagFieldLayout field;
-  private VisionSim sim;
+  private VisionSim sim = new VisionSim();
   private Swerve swerve;
 
-  private Camera[] cameras;
+  private Camera[] cameras = new Camera[CAMERA_NAMES.length];
 
   public Vision(Swerve swerve) {
     this.swerve = swerve;
@@ -30,13 +30,13 @@ public class Vision extends SubsystemBase {
       PhotonCamera.setVersionCheckEnabled(false);  
 
     try {
-      field = AprilTagFieldLayout.loadFromResource(AprilTagFields.k2024Crescendo.m_resourceFile);
+      field = AprilTagFieldLayout.loadFromResource(AprilTagFields.k2025Reefscape.m_resourceFile);
     } catch (IOException e) {
       System.out.println("ERROR Opening apriltag field layout file");
-      System.out.println(AprilTagFields.k2024Crescendo.m_resourceFile);
+      System.out.println(AprilTagFields.k2025Reefscape.m_resourceFile);
     }
 
-    sim = new VisionSim();
+  
     for (int i = 0; i<CAMERA_NAMES.length; i++) {
       cameras[i] = new Camera(field, CAMERA_NAMES[i], CAMERA_TRANSFORMS[i], CAMERA_INTRINSICS[i]);
       sim.addCamera(cameras[i]);
@@ -60,7 +60,7 @@ public class Vision extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // sim.periodic(swerve.getPoseWheelsOnly());
+    sim.periodic(swerve.getPoseWheelsOnly());
     for (Camera camera : cameras) {
       camera.logCamTransform(swerve.getPose());
     }

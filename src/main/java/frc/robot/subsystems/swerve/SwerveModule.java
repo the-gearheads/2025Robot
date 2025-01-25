@@ -16,121 +16,121 @@ import frc.robot.subsystems.swerve.motors.SteerMotor;
 import frc.robot.subsystems.swerve.motors.SteerMotorSim;
 
 public class SwerveModule {
-    public DriveMotor drive;
-    public SteerMotor steer;
-    Rotation2d offset;
+  public final DriveMotor drive;
+  public final SteerMotor steer;
+  Rotation2d offset;
 
-    private final Queue<Double> timestampQueue;
-    private final Queue<Double> drivePositionQueue;
-    private final Queue<Double> turnPositionQueue;
+  private final Queue<Double> timestampQueue;
+  private final Queue<Double> drivePositionQueue;
+  private final Queue<Double> turnPositionQueue;
 
-    String modulePath;
+  String modulePath;
 
-    public SwerveModule(int id, String moduleName) {
-        this.modulePath = "Swerve/" + moduleName;
-        this.offset = Rotation2d.fromDegrees(WHEEL_OFFSETS[id]);
-        if (Robot.isReal()) {
-        drive = new DriveMotor(MOTOR_IDS[id][0], id, modulePath);
-        steer = new SteerMotor(MOTOR_IDS[id][1], id, offset, modulePath);
-        } else {
-        drive = new DriveMotorSim(MOTOR_IDS[id][0], id, modulePath);
-        steer = new SteerMotorSim(MOTOR_IDS[id][1], id, offset, modulePath);
-        }
-        timestampQueue = SparkOdometryThread.getInstance().makeTimestampQueue();
-        drivePositionQueue = SparkOdometryThread.getInstance().registerSignal(drive::getPositionOptional);
-        turnPositionQueue = SparkOdometryThread.getInstance().registerSignal(steer::getAngleRadiansOptional);
+  public SwerveModule(int id, String moduleName) {
+    this.modulePath = "Swerve/" + moduleName;
+    this.offset = Rotation2d.fromDegrees(WHEEL_OFFSETS[id]);
+    if (Robot.isReal()) {
+      drive = new DriveMotor(MOTOR_IDS[id][0], id, modulePath);
+      steer = new SteerMotor(MOTOR_IDS[id][1], id, offset, modulePath);
+    } else {
+      drive = new DriveMotorSim(MOTOR_IDS[id][0], id, modulePath);
+      steer = new SteerMotorSim(MOTOR_IDS[id][1], id, offset, modulePath);
     }
+    timestampQueue = SparkOdometryThread.getInstance().makeTimestampQueue();
+    drivePositionQueue = SparkOdometryThread.getInstance().registerSignal(drive::getPositionOptional);
+    turnPositionQueue = SparkOdometryThread.getInstance().registerSignal(steer::getAngleRadiansOptional);
+  }
 
-    public void setState(SwerveModuleState state) {
-        Logger.recordOutput(modulePath + "/DesiredSwerveStatePreOpt", state);
+  public void setState(SwerveModuleState state) {
+    Logger.recordOutput(modulePath + "/DesiredSwerveStatePreOpt", state);
 
-        state.optimize(steer.getAngle());
-        // state.cosineScale(steer.getAngle());  // TODO: try this
+    state.optimize(steer.getAngle());
+    state.cosineScale(steer.getAngle()); // TODO: try this
 
-        Logger.recordOutput(modulePath + "/DesiredSwerveStatePostOpt", state);
+    Logger.recordOutput(modulePath + "/DesiredSwerveStatePostOpt", state);
 
-        steer.setAngle(state.angle);
-        drive.setSpeed(state.speedMetersPerSecond);
+    steer.setAngle(state.angle);
+    drive.setSpeed(state.speedMetersPerSecond);
+  }
+
+  public void runCharacterization(double output) {
+    drive.setVoltage(output);
+    steer.setAngle(new Rotation2d());
+  }
+
+  public SwerveModulePosition getCurrentModulePosition() {
+    return new SwerveModulePosition(drive.getPosition(), steer.getAngle());
+  }
+
+  public SwerveModuleState getCurrentState() {
+    return new SwerveModuleState(drive.getVelocity(), steer.getAngle());
+  }
+
+  public void setDriveVolts(double volts) {
+    drive.setVoltage(volts);
+  }
+
+  public void setSteerVolts(double volts) {
+    steer.setVoltage(volts);
+  }
+
+  public void voltageOnlyMode(boolean drive, boolean steer) {
+    /*
+     * disables PID for motors so you can set voltage in peace (for sysid)
+     */
+    this.drive.setManualVoltageOnly(drive);
+    this.steer.setManualVoltageOnly(steer);
+  }
+
+  public void periodic() {
+    steer.periodic();
+    drive.periodic();
+    steer.log();
+    drive.log();
+  }
+
+  public void configure() {
+    steer.configure();
+    drive.configure();
+  }
+
+  private Rotation2d[] getOdometrySteerPositions() {
+    var angles = turnPositionQueue
+        .stream()
+        .map((Double value) -> Rotation2d.fromRadians(value))
+        .toArray(Rotation2d[]::new);
+    Logger.recordOutput(modulePath + "/odometrySteerPositions", angles);
+    turnPositionQueue.clear();
+    return angles;
+  }
+
+  private double[] getOdometryDrivePositions() {
+    var positions = drivePositionQueue
+        .stream()
+        .mapToDouble((Double value) -> value)
+        .toArray();
+    Logger.recordOutput(modulePath + "/odometryDrivePositions", positions);
+    drivePositionQueue.clear();
+    return positions;
+  }
+
+  public double[] getOdometryTimestamps() {
+    var timestamps = timestampQueue
+        .stream()
+        .mapToDouble((Double value) -> value)
+        .toArray();
+    Logger.recordOutput(modulePath + "/odometryTimestamps", timestamps);
+    timestampQueue.clear();
+    return timestamps;
+  }
+
+  public SwerveModulePosition[] getOdometryModPositions() {
+    var drivePositions = getOdometryDrivePositions();
+    var turnPositions = getOdometrySteerPositions();
+    var positions = new SwerveModulePosition[drivePositions.length];
+    for (int i = 0; i < drivePositions.length; i++) {
+      positions[i] = new SwerveModulePosition(drivePositions[i], turnPositions[i]);
     }
-
-    public void runCharacterization(double output) {
-        drive.setVoltage(output);
-        steer.setAngle(new Rotation2d());
-    }
-    
-    public SwerveModulePosition getCurrentModulePosition() {
-        return new SwerveModulePosition(drive.getPosition(), steer.getAngle());
-    }
-
-    public SwerveModuleState getCurrentState() {
-        return new SwerveModuleState(drive.getVelocity(), steer.getAngle());
-    }
-
-    public void setDriveVolts(double volts) {
-        drive.setVoltage(volts);
-    }
-
-    public void setSteerVolts(double volts) {
-        steer.setVoltage(volts);
-    }
-
-    public void voltageOnlyMode(boolean drive, boolean steer) {
-        /*
-         * disables PID for motors so you can set voltage in peace (for sysid)
-         */
-        this.drive.setManualVoltageOnly(drive);
-        this.steer.setManualVoltageOnly(steer);
-    }
-
-    public void periodic() {
-        steer.periodic();
-        drive.periodic();
-        steer.log();
-        drive.log();
-    }
-    
-    public void configure() {
-        steer.configure();
-        drive.configure();
-    }
-
-    private Rotation2d[] getOdometrySteerPositions() {
-        var angles =  turnPositionQueue
-            .stream()
-            .map((Double value) -> Rotation2d.fromRadians(value))
-            .toArray(Rotation2d[]::new);
-        Logger.recordOutput(modulePath + "/odometrySteerPositions", angles);
-        turnPositionQueue.clear();
-        return angles;
-    }
-
-    private double[] getOdometryDrivePositions() {
-        var positions =  drivePositionQueue
-            .stream()
-            .mapToDouble((Double value) -> value)
-            .toArray();
-        Logger.recordOutput(modulePath + "/odometryDrivePositions", positions);
-        drivePositionQueue.clear();
-        return positions;
-    }
-
-    public double[] getOdometryTimestamps() {
-        var timestamps =  timestampQueue
-            .stream()
-            .mapToDouble((Double value) -> value)
-            .toArray();
-        Logger.recordOutput(modulePath + "/odometryTimestamps", timestamps);
-        timestampQueue.clear();
-        return timestamps;
-    }
-
-    public SwerveModulePosition[] getOdometryModPositions() {
-        var drivePositions = getOdometryDrivePositions();
-        var turnPositions = getOdometrySteerPositions();
-        var positions = new SwerveModulePosition[drivePositions.length];
-        for (int i = 0; i < drivePositions.length; i++) {
-          positions[i] = new SwerveModulePosition(drivePositions[i], turnPositions[i]);
-        }
-        return positions;
-    }
+    return positions;
+  }
 }

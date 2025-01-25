@@ -118,4 +118,8 @@ public class DriveMotor {
     var updatedConfig = new SparkFlexConfig().idleMode(willBrake ? IdleMode.kBrake : IdleMode.kCoast);
     flex.configure(updatedConfig, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
   }
+
+  public double getCurrent() {
+    return flex.getOutputCurrent();
+  }
 }
