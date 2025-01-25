@@ -21,7 +21,7 @@ public class Vision extends SubsystemBase {
   private VisionSim sim;
   private Swerve swerve;
 
-  private final Camera frontLeft, frontRight, backLeft;
+  private Camera[] cameras;
 
   public Vision(Swerve swerve) {
     this.swerve = swerve;
@@ -36,14 +36,12 @@ public class Vision extends SubsystemBase {
       System.out.println(AprilTagFields.k2024Crescendo.m_resourceFile);
     }
 
-    frontLeft = new Camera(field, FRONT_LEFT_NAME, FRONT_LEFT_TRANSFORM, FRONT_LEFT_INTRINSICS);
-    frontRight = new Camera(field, FRONT_RIGHT_NAME, FRONT_RIGHT_TRANSFORM, FRONT_RIGHT_INTRINSICS);
-    backLeft = new Camera(field, BACK_LEFT_NAME, BACK_LEFT_TRANSFORM, BACK_LEFT_INTRINSICS);
-
     sim = new VisionSim();
-    sim.addCamera(frontLeft);
-    sim.addCamera(frontRight);
-    sim.addCamera(backLeft);
+    for (int i = 0; i<CAMERA_NAMES.length; i++) {
+      cameras[i] = new Camera(field, CAMERA_NAMES[i], CAMERA_TRANSFORMS[i], CAMERA_INTRINSICS[i]);
+      sim.addCamera(cameras[i]);
+    }
+
   }
 
   /**
@@ -52,18 +50,19 @@ public class Vision extends SubsystemBase {
    * @return Whether a vision measurement was added
    */
   public boolean feedPoseEstimator(SwerveDrivePoseEstimator poseEstimator) {
-    boolean tfl = frontLeft.feedPoseEstimator(poseEstimator);
-    boolean tfr = frontRight.feedPoseEstimator(poseEstimator);
-    boolean tbl = backLeft.feedPoseEstimator(poseEstimator);
-
-    return tfl || tfr || tbl;
+    boolean posed = false;
+    for (Camera camera : cameras) {
+      posed |= camera.feedPoseEstimator(poseEstimator);
+    }
+    
+    return posed;
   }
 
   @Override
   public void periodic() {
     // sim.periodic(swerve.getPoseWheelsOnly());
-    frontLeft.logCamTransform(swerve.getPose());
-    frontRight.logCamTransform(swerve.getPose());
-    backLeft.logCamTransform(swerve.getPose());
+    for (Camera camera : cameras) {
+      camera.logCamTransform(swerve.getPose());
+    }
   }
 }

@@ -15,12 +15,17 @@ public class CameraIntrinsics {
   public double cx;
   public double cy;
   public double[] distCoeffs = new double[8];
+  public int resX;
+  public int resY;
 
-  public CameraIntrinsics(double fx, double fy, double cx, double cy, double[] distCoeffs) {
+  public CameraIntrinsics(int resX, int resY, double fx, double fy, double cx, double cy, double[] distCoeffs) {
+    this.resX = resX;
+    this.resY = resY;
     this.fx = fx;
     this.fy = fy;
     this.cx = cx;
     this.cy = cy;
+
     for(int i = 0; i < distCoeffs.length; i++) { // cause we wanna preserve the 0s
       this.distCoeffs[i] = distCoeffs[i];
     }

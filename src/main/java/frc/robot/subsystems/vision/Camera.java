@@ -145,7 +145,7 @@ public class Camera {
 
   public SimCameraProperties getSimProperties() {
     SimCameraProperties properties = new SimCameraProperties();
-    properties.setCalibration(1280, 720, intrinsics.getCameraMatrix(), intrinsics.getDistCoeffs());
+    properties.setCalibration(intrinsics.resX, intrinsics.resY, intrinsics.getCameraMatrix(), intrinsics.getDistCoeffs());
 
     // Approximate detection noise with average and standard deviation error in pixels.
     properties.setCalibError(0.02, 0.05);

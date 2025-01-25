@@ -41,7 +41,7 @@ public class RobotContainer {
     // An example command will be run in autonomous
     return swerve.run(
       () -> {swerve.drive(new ChassisSpeeds(1, 0, 0));}
-      );
+      ).withTimeout(3);
   }
 }
 // peepee poopoo
