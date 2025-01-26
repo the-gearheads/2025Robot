@@ -11,6 +11,7 @@ import org.littletonrobotics.junction.Logger;
 import com.studica.frc.AHRS;
 import com.studica.frc.AHRS.NavXComType;
 
+import choreo.trajectory.SwerveSample;
 import edu.wpi.first.hal.SimDouble;
 import edu.wpi.first.hal.simulation.SimDeviceDataJNI;
 import edu.wpi.first.math.controller.PIDController;
@@ -52,6 +53,10 @@ public class Swerve extends SubsystemBase {
     new SwerveModule(3, "BR")
   };
 
+  PIDController xPid = new PIDController(XY_PATH_FOLLOWING_PID[0], XY_PATH_FOLLOWING_PID[1], XY_PATH_FOLLOWING_PID[2]);
+  PIDController yPid = new PIDController(XY_PATH_FOLLOWING_PID[0], XY_PATH_FOLLOWING_PID[1], XY_PATH_FOLLOWING_PID[2]);
+  PIDController rotPid = new PIDController(ROT_PATH_FOLLOWING_PID[0], ROT_PATH_FOLLOWING_PID[1], ROT_PATH_FOLLOWING_PID[2]);
+
   public Swerve() {
     this.vision = new Vision(this);
     gyro.zeroYaw();
@@ -67,6 +72,8 @@ public class Swerve extends SubsystemBase {
     wheelOdometry = new SwerveDriveOdometry(kinematics, getGyroRotation(), getModulePositions());
     headingController.enableContinuousInput(0, 2 * Math.PI);
     headingController.setTolerance(HEADING_CONTROLLER_TOLERANCE);
+
+    rotPid.enableContinuousInput(-Math.PI, Math.PI);
   }
 
   public Rotation2d getGyroRotation() {
@@ -119,12 +126,23 @@ public class Swerve extends SubsystemBase {
     drive(speeds, null);
   }
 
-  public void driveFieldRelative(ChassisSpeeds speeds, Double alignToAngle) {
+  /* relative to your alliance's DS wall */
+  public void driveAllianceRelative(ChassisSpeeds speeds, Double alignToAngle) {
     var rot = getPose().getRotation();
     if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red) {
       rot = rot.rotateBy(Rotation2d.fromDegrees(180));
     }
     drive(ChassisSpeeds.fromFieldRelativeSpeeds(speeds, rot), alignToAngle);
+  }
+
+  /* relative to blue ds wall */
+  public void driveFieldRelative(ChassisSpeeds speeds, Double alignToAngle) {
+    var rot = getPose().getRotation();
+    drive(ChassisSpeeds.fromFieldRelativeSpeeds(speeds, rot), alignToAngle);
+  }
+
+  public void driveAllianceRelative(ChassisSpeeds speeds) {
+    driveAllianceRelative(speeds, null);
   }
 
   public void driveFieldRelative(ChassisSpeeds speeds) {
@@ -192,5 +210,16 @@ public class Swerve extends SubsystemBase {
 
   public Pose2d getPoseWheelsOnly() {
     return wheelOdometry.getPoseMeters();
+  }
+
+  public void followTrajectory(SwerveSample sample) {
+    var pose = getPose();
+
+    ChassisSpeeds speeds = new ChassisSpeeds(
+      sample.vx + xPid.calculate(pose.getX(), sample.x),
+      sample.vy + yPid.calculate(pose.getY(), sample.y),
+      sample.omega + rotPid.calculate(pose.getRotation().getRadians(), sample.heading)
+    );
+    driveFieldRelative(speeds);
   }
 }

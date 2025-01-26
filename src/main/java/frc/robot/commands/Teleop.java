@@ -29,6 +29,6 @@ public class Teleop extends Command {
 
         var speeds = new ChassisSpeeds(x, y, rot);
 
-        swerve.driveFieldRelative(speeds);
+        swerve.driveAllianceRelative(speeds);
     }
 }

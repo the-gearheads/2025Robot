@@ -4,11 +4,8 @@
 
 package frc.robot;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.commands.Teleop;
 import frc.robot.controllers.Controllers;
 import frc.robot.subsystems.swerve.Swerve;
@@ -16,6 +13,7 @@ import frc.robot.subsystems.swerve.Swerve;
 public class RobotContainer {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   private final Swerve swerve = new Swerve();
+  private final Autos autos = new Autos(swerve);
   public RobotContainer() {
     swerve.setDefaultCommand(new Teleop(swerve));
   }
@@ -41,9 +39,7 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    return new InstantCommand(()-> swerve.setPose(new Pose2d())).andThen(swerve.run(
-      () -> {swerve.drive(new ChassisSpeeds(1, 0, 0));}
-      ));
+    return autos.getAutonomousRoutine();
   }
 
   public double getCurrentDrawSim() {
