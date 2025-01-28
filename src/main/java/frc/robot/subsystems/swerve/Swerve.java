@@ -108,8 +108,8 @@ public class Swerve extends SubsystemBase {
     // for (SwerveModuleState moduleState : moduleStates) {
 
 
-    Logger.recordOutput("Swerve/Speeds", speeds);
-    SwerveDriveKinematics.desaturateWheelSpeeds(getModuleStates(), speeds, MAX_MOD_SPEED, MAX_ROBOT_TRANS_SPEED, MAX_ROBOT_ROT_SPEED);
+    // Logger.recordOutput("Swerve/Speeds", speeds);
+    // SwerveDriveKinematics.desaturateWheelSpeeds(getModuleStates(), speeds, MAX_MOD_SPEED, MAX_ROBOT_TRANS_SPEED, MAX_ROBOT_ROT_SPEED);
     Logger.recordOutput("Swerve/DesaturatedSpeeds", speeds);
     ChassisSpeeds discretized = ChassisSpeeds.discretize(speeds, 0.02);
     Logger.recordOutput("Swerve/DiscretizedSpeeds", discretized);
@@ -220,6 +220,8 @@ public class Swerve extends SubsystemBase {
       sample.vy + yPid.calculate(pose.getY(), sample.y),
       sample.omega + rotPid.calculate(pose.getRotation().getRadians(), sample.heading)
     );
+
+    Logger.recordOutput("Swerve/Traj/Sample", sample);
     driveFieldRelative(speeds);
   }
 }

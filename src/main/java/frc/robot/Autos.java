@@ -24,6 +24,7 @@ public class Autos {
     );
     chooser = new AutoChooser();
     chooser.addRoutine("Epic Routine", this::epicRoutine);
+    chooser.addRoutine("Less epic routine", this::lessEpicRoutine);
     SmartDashboard.putData("AutoChooser", chooser);
   }
 
@@ -39,6 +40,19 @@ public class Autos {
       Commands.sequence(
         epicTraj.resetOdometry(),
         epicTraj.cmd()
+      )
+    );
+    return routine;
+  }
+
+  public AutoRoutine lessEpicRoutine() {
+    var routine = factory.newRoutine("less epic");
+    AutoTrajectory lessEpicTraj = routine.trajectory("less epic path");
+
+    routine.active().onTrue(
+      Commands.sequence(
+        lessEpicTraj.resetOdometry(),
+        lessEpicTraj.cmd()
       )
     );
     return routine;
