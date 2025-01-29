@@ -1,6 +1,8 @@
 package frc.robot.subsystems.swerve;
 
 import static frc.robot.constants.SwerveConstants.*;
+import static edu.wpi.first.units.Units.Seconds;
+import static edu.wpi.first.units.Units.Volts;
 
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -24,11 +26,14 @@ import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Robot;
 import frc.robot.subsystems.vision.Vision;
 
@@ -57,6 +62,9 @@ public class Swerve extends SubsystemBase {
   PIDController yPid = new PIDController(XY_PATH_FOLLOWING_PID[0], XY_PATH_FOLLOWING_PID[1], XY_PATH_FOLLOWING_PID[2]);
   PIDController rotPid = new PIDController(ROT_PATH_FOLLOWING_PID[0], ROT_PATH_FOLLOWING_PID[1], ROT_PATH_FOLLOWING_PID[2]);
 
+  SysIdRoutine driveRoutine;
+  SysIdRoutine angularRoutine;
+
   public Swerve() {
     this.vision = new Vision(this);
     gyro.zeroYaw();
@@ -74,6 +82,18 @@ public class Swerve extends SubsystemBase {
     headingController.setTolerance(HEADING_CONTROLLER_TOLERANCE);
 
     rotPid.enableContinuousInput(-Math.PI, Math.PI);
+
+    driveRoutine = new SysIdRoutine(
+      new SysIdRoutine.Config(null, null, null, (state) -> Logger.recordOutput("SysIdTestState", state.toString())),
+      new SysIdRoutine.Mechanism(this::setDriveVoltage, null, this)
+    );
+
+    angularRoutine = new SysIdRoutine(
+      new SysIdRoutine.Config(Volts.of(0.5).per(Seconds), Volts.of(3.5), null, (state) -> Logger.recordOutput("SysIdTestState", state.toString())), 
+      new SysIdRoutine.Mechanism((Voltage v) -> {
+        drive(new ChassisSpeeds(0, 0, v.in(Volts)));
+      }, null, this)
+    );
   }
 
   public Rotation2d getGyroRotation() {
@@ -223,5 +243,34 @@ public class Swerve extends SubsystemBase {
 
     Logger.recordOutput("Swerve/Traj/Sample", sample);
     driveFieldRelative(speeds);
+  }
+
+
+  public void setDriveVoltage(Voltage volts) {
+    for (SwerveModule mod : modules) {
+      mod.setDriveVolts(volts.magnitude());
+    }
+  }
+
+  public void setSteerVoltage(Voltage volts) {
+    for (SwerveModule mod : modules) {
+      mod.setSteerVolts(volts.magnitude());
+    }
+  }
+
+  public Command sysIdForwardQuasistatic(SysIdRoutine.Direction direction) {
+    return driveRoutine.quasistatic(direction);
+  }
+
+  public Command sysIdForwardDynamic(SysIdRoutine.Direction direction) {
+    return driveRoutine.dynamic(direction);
+  }
+
+  public Command sysIdAngularQuasistatic(SysIdRoutine.Direction direction) {
+    return angularRoutine.quasistatic(direction);
+  }
+
+  public Command sysIdAngularDynamic(SysIdRoutine.Direction direction) {
+    return angularRoutine.dynamic(direction);
   }
 }
