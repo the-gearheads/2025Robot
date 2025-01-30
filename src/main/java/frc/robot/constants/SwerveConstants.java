@@ -9,7 +9,7 @@ public final class SwerveConstants {
       {8, 28}, // FR
       {2, 22}, // BL
       {4, 24}  // BR
-    };
+    };  // front is battery side on rinzler
 
     public static final Translation2d[] WHEEL_POSITIONS = {
       new Translation2d(0.3305, 0.3313), // TODO: placeholders, note that +x is forward and +y is left
@@ -22,7 +22,7 @@ public final class SwerveConstants {
     public static final double WHEEL_BASE = WHEEL_POSITIONS[0].getX() - WHEEL_POSITIONS[2].getX();
     public static final double TRACK_WIDTH = WHEEL_POSITIONS[0].getY() - WHEEL_POSITIONS[1].getY();
 
-    public static final double[] WHEEL_OFFSETS = {0, 0, 0, 0};
+    public static final double[] WHEEL_OFFSETS = {0, 0, 0, 180};
     public static final boolean[] IS_INVERTED = {true, false, true, false};
 
     public static final double WHEEL_DIAMETER = 0.073800;
@@ -51,7 +51,7 @@ public final class SwerveConstants {
     public static final double[] DRIVE_PID = {0.04, 0, 0};
     public static final SimpleMotorFeedforward DRIVE_FEEDFORWARD = new SimpleMotorFeedforward(0.25521, 2.0821, 0.10605);
 
-    public static final int DRIVE_CURRENT_LIMIT = 50;
+    public static final int DRIVE_CURRENT_LIMIT = 80;
     public static final int STEER_CURRENT_LIMIT = 20;
     
     public static final double MAX_MOD_SPEED = DRIVE_FREE_SPD;  // m/s, placeholders

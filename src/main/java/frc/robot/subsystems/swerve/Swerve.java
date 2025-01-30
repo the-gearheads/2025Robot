@@ -85,19 +85,35 @@ public class Swerve extends SubsystemBase {
 
     driveRoutine = new SysIdRoutine(
       new SysIdRoutine.Config(null, null, null, (state) -> Logger.recordOutput("SysIdTestState", state.toString())),
-      new SysIdRoutine.Mechanism(this::setDriveVoltage, null, this)
+      new SysIdRoutine.Mechanism((Voltage v) -> {
+        modules[0].steer.setAngle(new Rotation2d());
+        modules[1].steer.setAngle(new Rotation2d());
+        modules[2].steer.setAngle(new Rotation2d());
+        modules[3].steer.setAngle(new Rotation2d());
+        setDriveVoltage(v);
+      }, null, this)
     );
 
     angularRoutine = new SysIdRoutine(
       new SysIdRoutine.Config(Volts.of(0.5).per(Seconds), Volts.of(3.5), null, (state) -> Logger.recordOutput("SysIdTestState", state.toString())), 
       new SysIdRoutine.Mechanism((Voltage v) -> {
-        drive(new ChassisSpeeds(0, 0, v.in(Volts)));
+        var states = kinematics.toSwerveModuleStates(new ChassisSpeeds(0, 0, 100));
+        for(int i = 0; i < modules.length; i++) {
+          modules[i].steer.setAngle(states[i].angle);
+        }
+        setDriveVoltage(v);
       }, null, this)
     );
   }
 
+  @AutoLogOutput
   public Rotation2d getGyroRotation() {
     return gyro.getRotation2d();
+  }
+
+  @AutoLogOutput
+  public double getGyroVelocity() {
+    return Units.degreesToRadians(-gyro.getRate());
   }
 
   @Override
