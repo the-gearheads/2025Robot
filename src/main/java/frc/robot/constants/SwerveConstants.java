@@ -49,7 +49,7 @@ public final class SwerveConstants {
 
     public static final double[] STEER_PIDF = {1, 0, 0, 0}; // apparently just a P value of 1 worked for us??? i wanna test that a bit more throughly
     public static final double[] DRIVE_PID = {0.04, 0, 0};
-    public static final SimpleMotorFeedforward DRIVE_FEEDFORWARD = new SimpleMotorFeedforward(0.25521, 2.0821, 0.10605);
+    public static final SimpleMotorFeedforward DRIVE_FEEDFORWARD = new SimpleMotorFeedforward(0.18037, 2.1549, 0.20163);
 
     public static final int DRIVE_CURRENT_LIMIT = 80;
     public static final int STEER_CURRENT_LIMIT = 20;
