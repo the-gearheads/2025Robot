@@ -50,8 +50,8 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    // return autos.getAutonomousRoutine();
-    return sysidAuto.get();
+    return autos.getAutonomousRoutine();
+    // return sysidAuto.get();
   }
 
   public double getCurrentDrawSim() {

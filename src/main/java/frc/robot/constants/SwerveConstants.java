@@ -2,6 +2,7 @@ package frc.robot.constants;
 
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.util.Units;
 
 public final class SwerveConstants {
     public static final int[][] MOTOR_IDS = {
@@ -56,11 +57,16 @@ public final class SwerveConstants {
     
     public static final double MAX_MOD_SPEED = DRIVE_FREE_SPD;  // m/s, placeholders
     public static final double MAX_ROBOT_TRANS_SPEED = DRIVE_FEEDFORWARD.maxAchievableVelocity(12, 0.1); // m/s
+    public static final double MAX_ROBOT_ACCEL = DRIVE_FEEDFORWARD.maxAchievableAcceleration(12, MAX_ROBOT_TRANS_SPEED-1); // m/s^2, 1 is a fudge factor
+    public static final double MAX_MOD_STEER_VEL = Units.degreesToRadians(1040); // I think? Going from 0-90 went at ~200deg/s
+    
     public static final double MAX_ROBOT_ROT_SPEED = MAX_ROBOT_TRANS_SPEED / 0.4585738763; // rad/s, 0.45 is radius of robot, spd/r is rad/s
 
     public static final double HEADING_CONTROLLER_TOLERANCE = 0.005;  // rad
 
-    public static double[] XY_PATH_FOLLOWING_PID = {0.5, 0, 0.2};
-    public static double[] ROT_PATH_FOLLOWING_PID = {0.2, 0, 0.05};
+    public static double[] XY_PATH_FOLLOWING_PID = {4.2, 0, 0.8};
+    public static double[] ROT_PATH_FOLLOWING_PID = {4, 0, 0};
+
+    
 
 }

@@ -25,12 +25,25 @@ public class Autos {
     chooser = new AutoChooser();
     chooser.addRoutine("Epic Routine", this::epicRoutine);
     chooser.addRoutine("Less epic routine", this::lessEpicRoutine);
+    chooser.addRoutine("Alignment thing", this::testRoutine);
     SmartDashboard.putData("AutoChooser", chooser);
   }
 
   public Command getAutonomousRoutine() {
     return chooser.selectedCommand();
   }
+
+  public AutoRoutine testRoutine() {
+    var routine = factory.newRoutine("test path 2");
+
+    AutoTrajectory epicTraj = routine.trajectory("Alignment path");
+    routine.active().onTrue(
+      Commands.sequence(
+        epicTraj.resetOdometry(),
+        epicTraj.cmd()
+      )
+    );
+    return routine;  }
 
   public AutoRoutine epicRoutine() {
     var routine = factory.newRoutine("epic");
