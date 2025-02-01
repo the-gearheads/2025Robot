@@ -8,7 +8,7 @@ public class Controllers {
 
   private Controllers() {}
 
-  private static final Integer NUMBER_OF_CONTROLLERS = 6;
+  private static final int NUMBER_OF_CONTROLLERS = 6;
   private static String[] lastControllerNames = new String[NUMBER_OF_CONTROLLERS];
 
   public static DriverController driverController;
@@ -17,9 +17,10 @@ public class Controllers {
   /** Returns true if the connected controllers have changed since last called. */
   public static boolean didControllersChange() {
     boolean hasChanged = false;
+    String name;
 
     for (int i = 0; i < DriverStation.kJoystickPorts; i++) {
-      String name = DriverStation.getJoystickName(i);
+      name = DriverStation.getJoystickName(i);
       if (!name.equals(lastControllerNames[i])) {
         hasChanged = true;
         lastControllerNames[i] = name;
