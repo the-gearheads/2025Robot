@@ -1,6 +1,6 @@
 package frc.robot.controllers;
 
-import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.MathUtil.applyDeadband;
 import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.constants.MiscConstants;
 
@@ -9,11 +9,11 @@ public class Controllers {
   private Controllers() {}
 
   private static final int MAX_DRIVER_STATION_PORTS = DriverStation.kJoystickPorts; 
-  private static String[] lastControllerNames = new String[MAX_DRIVER_STATION_PORTS];
   private static final String[] OPERATOR_CONTROLLER_NAMES = {
     "T.16000M",
     "Keyboard 1"
   };
+  private static String[] lastControllerNames = new String[MAX_DRIVER_STATION_PORTS];
 
   public static DriverController driverController;
   public static OperatorController operatorController;
@@ -78,6 +78,6 @@ public class Controllers {
   }
 
   public static double deadband(double num) {
-    return MathUtil.applyDeadband(num, MiscConstants.JOYSTICK_DEADBAND);
+    return applyDeadband(num, MiscConstants.JOYSTICK_DEADBAND);
   }
 }
