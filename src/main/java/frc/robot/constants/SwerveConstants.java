@@ -4,6 +4,10 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 
+/*
+  Food for thought: could move all the calculated constants into a SwerveCalculaltedConstants class.
+ */
+
 public final class SwerveConstants {
     public static final int[][] MOTOR_IDS = {
       {6, 26}, // FL
