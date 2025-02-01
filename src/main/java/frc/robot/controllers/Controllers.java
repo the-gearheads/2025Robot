@@ -1,8 +1,9 @@
 package frc.robot.controllers;
 
-import edu.wpi.first.math.MathUtil.applyDeadband;
 import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.constants.MiscConstants;
+
+import static edu.wpi.first.math.MathUtil.applyDeadband;
 
 public class Controllers {
 
@@ -44,9 +45,9 @@ public class Controllers {
     boolean foundOperatorController = false;
     String joyName;
 
-    for (int i = 0; i < MAX_DRIVER_STATION_PORTS; i++) {
-      if (DriverStation.getInstance().isJoystickConnected(i)) {
-        joyName = DriverStation.getJoystickName(i);
+    for (int port = 0; port < MAX_DRIVER_STATION_PORTS; port++) {
+      if (DriverStation.isJoystickConnected(port)) {
+        joyName = DriverStation.getJoystickName(port);
         // if (joyName.equals(""))
         //   continue;
 
@@ -57,12 +58,12 @@ public class Controllers {
 
         if (!foundOperatorController && isOperatorControllerName(joyName)) {
           foundOperatorController = true;
-          operatorController = new Thrustmaster(i);
+          operatorController = new Thrustmaster(port);
         }
         // No filtering for now, just use the first
         else if (!foundDriveController) {
           foundDriveController = true;
-          driverController = new DriverController(i);
+          driverController = new DriverController(port);
         }
       }
     }
