@@ -43,6 +43,7 @@ import frc.robot.subsystems.vision.Vision;
 
 public class Swerve extends SubsystemBase {
   private static final String SIM_DEVICE_HANDLE_NAME = "navX-Sensor[4]";
+  private static final double DEFAULT_DT = 0.02;
   private static final double DEFAULT_PROPORTIONAL_COEFFICIENT = 5.2;
   private static final double DEFAULT_INTEGRAL_COEFFICIENT = 0d;
   private static final double DEFAULT_DERIVATIVE_COEFFICIENT = 0.5;
@@ -170,15 +171,12 @@ public class Swerve extends SubsystemBase {
 
   @Override
   public void simulationPeriodic() {
-    static final double WHAT_IS_THIS_VALUE = 0.02;
     double degreesPerSecond = Units.radiansToDegrees(getRobotRelativeSpeeds().omegaRadiansPerSecond);
-    simGyroAngle.set(simGyroAngle.get() - (degreesPerSecond * WHAT_IS_THIS_VALUE));
+    simGyroAngle.set(simGyroAngle.get() - (degreesPerSecond * DEFAULT_DT));
   }
 
 
   public void drive(ChassisSpeeds speeds, Double alignToAngle) {
-    
-    static final double WHAT_IS_THIS_VALUE = 0.02;
     double commandedRot = headingController.calculate(getPose().getRotation().getRadians());
 
     if (alignToAngle != null) {
@@ -196,7 +194,7 @@ public class Swerve extends SubsystemBase {
     // SwerveDriveKinematics.desaturateWheelSpeeds(getModuleStates(), speeds, MAX_MOD_SPEED, MAX_ROBOT_TRANS_SPEED, MAX_ROBOT_ROT_SPEED);
     Logger.recordOutput("Swerve/DesaturatedSpeeds", speeds);
 
-    ChassisSpeeds discretized = ChassisSpeeds.discretize(speeds, WHAT_IS_THIS_VALUE);
+    ChassisSpeeds discretized = ChassisSpeeds.discretize(speeds, DEFAULT_DT);
     Logger.recordOutput("Swerve/DiscretizedSpeeds", discretized);
 
     // lastSetpoint = setpointGenerator.generateSetpoint(limits, lastSetpoint, speeds, Timer.getFPGATimestamp() - lastTime);
@@ -244,7 +242,7 @@ public class Swerve extends SubsystemBase {
   }
 
   public SwerveModulePosition[] getModulePositions() {
-    getModuleStates();
+    getModuleStates(); // TODO: REMOVE IF NOT NEEDED! It's returning a 
     SwerveModulePosition[] positions = new SwerveModulePosition[modules.length];
     // for (int module = 0; i < modules.length; module++) {
     //   positions[module] = modules[module].getCurrentModulePosition();
