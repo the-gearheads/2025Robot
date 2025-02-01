@@ -131,6 +131,7 @@ public class Swerve extends SubsystemBase {
     simGyroAngle.set(simGyroAngle.get() - (degreesPerSecond * 0.02));
   }
 
+
   public void drive(ChassisSpeeds speeds, Double alignToAngle) {
     double commandedRot = headingController.calculate(getPose().getRotation().getRadians());
 
@@ -146,7 +147,7 @@ public class Swerve extends SubsystemBase {
 
     Logger.recordOutput("Swerve/Speeds", speeds);
 
-    SwerveDriveKinematics.desaturateWheelSpeeds(getModuleStates(), speeds, MAX_MOD_SPEED, MAX_ROBOT_TRANS_SPEED, MAX_ROBOT_ROT_SPEED);
+    // SwerveDriveKinematics.desaturateWheelSpeeds(getModuleStates(), speeds, MAX_MOD_SPEED, MAX_ROBOT_TRANS_SPEED, MAX_ROBOT_ROT_SPEED);
     Logger.recordOutput("Swerve/DesaturatedSpeeds", speeds);
 
     ChassisSpeeds discretized = ChassisSpeeds.discretize(speeds, 0.02);
