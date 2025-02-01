@@ -5,7 +5,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 
 /*
-  Food for thought: could move all the calculated constants into a SwerveCalculaltedConstants class.
+  Food for thought: could move all the calculated constants into a SwerveCalculaltedConstants class - would make it easier to see what's calculated and what's not
  */
 
 public final class SwerveConstants {

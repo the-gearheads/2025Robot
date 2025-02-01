@@ -42,7 +42,11 @@ import frc.robot.subsystems.swerve.setpointgen.SwerveSetpointGenerator;
 import frc.robot.subsystems.vision.Vision;
 
 public class Swerve extends SubsystemBase {
-
+  private static final String SIM_DEVICE_HANDLE_NAME = "navX-Sensor[4]";
+  private static final double DEFAULT_PROPORTIONAL_COEFFICIENT = 5.2;
+  private static final double DEFAULT_INTEGRAL_COEFFICIENT = 0d;
+  private static final double DEFAULT_DERIVATIVE_COEFFICIENT = 0.5;
+  
   static final Lock odometryLock = new ReentrantLock();
   AHRS gyro = new AHRS(NavXComType.kMXP_SPI);
   SwerveDriveKinematics kinematics = new SwerveDriveKinematics(WHEEL_POSITIONS);
@@ -51,9 +55,11 @@ public class Swerve extends SubsystemBase {
   Field2d field = new Field2d();
   Vision vision;
 
-  int simGyro = SimDeviceDataJNI.getSimDeviceHandle("navX-Sensor[4]");
+  int simGyro = SimDeviceDataJNI.getSimDeviceHandle(SIM_DEVICE_HANDLE_NAME);
   SimDouble simGyroAngle = new SimDouble(SimDeviceDataJNI.getSimValueHandle(simGyro, "Yaw"));
-  PIDController headingController = new PIDController(5.2, 0, 0.5);
+  PIDController headingController = new PIDController(DEFAULT_PROPORTIONAL_COEFFICIENT,
+                                                      DEFAULT_INTEGRAL_COEFFICIENT,
+                                                      DEFAULT_DERIVATIVE_COEFFICIENT);
   SwerveSetpointGenerator setpointGenerator = new SwerveSetpointGenerator(kinematics, WHEEL_POSITIONS);
 
   SwerveModule[] modules = {
@@ -92,26 +98,63 @@ public class Swerve extends SubsystemBase {
 
     rotPid.enableContinuousInput(-Math.PI, Math.PI);
 
-    driveRoutine = new SysIdRoutine(
-      new SysIdRoutine.Config(null, null, null, (state) -> Logger.recordOutput("SysIdTestState", state.toString())),
+    driveRoutine = setDriveRoutine();
+
+    angularRoutine = setAngularRoutine();
+  }
+
+  private SysIdRoutine setDriveRoutine() {
+    return new SysIdRoutine(
+      new SysIdRoutine.Config(
+        null, 
+        null, 
+        null, 
+        (state) -> Logger.recordOutput("SysIdTestState", state.toString())
+      ),
       new SysIdRoutine.Mechanism((Voltage v) -> {
-        modules[0].steer.setAngle(new Rotation2d());
-        modules[1].steer.setAngle(new Rotation2d());
-        modules[2].steer.setAngle(new Rotation2d());
-        modules[3].steer.setAngle(new Rotation2d());
+        for (SwerveModule module : modules) {
+          module.steer.setAngle(new Rotation2d());
+        }
+        // modules[0].steer.setAngle(new Rotation2d());
+        // modules[1].steer.setAngle(new Rotation2d());
+        // modules[2].steer.setAngle(new Rotation2d());
+        // modules[3].steer.setAngle(new Rotation2d());
         setDriveVoltage(v);
       }, null, this)
     );
+  }
 
-    angularRoutine = new SysIdRoutine(
-      new SysIdRoutine.Config(Volts.of(0.5).per(Seconds), Volts.of(3.5), null, (state) -> Logger.recordOutput("SysIdTestState", state.toString())), 
+  private SysIdRoutine setAngularRoutine() {
+    static final double DEFAULT_VX_METERS_PER_SECOND = 0;
+    static final double DEFAULT_VY_METERS_PER_SECOND = 0;
+    static final double DEFAULT_OMEGA_RADIANS_PER_SECOND = 100;
+
+    return new SysIdRoutine(
+      new SysIdRoutine.Config(
+        Volts.of(0.5).per(Seconds), 
+        Volts.of(3.5), 
+        null, 
+        (state) -> Logger.recordOutput("SysIdTestState", state.toString())
+      ), 
       new SysIdRoutine.Mechanism((Voltage v) -> {
-        var states = kinematics.toSwerveModuleStates(new ChassisSpeeds(0, 0, 100));
-        for(int i = 0; i < modules.length; i++) {
-          modules[i].steer.setAngle(states[i].angle);
-        }
-        setDriveVoltage(v);
-      }, null, this)
+          var states = kinematics.toSwerveModuleStates(
+            new ChassisSpeeds(
+              DEFAULT_VX_METERS_PER_SECOND, 
+              DEFAULT_VY_METERS_PER_SECOND, 
+              DEFAULT_OMEGA_RADIANS_PER_SECOND
+            )
+          );
+          // for(int module = 0; module < modules.length; module++) {
+          //   modules[module].steer.setAngle(states[module].angle);
+          // }
+          for (SwerveModule module : modules) {
+            module.steer.setAngle(states[module.id].angle);
+          }
+          setDriveVoltage(v);
+        }, 
+        null, 
+        this
+      )
     );
   }
 
@@ -127,12 +170,15 @@ public class Swerve extends SubsystemBase {
 
   @Override
   public void simulationPeriodic() {
+    static final double WHAT_IS_THIS_VALUE = 0.02;
     double degreesPerSecond = Units.radiansToDegrees(getRobotRelativeSpeeds().omegaRadiansPerSecond);
-    simGyroAngle.set(simGyroAngle.get() - (degreesPerSecond * 0.02));
+    simGyroAngle.set(simGyroAngle.get() - (degreesPerSecond * WHAT_IS_THIS_VALUE));
   }
 
 
   public void drive(ChassisSpeeds speeds, Double alignToAngle) {
+    
+    static final double WHAT_IS_THIS_VALUE = 0.02;
     double commandedRot = headingController.calculate(getPose().getRotation().getRadians());
 
     if (alignToAngle != null) {
@@ -150,7 +196,7 @@ public class Swerve extends SubsystemBase {
     // SwerveDriveKinematics.desaturateWheelSpeeds(getModuleStates(), speeds, MAX_MOD_SPEED, MAX_ROBOT_TRANS_SPEED, MAX_ROBOT_ROT_SPEED);
     Logger.recordOutput("Swerve/DesaturatedSpeeds", speeds);
 
-    ChassisSpeeds discretized = ChassisSpeeds.discretize(speeds, 0.02);
+    ChassisSpeeds discretized = ChassisSpeeds.discretize(speeds, WHAT_IS_THIS_VALUE);
     Logger.recordOutput("Swerve/DiscretizedSpeeds", discretized);
 
     // lastSetpoint = setpointGenerator.generateSetpoint(limits, lastSetpoint, speeds, Timer.getFPGATimestamp() - lastTime);
@@ -162,9 +208,12 @@ public class Swerve extends SubsystemBase {
     SwerveModuleState[] moduleStates = kinematics.toSwerveModuleStates(discretized);
     Logger.recordOutput("Swerve/DesiredStates", moduleStates);
 
-    for (int i = 0; i < modules.length; i++) {
-      modules[i].setState(moduleStates[i]);
+    for (SwerveModule module : modules) {
+      module.setState(moduleStates[module.id]);
     }
+    // for (int module = 0; module < modules.length; module++) {
+    //   modules[module].setState(moduleStates[module]);
+    // }
   }
 
   public void drive(ChassisSpeeds speeds) {
@@ -197,8 +246,11 @@ public class Swerve extends SubsystemBase {
   public SwerveModulePosition[] getModulePositions() {
     getModuleStates();
     SwerveModulePosition[] positions = new SwerveModulePosition[modules.length];
-    for (int i = 0; i < modules.length; i++) {
-      positions[i] = modules[i].getCurrentModulePosition();
+    // for (int module = 0; i < modules.length; module++) {
+    //   positions[module] = modules[module].getCurrentModulePosition();
+    // }
+    for (SwerveModule module : modules) {
+      positions[module.id] = module.getCurrentModulePosition();
     }
     Logger.recordOutput("Swerve/Positions", positions);
     return positions;
@@ -206,8 +258,11 @@ public class Swerve extends SubsystemBase {
 
   public SwerveModuleState[] getModuleStates() {
     SwerveModuleState[] states = new SwerveModuleState[modules.length];
-    for (int i = 0; i < modules.length; i++) {
-      states[i] = modules[i].getCurrentState();
+    // for (int module = 0; module < modules.length; module++) {
+    //   states[module] = modules[module].getCurrentState();
+    // }
+    for (SwerveModule module : modules) {
+      states[module.id] = module.getCurrentState();
     }
     Logger.recordOutput("Swerve/States", states);
     return states;
@@ -272,14 +327,14 @@ public class Swerve extends SubsystemBase {
 
 
   public void setDriveVoltage(Voltage volts) {
-    for (SwerveModule mod : modules) {
-      mod.setDriveVolts(volts.magnitude());
+    for (SwerveModule module : modules) {
+      module.setDriveVolts(volts.magnitude());
     }
   }
 
   public void setSteerVoltage(Voltage volts) {
-    for (SwerveModule mod : modules) {
-      mod.setSteerVolts(volts.magnitude());
+    for (SwerveModule module : modules) {
+      module.setSteerVolts(volts.magnitude());
     }
   }
 
