@@ -20,6 +20,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
@@ -260,14 +261,40 @@ public class Swerve extends SubsystemBase {
   public void followTrajectory(SwerveSample sample) {
     var pose = getPose();
 
-    ChassisSpeeds speeds = new ChassisSpeeds(
+    ChassisSpeeds chassisSpeeds = new ChassisSpeeds(
       sample.vx + xPid.calculate(pose.getX(), sample.x),
       sample.vy + yPid.calculate(pose.getY(), sample.y),
       sample.omega + rotPid.calculate(pose.getRotation().getRadians(), sample.heading)
     );
 
+    /* begin math abuse */
+    double dt = 0.02;
+    Twist2d accel = new Twist2d(sample.ax * dt, sample.ay * dt, sample.alpha * dt);
+    var nextPose = new Pose2d(sample.vx, sample.vy, new Rotation2d(sample.omega)).exp(accel);
+    var next = new ChassisSpeeds(nextPose.getX(), nextPose.getY(), nextPose.getRotation().getRadians());
+    Logger.recordOutput("Swerve/Traj/Accel", accel);
+    Logger.recordOutput("Swerve/Traj/Next", next);
+    /* end math abuse */
+
     Logger.recordOutput("Swerve/Traj/Sample", sample);
-    driveFieldRelative(speeds);
+    var rot = getPose().getRotation();
+    var speeds = ChassisSpeeds.fromFieldRelativeSpeeds(chassisSpeeds, rot);
+    var speedsNext = ChassisSpeeds.fromFieldRelativeSpeeds(next, rot);
+
+    Logger.recordOutput("Swerve/Speeds", speeds);
+
+    ChassisSpeeds discretized = ChassisSpeeds.discretize(speeds, 0.02);
+    ChassisSpeeds discretizedNext = ChassisSpeeds.discretize(speedsNext, 0.02);
+    Logger.recordOutput("Swerve/DiscretizedSpeeds", discretized);
+
+    SwerveModuleState[] moduleStates = kinematics.toSwerveModuleStates(discretized);
+    SwerveModuleState[] moduleStatesNext = kinematics.toSwerveModuleStates(discretizedNext);
+    Logger.recordOutput("Swerve/DesiredStates", moduleStates);
+
+    for (int i = 0; i < modules.length; i++) {
+      modules[i].setState(moduleStates[i], moduleStatesNext[i]);
+    }
+
   }
 
 

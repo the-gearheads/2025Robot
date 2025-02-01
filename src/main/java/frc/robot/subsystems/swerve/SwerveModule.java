@@ -41,7 +41,7 @@ public class SwerveModule {
     turnPositionQueue = SparkOdometryThread.getInstance().registerSignal(steer::getAngleRadiansOptional);
   }
 
-  public void setState(SwerveModuleState state) {
+  public void setState(SwerveModuleState state, SwerveModuleState next) {
     Logger.recordOutput(modulePath + "/DesiredSwerveStatePreOpt", state);
 
     state.optimize(steer.getAngle());
@@ -50,7 +50,15 @@ public class SwerveModule {
     Logger.recordOutput(modulePath + "/DesiredSwerveStatePostOpt", state);
 
     steer.setAngle(state.angle);
-    drive.setSpeed(state.speedMetersPerSecond);
+    if(next == null) {
+      drive.setSpeed(state.speedMetersPerSecond);
+    } else {
+      drive.setSpeed(state.speedMetersPerSecond, next.speedMetersPerSecond);
+    }
+  }
+
+  public void setState(SwerveModuleState state) {
+    setState(state, null);
   }
 
   public void runCharacterization(double output) {
