@@ -36,25 +36,16 @@ public class Controllers {
   }
 
   public static void updateActiveControllerInstance() {
-    // Defaults, since a NullPointerException would be far worse than any warnings
-    // driverController = new DriverController() {};
-    driverController = new DriverController();
-    operatorController = new OperatorController() {};
-
     boolean foundDriveController = false;
     boolean foundOperatorController = false;
     String joyName;
 
+    driverController = new DriverController();
+    operatorController = new OperatorController() {};
+
     for (int port = 0; port < MAX_DRIVER_STATION_PORTS; port++) {
       if (DriverStation.isJoystickConnected(port)) {
         joyName = DriverStation.getJoystickName(port);
-        // if (joyName.equals(""))
-        //   continue;
-
-        // if (!foundOperatorController && (joyName.contains("T.16000M") || joyName.contains("Keyboard 1"))) {
-        //   foundOperatorController = true;
-        //   operatorController = new Thrustmaster(i);
-        // }
 
         if (!foundOperatorController && isOperatorControllerName(joyName)) {
           foundOperatorController = true;

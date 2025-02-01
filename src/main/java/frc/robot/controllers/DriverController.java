@@ -13,7 +13,7 @@ public class DriverController {
   XboxController controller;
 
   public DriverController(int id) {
-    if(id >= 0 || id <= DriverStation.kJoystickPorts) {
+    if(id >= 0 || id < DriverStation.kJoystickPorts) {
       this.controller = new XboxController(id);
     }
   }
