@@ -12,11 +12,13 @@ public class DriverController {
   XboxController controller;
 
   public DriverController(int id) {
-    if(id == -1) {
-      this.controller = null;
-      return;
+    if(id >= 0 || id <= DriverStation.kJoystickPorts) {
+      this.controller = new XboxController(id);
     }
-    this.controller = new XboxController(id);
+  }
+
+  public DriverController() {
+    this.controller = null;
   }
 
   private boolean isNull() {
