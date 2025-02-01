@@ -16,6 +16,7 @@ public class RobotContainer {
   private final Swerve swerve = new Swerve();
   private final Autos autos = new Autos(swerve);
   private final SysidAutoPicker sysidAuto = new SysidAutoPicker();
+
   public RobotContainer() {
     swerve.setDefaultCommand(new Teleop(swerve));
     sysidAuto.addSysidRoutine(swerve.sysIdForwardDynamic(Direction.kForward), "Swerve Dynamic ->");
@@ -30,17 +31,15 @@ public class RobotContainer {
   }
 
   public void configureBindings() {
-    if (!Controllers.didControllersChange())
-      return;
-    
-        // Clear buttons
-    CommandScheduler.getInstance().getActiveButtonLoop().clear();
+    if (Controllers.didControllersChange()) {  
+      // Clear buttons
+      CommandScheduler.getInstance().getActiveButtonLoop().clear();
 
-    // Find new controllers
-    Controllers.updateActiveControllerInstance();
-
-    // teleop controlls
-    
+      // Find new controllers
+      Controllers.updateActiveControllerInstance();
+  
+      // teleop controlls
+    }
   }
 
   /**
