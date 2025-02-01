@@ -8,7 +8,8 @@ public class Controllers {
 
   private Controllers() {}
 
-  private static String[] lastControllerNames = new String[6];
+  private static final Integer NUMBER_OF_CONTROLLERS = 6;
+  private static String[] lastControllerNames = new String[NUMBER_OF_CONTROLLERS];
 
   public static DriverController driverController;
   public static OperatorController operatorController;
