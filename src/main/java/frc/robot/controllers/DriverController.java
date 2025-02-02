@@ -1,6 +1,7 @@
 package frc.robot.controllers;
 
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -12,11 +13,13 @@ public class DriverController {
   XboxController controller;
 
   public DriverController(int id) {
-    if(id == -1) {
-      this.controller = null;
-      return;
+    if(id >= 0 || id < DriverStation.kJoystickPorts) {
+      this.controller = new XboxController(id);
     }
-    this.controller = new XboxController(id);
+  }
+
+  public DriverController() {
+    this.controller = null;
   }
 
   private boolean isNull() {
