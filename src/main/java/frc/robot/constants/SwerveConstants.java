@@ -71,4 +71,5 @@ public final class SwerveConstants {
     public static double[] XY_PATH_FOLLOWING_PID = {3.6, 0, 0.0};
     public static double[] ROT_PATH_FOLLOWING_PID = {3.6, 0, 0};
 
+    public static final double[] HEADING_PID = {5.2, 0, 0.5};
 }
