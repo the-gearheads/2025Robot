@@ -93,7 +93,7 @@ public class Swerve extends SubsystemBase {
     rotPid.enableContinuousInput(-Math.PI, Math.PI);
 
     driveRoutine = new SysIdRoutine(
-      new SysIdRoutine.Config(null, null, null, (state) -> Logger.recordOutput("SysIdTestState", state.toString())),
+      new SysIdRoutine.Config(null, Volts.of(5.5), null, (state) -> Logger.recordOutput("SysIdTestState", state.toString())),
       new SysIdRoutine.Mechanism((Voltage v) -> {
         modules[0].steer.setAngle(new Rotation2d());
         modules[1].steer.setAngle(new Rotation2d());
