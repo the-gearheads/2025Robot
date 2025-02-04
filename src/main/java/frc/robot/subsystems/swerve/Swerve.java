@@ -195,7 +195,6 @@ public class Swerve extends SubsystemBase {
   }
 
   public SwerveModulePosition[] getModulePositions() {
-    getModuleStates();
     SwerveModulePosition[] positions = new SwerveModulePosition[modules.length];
     for (int i = 0; i < modules.length; i++) {
       positions[i] = modules[i].getCurrentModulePosition();
@@ -204,6 +203,7 @@ public class Swerve extends SubsystemBase {
     return positions;
   }
 
+  @AutoLogOutput
   public SwerveModuleState[] getModuleStates() {
     SwerveModuleState[] states = new SwerveModuleState[modules.length];
     for (int i = 0; i < modules.length; i++) {
