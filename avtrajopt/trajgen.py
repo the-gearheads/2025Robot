@@ -75,10 +75,16 @@ def main(input_file, output_dir):
   waypoints = data["waypoints"]
   assert len(waypoints) >= 2
 
+  if "vel" not in waypoints[0]:
+    raise ValueError("First waypoint must have a velocity")
+  
+  if "vel" not in waypoints[-1]:
+    raise ValueError("Last waypoint must have a velocity")
+
   for waypoint in waypoints:
     sample = waypoint["progress"] * N # progress is in % of samples. kinda scuffed
     endeff_pos = waypoint["pose"]
-    vels = waypoint.get("velocities", None)
+    vels = waypoint.get("vel", None)
     pose_pivot_elevator = get_elevator_len_arm_angle(endeff_pos[0], endeff_pos[1])
     if pose_pivot_elevator[0] < constants.elevator_min_len:
       raise ValueError(f"Elevator length is too short to reach {waypoint} ({pose_pivot_elevator[0]} < {constants.elevator_min_len})")
@@ -101,8 +107,8 @@ def main(input_file, output_dir):
   trajectory_data = {
     "name": data["name"],
     "total_time": total_time.value(),
-    "N": N,
-    "dt": dt[0, 0].value(),
+    "N_total": N,
+    "waypoints": waypoints
   }
 
   trajectory_data["samples"] = []

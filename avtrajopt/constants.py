@@ -19,6 +19,8 @@ pivot_max_accel = 5 # rad/s^2
 
 def pivot_accel_scaling(elevator_length):
   from jormungandr.autodiff import pow
+  if type(elevator_length) == float:
+    return pivot_max_accel * math.pow(elevator_min_len / elevator_length, 2)
   return pivot_max_accel * pow(elevator_min_len / elevator_length, 2) # honestly no idea if this is correct but deepseek suggested it? really just a heuristic so it doesnt matter much until we do real testing
 
   
