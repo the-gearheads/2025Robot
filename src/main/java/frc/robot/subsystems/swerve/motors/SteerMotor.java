@@ -127,7 +127,7 @@ public class SteerMotor {
 
   public void setBrakeCoast(boolean willBrake) {
     var updatedConfig = new SparkMaxConfig().idleMode(willBrake ? IdleMode.kBrake : IdleMode.kCoast);
-    max.configure(updatedConfig, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
+    max.configureAsync(updatedConfig, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
   }
 
   public double getCurrent() {
