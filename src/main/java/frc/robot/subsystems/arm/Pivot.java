@@ -97,6 +97,7 @@ public class Pivot extends SubsystemBase {
 
     pivotConfig.signals.appliedOutputPeriodMs(10);
     pivotConfig.encoder.positionConversionFactor(PIVOT_POS_FACTOR);
+    pivotConfig.encoder.velocityConversionFactor(PIVOT_VEL_FACTOR);
 
     pivot.configure(pivotConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
 

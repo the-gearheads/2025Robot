@@ -1,6 +1,7 @@
 package frc.robot.constants;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
+import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
 
@@ -28,5 +29,19 @@ public final class ArmConstants {
   // -- elevator contants --
   public static final int ELEVATOR_MOTOR_ID = 11;
   public static final int ELEVATOR_MOTOR_FOLLOWER_ID = 12;
+
+  public static final double ELEVATOR_GEAR_RATIO = 1/5;
+  public static final double ELEVATOR_RATIO = 1; // ((pi * spool diameter) / gear ratio) * stage Count
+  public static final double ELEVATOR_POS_FACTOR = 1;
+  public static final double ELEVATOR_VEL_FACTOR = 1;
+
+  public static final int ELEVATOR_CURRENT_LIMIT = 80;
+  
+  public static final double[] ELEVATOR_PID = {1, 0, 0};
+  public static final ElevatorFeedforward ELEVATOR_FEEDFORWARD = new ElevatorFeedforward(1, 1, 0);
+  public static final Constraints ELEVATOR_CONSTRAINTS = new Constraints(
+    0.5,
+    1
+  );
 
 }
