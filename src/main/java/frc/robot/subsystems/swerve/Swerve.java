@@ -10,12 +10,8 @@ import java.util.concurrent.locks.ReentrantLock;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
-import com.studica.frc.AHRS;
-import com.studica.frc.AHRS.NavXComType;
 
 import choreo.trajectory.SwerveSample;
-import edu.wpi.first.hal.SimDouble;
-import edu.wpi.first.hal.simulation.SimDeviceDataJNI;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -25,7 +21,6 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
@@ -36,6 +31,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Robot;
+import frc.robot.subsystems.swerve.gyro.Gyro;
+import frc.robot.subsystems.swerve.gyro.GyroNavx;
+import frc.robot.subsystems.swerve.gyro.GyroSim;
 import frc.robot.subsystems.swerve.setpointgen.ModuleLimits;
 import frc.robot.subsystems.swerve.setpointgen.SwerveSetpoint;
 import frc.robot.subsystems.swerve.setpointgen.SwerveSetpointGenerator;
@@ -44,15 +42,13 @@ import frc.robot.subsystems.vision.Vision;
 public class Swerve extends SubsystemBase {
 
   static final Lock odometryLock = new ReentrantLock();
-  AHRS gyro = new AHRS(NavXComType.kMXP_SPI);
   SwerveDriveKinematics kinematics = new SwerveDriveKinematics(WHEEL_POSITIONS);
   SwerveDrivePoseEstimator multitagPoseEstimator;
   SwerveDriveOdometry wheelOdometry;
   Field2d field = new Field2d();
   Vision vision;
 
-  int simGyro = SimDeviceDataJNI.getSimDeviceHandle("navX-Sensor[4]");
-  SimDouble simGyroAngle = new SimDouble(SimDeviceDataJNI.getSimValueHandle(simGyro, "Yaw"));
+  Gyro gyro;
   PIDController headingController = new PIDController(5.2, 0, 0.5);
   SwerveSetpointGenerator setpointGenerator = new SwerveSetpointGenerator(kinematics, WHEEL_POSITIONS);
 
@@ -76,7 +72,12 @@ public class Swerve extends SubsystemBase {
 
   public Swerve() {
     this.vision = new Vision(this);
-    gyro.zeroYaw();
+    if (Robot.isSimulation()) {
+      gyro = new GyroSim();
+    } else {
+      gyro = new GyroNavx();
+    }
+    gyro.reset();
     SmartDashboard.putData("Field", field);
     
     for (SwerveModule module : modules) {
@@ -122,13 +123,16 @@ public class Swerve extends SubsystemBase {
 
   @AutoLogOutput
   public double getGyroVelocity() {
-    return Units.degreesToRadians(-gyro.getRate());
+    return gyro.getVelocityYaw();
   }
 
   @Override
   public void simulationPeriodic() {
-    double degreesPerSecond = Units.radiansToDegrees(getRobotRelativeSpeeds().omegaRadiansPerSecond);
-    simGyroAngle.set(simGyroAngle.get() - (degreesPerSecond * 0.02));
+    double rotationSpeed = getRobotRelativeSpeeds().omegaRadiansPerSecond;
+    if(gyro instanceof GyroSim) {
+      ((GyroSim) gyro).setVelocityYaw(rotationSpeed);
+      ((GyroSim) gyro).setYaw(gyro.getRotation2d().getRadians() + rotationSpeed * 0.02);
+    }
   }
 
 
@@ -241,6 +245,8 @@ public class Swerve extends SubsystemBase {
   }
 
   public void periodic() {
+    gyro.log();
+    Logger.recordOutput("Swerve/Gyro3d", gyro.getRotation3d());
     for (SwerveModule module : modules) {
       module.periodic();
     }
