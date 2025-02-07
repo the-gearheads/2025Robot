@@ -23,6 +23,8 @@ public interface Gyro {
    * Gets angular velocity of yaw, rad/sec
    */
   public double getVelocityYaw();
+
+  public boolean isConnected();
   
   public void reset();
   

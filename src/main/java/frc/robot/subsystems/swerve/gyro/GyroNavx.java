@@ -34,4 +34,8 @@ public class GyroNavx implements Gyro {
     public double getYaw() {
       return Units.degreesToRadians(-gyro.getAngle());
     }
+
+    public boolean isConnected() {
+      return gyro.isConnected();
+    }
 }

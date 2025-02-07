@@ -40,4 +40,8 @@ public class GyroSim implements Gyro {
   public double setVelocityYaw(double velocity) {
     return velocityYaw = velocity;
   }
+
+  public boolean isConnected() {
+    return true;
+  }
 }

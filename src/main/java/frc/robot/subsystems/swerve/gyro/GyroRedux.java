@@ -36,9 +36,12 @@ public class GyroRedux implements Gyro {
     return gyro.getAngularVelocityYaw() * (2 * Math.PI); // rot/sec -> rad/sec
   }
 
+  public boolean isConnected() {
+    return gyro.isConnected();
+  }
+
   public void log() {
     Logger.recordOutput("Swerve/GyroRedux/Faults", gyro.getActiveFaults());
     Logger.recordOutput("Swerve/GyroRedux/StickyFaults", gyro.getStickyFaults());
-    Logger.recordOutput("Swerve/GyroRedux/IsConnected", gyro.isConnected());
   }
 }

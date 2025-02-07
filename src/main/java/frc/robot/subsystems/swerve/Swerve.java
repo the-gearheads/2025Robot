@@ -246,7 +246,8 @@ public class Swerve extends SubsystemBase {
 
   public void periodic() {
     gyro.log();
-    Logger.recordOutput("Swerve/Gyro3d", gyro.getRotation3d());
+    Logger.recordOutput("Swerve/Gyro/Rotation3d", gyro.getRotation3d());
+    Logger.recordOutput("Swerve/Gyro/Connected", gyro.isConnected());
     for (SwerveModule module : modules) {
       module.periodic();
     }
