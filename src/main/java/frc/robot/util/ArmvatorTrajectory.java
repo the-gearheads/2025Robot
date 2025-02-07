@@ -41,7 +41,14 @@ public record ArmvatorTrajectory(String name, List<ArmvatorSample> samples) {
     if(samples.isEmpty()) {
       return 0;
     }
-    return samples.get(samples.size() - 1).t();
+
+    /* The last sample should run for dt time also. Since we can probably safely assume the target waypoint of the size-2 is the same as the one for size-1 the dt should be correct. */
+    double dt_additional = 0;
+    if(samples.size() > 1) {
+      dt_additional = samples.get(samples.size() - 1).t() - samples.get(samples.size() - 2).t();
+    }
+
+    return samples.get(samples.size() - 1).t() + dt_additional;
   }
 
   // basically just https://github.com/SleipnirGroup/Choreo/blob/1f68147d11f0f59e00a038bf7dda2b4f3152da7d/choreolib/src/main/java/choreo/trajectory/Trajectory.java#L105
