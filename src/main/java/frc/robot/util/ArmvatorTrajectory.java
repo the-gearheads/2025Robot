@@ -135,9 +135,9 @@ public record ArmvatorTrajectory(String name, List<ArmvatorSample> samples) {
       double elevatorVel = sampleJson.get("elevator_velocity").getAsDouble();
       double armAccel = sampleJson.get("pivot_accel").getAsDouble();
       double elevatorAccel = sampleJson.get("elevator_accel").getAsDouble();
-      var endeffPosJson = sampleJson.getAsJsonObject("endeff_pos");
-      double endeffPosX = endeffPosJson.get("x").getAsDouble();
-      double endeffPosY = endeffPosJson.get("y").getAsDouble();
+      var endeffPosJson = sampleJson.getAsJsonArray("endeff_pos");
+      double endeffPosX = endeffPosJson.get(0).getAsDouble();
+      double endeffPosY = endeffPosJson.get(1).getAsDouble();
       Translation2d endeffPos = new Translation2d(endeffPosX, endeffPosY);
       samples.add(new ArmvatorSample(t, num, armPos, armVel, elevatorLen, elevatorVel, armAccel, elevatorAccel, endeffPos));
     }
