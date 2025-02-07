@@ -1,5 +1,147 @@
 package frc.robot.util;
 
-public class ArmvatorTrajectory {
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.Reader;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Consumer;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.FunctionalCommand;
+import edu.wpi.first.wpilibj2.command.Subsystem;
+
+public record ArmvatorTrajectory(String name, List<ArmvatorSample> samples) {
   
+  private static final Gson GSON = new Gson();
+
+  public ArmvatorSample getInitialSample() {
+    if(samples.isEmpty()) {
+      return null;
+    }
+    return samples.get(0);
+  }
+
+  public ArmvatorSample getFinalSample() {
+    if(samples.isEmpty()) {
+      return null;
+    }
+    return samples.get(samples.size() - 1);
+  }
+
+  public double getDuration() {
+    if(samples.isEmpty()) {
+      return 0;
+    }
+    return samples.get(samples.size() - 1).t();
+  }
+
+  // basically just https://github.com/SleipnirGroup/Choreo/blob/1f68147d11f0f59e00a038bf7dda2b4f3152da7d/choreolib/src/main/java/choreo/trajectory/Trajectory.java#L105
+  public ArmvatorSample sampleAt(double t) {
+    if(samples.isEmpty()) {
+      return null;
+    }
+
+    if(t <= 0) {
+      return getInitialSample();
+    }
+
+    if(t >= getDuration()) {
+      return getFinalSample();
+    }
+
+    // binary search for samples both before and after t
+    int low = 0;
+    int high = samples.size() - 1;
+    while(low < high) {
+      int mid = (low + high) / 2;
+      if(samples.get(mid).t() < t) {
+        low = mid + 1;
+      } else {
+        high = mid;
+      }
+    }
+
+    if(low == 0) {
+      return samples.get(0);
+    }
+
+    ArmvatorSample before = samples.get(low - 1);
+    ArmvatorSample after = samples.get(low);
+    return before.interpolate(after, t);
+  }
+  
+  // Follows an armvator trajectory, sampling periodically. Consumer is expected to actually do the following.
+  public Command follow(Consumer<ArmvatorSample> consumer, Subsystem... requirements) {
+    Timer timer = new Timer();
+    return new FunctionalCommand(
+      // On init
+      () -> {
+        timer.start();
+      },
+      // On periodic
+      () -> {
+        double t = timer.get();
+        ArmvatorSample sample = sampleAt(t);
+        consumer.accept(sample);
+      },
+      // On end
+      end -> {
+        timer.stop();
+        timer.reset();
+      },
+      // Is finished
+      () -> {
+        return timer.get() > getDuration();
+      },
+      requirements
+    );
+  }
+
+  public static ArmvatorTrajectory load(String filename) {
+    File deployDir = Filesystem.getDeployDirectory();
+    File file = new File(deployDir, "avtrajopt/" + filename + ".agentraj"); // json
+    if (!file.exists()) {
+      DriverStation.reportError("File not found: " + file.getAbsolutePath(), true);
+    }
+
+    Reader reader = null;
+    try {
+      reader = new FileReader(file);
+    } catch (FileNotFoundException e) {
+      e.printStackTrace();
+    }
+
+    JsonObject json = GSON.fromJson(reader, JsonObject.class);
+    String name = json.get("name").getAsString();
+    var samplesJson = json.getAsJsonArray("samples");
+    List<ArmvatorSample> samples = new ArrayList<>(samplesJson.size());
+    for (int i = 0; i < samplesJson.size(); i++) {
+      // oof ouch owie my repetition
+      var sampleJson = samplesJson.get(i).getAsJsonObject();
+      double t = sampleJson.get("time").getAsDouble();
+      double num = sampleJson.get("sample_num").getAsDouble();
+      double armPos = sampleJson.get("pivot_angle").getAsDouble();
+      double armVel = sampleJson.get("pivot_velocity").getAsDouble();
+      double elevatorLen = sampleJson.get("elevator_length").getAsDouble();
+      double elevatorVel = sampleJson.get("elevator_velocity").getAsDouble();
+      double armAccel = sampleJson.get("pivot_accel").getAsDouble();
+      double elevatorAccel = sampleJson.get("elevator_accel").getAsDouble();
+      var endeffPosJson = sampleJson.getAsJsonObject("endeff_pos");
+      double endeffPosX = endeffPosJson.get("x").getAsDouble();
+      double endeffPosY = endeffPosJson.get("y").getAsDouble();
+      Translation2d endeffPos = new Translation2d(endeffPosX, endeffPosY);
+      samples.add(new ArmvatorSample(t, num, armPos, armVel, elevatorLen, elevatorVel, armAccel, elevatorAccel, endeffPos));
+    }
+
+    return new ArmvatorTrajectory(name, samples);
+  }
 }
