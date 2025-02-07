@@ -124,22 +124,22 @@ public record ArmvatorTrajectory(String name, List<ArmvatorSample> samples) {
     String name = json.get("name").getAsString();
     var samplesJson = json.getAsJsonArray("samples");
     List<ArmvatorSample> samples = new ArrayList<>(samplesJson.size());
-    for (int i = 0; i < samplesJson.size(); i++) {
-      // oof ouch owie my repetition
-      var sampleJson = samplesJson.get(i).getAsJsonObject();
-      double t = sampleJson.get("time").getAsDouble();
-      double num = sampleJson.get("sample_num").getAsDouble();
-      double armPos = sampleJson.get("pivot_angle").getAsDouble();
-      double armVel = sampleJson.get("pivot_velocity").getAsDouble();
-      double elevatorLen = sampleJson.get("elevator_length").getAsDouble();
-      double elevatorVel = sampleJson.get("elevator_velocity").getAsDouble();
-      double armAccel = sampleJson.get("pivot_accel").getAsDouble();
-      double elevatorAccel = sampleJson.get("elevator_accel").getAsDouble();
-      var endeffPosJson = sampleJson.getAsJsonArray("endeff_pos");
-      double endeffPosX = endeffPosJson.get(0).getAsDouble();
-      double endeffPosY = endeffPosJson.get(1).getAsDouble();
-      Translation2d endeffPos = new Translation2d(endeffPosX, endeffPosY);
-      samples.add(new ArmvatorSample(t, num, armPos, armVel, elevatorLen, elevatorVel, armAccel, elevatorAccel, endeffPos));
+    for (var element : samplesJson) {
+      var sample = element.getAsJsonObject();
+      samples.add(new ArmvatorSample(
+        sample.get("time").getAsDouble(),
+        sample.get("sample_num").getAsDouble(),
+        sample.get("pivot_angle").getAsDouble(),
+        sample.get("pivot_velocity").getAsDouble(),
+        sample.get("elevator_length").getAsDouble(),
+        sample.get("elevator_velocity").getAsDouble(),
+        sample.get("pivot_accel").getAsDouble(),
+        sample.get("elevator_accel").getAsDouble(),
+        new Translation2d(
+          sample.getAsJsonArray("endeff_pos").get(0).getAsDouble(),
+          sample.getAsJsonArray("endeff_pos").get(1).getAsDouble()
+        )
+      ));
     }
 
     return new ArmvatorTrajectory(name, samples);
