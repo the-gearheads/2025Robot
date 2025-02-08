@@ -40,7 +40,9 @@ import frc.robot.subsystems.swerve.setpointgen.SwerveSetpointGenerator;
 import frc.robot.subsystems.vision.Vision;
 
 public class Swerve extends SubsystemBase {
-
+  private static final String GYRO_SIMDEVICE_NAME = "navX-Sensor[4]";
+  private static final double DEFAULT_DT = 0.02;
+  
   static final Lock odometryLock = new ReentrantLock();
   SwerveDriveKinematics kinematics = new SwerveDriveKinematics(WHEEL_POSITIONS);
   SwerveDrivePoseEstimator multitagPoseEstimator;
@@ -48,7 +50,8 @@ public class Swerve extends SubsystemBase {
   Field2d field = new Field2d();
   Vision vision;
 
-  Gyro gyro;
+  int simGyro = SimDeviceDataJNI.getSimDeviceHandle("navX-Sensor[4]");
+  SimDouble simGyroAngle = new SimDouble(SimDeviceDataJNI.getSimValueHandle(simGyro, "Yaw"));
   PIDController headingController = new PIDController(5.2, 0, 0.5);
   SwerveSetpointGenerator setpointGenerator = new SwerveSetpointGenerator(kinematics, WHEEL_POSITIONS);
 
@@ -94,25 +97,45 @@ public class Swerve extends SubsystemBase {
     rotPid.enableContinuousInput(-Math.PI, Math.PI);
 
     driveRoutine = new SysIdRoutine(
-      new SysIdRoutine.Config(null, Volts.of(5.5), null, (state) -> Logger.recordOutput("SysIdTestState", state.toString())),
+      new SysIdRoutine.Config(null, null, null, (state) -> Logger.recordOutput("SysIdTestState", state.toString())),
       new SysIdRoutine.Mechanism((Voltage v) -> {
-        modules[0].steer.setAngle(new Rotation2d());
-        modules[1].steer.setAngle(new Rotation2d());
-        modules[2].steer.setAngle(new Rotation2d());
-        modules[3].steer.setAngle(new Rotation2d());
+        for (SwerveModule module : modules) {
+          module.steer.setAngle(new Rotation2d());
+        }
+
         setDriveVoltage(v);
       }, null, this)
     );
+  }
 
-    angularRoutine = new SysIdRoutine(
-      new SysIdRoutine.Config(Volts.of(0.5).per(Seconds), Volts.of(3.5), null, (state) -> Logger.recordOutput("SysIdTestState", state.toString())), 
+  private SysIdRoutine setAngularRoutine() {
+    static final double INIT_VX_METERS_PER_SECOND = 0;
+    static final double INIT_VY_METERS_PER_SECOND = 0;
+    static final double INIT_OMEGA_RADIANS_PER_SECOND = 100;
+
+    return new SysIdRoutine(
+      new SysIdRoutine.Config(
+        Volts.of(0.5).per(Seconds), 
+        Volts.of(3.5), 
+        null, 
+        (state) -> Logger.recordOutput("SysIdTestState", state.toString())
+      ), 
       new SysIdRoutine.Mechanism((Voltage v) -> {
-        var states = kinematics.toSwerveModuleStates(new ChassisSpeeds(0, 0, 100));
-        for(int i = 0; i < modules.length; i++) {
-          modules[i].steer.setAngle(states[i].angle);
-        }
-        setDriveVoltage(v);
-      }, null, this)
+          var states = kinematics.toSwerveModuleStates(
+            new ChassisSpeeds(
+              INIT_VX_METERS_PER_SECOND, 
+              INIT_VY_METERS_PER_SECOND, 
+              INIT_OMEGA_RADIANS_PER_SECOND
+            )
+          );
+          for (SwerveModule module : modules) {
+            module.steer.setAngle(states[module.id].angle);
+          }
+          setDriveVoltage(v);
+        }, 
+        null, 
+        this
+      )
     );
   }
 
@@ -151,23 +174,16 @@ public class Swerve extends SubsystemBase {
 
     Logger.recordOutput("Swerve/Speeds", speeds);
 
-    // SwerveDriveKinematics.desaturateWheelSpeeds(getModuleStates(), speeds, MAX_MOD_SPEED, MAX_ROBOT_TRANS_SPEED, MAX_ROBOT_ROT_SPEED);
     Logger.recordOutput("Swerve/DesaturatedSpeeds", speeds);
 
-    ChassisSpeeds discretized = ChassisSpeeds.discretize(speeds, 0.02);
+    ChassisSpeeds discretized = ChassisSpeeds.discretize(speeds, DEFAULT_DT);
     Logger.recordOutput("Swerve/DiscretizedSpeeds", discretized);
-
-    // lastSetpoint = setpointGenerator.generateSetpoint(limits, lastSetpoint, speeds, Timer.getFPGATimestamp() - lastTime);
-    // speeds = lastSetpoint.chassisSpeeds();
-    // lastTime = Timer.getFPGATimestamp();
-    // Logger.recordOutput("Swerve/SetpointGeneratedSpeeds", speeds);
-    // SwerveModuleState[] moduleStates = lastSetpoint.moduleStates();
 
     SwerveModuleState[] moduleStates = kinematics.toSwerveModuleStates(discretized);
     Logger.recordOutput("Swerve/DesiredStates", moduleStates);
 
-    for (int i = 0; i < modules.length; i++) {
-      modules[i].setState(moduleStates[i]);
+    for (SwerveModule module : modules) {
+      module.setState(moduleStates[module.id]);
     }
   }
 
@@ -200,8 +216,8 @@ public class Swerve extends SubsystemBase {
 
   public SwerveModulePosition[] getModulePositions() {
     SwerveModulePosition[] positions = new SwerveModulePosition[modules.length];
-    for (int i = 0; i < modules.length; i++) {
-      positions[i] = modules[i].getCurrentModulePosition();
+    for (SwerveModule module : modules) {
+      positions[module.id] = module.getCurrentModulePosition();
     }
     Logger.recordOutput("Swerve/Positions", positions);
     return positions;
@@ -210,8 +226,8 @@ public class Swerve extends SubsystemBase {
   @AutoLogOutput
   public SwerveModuleState[] getModuleStates() {
     SwerveModuleState[] states = new SwerveModuleState[modules.length];
-    for (int i = 0; i < modules.length; i++) {
-      states[i] = modules[i].getCurrentState();
+    for (SwerveModule module : modules) {
+      states[module.id] = module.getCurrentState();
     }
     Logger.recordOutput("Swerve/States", states);
     return states;
@@ -279,14 +295,14 @@ public class Swerve extends SubsystemBase {
 
 
   public void setDriveVoltage(Voltage volts) {
-    for (SwerveModule mod : modules) {
-      mod.setDriveVolts(volts.magnitude());
+    for (SwerveModule module : modules) {
+      module.setDriveVolts(volts.magnitude());
     }
   }
 
   public void setSteerVoltage(Voltage volts) {
-    for (SwerveModule mod : modules) {
-      mod.setSteerVolts(volts.magnitude());
+    for (SwerveModule module : modules) {
+      module.setSteerVolts(volts.magnitude());
     }
   }
 

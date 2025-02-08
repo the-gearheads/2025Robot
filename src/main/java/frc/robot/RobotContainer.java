@@ -19,6 +19,7 @@ public class RobotContainer {
   private final Pivot pivot;
   private final Autos autos = new Autos(swerve);
   private final SysidAutoPicker sysidAuto = new SysidAutoPicker();
+
   public RobotContainer() {
     if (Robot.isReal()) {
       pivot = new Pivot();
@@ -39,17 +40,15 @@ public class RobotContainer {
   }
 
   public void configureBindings() {
-    if (!Controllers.didControllersChange())
-      return;
-    
-        // Clear buttons
-    CommandScheduler.getInstance().getActiveButtonLoop().clear();
+    if (Controllers.didControllersChange()) {  
+      // Clear buttons
+      CommandScheduler.getInstance().getActiveButtonLoop().clear();
 
-    // Find new controllers
-    Controllers.updateActiveControllerInstance();
-
-    // teleop controlls
-    
+      // Find new controllers
+      Controllers.updateActiveControllerInstance();
+  
+      // teleop controlls
+    }
   }
 
   /**
