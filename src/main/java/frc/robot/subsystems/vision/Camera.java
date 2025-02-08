@@ -25,20 +25,32 @@ import edu.wpi.first.math.util.Units;
 
 public class Camera {
 
-  public final String name;
+  private String name;
   public final String path;
   public final Transform3d transform;
   public final CameraIntrinsics intrinsics;
 
   public final PhotonCamera camera;
   public final PhotonPoseEstimator estimator;
+  
+  private final double MAX_PITCHROLL_DEGREES = 5;
+  private final double MAX_PITCHROLL = Units.degreesToRadians(MAX_PITCHROLL_DEGREES);
+  private final double MAX_Z_INCHES = 7;
+  private final double MAX_Z = Units.inchesToMeters(MAX_Z_INCHES);
 
-  private final double MAX_PITCHROLL = Units.degreesToRadians(5);
-  private final double MAX_Z = Units.inchesToMeters(7);
+  private final double XY_STD_DEV_COEFFICIENT = 0.08;
+  private final double THETA_STD_DEV_COEFFICIENT = 0.16;
+  private final double COEFFICIENT_FACTOR = 10_000.0;
 
-  private final double xyStdDevCoefficient = 0.08;
-  private final double thetaStdDevCoefficient = 0.16;
-  private final double coefficientFactor = 10_000.0;
+  private final String PATH_VISION = "Vision/";
+  private final String PATH_TAG_POSES = "/TagPoses";
+  private final String PATH_CAM_TRANSFORM = "/CamTransform";
+  private final String PATH_EST_POSE_UNFILTERED = "/EstPoseUnfiltered";
+  private final String PATH_XY_STD_DEV = "/XyStdDev";
+  private final String PATH_THETA_STD_DEV = "/ThetaStdDev";
+  private final String PATH_NUM_TARGETS = "/NumTargets";
+  private final String PATH_AVG_TAG_AREA = "/AvgTagArea";
+  private final String PATH_EST_POSE = "/EstPose";
 
   // kinda ugly ik ik
   private Pose2d lastRobotPose;
@@ -50,7 +62,7 @@ public class Camera {
     this.transform = transform;
     this.intrinsics = intrinsics;
     this.field = field;
-    path = "Vision/" + name.replace("_", "");
+    path = PATH_VISION + name.replace("_", "");
 
     camera = new PhotonCamera(name);
 
@@ -85,7 +97,7 @@ public class Camera {
       var fieldToTag = currentPose3d.transformBy(transform).transformBy(detection);
       allTagPoses.add(fieldToTag);
     }
-    Logger.recordOutput(path + "/TagPoses", allTagPoses.toArray(Pose3d[]::new));
+    Logger.recordOutput(path + PATH_TAG_POSES, allTagPoses.toArray(Pose3d[]::new));
 
     return Optional.of(estPose);
   }
@@ -93,7 +105,7 @@ public class Camera {
   public void logCamTransform(Pose2d robotPose) {
     Pose3d camPose = new Pose3d(robotPose);
     camPose = camPose.transformBy(transform);
-    Logger.recordOutput(path + "/CamTransform", camPose);
+    Logger.recordOutput(path + PATH_CAM_TRANSFORM, camPose);
   }
 
   public boolean feedPoseEstimator(SwerveDrivePoseEstimator poseEstimator) {
@@ -108,7 +120,7 @@ public class Camera {
 
       EstimatedRobotPose pose = poseResult.get();
 
-      Logger.recordOutput(path + "/EstPoseUnfiltered", pose.estimatedPose);
+      Logger.recordOutput(path + PATH_EST_POSE_UNFILTERED, pose.estimatedPose);
       var filteredPose = filterPose(pose);
       if (filteredPose.isEmpty())
         continue;
@@ -120,17 +132,17 @@ public class Camera {
       }
       avgTagArea /= numTargets;
 
-      double xyStdDev = xyStdDevCoefficient * Math.pow(avgTagArea, 2.0) / numTargets * coefficientFactor;
-      double thetaStdDev = thetaStdDevCoefficient * Math.pow(avgTagArea, 2.0) / numTargets * coefficientFactor;
+      double xyStdDev = XY_STD_DEV_COEFFICIENT * Math.pow(avgTagArea, 2.0) / numTargets * COEFFICIENT_FACTOR;
+      double thetaStdDev = THETA_STD_DEV_COEFFICIENT * Math.pow(avgTagArea, 2.0) / numTargets * COEFFICIENT_FACTOR;
 
       if (numTargets <= 1)
         thetaStdDev = Double.POSITIVE_INFINITY;
 
-      Logger.recordOutput(path + "/XyStdDev", xyStdDev);
-      Logger.recordOutput(path + "/ThetaStdDev", thetaStdDev);
-      Logger.recordOutput(path + "/NumTargets", numTargets);
-      Logger.recordOutput(path + "/AvgTagArea", avgTagArea);
-      Logger.recordOutput(path + "/EstPose", pose.estimatedPose);
+      Logger.recordOutput(path + PATH_XY_STD_DEV, xyStdDev);
+      Logger.recordOutput(path + PATH_THETA_STD_DEV, thetaStdDev);
+      Logger.recordOutput(path + PATH_NUM_TARGETS, numTargets);
+      Logger.recordOutput(path + PATH_AVG_TAG_AREA, avgTagArea);
+      Logger.recordOutput(path + PATH_EST_POSE, pose.estimatedPose);
 
       var stddevs = MatBuilder.fill(Nat.N3(), Nat.N1(), xyStdDev, xyStdDev, thetaStdDev);
 
@@ -139,12 +151,12 @@ public class Camera {
     }
 
     if (!visionWasMeasured) {
-      Logger.recordOutput(path + "/XyStdDev", -1d);
-      Logger.recordOutput(path + "/ThetaStdDev", -1d);
-      Logger.recordOutput(path + "/NumTargets", 0);
-      Logger.recordOutput(path + "/AvgTagArea", -1d);
-      Logger.recordOutput(path + "/EstPose", new Pose3d(new Translation3d(-100, -100, -100), new Rotation3d()));
-      Logger.recordOutput(path + "/TagPoses", new Pose3d[0]);
+      Logger.recordOutput(path + PATH_XY_STD_DEV, -1d);
+      Logger.recordOutput(path + PATH_THETA_STD_DEV, -1d);
+      Logger.recordOutput(path + PATH_NUM_TARGETS, 0);
+      Logger.recordOutput(path + PATH_AVG_TAG_AREA, -1d);
+      Logger.recordOutput(path + PATH_EST_POSE, new Pose3d(new Translation3d(-100, -100, -100), new Rotation3d()));
+      Logger.recordOutput(path + PATH_TAG_POSES, new Pose3d[0]);
       return false;
     }
 
