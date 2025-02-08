@@ -3,6 +3,7 @@ package frc.robot.subsystems.vision;
 import java.util.Optional;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.littletonrobotics.junction.Logger;
 import org.photonvision.EstimatedRobotPose;
@@ -24,13 +25,12 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 
 public class Camera {
-
-  private String name;
-  public final String path;
-  public final Transform3d transform;
-  public final CameraIntrinsics intrinsics;
-
-  public final PhotonCamera camera;
+  private String path;
+  private Transform3d transform;
+  private CameraIntrinsics intrinsics;
+  private AprilTagFieldLayout field;
+  private PhotonCamera camera;
+  
   public final PhotonPoseEstimator estimator;
   
   private final double MAX_PITCHROLL_DEGREES = 5;
@@ -55,21 +55,24 @@ public class Camera {
   // kinda ugly ik ik
   private Pose2d lastRobotPose;
 
-  private final AprilTagFieldLayout field;
-
-  public Camera(AprilTagFieldLayout field, String name, Transform3d transform, CameraIntrinsics intrinsics) {
-    this.name = name;
+  public Camera(AprilTagFieldLayout field, PhotonCamera camera, Transform3d transform, CameraIntrinsics intrinsics) {
     this.transform = transform;
     this.intrinsics = intrinsics;
     this.field = field;
-    path = PATH_VISION + name.replace("_", "");
+    this.path = PATH_VISION + camera.getName().replace("_", "");
 
-    camera = new PhotonCamera(name);
+    estimator = new PhotonPoseEstimator(this.field, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, transform);
+    estimator.setMultiTagFallbackStrategy(PoseStrategy.CLOSEST_TO_CAMERA_HEIGHT);
+  }
 
-    var strategy = PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR;
-    var fallbackStrategy = PoseStrategy.CLOSEST_TO_CAMERA_HEIGHT;
-    estimator = new PhotonPoseEstimator(this.field, strategy, transform);
-    estimator.setMultiTagFallbackStrategy(fallbackStrategy);
+  public PhotonCamera getCamera() {
+    if (Objects.isNull(camera)) 
+      return camera;
+    return new PhotonCamera("");
+  }
+
+  public Transform3d getTransform() {
+    return transform;
   }
 
   public List<PhotonPipelineResult> getPipelineResults() {
@@ -80,8 +83,9 @@ public class Camera {
     Pose3d estPose = estimatedPose.estimatedPose;
     double pitch = estPose.getRotation().getX();
     double roll = estPose.getRotation().getY();
-    if (Math.abs(pitch) > MAX_PITCHROLL || Math.abs(roll) > MAX_PITCHROLL
-        || Math.abs(estPose.getTranslation().getZ()) > MAX_Z) {
+    if (Math.abs(pitch) > MAX_PITCHROLL 
+      || Math.abs(roll) > MAX_PITCHROLL
+      || Math.abs(estPose.getTranslation().getZ()) > MAX_Z) {
       return Optional.empty();
     }
     // TODO: readd
@@ -91,15 +95,17 @@ public class Camera {
 
     // advantagekit viz stuff
     ArrayList<Pose3d> allTagPoses = new ArrayList<>();
-    var currentPose3d = new Pose3d(lastRobotPose);
+    Pose3d currentPose3d = new Pose3d(lastRobotPose);
+    Transform3d detection;
+    Pose3d fieldToTag;
     for (var detectionEntry : estimatedPose.targetsUsed) {
-      var detection = detectionEntry.getBestCameraToTarget();
-      var fieldToTag = currentPose3d.transformBy(transform).transformBy(detection);
+      detection = detectionEntry.getBestCameraToTarget();
+      fieldToTag = currentPose3d.transformBy(transform).transformBy(detection);
       allTagPoses.add(fieldToTag);
     }
     Logger.recordOutput(path + PATH_TAG_POSES, allTagPoses.toArray(Pose3d[]::new));
 
-    return Optional.of(estPose);
+    return Optional.of(estPose); // TODO: ADD ERROR CATCHING OR SOMETHING ELSE TO REMOVE THE OPTIONAL.OF / ASK MORE ABOUT THIS
   }
 
   public void logCamTransform(Pose2d robotPose) {
