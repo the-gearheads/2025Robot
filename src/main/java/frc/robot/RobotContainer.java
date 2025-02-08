@@ -9,16 +9,25 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.Teleop;
 import frc.robot.controllers.Controllers;
+import frc.robot.subsystems.arm.Pivot;
+import frc.robot.subsystems.arm.PivotSim;
 import frc.robot.subsystems.swerve.Swerve;
 
 public class RobotContainer {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   private final Swerve swerve = new Swerve();
+  private final Pivot pivot;
   private final Autos autos = new Autos(swerve);
   private final SysidAutoPicker sysidAuto = new SysidAutoPicker();
 
   public RobotContainer() {
+    if (Robot.isReal()) {
+      pivot = new Pivot();
+    } else {
+      pivot = new PivotSim();
+    }
     swerve.setDefaultCommand(new Teleop(swerve));
+    // pivot.setDefaultCommand(new ManualPivot(pivot));
     sysidAuto.addSysidRoutine(swerve.sysIdForwardDynamic(Direction.kForward), "Swerve Dynamic ->");
     sysidAuto.addSysidRoutine(swerve.sysIdForwardQuasistatic(Direction.kForward), "Swerve Quasistatic ->");
     sysidAuto.addSysidRoutine(swerve.sysIdForwardDynamic(Direction.kReverse), "Swerve Dynamic <-");

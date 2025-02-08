@@ -54,11 +54,6 @@ public class DriveMotor {
     pid.setReference(speed, ControlType.kVelocity, ClosedLoopSlot.kSlot0, DRIVE_FEEDFORWARD.calculate(speed));
   }
 
-  public void setSpeed(double speed, double accel) {
-    driveSetpoint = speed;
-    pid.setReference(speed, ControlType.kVelocity, ClosedLoopSlot.kSlot0, DRIVE_FEEDFORWARD.calculate(speed, accel));
-  }
-
   public double getVoltage() {
     return flex.getAppliedOutput() * flex.getBusVoltage();
   }
@@ -121,7 +116,7 @@ public class DriveMotor {
 
   public void setBrakeCoast(boolean willBrake) {
     var updatedConfig = new SparkFlexConfig().idleMode(willBrake ? IdleMode.kBrake : IdleMode.kCoast);
-    flex.configure(updatedConfig, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
+    flex.configureAsync(updatedConfig, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
   }
 
   public double getCurrent() {

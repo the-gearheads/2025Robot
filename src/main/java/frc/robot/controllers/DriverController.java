@@ -26,6 +26,7 @@ public class DriverController {
     return controller == null;
   }
 
+  @SuppressWarnings("unused")
   private Trigger emptyTrigger() {
     return new Trigger(() -> false);
   }
@@ -53,6 +54,11 @@ public class DriverController {
   public double getSlowDownAxis() {
     if(isNull()) return 0;
     return Controllers.deadband(controller.getRightTriggerAxis());
+  }
+
+  public boolean getXBtn() {
+    if(isNull()) return false;
+    return controller.getXButton();
   }
 
   public void setRumble(double rumble) {
