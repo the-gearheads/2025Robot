@@ -6,10 +6,12 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
 
 public final class ArmConstants {
+  public static final double ARM_LENGTH = Units.inchesToMeters(36);
+
   public static final int PIVOT_MOTOR_ID = 9;
   public static final int PIVOT_MOTOR_FOLLOWER_ID = 10;
 
-  public static final double PIVOT_GEAR_RATIO = 1/256.0;
+  public static final double PIVOT_GEAR_RATIO = 256.0/1.0;
   public static final double PIVOT_POS_FACTOR = PIVOT_GEAR_RATIO * 2 * Math.PI;
   public static final double PIVOT_VEL_FACTOR = (PIVOT_GEAR_RATIO * 2 * Math.PI) / 60;  // Rad per Sec
   public static final int PIVOT_CURRENT_LIMIT = 60;
@@ -22,9 +24,10 @@ public final class ArmConstants {
     Units.degreesToRadians(2515)
   );
 
-  public static final double MAX_ANGLE = 90;
-  public static final double MIN_ANGLE = 15;
+  public static final double MAX_ANGLE = Units.degreesToRadians(90);
+  public static final double MIN_ANGLE = Units.degreesToRadians(15);
   public static final double PIVOT_ANGLE_TOLERANCE = Units.degreesToRadians(0.2);
+  public static final double PIVOT_MOI_EST = 0.7895417850; // from cad kg * m^2
 
   // -- elevator contants --
   public static final int ELEVATOR_MOTOR_ID = 11;

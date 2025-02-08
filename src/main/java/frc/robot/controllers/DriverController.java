@@ -53,6 +53,11 @@ public class DriverController {
     return Controllers.deadband(controller.getRightTriggerAxis());
   }
 
+  public boolean getXBtn() {
+    if(isNull()) return false;
+    return controller.getXButton();
+  }
+
   public void setRumble(double rumble) {
     if(isNull()) return;
     controller.setRumble(RumbleType.kBothRumble, rumble);
