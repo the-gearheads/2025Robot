@@ -3,7 +3,6 @@ package frc.robot.subsystems.vision;
 import java.util.Optional;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import org.littletonrobotics.junction.Logger;
 import org.photonvision.EstimatedRobotPose;
@@ -31,7 +30,8 @@ public class Camera {
   private AprilTagFieldLayout field;
   private PhotonCamera camera;
   
-  public final PhotonPoseEstimator estimator;
+  private
+   final PhotonPoseEstimator estimator;
   
   private final double MAX_PITCHROLL_DEGREES = 5;
   private final double MAX_PITCHROLL = Units.degreesToRadians(MAX_PITCHROLL_DEGREES);
@@ -60,15 +60,14 @@ public class Camera {
     this.intrinsics = intrinsics;
     this.field = field;
     this.path = PATH_VISION + camera.getName().replace("_", "");
+    this.camera = camera;
 
     estimator = new PhotonPoseEstimator(this.field, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, transform);
     estimator.setMultiTagFallbackStrategy(PoseStrategy.CLOSEST_TO_CAMERA_HEIGHT);
   }
 
   public PhotonCamera getCamera() {
-    if (Objects.isNull(camera)) 
-      return camera;
-    return new PhotonCamera("");
+    return camera;
   }
 
   public Transform3d getTransform() {
