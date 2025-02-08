@@ -11,6 +11,9 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.units.Units;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Elevator extends SubsystemBase {
@@ -27,6 +30,7 @@ public class Elevator extends SubsystemBase {
   double output;
 
   public Elevator() {
+    configure();
   }
 
   public void configure() {
@@ -48,9 +52,39 @@ public class Elevator extends SubsystemBase {
     elevatorFollowerConfig.idleMode(IdleMode.kBrake);
     elevatorFollowerConfig.voltageCompensation(12);
 
-    elevatorFollower.configure(elevatorFollowerConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
+    elevatorFollower.configure(elevatorFollowerConfig, ResetMode.kResetSafeParameters,
+        PersistMode.kNoPersistParameters);
 
     elevator.setCANTimeout(0);
     elevatorFollower.setCANTimeout(0);
+  }
+
+  public boolean getLimitswitch() {
+    return elevator.getReverseLimitSwitch().isPressed();
+  }
+
+  public void setArmLength(double setpointLength) {
+    elevatorPid.setGoal(setpointLength);
+  }
+
+  public double getArmLength() {
+    return elevatorEncoder.getPosition();
+  }
+
+  public void setVoltage(double volts) {
+    elevator.setVoltage(volts);
+  }
+
+  public void setEncoder(double position) {
+    elevatorEncoder.setPosition(position);
+  }
+
+  public Command getHomingRoutine() {
+    return this.startEnd(() -> {
+      setVoltage(HOMING_VOLTAGE);
+    }, () -> {
+      setVoltage(0);
+      setEncoder(0);
+    }).until(this::getLimitswitch);
   }
 }
