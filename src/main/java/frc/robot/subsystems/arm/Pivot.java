@@ -18,11 +18,12 @@ import com.revrobotics.spark.config.SparkFlexConfig;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.commands.ManualPivot;
 
 public class Pivot extends SubsystemBase {
   /*
@@ -40,51 +41,55 @@ public class Pivot extends SubsystemBase {
 
   double ff;
   double output;
+  double voltage;
 
   public Pivot() {
     configure();
     pivotEncoder.setPosition(pivotAbsEnc.get());
     pid.reset(getAngle().getRadians());
     pid.setGoal(getAngle().getRadians());
-    setDefaultCommand(new ManualPivot(this));
   }
 
   public void periodic() {
-    // if (DriverStation.isDisabled())
-    //   pivotEncoder.setPosition(pivotAbsEnc.get());
+    if (DriverStation.isDisabled())
+      pivotEncoder.setPosition(pivotAbsEnc.get());
 
-    // // https://gist.github.com/person4268/46710dca9a128a0eb5fbd93029627a6b
-    // if (Math.abs(
-    //     Units.radiansToDegrees(getAngle().getRadians() - pid.getSetpoint().position)) > PIVOT_ANGLE_LIVE_FF_THRESHOLD) {
-    //   ff = PIVOT_FEEDFORWARD.calculate(getAngle().getRadians(), pid.getSetpoint().velocity);
-    // } else {
-    //   ff = PIVOT_FEEDFORWARD.calculate(pid.getSetpoint().position, pid.getSetpoint().velocity);
-    // }
+    // https://gist.github.com/person4268/46710dca9a128a0eb5fbd93029627a6b
+    if (Math.abs(
+        Units.radiansToDegrees(getAngle().getRadians() - pid.getSetpoint().position)) > PIVOT_ANGLE_LIVE_FF_THRESHOLD) {
+      ff = PIVOT_FEEDFORWARD.calculate(getAngle().getRadians(), pid.getSetpoint().velocity);
+    } else {
+      ff = PIVOT_FEEDFORWARD.calculate(pid.getSetpoint().position, pid.getSetpoint().velocity);
+    }
 
-    // output = pid.calculate(getAngle().getRadians()) + ff;
-    // Logger.recordOutput("Pivot/attemptedOutput", output);
+    output = pid.calculate(getAngle().getRadians()) + ff;
+    Logger.recordOutput("Pivot/attemptedOutput", output);
 
-    // // stops robot from runnign into itself
-    // if (output > 0 && getAngle().getRadians() > MAX_ANGLE) {
-    //   output = 0;
-    // }
+    // stops robot from runnign into itself
+    if (output > 0 && getAngle().getRadians() > MAX_ANGLE) {
+      output = 0;
+    }
 
-    // if (output < 0 && getAngle().getRadians() < MIN_ANGLE) {
-    //   output = 0;
-    // }
+    if (output < 0 && getAngle().getRadians() < MIN_ANGLE) {
+      output = 0;
+    }
 
-    // if (pid.getSetpoint().position < MIN_ANGLE || pid.getSetpoint().position > MAX_ANGLE) {
-    //   output = 0;
-    // }
+    if (pid.getSetpoint().position < MIN_ANGLE || pid.getSetpoint().position > MAX_ANGLE) {
+      output = 0;
+    }
 
-    // // Might as well just get as close as we can
-    // if (pid.getGoal().position < MIN_ANGLE || pid.getGoal().position > MAX_ANGLE) {
-    //   pid.setGoal(MathUtil.clamp(pid.getGoal().position, MIN_ANGLE, MAX_ANGLE));
-    // }
+    // Might as well just get as close as we can
+    if (pid.getGoal().position < MIN_ANGLE || pid.getGoal().position > MAX_ANGLE) {
+      pid.setGoal(MathUtil.clamp(pid.getGoal().position, MIN_ANGLE, MAX_ANGLE));
+    }
     
-    // Logger.recordOutput("Pivot/output", output);
-    // pivot.setVoltage(output);
-
+    Logger.recordOutput("Pivot/output", output);
+    if (voltage == 0) {
+      voltage = output;
+    }
+    Logger.recordOutput("Pivot/outputVoltage", voltage);
+    pivot.setVoltage(voltage);
+    voltage = 0;
   }
 
   public void configure() {
@@ -128,7 +133,7 @@ public class Pivot extends SubsystemBase {
   }
 
   public void setVoltage(double volts) {
-    pivot.setVoltage(volts);
+    voltage = volts;
   }
 
   public void setVoltage(Voltage volts) {

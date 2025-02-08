@@ -3,7 +3,6 @@ package frc.robot.subsystems.swerve.gyro;
 import static frc.robot.constants.SwerveConstants.BORON_ID;
 
 import org.littletonrobotics.junction.AutoLogOutput;
-import org.littletonrobotics.junction.Logger;
 
 import com.reduxrobotics.sensors.canandgyro.Canandgyro;
 import com.reduxrobotics.sensors.canandgyro.CanandgyroFaults;
