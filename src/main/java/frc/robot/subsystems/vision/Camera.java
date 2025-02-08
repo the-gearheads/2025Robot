@@ -30,8 +30,7 @@ public class Camera {
   private AprilTagFieldLayout field;
   private PhotonCamera camera;
   
-  private
-   final PhotonPoseEstimator estimator;
+  private final PhotonPoseEstimator estimator;
   
   private final double MAX_PITCHROLL_DEGREES = 5;
   private final double MAX_PITCHROLL = Units.degreesToRadians(MAX_PITCHROLL_DEGREES);
