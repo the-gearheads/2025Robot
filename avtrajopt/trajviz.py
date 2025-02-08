@@ -87,7 +87,7 @@ def plot_traj(traj):
   plt.plot(time, min_pivot_accel, color="purple", linestyle=":", label="Min Pivot Acceleration")
   plt.xlabel("Time (s)")
   plt.ylabel("Acceleration")
-  plt.legend()
+  plt.legend(loc='upper right', bbox_to_anchor=(-0.05, 1))
   plt.grid()
 
   plt.tight_layout()

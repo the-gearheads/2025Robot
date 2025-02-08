@@ -26,6 +26,40 @@ def main(input_file, output_dir):
   accel = p.decision_variable(2, N + 1) # pivot accel (rad/s^2), elevator accel (m/s^2)
   dt = p.decision_variable(1, N + 1) # time step, constrained to be equal
 
+  # Gotta make it go where we want
+  waypoints = data["waypoints"]
+  assert len(waypoints) >= 2
+
+  if "vel" not in waypoints[0]:
+    raise ValueError("First waypoint must have a velocity")
+  
+  if "vel" not in waypoints[-1]:
+    raise ValueError("Last waypoint must have a velocity")
+
+
+  sample_transition_points = [] # Points where midwaypoints begin
+  for i, waypoint in enumerate(waypoints):
+    sample = waypoint["at_sample"] * N
+    if i != 0 and i < len(waypoints) - 1:
+      sample_transition_points.append(sample)
+    endeff_pos = waypoint["pose"]
+    vels = waypoint.get("vel", None)
+    pose_pivot_elevator = get_elevator_len_arm_angle(endeff_pos[0], endeff_pos[1])
+    if pose_pivot_elevator[0] < constants.elevator_min_len:
+      raise ValueError(f"Elevator length is too short to reach {waypoint} ({pose_pivot_elevator[0]} < {constants.elevator_min_len})")
+    if pose_pivot_elevator[0] > constants.elevator_max_len:
+      raise ValueError(f"Elevator length is too long to reach {waypoint} ({pose_pivot_elevator[0]} > {constants.elevator_max_len})")
+    if pose_pivot_elevator[1] < constants.pivot_min:
+      raise ValueError(f"Pivot angle is too small to reach {waypoint} ({pose_pivot_elevator[1]} < {constants.pivot_min})")
+    if pose_pivot_elevator[1] > constants.pivot_max:
+      raise ValueError(f"Pivot angle is too large to reach {waypoint} ({pose_pivot_elevator[1]} > {constants.pivot_max})")
+    p.subject_to(pivot[0, int(sample)] == pose_pivot_elevator[1])
+    p.subject_to(elevator[0, int(sample)] == pose_pivot_elevator[0])
+    if vels is not None:
+      p.subject_to(pivot[1, int(sample)] == vels[0])
+      p.subject_to(elevator[1, int(sample)] == vels[1])
+
+
   for k in range(N + 1):
     p.subject_to(pivot[0, k] >= constants.pivot_min)
     p.subject_to(pivot[0, k] <= constants.pivot_max)
@@ -37,7 +71,7 @@ def main(input_file, output_dir):
     p.subject_to(pos[0] <= constants.endeff_x_max)
     p.subject_to(pos[1] >= constants.endeff_y_min)
 
-    if k > 0:
+    if k > 0 and k not in sample_transition_points:
       p.subject_to(dt[0, k] == dt[0, k-1])
     p.subject_to(dt[0, k] > 0)
     dt[0, k].set_value(constants.dt_initial_guess)
@@ -70,35 +104,6 @@ def main(input_file, output_dir):
   total_time = sum(dt[0, k] for k in range(N + 1))
   p.subject_to(total_time <= constants.T_max)
   p.minimize(total_time)
-
-  # Gotta make it go where we want
-  waypoints = data["waypoints"]
-  assert len(waypoints) >= 2
-
-  if "vel" not in waypoints[0]:
-    raise ValueError("First waypoint must have a velocity")
-  
-  if "vel" not in waypoints[-1]:
-    raise ValueError("Last waypoint must have a velocity")
-
-  for waypoint in waypoints:
-    sample = waypoint["progress"] * N # progress is in % of samples. kinda scuffed
-    endeff_pos = waypoint["pose"]
-    vels = waypoint.get("vel", None)
-    pose_pivot_elevator = get_elevator_len_arm_angle(endeff_pos[0], endeff_pos[1])
-    if pose_pivot_elevator[0] < constants.elevator_min_len:
-      raise ValueError(f"Elevator length is too short to reach {waypoint} ({pose_pivot_elevator[0]} < {constants.elevator_min_len})")
-    if pose_pivot_elevator[0] > constants.elevator_max_len:
-      raise ValueError(f"Elevator length is too long to reach {waypoint} ({pose_pivot_elevator[0]} > {constants.elevator_max_len})")
-    if pose_pivot_elevator[1] < constants.pivot_min:
-      raise ValueError(f"Pivot angle is too small to reach {waypoint} ({pose_pivot_elevator[1]} < {constants.pivot_min})")
-    if pose_pivot_elevator[1] > constants.pivot_max:
-      raise ValueError(f"Pivot angle is too large to reach {waypoint} ({pose_pivot_elevator[1]} > {constants.pivot_max})")
-    p.subject_to(pivot[0, int(sample)] == pose_pivot_elevator[1])
-    p.subject_to(elevator[0, int(sample)] == pose_pivot_elevator[0])
-    if vels is not None:
-      p.subject_to(pivot[1, int(sample)] == vels[0])
-      p.subject_to(elevator[1, int(sample)] == vels[1])
   
   print(f"Solving trajectory {data["name"]}")
   p.solve(diagnostics = True)
