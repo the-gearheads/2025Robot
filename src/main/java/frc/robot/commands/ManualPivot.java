@@ -16,7 +16,10 @@ public class ManualPivot extends Command {
   @Override
   public void execute() {
     if (Controllers.driverController.getXBtn()) {
-      pivot.setVoltage(1);
+      pivot.setVoltage(-6);
+    }
+    if (Controllers.driverController.getABtn()) {
+      pivot.setVoltage(6);
     }
   }
 }

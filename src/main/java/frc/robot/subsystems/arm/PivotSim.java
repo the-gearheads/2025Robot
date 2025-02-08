@@ -25,7 +25,7 @@ public class PivotSim extends Pivot {
   @Override
   public void simulationPeriodic() {
     var out = pivotSim.getAppliedOutput();
-    armSim.setInputVoltage(out);
+    armSim.setInputVoltage(out * RoboRioSim.getVInVoltage());
     armSim.update(0.02);
     pivotSim.iterate(armSim.getVelocityRadPerSec(), RoboRioSim.getVInVoltage(), 0.02); // might not work theres a separate iterate for abs encoder that might need to be called????
   }

@@ -58,6 +58,16 @@ public class DriverController {
     return controller.getXButton();
   }
 
+  public boolean getABtn() {
+    if(isNull()) return false;
+    return controller.getAButton();
+  }
+
+  public Trigger getYBtn() {
+    if(isNull()) return emptyTrigger();
+    return new Trigger(() -> controller.getYButton());
+  }
+
   public void setRumble(double rumble) {
     if(isNull()) return;
     controller.setRumble(RumbleType.kBothRumble, rumble);

@@ -32,7 +32,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Robot;
 import frc.robot.subsystems.swerve.gyro.Gyro;
-import frc.robot.subsystems.swerve.gyro.GyroNavx;
+import frc.robot.subsystems.swerve.gyro.GyroRedux;
 import frc.robot.subsystems.swerve.gyro.GyroSim;
 import frc.robot.subsystems.swerve.setpointgen.ModuleLimits;
 import frc.robot.subsystems.swerve.setpointgen.SwerveSetpoint;
@@ -75,7 +75,7 @@ public class Swerve extends SubsystemBase {
     if (Robot.isSimulation()) {
       gyro = new GyroSim();
     } else {
-      gyro = new GyroNavx();
+      gyro = new GyroRedux();
     }
     gyro.reset();
     SmartDashboard.putData("Field", field);
@@ -116,12 +116,10 @@ public class Swerve extends SubsystemBase {
     );
   }
 
-  @AutoLogOutput
   public Rotation2d getGyroRotation() {
     return gyro.getRotation2d();
   }
 
-  @AutoLogOutput
   public double getGyroVelocity() {
     return gyro.getVelocityYaw();
   }
@@ -244,10 +242,12 @@ public class Swerve extends SubsystemBase {
     return totalCurrent;
   }
 
+  public void zeroGyro() {
+    gyro.reset();
+  }
+
   public void periodic() {
-    gyro.log();
-    Logger.recordOutput("Swerve/Gyro/Rotation3d", gyro.getRotation3d());
-    Logger.recordOutput("Swerve/Gyro/Connected", gyro.isConnected());
+    // gyro.log();
     for (SwerveModule module : modules) {
       module.periodic();
     }
@@ -289,6 +289,7 @@ public class Swerve extends SubsystemBase {
       mod.setSteerVolts(volts.magnitude());
     }
   }
+
 
   public Command sysIdForwardQuasistatic(SysIdRoutine.Direction direction) {
     return driveRoutine.quasistatic(direction);

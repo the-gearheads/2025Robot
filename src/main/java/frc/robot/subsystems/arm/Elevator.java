@@ -19,7 +19,6 @@ public class Elevator extends SubsystemBase {
   SparkFlex elevatorFollower = new SparkFlex(ELEVATOR_MOTOR_FOLLOWER_ID, MotorType.kBrushless);
   SparkFlexConfig elevatorConfig = new SparkFlexConfig();
   SparkFlexConfig elevatorFollowerConfig = new SparkFlexConfig();
-
   RelativeEncoder elevatorEncoder = elevator.getEncoder();
   ProfiledPIDController elevatorPid = new ProfiledPIDController(ELEVATOR_PID[0], ELEVATOR_PID[1], ELEVATOR_PID[2],
       ELEVATOR_CONSTRAINTS);
