@@ -14,9 +14,9 @@ import edu.wpi.first.wpilibj.simulation.RoboRioSim;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 
 public class PivotSim extends Pivot {
-  DCMotor motoar = DCMotor.getNeoVortex(2);
-  SingleJointedArmSim armSim = new SingleJointedArmSim(LinearSystemId.createSingleJointedArmSystem(motoar, PIVOT_MOI_EST, PIVOT_GEAR_RATIO), motoar, PIVOT_GEAR_RATIO, ARM_LENGTH, MIN_ANGLE, MAX_ANGLE, true, 15);
-  SparkFlexSim pivotSim = new SparkFlexSim(pivot, motoar);
+  DCMotor pivotMotorSim = DCMotor.getNeoVortex(2);
+  SingleJointedArmSim armSim = new SingleJointedArmSim(LinearSystemId.createSingleJointedArmSystem(pivotMotorSim, PIVOT_MOI_EST, PIVOT_GEAR_RATIO), pivotMotorSim, PIVOT_GEAR_RATIO, ARM_LENGTH, MIN_ANGLE, MAX_ANGLE, true, 15);
+  SparkFlexSim pivotSim = new SparkFlexSim(pivot, pivotMotorSim);
 
   public PivotSim() {
     super();

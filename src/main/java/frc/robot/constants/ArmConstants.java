@@ -33,10 +33,15 @@ public final class ArmConstants {
   public static final int ELEVATOR_MOTOR_ID = 11;
   public static final int ELEVATOR_MOTOR_FOLLOWER_ID = 12;
 
-  public static final double ELEVATOR_GEAR_RATIO = 1/5;
+  public static final double ELEVATOR_GEAR_RATIO = 5;
   public static final double ELEVATOR_RATIO = 1; // ((pi * spool diameter) / gear ratio) * stage Count
   public static final double ELEVATOR_POS_FACTOR = 1;
   public static final double ELEVATOR_VEL_FACTOR = 1;
+
+  public static final double ELEVATOR_MASS = 13.6078; // mass of elevator carriage (kg)
+  public static final double ELEVATOR_RADIUS = 1; // radius of elevator driving drum
+  public static final double MIN_HEIGHT = Units.inchesToMeters(36);
+  public static final double MAX_HEIGHT = Units.inchesToMeters(77.6);
 
   public static final int ELEVATOR_CURRENT_LIMIT = 80;
   public static final double HOMING_VOLTAGE = -2;

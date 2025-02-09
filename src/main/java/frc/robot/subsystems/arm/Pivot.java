@@ -41,7 +41,7 @@ public class Pivot extends SubsystemBase {
 
   double ff;
   double output;
-  double voltage;
+  double manualVoltage;
 
   public Pivot() {
     configure();
@@ -83,13 +83,13 @@ public class Pivot extends SubsystemBase {
       pid.setGoal(MathUtil.clamp(pid.getGoal().position, MIN_ANGLE, MAX_ANGLE));
     }
     
-    Logger.recordOutput("Pivot/output", output);
-    if (voltage == 0) {
-      voltage = output;
+    Logger.recordOutput("Pivot/manualVoltage", manualVoltage);
+    if (manualVoltage != 0) {
+      output = manualVoltage;
+      manualVoltage = 0;
     }
-    Logger.recordOutput("Pivot/outputVoltage", voltage);
-    pivot.setVoltage(voltage);
-    voltage = 0;
+    Logger.recordOutput("Telescope/output", output);
+    pivot.setVoltage(output);
   }
 
   public void configure() {
@@ -132,12 +132,12 @@ public class Pivot extends SubsystemBase {
     pid.setGoal(angleRad);
   }
 
-  public void setVoltage(double volts) {
-    voltage = volts;
+  public void setManualVoltage(double volts) {
+    manualVoltage = volts;
   }
 
   public void setVoltage(Voltage volts) {
-    pivot.setVoltage(volts);
+    manualVoltage = volts.magnitude();
   }
 
   public boolean atPoint(double angle) {
