@@ -33,6 +33,7 @@ public class SteerMotor {
 
   double targetAngle;
 
+  // mifdsa checkadfs
   boolean manualVoltageOnly = false;
 
   public SteerMotor(int id, int index, Rotation2d offset, String modulePath) {
