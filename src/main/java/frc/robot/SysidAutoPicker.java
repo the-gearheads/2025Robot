@@ -13,9 +13,6 @@ public class SysidAutoPicker {
 
   public void addSysidRoutine(Command routine, String name) {
     chooser.addOption(name, routine);
-    chooser.addOption(name, routine);
-    chooser.addOption(name, routine);
-    chooser.addOption(name, routine);
   }
 
   public Command get() {

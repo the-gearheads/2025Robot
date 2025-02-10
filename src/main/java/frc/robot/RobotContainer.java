@@ -17,6 +17,7 @@ import frc.robot.subsystems.arm.PivotSim;
 import frc.robot.subsystems.arm.Telescope;
 import frc.robot.subsystems.arm.telescopeSim;
 import frc.robot.subsystems.swerve.Swerve;
+import frc.robot.util.RunMode;
 
 public class RobotContainer {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -34,7 +35,7 @@ public class RobotContainer {
       telescope = new telescopeSim();
     }
     swerve.setDefaultCommand(new Teleop(swerve));
-    pivot.setDefaultCommand(new ManualPivot(pivot));
+    pivot.setDefaultCommand(pivot.runWithMode(new ManualPivot(pivot), RunMode.VOLTAGE));
     telescope.setDefaultCommand(new ManualTelescope(telescope));
     sysidAuto.addSysidRoutine(swerve.sysIdForwardDynamic(Direction.kForward), "Swerve Dynamic ->");
     sysidAuto.addSysidRoutine(swerve.sysIdForwardQuasistatic(Direction.kForward), "Swerve Quasistatic ->");

@@ -47,7 +47,7 @@ public final class ArmConstants {
   public static final double HOMING_VOLTAGE = -2;
   
   public static final double[] ELEVATOR_PID = {1, 0, 0};
-  public static final ElevatorFeedforward ELEVATOR_FEEDFORWARD = new ElevatorFeedforward(1, 1, 0);
+  public static final ElevatorFeedforward ELEVATOR_FEEDFORWARD = new ElevatorFeedforward(0, 0, 0);
   public static final Constraints ELEVATOR_CONSTRAINTS = new Constraints(
     0.5,
     1

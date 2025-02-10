@@ -9,13 +9,11 @@ public class Controllers {
 
   private Controllers() {}
 
-  private static final int MAX_DRIVER_STATION_PORTS = DriverStation.kJoystickPorts; 
-  private static final String[] OPERATOR_CONTROLLER_NAMES = {
+  private static final String[] OPERATOR_CONTROLLERS = {
     "T.16000M",
     "Keyboard 1"
   };
-  private static String[] lastControllerNames = new String[MAX_DRIVER_STATION_PORTS];
-
+  private static String[] lastControllerNames = new String[DriverStation.kJoystickPorts];
   public static DriverController driverController;
   public static OperatorController operatorController;
 
@@ -24,7 +22,7 @@ public class Controllers {
     boolean hasChanged = false;
     String name;
 
-    for (int i = 0; i < MAX_DRIVER_STATION_PORTS ; i++) {
+    for (int i = 0; i < DriverStation.kJoystickPorts ; i++) {
       name = DriverStation.getJoystickName(i);
       if (!name.equals(lastControllerNames[i])) {
         hasChanged = true;
@@ -43,11 +41,11 @@ public class Controllers {
     driverController = new DriverController(-1);
     operatorController = new OperatorController() {};
 
-    for (int port = 0; port < MAX_DRIVER_STATION_PORTS; port++) {
+    for (int port = 0; port < DriverStation.kJoystickPorts; port++) {
       if (DriverStation.isJoystickConnected(port)) {
         joyName = DriverStation.getJoystickName(port);
 
-        if (!foundOperatorController && isOperatorControllerName(joyName)) {
+        if (!foundOperatorController && isOperatorController(joyName)) {
           foundOperatorController = true;
           operatorController = new Thrustmaster(port);
         }
@@ -60,8 +58,8 @@ public class Controllers {
     }
   }
 
-  private static boolean isOperatorControllerName(String name) {
-    for (String controllerName : OPERATOR_CONTROLLER_NAMES) {
+  private static boolean isOperatorController(String name) {
+    for (String controllerName : OPERATOR_CONTROLLERS) {
       if (name.contains(controllerName)) {
         return true;
       }

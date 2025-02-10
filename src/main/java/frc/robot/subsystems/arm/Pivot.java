@@ -22,8 +22,10 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.util.RunMode;
 
 public class Pivot extends SubsystemBase {
   /*
@@ -35,13 +37,16 @@ public class Pivot extends SubsystemBase {
   SparkFlexConfig pivotFollowerConfig = new SparkFlexConfig();
 
   RelativeEncoder pivotEncoder = pivot.getEncoder();
-  DutyCycleEncoder pivotAbsEnc = new DutyCycleEncoder(0);
+  DutyCycleEncoder pivotAbsEnc = new DutyCycleEncoder(0); // TODO: incorrect. need to zero properly.
   ProfiledPIDController pid = new ProfiledPIDController(PIVOT_PID[0], PIVOT_PID[1], PIVOT_PID[2], PIVOT_CONSTRAINTS,
       0.02);
 
   double ff;
   double output;
   double manualVoltage;
+
+  RunMode defaultMode = RunMode.VOLTAGE;
+  RunMode mode = defaultMode;
 
   public Pivot() {
     configure();
@@ -54,15 +59,25 @@ public class Pivot extends SubsystemBase {
     if (DriverStation.isDisabled())
       pivotEncoder.setPosition(pivotAbsEnc.get());
 
-    // https://gist.github.com/person4268/46710dca9a128a0eb5fbd93029627a6b
-    if (Math.abs(
-        Units.radiansToDegrees(getAngle().getRadians() - pid.getSetpoint().position)) > PIVOT_ANGLE_LIVE_FF_THRESHOLD) {
-      ff = PIVOT_FEEDFORWARD.calculate(getAngle().getRadians(), pid.getSetpoint().velocity);
-    } else {
-      ff = PIVOT_FEEDFORWARD.calculate(pid.getSetpoint().position, pid.getSetpoint().velocity);
+    switch (mode) {
+      case PID:
+        output = pid.calculate(getAngle().getRadians()) + ff;
+
+        // https://gist.github.com/person4268/46710dca9a128a0eb5fbd93029627a6b
+        if (Math.abs(Units.radiansToDegrees(getAngle().getRadians() - pid.getSetpoint().position)) > PIVOT_ANGLE_LIVE_FF_THRESHOLD) {
+          ff = PIVOT_FEEDFORWARD.calculate(getAngle().getRadians(), pid.getSetpoint().velocity);
+        } else {
+          ff = PIVOT_FEEDFORWARD.calculate(pid.getSetpoint().position, pid.getSetpoint().velocity);
+        }
+
+        output = pid.calculate(getAngle().getRadians()) + ff;
+        break;
+      case VOLTAGE:
+        output = manualVoltage;
+        break;
     }
 
-    output = pid.calculate(getAngle().getRadians()) + ff;
+    Logger.recordOutput("Pivot/Mode", mode.toString());
     Logger.recordOutput("Pivot/attemptedOutput", output);
 
     // stops robot from runnign into itself
@@ -146,7 +161,17 @@ public class Pivot extends SubsystemBase {
 
   public boolean atPoint(double angle, double tolerance) {
     return MathUtil.isNear(getAngle().getRadians(), angle, tolerance);
-  } 
+  }
+
+  public void setMode(RunMode mode) {
+    this.mode = mode;
+  }
+
+  public Command runWithMode(Command cmd, RunMode tempMode) {
+    return cmd
+      .beforeStarting(() -> setMode(tempMode), this)
+      .andThen(() -> setMode(defaultMode), this);
+  }
 
   public SysIdRoutine getSysIdRoutine() {
     return new SysIdRoutine(
