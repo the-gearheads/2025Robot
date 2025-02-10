@@ -1,6 +1,6 @@
 import math
 
-N_samples_default = 400
+N_samples_default = 500
 T_max = 10 # seconds
 dt_initial_guess = 0.05 # 50ms. bit big but works
 IN_TO_M = 0.0254
@@ -20,7 +20,7 @@ pivot_max_accel = 5 # rad/s^2
 def pivot_accel_scaling(elevator_length):
   from jormungandr.autodiff import pow
   if type(elevator_length) == float:
-    return pivot_max_accel * math.pow(elevator_min_len / elevator_length, 2)
-  return pivot_max_accel * pow(elevator_min_len / elevator_length, 2) # honestly no idea if this is correct but deepseek suggested it? really just a heuristic so it doesnt matter much until we do real testing
+    return pivot_max_accel * math.pow(elevator_min_len / elevator_length, 4)
+  return pivot_max_accel * pow(elevator_min_len / elevator_length, 4) # honestly no idea if this is correct but deepseek suggested it? really just a heuristic so it doesnt matter much until we do real testing
 
   
