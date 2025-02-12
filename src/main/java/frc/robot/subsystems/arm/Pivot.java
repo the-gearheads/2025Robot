@@ -39,9 +39,10 @@ public class Pivot extends SubsystemBase {
   ProfiledPIDController pid = new ProfiledPIDController(PIVOT_PID[0], PIVOT_PID[1], PIVOT_PID[2], PIVOT_CONSTRAINTS,
       0.02);
 
-  double ff;
-  double output;
-  double manualVoltage;
+  private Double accelSetpoint;
+  private double ff;
+  private double output;
+  private Double manualVoltage;
 
   public Pivot() {
     configure();
@@ -57,9 +58,9 @@ public class Pivot extends SubsystemBase {
     // https://gist.github.com/person4268/46710dca9a128a0eb5fbd93029627a6b
     if (Math.abs(
         Units.radiansToDegrees(getAngle().getRadians() - pid.getSetpoint().position)) > PIVOT_ANGLE_LIVE_FF_THRESHOLD) {
-      ff = PIVOT_FEEDFORWARD.calculate(getAngle().getRadians(), pid.getSetpoint().velocity);
+      ff = PIVOT_FEEDFORWARD.calculate(getAngle().getRadians(), pid.getSetpoint().velocity, accelSetpoint);
     } else {
-      ff = PIVOT_FEEDFORWARD.calculate(pid.getSetpoint().position, pid.getSetpoint().velocity);
+      ff = PIVOT_FEEDFORWARD.calculate(pid.getSetpoint().position, pid.getSetpoint().velocity, accelSetpoint);
     }
 
     output = pid.calculate(getAngle().getRadians()) + ff;
@@ -84,12 +85,13 @@ public class Pivot extends SubsystemBase {
     }
     
     Logger.recordOutput("Pivot/manualVoltage", manualVoltage);
-    if (manualVoltage != 0) {
-      output = manualVoltage;
-      manualVoltage = 0;
+    if (manualVoltage != null) {
+      output = manualVoltage.doubleValue();
+      manualVoltage = null;
     }
     Logger.recordOutput("Telescope/output", output);
     pivot.setVoltage(output);
+    accelSetpoint = null; // feels wrong/dangerous for it to not be unset, so it must be updated every periodic.
   }
 
   public void configure() {
@@ -132,7 +134,12 @@ public class Pivot extends SubsystemBase {
     pid.setGoal(angleRad);
   }
 
-  public void setManualVoltage(double volts) {
+  public void setGoal(double angleRad, double vel, double accel) {
+    accelSetpoint = accel;
+    pid.setGoal(angleRad);
+  }
+
+  public void setVoltage(double volts) {
     manualVoltage = volts;
   }
 
