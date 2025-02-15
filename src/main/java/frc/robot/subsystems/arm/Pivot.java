@@ -70,6 +70,7 @@ public class Pivot extends SubsystemBase {
     profiliedPid.setGoal(getAngle().getRadians());
   }
 
+  @Override
   public void periodic() {
     if (DriverStation.isDisabled())
       pivotEncoder.setPosition(pivotAbsEnc.get());
@@ -121,7 +122,7 @@ public class Pivot extends SubsystemBase {
     }
 
     Logger.recordOutput("Pivot/output", output);
-    pivot.setVoltage(output);
+    setMotorVoltage(output);
   }
 
   public void configure() {
@@ -181,6 +182,9 @@ public class Pivot extends SubsystemBase {
     manualVoltage = volts;
   }
 
+  protected void setMotorVoltage(double volts) {
+    pivot.setVoltage(output);
+  }
   public void setVoltage(Voltage volts) {
     manualVoltage = volts.magnitude();
   }

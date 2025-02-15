@@ -21,7 +21,6 @@ public class TelescopeSim extends Telescope {
 
   @Override
   public void simulationPeriodic() {
-    // teleSim.setInputVoltage(out * RoboRioSim.getVInVoltage());
     teleSim.update(0.02);
   }
 
