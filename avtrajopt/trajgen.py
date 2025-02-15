@@ -122,9 +122,9 @@ def main(input_file, output_dir):
   p.subject_to(total_time <= constants.T_max)
   J = total_time**2
   # # wrong for multiwaypoint
-  end_wp = waypoints[len(waypoints) - 1]
-  end_state = get_elevator_len_arm_angle(end_wp["pose"][0], end_wp["pose"][1])
-  displacement_pivot_elevator = p.decision_variable(2)
+  # end_wp = waypoints[len(waypoints) - 1]
+  # end_state = get_elevator_len_arm_angle(end_wp["pose"][0], end_wp["pose"][1])
+  # displacement_pivot_elevator = p.decision_variable(2)
   for k in range(1, N + 1):
     J += (pivot[0, k] - pivot[0, k-1])**2
     J += (elevator[0, k] - elevator[0, k-1])**2
