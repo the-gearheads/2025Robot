@@ -5,7 +5,6 @@ import static frc.robot.constants.ArmConstants.ELEVATOR_MASS;
 import static frc.robot.constants.ArmConstants.MAX_HEIGHT;
 import static frc.robot.constants.ArmConstants.MIN_HEIGHT;
 
-import org.littletonrobotics.junction.AutoLogOutput;
 
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
@@ -42,8 +41,4 @@ public class TelescopeSim extends Telescope {
     return teleSim.getVelocityMetersPerSecond();
   }
 
-  @AutoLogOutput(key="")
-  public double getOutput() {
-    return output;
-  }
 }
