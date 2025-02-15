@@ -33,7 +33,7 @@ def generate_ungenerated_traj_file(start: str, end: str):
   start_state = get_elevator_len_arm_angle(start_json["pose"][0], start_json["pose"][1])
   end_state = get_elevator_len_arm_angle(end_json["pose"][0], end_json["pose"][1])
   traj_json = {
-    "name": f"{start}>>{end}",
+    "name": f"{start},{end}",
     "waypoints": [start_json, end_json],
     # "N": int(math.sqrt((start_json["pose"][0] -j end_json["pose"][0])**2 + (start_json["pose"][1] - end_json["pose"][1])**2) * samples_per_meter_travelled),
   }
@@ -41,7 +41,7 @@ def generate_ungenerated_traj_file(start: str, end: str):
   if abs(end_state[1] - start_state[1]) < math.radians(2): # it borks out sometimes if pivot doesnt change
     traj_json["use_pivot_accel_scaling"] = False
 
-  with open(f"{os.path.dirname(__file__)}/trajs/{start}>>{end}.atraj", "w") as f:
+  with open(f"{os.path.dirname(__file__)}/trajs/{start},{end}.atraj", "w") as f:
     f.write(json.dumps(traj_json, indent=2))
 
 for start, end in itertools.permutations(places.keys(), 2):
