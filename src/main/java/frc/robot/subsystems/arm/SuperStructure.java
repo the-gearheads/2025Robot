@@ -1,7 +1,5 @@
 package frc.robot.subsystems.arm;
 
-import static frc.robot.constants.ArmConstants.ELEVATOR_FEEDFORWARD;
-import static frc.robot.constants.ArmConstants.PIVOT_FEEDFORWARD;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Robot;
@@ -29,7 +27,7 @@ public class SuperStructure {
       telescope = new Telescope();
     } else {
       pivot = new PivotSim();
-      telescope = new telescopeSim();
+      telescope = new TelescopeSim();
     }
 
     pivot.setDefaultCommand(new ManualPivot(pivot));

@@ -33,10 +33,11 @@ public final class ArmConstants {
   public static final int ELEVATOR_MOTOR_ID = 11;
   public static final int ELEVATOR_MOTOR_FOLLOWER_ID = 12;
 
-  public static final double ELEVATOR_GEAR_RATIO = 5;
-  public static final double ELEVATOR_RATIO = 1; // ((pi * spool diameter) / gear ratio) * stage Count
-  public static final double ELEVATOR_POS_FACTOR = 1;
-  public static final double ELEVATOR_VEL_FACTOR = 1;
+  public static final double ELEVATOR_GEAR_RATIO = 12;
+  public static final double ELEVATOR_DRUM_DIAMETER = 0.98 * 0.0254;
+  public static final double ELEVATOR_RATIO = (2 * Math.PI * ELEVATOR_DRUM_DIAMETER) / ELEVATOR_GEAR_RATIO;
+  public static final double ELEVATOR_POS_FACTOR = ELEVATOR_RATIO;
+  public static final double ELEVATOR_VEL_FACTOR = ELEVATOR_RATIO / 60.0;
 
   public static final double ELEVATOR_MASS = 13.6078; // mass of elevator carriage (kg)
   public static final double ELEVATOR_RADIUS = 1; // radius of elevator driving drum

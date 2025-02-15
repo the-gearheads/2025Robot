@@ -87,25 +87,27 @@ public class Telescope extends SubsystemBase {
     Logger.recordOutput("Telescope/sample", sample);
 
     // stops robot from runnign into itself
-    if (output > 0 && getPosition() > MAX_HEIGHT) {
-      output = 0;
+    // if (output > 0 && getPosition() > MAX_HEIGHT) {
+    //   output = 0;
+    // }
+
+    // if (output < 0 && getPosition() < MIN_HEIGHT) {
+    //   output = 0;
+    // }
+
+    if (mode == RunMode.PID) {
+      if (profiliedPid.getSetpoint().position < MIN_HEIGHT || profiliedPid.getSetpoint().position > MAX_HEIGHT) {
+        output = 0;
+        // Might as well just get as close as we can
+        if (profiliedPid.getGoal().position < MIN_HEIGHT || profiliedPid.getGoal().position > MAX_HEIGHT) {
+          profiliedPid.setGoal(MathUtil.clamp(profiliedPid.getGoal().position, MIN_HEIGHT, MAX_HEIGHT));
+        }
+      }
     }
 
-    if (output < 0 && getPosition() < MIN_HEIGHT) {
-      output = 0;
-    }
-
-    if (profiliedPid.getSetpoint().position < MIN_HEIGHT || profiliedPid.getSetpoint().position > MAX_HEIGHT) {
-      output = 0;
-    }
-
-    // Might as well just get as close as we can
-    if (profiliedPid.getGoal().position < MIN_HEIGHT || profiliedPid.getGoal().position > MAX_HEIGHT) {
-      profiliedPid.setGoal(MathUtil.clamp(profiliedPid.getGoal().position, MIN_HEIGHT, MAX_HEIGHT));
-    }
 
     Logger.recordOutput("Telescope/output", output);
-    elevator.setVoltage(output);
+    setMotorVoltage(output);
   }
 
   @AutoLogOutput
@@ -125,6 +127,7 @@ public class Telescope extends SubsystemBase {
     this.mode = mode;
   }
   
+  @AutoLogOutput
   public RunMode getMode() {
     return mode;
   }
@@ -137,6 +140,10 @@ public class Telescope extends SubsystemBase {
   @AutoLogOutput
   public double getVelocity() {
     return elevatorEncoder.getVelocity();
+  }
+
+  protected void setMotorVoltage(double voltage) {
+    elevator.setVoltage(output);
   }
 
   public void setVoltage(double volts) {

@@ -34,7 +34,6 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.subsystems.arm.SuperStructure.RunMode;
@@ -62,7 +61,7 @@ public class Pivot extends SubsystemBase {
   private ArmvatorSample sample;
   private double ff;
   private double output;
-  private Double manualVoltage;
+  private Double manualVoltage = 0.0;
 
   public Pivot() {
     configure();
@@ -110,13 +109,15 @@ public class Pivot extends SubsystemBase {
       output = 0;
     }
 
-    if (profiliedPid.getSetpoint().position < MIN_ANGLE || profiliedPid.getSetpoint().position > MAX_ANGLE) {
-      output = 0;
-    }
+    if (mode == RunMode.PID) {
+      if (profiliedPid.getSetpoint().position < MIN_ANGLE || profiliedPid.getSetpoint().position > MAX_ANGLE) {
+        output = 0;
+      }
 
-    // Might as well just get as close as we can
-    if (profiliedPid.getGoal().position < MIN_ANGLE || profiliedPid.getGoal().position > MAX_ANGLE) {
-      profiliedPid.setGoal(MathUtil.clamp(profiliedPid.getGoal().position, MIN_ANGLE, MAX_ANGLE));
+      // Might as well just get as close as we can
+      if (profiliedPid.getGoal().position < MIN_ANGLE || profiliedPid.getGoal().position > MAX_ANGLE) {
+        profiliedPid.setGoal(MathUtil.clamp(profiliedPid.getGoal().position, MIN_ANGLE, MAX_ANGLE));
+      }
     }
 
     Logger.recordOutput("Pivot/output", output);
@@ -171,6 +172,7 @@ public class Pivot extends SubsystemBase {
     this.mode = mode;
   }
   
+  @AutoLogOutput
   public RunMode getMode() {
     return mode;
   }

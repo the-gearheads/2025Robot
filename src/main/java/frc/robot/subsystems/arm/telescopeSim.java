@@ -5,28 +5,45 @@ import static frc.robot.constants.ArmConstants.ELEVATOR_MASS;
 import static frc.robot.constants.ArmConstants.MAX_HEIGHT;
 import static frc.robot.constants.ArmConstants.MIN_HEIGHT;
 
-import com.revrobotics.sim.SparkFlexSim;
+import org.littletonrobotics.junction.AutoLogOutput;
 
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj.simulation.ElevatorSim;
-import edu.wpi.first.wpilibj.simulation.RoboRioSim;
 
-public class telescopeSim extends Telescope {
+public class TelescopeSim extends Telescope {
   DCMotor elevatorMotor = DCMotor.getNeoVortex(2);
   ElevatorSim teleSim = new ElevatorSim(LinearSystemId.createElevatorSystem(elevatorMotor, ELEVATOR_MASS, 0.15, ELEVATOR_GEAR_RATIO), elevatorMotor, MIN_HEIGHT, MAX_HEIGHT, true, MIN_HEIGHT);
-  SparkFlexSim elevatorFlexSim = new SparkFlexSim(elevator, elevatorMotor);
+  double output = 0;
 
-  public telescopeSim() {
+  public TelescopeSim() {
     super();
   }
 
   @Override
   public void simulationPeriodic() {
-    var out = elevatorFlexSim.getAppliedOutput();
-    out = 1;
-    teleSim.setInputVoltage(out * RoboRioSim.getVInVoltage());
+    // teleSim.setInputVoltage(out * RoboRioSim.getVInVoltage());
     teleSim.update(0.02);
-    elevatorFlexSim.iterate(teleSim.getVelocityMetersPerSecond(), RoboRioSim.getVInVoltage(), 0.02); // might not work theres a separate iterate for abs encoder that might need to be called????
+  }
+
+  @Override
+  public double getPosition() {
+    return teleSim.getPositionMeters();
+  }
+
+  @Override
+  protected void setMotorVoltage(double volts) {
+    teleSim.setInputVoltage(volts);
+    output = volts;
+  }
+
+  @Override
+  public double getVelocity() {
+    return teleSim.getVelocityMetersPerSecond();
+  }
+
+  @AutoLogOutput(key="")
+  public double getOutput() {
+    return output;
   }
 }
