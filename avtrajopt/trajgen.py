@@ -1,8 +1,8 @@
 import argparse
 import math
 import os
-from jormungandr.optimization import OptimizationProblem
-from jormungandr.autodiff import sin, cos
+from jormungandr.optimization import OptimizationProblem, SolverExitCondition
+from jormungandr.autodiff import sin, cos, abs
 import json
 import constants
 
@@ -13,6 +13,9 @@ def get_end_eff_pos(ext_len, theta):
 
 def get_elevator_len_arm_angle(x, y):
   return math.sqrt(x ** 2 + y ** 2), math.atan2(y, x)
+
+def lerp(a, b, t):
+  return a + (b - a) * t
 
 def main(input_file, output_dir):
   with open(input_file, 'r') as f:
@@ -55,14 +58,25 @@ def main(input_file, output_dir):
       raise ValueError(f"Pivot angle is too large to reach {waypoint} ({pose_pivot_elevator[1]} > {constants.pivot_max})")
     p.subject_to(pivot[0, int(sample)] == pose_pivot_elevator[1])
     p.subject_to(elevator[0, int(sample)] == pose_pivot_elevator[0])
+    # populate an initial position guess from the last waypoint to this one
+    if i > 0:
+      start_sample = int(waypoints[i - 1]["at_sample"] * N)
+      this_sample = int(sample)
+      start_elev_arm_angle = (waypoints[i - 1]["pose"][0], waypoints[i - 1]["pose"][1])
+      this_elev_arm_angle = pose_pivot_elevator
+      for k in range(start_sample + 1, this_sample):
+        t = (k - start_sample) / (this_sample - start_sample)
+        pivot[0, k].set_value(lerp(start_elev_arm_angle[1], this_elev_arm_angle[1], t))
+        elevator[0, k].set_value(lerp(start_elev_arm_angle[0], this_elev_arm_angle[0], t))
     if vels is not None:
       p.subject_to(pivot[1, int(sample)] == vels[0])
       p.subject_to(elevator[1, int(sample)] == vels[1])
 
 
   for k in range(N + 1):
-    p.subject_to(pivot[0, k] >= constants.pivot_min)
-    p.subject_to(pivot[0, k] <= constants.pivot_max)
+    if True:
+      p.subject_to(pivot[0, k] > constants.pivot_min)
+      p.subject_to(pivot[0, k] < constants.pivot_max)
     p.subject_to(elevator[0, k] >= constants.elevator_min_len)
     p.subject_to(elevator[0, k] <= constants.elevator_max_len)
 
@@ -94,7 +108,10 @@ def main(input_file, output_dir):
 
     # Acceleration limits
     elevator_k[0].set_value(constants.elevator_min_len) # avoid singularities at the initial 0 length state
-    pivot_accel_k = constants.pivot_accel_scaling(elevator_k[0])
+    if data.get("use_pivot_accel_scaling", True):
+      pivot_accel_k = constants.pivot_accel_scaling(elevator_k[0])
+    else:
+      pivot_accel_k = constants.pivot_max_accel
     p.subject_to(accel_k[0] >= -pivot_accel_k)
     p.subject_to(accel_k[0] <= pivot_accel_k)
     p.subject_to(accel_k[1] >= -constants.elevator_max_accel)
@@ -103,10 +120,25 @@ def main(input_file, output_dir):
   # Now we gotta minimize time
   total_time = sum(dt[0, k] for k in range(N + 1))
   p.subject_to(total_time <= constants.T_max)
-  p.minimize(total_time)
-  
+  J = total_time**2
+  # # wrong for multiwaypoint
+  end_wp = waypoints[len(waypoints) - 1]
+  end_state = get_elevator_len_arm_angle(end_wp["pose"][0], end_wp["pose"][1])
+  displacement_pivot_elevator = p.decision_variable(2)
+  for k in range(1, N + 1):
+    J += (pivot[0, k] - pivot[0, k-1])**2
+    J += (elevator[0, k] - elevator[0, k-1])**2
+    # J += (accel[0, k] - accel[0, k-1])**2 + (accel[1, k] - accel[1, k-1])**2
+    # J += (end_state[0] - elevator[0, k]) ** 2
+    # J += (end_state[1] - pivot[0, k]) ** 2
+    # displacement_pivot_elevator[0] += abs(elevator[0, k-1] - elevator[0, k])
+    # displacement_pivot_elevator[1] += abs(pivot[0, k-1] - pivot[0, k])
+  p.minimize(J)
   print(f"Solving trajectory {data["name"]}")
-  p.solve(diagnostics = True)
+  out = p.solve(diagnostics = True)
+  if out.exit_condition != SolverExitCondition.SUCCESS:
+    print(f"Failed to solve trajectory {data["name"]}")
+    return -1
   # yay
   # now we gotta save it
   trajectory_data = {
@@ -134,11 +166,12 @@ def main(input_file, output_dir):
     time += dt[0, k].value()
   with open(f"{output_dir}/{os.path.splitext(os.path.basename(input_file))[0]}.agentraj", "w") as f:
     json.dump(trajectory_data, f, indent = 2)
+  return 0
 
 
 
 if __name__ == "__main__":
-  parser = argparse.ArgumentParser(description="Generate a trajectory for the elevator")
+  parser = argparse.ArgumentParser(description="Generate a trajectory for the armvator")
   parser.add_argument("input_file", type=str, help="The input file containing the waypoints")
   parser.add_argument("output_dir", type=str, help="The output directory to save the trajectory")
   args = parser.parse_args()
