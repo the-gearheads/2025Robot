@@ -2,7 +2,18 @@ package frc.robot.subsystems.arm;
 
 import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
-import static frc.robot.constants.ArmConstants.*;
+import static frc.robot.constants.ArmConstants.MAX_ANGLE;
+import static frc.robot.constants.ArmConstants.MIN_ANGLE;
+import static frc.robot.constants.ArmConstants.PIVOT_ANGLE_LIVE_FF_THRESHOLD;
+import static frc.robot.constants.ArmConstants.PIVOT_ANGLE_TOLERANCE;
+import static frc.robot.constants.ArmConstants.PIVOT_CONSTRAINTS;
+import static frc.robot.constants.ArmConstants.PIVOT_CURRENT_LIMIT;
+import static frc.robot.constants.ArmConstants.PIVOT_FEEDFORWARD;
+import static frc.robot.constants.ArmConstants.PIVOT_MOTOR_FOLLOWER_ID;
+import static frc.robot.constants.ArmConstants.PIVOT_MOTOR_ID;
+import static frc.robot.constants.ArmConstants.PIVOT_PID;
+import static frc.robot.constants.ArmConstants.PIVOT_POS_FACTOR;
+import static frc.robot.constants.ArmConstants.PIVOT_VEL_FACTOR;
 
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
@@ -16,14 +27,18 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.subsystems.arm.SuperStructure.RunMode;
+import frc.robot.util.ArmvatorSample;
 
 public class Pivot extends SubsystemBase {
   /*
@@ -36,10 +51,15 @@ public class Pivot extends SubsystemBase {
 
   RelativeEncoder pivotEncoder = pivot.getEncoder();
   DutyCycleEncoder pivotAbsEnc = new DutyCycleEncoder(0);
-  ProfiledPIDController pid = new ProfiledPIDController(PIVOT_PID[0], PIVOT_PID[1], PIVOT_PID[2], PIVOT_CONSTRAINTS,
+  ProfiledPIDController profiliedPid = new ProfiledPIDController(PIVOT_PID[0], PIVOT_PID[1], PIVOT_PID[2],
+      PIVOT_CONSTRAINTS,
       0.02);
+  PIDController pid = new PIDController(PIVOT_PID[0], PIVOT_PID[1], PIVOT_PID[2]);
 
-  private Double accelSetpoint;
+  RunMode defaultMode = RunMode.VOLTAGE;
+  RunMode mode = defaultMode;
+
+  private ArmvatorSample sample;
   private double ff;
   private double output;
   private Double manualVoltage;
@@ -47,25 +67,40 @@ public class Pivot extends SubsystemBase {
   public Pivot() {
     configure();
     pivotEncoder.setPosition(pivotAbsEnc.get());
-    pid.reset(getAngle().getRadians());
-    pid.setGoal(getAngle().getRadians());
+    profiliedPid.reset(getAngle().getRadians());
+    profiliedPid.setGoal(getAngle().getRadians());
   }
 
   public void periodic() {
     if (DriverStation.isDisabled())
       pivotEncoder.setPosition(pivotAbsEnc.get());
 
-    // https://gist.github.com/person4268/46710dca9a128a0eb5fbd93029627a6b
-    if (Math.abs(
-        Units.radiansToDegrees(getAngle().getRadians() - pid.getSetpoint().position)) > PIVOT_ANGLE_LIVE_FF_THRESHOLD) {
-      ff = PIVOT_FEEDFORWARD.calculate(getAngle().getRadians(), pid.getSetpoint().velocity, accelSetpoint);
-    } else {
-      ff = PIVOT_FEEDFORWARD.calculate(pid.getSetpoint().position, pid.getSetpoint().velocity, accelSetpoint);
+    switch (mode) {
+      case PID:
+        output = profiliedPid.calculate(getAngle().getRadians()) + ff;
+
+        // https://gist.github.com/person4268/46710dca9a128a0eb5fbd93029627a6b
+        if (Math.abs(Units.radiansToDegrees(
+            getAngle().getRadians() - profiliedPid.getSetpoint().position)) > PIVOT_ANGLE_LIVE_FF_THRESHOLD) {
+          ff = PIVOT_FEEDFORWARD.calculate(getAngle().getRadians(), profiliedPid.getSetpoint().velocity);
+        } else {
+          ff = PIVOT_FEEDFORWARD.calculate(profiliedPid.getSetpoint().position, profiliedPid.getSetpoint().velocity);
+        }
+
+        output = profiliedPid.calculate(getAngle().getRadians()) + ff;
+        break;
+      case VOLTAGE:
+        output = manualVoltage;
+        break;
+      case TRAJECTORY:
+        ff = PIVOT_FEEDFORWARD.calculate(sample.armPos(), sample.armVel(), sample.armAccel());
+        output = pid.calculate(getAngle().getRadians(), sample.armPos()) + ff;
+        break;
     }
 
-    output = pid.calculate(getAngle().getRadians()) + ff;
+    Logger.recordOutput("Pivot/manualVoltage", manualVoltage);
+    Logger.recordOutput("Pivot/Sample", sample);
     Logger.recordOutput("Pivot/attemptedOutput", output);
-
     // stops robot from runnign into itself
     if (output > 0 && getAngle().getRadians() > MAX_ANGLE) {
       output = 0;
@@ -75,23 +110,17 @@ public class Pivot extends SubsystemBase {
       output = 0;
     }
 
-    if (pid.getSetpoint().position < MIN_ANGLE || pid.getSetpoint().position > MAX_ANGLE) {
+    if (profiliedPid.getSetpoint().position < MIN_ANGLE || profiliedPid.getSetpoint().position > MAX_ANGLE) {
       output = 0;
     }
 
     // Might as well just get as close as we can
-    if (pid.getGoal().position < MIN_ANGLE || pid.getGoal().position > MAX_ANGLE) {
-      pid.setGoal(MathUtil.clamp(pid.getGoal().position, MIN_ANGLE, MAX_ANGLE));
+    if (profiliedPid.getGoal().position < MIN_ANGLE || profiliedPid.getGoal().position > MAX_ANGLE) {
+      profiliedPid.setGoal(MathUtil.clamp(profiliedPid.getGoal().position, MIN_ANGLE, MAX_ANGLE));
     }
-    
-    Logger.recordOutput("Pivot/manualVoltage", manualVoltage);
-    if (manualVoltage != null) {
-      output = manualVoltage.doubleValue();
-      manualVoltage = null;
-    }
-    Logger.recordOutput("Telescope/output", output);
+
+    Logger.recordOutput("Pivot/output", output);
     pivot.setVoltage(output);
-    accelSetpoint = null; // feels wrong/dangerous for it to not be unset, so it must be updated every periodic.
   }
 
   public void configure() {
@@ -131,12 +160,19 @@ public class Pivot extends SubsystemBase {
 
   public void setAngle(double angleRad) {
     angleRad = MathUtil.clamp(angleRad, MIN_ANGLE, MAX_ANGLE);
-    pid.setGoal(angleRad);
+    profiliedPid.setGoal(angleRad);
   }
 
-  public void setGoal(double angleRad, double vel, double accel) {
-    accelSetpoint = accel;
-    pid.setGoal(angleRad);
+  public void setSample(ArmvatorSample sample) {
+    this.sample = sample;
+  }
+
+  public void setMode(RunMode mode) {
+    this.mode = mode;
+  }
+  
+  public RunMode getMode() {
+    return mode;
   }
 
   public void setVoltage(double volts) {
@@ -153,17 +189,15 @@ public class Pivot extends SubsystemBase {
 
   public boolean atPoint(double angle, double tolerance) {
     return MathUtil.isNear(getAngle().getRadians(), angle, tolerance);
-  } 
+  }
 
   public SysIdRoutine getSysIdRoutine() {
     return new SysIdRoutine(
-      new SysIdRoutine.Config(Volts.of(0.8).per(Seconds), Volts.of(6), null, 
-          (state) -> Logger.recordOutput("SysIdTestState", state.toString())),
-      new SysIdRoutine.Mechanism(
-        this::setVoltage,
-        null,
-        this
-      )
-    );
+        new SysIdRoutine.Config(Volts.of(0.8).per(Seconds), Volts.of(6), null,
+            (state) -> Logger.recordOutput("SysIdTestState", state.toString())),
+        new SysIdRoutine.Mechanism(
+            this::setVoltage,
+            null,
+            this));
   }
 }

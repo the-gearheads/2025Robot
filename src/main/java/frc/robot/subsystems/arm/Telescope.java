@@ -14,10 +14,13 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.subsystems.arm.SuperStructure.RunMode;
+import frc.robot.util.ArmvatorSample;
 
 public class Telescope extends SubsystemBase {
   SparkFlex elevator = new SparkFlex(ELEVATOR_MOTOR_ID, MotorType.kBrushless);
@@ -25,9 +28,13 @@ public class Telescope extends SubsystemBase {
   SparkFlexConfig elevatorConfig = new SparkFlexConfig();
   SparkFlexConfig elevatorFollowerConfig = new SparkFlexConfig();
   RelativeEncoder elevatorEncoder = elevator.getEncoder();
-  ProfiledPIDController elevatorPid = new ProfiledPIDController(ELEVATOR_PID[0], ELEVATOR_PID[1], ELEVATOR_PID[2],
+  ProfiledPIDController profiliedPid = new ProfiledPIDController(ELEVATOR_PID[0], ELEVATOR_PID[1], ELEVATOR_PID[2],
       ELEVATOR_CONSTRAINTS);
-    
+  PIDController pid = new PIDController(ELEVATOR_PID[0], ELEVATOR_PID[1], ELEVATOR_PID[2]);
+
+  RunMode defaultMode = RunMode.VOLTAGE;
+  RunMode mode = defaultMode;
+  ArmvatorSample sample;
   double ff;
   double output;
   double manualVoltage;
@@ -64,10 +71,20 @@ public class Telescope extends SubsystemBase {
 
   @Override
   public void periodic() {
-    ff = ELEVATOR_FEEDFORWARD.calculate(elevatorPid.getSetpoint().velocity);
+    switch (mode) {
+      case PID:
+        ff = ELEVATOR_FEEDFORWARD.calculate(profiliedPid.getSetpoint().velocity);
+        output = profiliedPid.calculate(getPosition()) + ff;
+      case TRAJECTORY:
+        ff = ELEVATOR_FEEDFORWARD.calculate(sample.elevatorVel(), sample.elevatorAccel());
+        output = profiliedPid.calculate(getPosition(), sample.elevatorLen());
+      case VOLTAGE:
+        output = manualVoltage;
+    }
 
-    output = elevatorPid.calculate(getPosition()) + ff;
     Logger.recordOutput("Telescope/attemptedOutput", output);
+    Logger.recordOutput("Telescope/manualVoltage", manualVoltage);
+    Logger.recordOutput("Telescope/sample", sample);
 
     // stops robot from runnign into itself
     if (output > 0 && getPosition() > MAX_HEIGHT) {
@@ -78,20 +95,15 @@ public class Telescope extends SubsystemBase {
       output = 0;
     }
 
-    if (elevatorPid.getSetpoint().position < MIN_HEIGHT || elevatorPid.getSetpoint().position > MAX_HEIGHT) {
+    if (profiliedPid.getSetpoint().position < MIN_HEIGHT || profiliedPid.getSetpoint().position > MAX_HEIGHT) {
       output = 0;
     }
 
     // Might as well just get as close as we can
-    if (elevatorPid.getGoal().position < MIN_HEIGHT || elevatorPid.getGoal().position > MAX_HEIGHT) {
-      elevatorPid.setGoal(MathUtil.clamp(elevatorPid.getGoal().position, MIN_HEIGHT, MAX_HEIGHT));
+    if (profiliedPid.getGoal().position < MIN_HEIGHT || profiliedPid.getGoal().position > MAX_HEIGHT) {
+      profiliedPid.setGoal(MathUtil.clamp(profiliedPid.getGoal().position, MIN_HEIGHT, MAX_HEIGHT));
     }
-    
-    Logger.recordOutput("Pivot/manualVoltage", manualVoltage);
-    if (manualVoltage != 0) {
-      output = manualVoltage;
-      manualVoltage = 0;
-    }
+
     Logger.recordOutput("Telescope/output", output);
     elevator.setVoltage(output);
   }
@@ -102,7 +114,19 @@ public class Telescope extends SubsystemBase {
   }
 
   public void setPosition(double setpointLength) {
-    elevatorPid.setGoal(setpointLength);
+    profiliedPid.setGoal(setpointLength);
+  }
+
+  public void setSample(ArmvatorSample sample) {
+    this.sample = sample;
+  }
+
+  public void setMode(RunMode mode) {
+    this.mode = mode;
+  }
+  
+  public RunMode getMode() {
+    return mode;
   }
 
   @AutoLogOutput
