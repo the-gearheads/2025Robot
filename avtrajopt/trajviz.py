@@ -4,9 +4,8 @@ import math
 import constants
 import json
 
-# note: we can't assume constant dt as future iterations will change that to allow for proper impl of >2 waypoints
-def plot_traj(traj):
-  with open(traj, 'r') as f:
+def plot_traj(traj_path):
+  with open(traj_path, 'r') as f:
     data = json.load(f)
   
   samples = data["samples"]
@@ -25,8 +24,10 @@ def plot_traj(traj):
   max_pivot_accel = [constants.pivot_accel_scaling(elevator_lengths[k]) for k in range(len(samples))]
   min_pivot_accel = [-x for x in max_pivot_accel]
 
-  # Pivot state
   plt.figure(figsize=(16, 12))
+  plt.suptitle(f"{traj_path}", fontsize=14)
+
+  # Pivot state
   plt.subplot(3, 2, 1)
   plt.plot(time, [math.degrees(angle) for angle in pivot_angles], label="Pivot Angle (deg)")
   plt.xlabel("Time (s)")
@@ -62,15 +63,8 @@ def plot_traj(traj):
   for i in range(len(endeff_x) - 1):
     plt.plot(endeff_x[i:i+2], endeff_y[i:i+2], color=cmap(i/len(endeff_x)), lw=2)
   plt.scatter(0, 0, color="black", label="Origin", zorder=5)
-  # plt.scatter(endeff_x[0], endeff_y[0], color="blue", label="Start Point", zorder=5)
-  # plt.scatter(endeff_x[-1], endeff_y[-1], color="red", label="End Point", zorder=5)
   for i, waypoint in enumerate(waypoint_poses):
-    if i == 0:
-      name = "Start"
-    elif i == len(waypoint_poses) - 1:
-      name = "End"
-    else:
-      name = f"Mid-waypoint #{i}"
+    name = "Start" if i == 0 else "End" if i == len(waypoint_poses) - 1 else f"Mid-waypoint #{i}"
     plt.scatter(waypoint[0], waypoint[1], label=name, zorder=5)
   plt.xlabel("X Position (m)")
   plt.ylabel("Y Position (m)")
@@ -90,12 +84,13 @@ def plot_traj(traj):
   plt.legend(loc='upper right', bbox_to_anchor=(-0.05, 1))
   plt.grid()
 
-  plt.tight_layout()
+  plt.tight_layout(rect=[0, 0, 1, 0.96])
   plt.show()
 
 if __name__ == "__main__":
-  parser = argparse.ArgumentParser(description="Visualize trajectory")
-  parser.add_argument("traj", type=str, help="Path to trajectory file")
+  parser = argparse.ArgumentParser(description="Visualize multiple trajectories")
+  parser.add_argument("traj", type=str, nargs='+', help="Paths to trajectory files")
   args = parser.parse_args()
-  plot_traj(args.traj)
-
+  
+  for traj in args.traj:
+    plot_traj(traj)
