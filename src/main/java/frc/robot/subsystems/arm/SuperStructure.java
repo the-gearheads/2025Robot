@@ -9,8 +9,8 @@ import frc.robot.util.ArmvatorSample;
 import frc.robot.util.ArmvatorTrajectory;
 
 public class SuperStructure {
-  public final Pivot pivot;
-  public final Telescope telescope;
+  private final Pivot pivot;
+  private final Telescope telescope;
 
   private double ffPivot;
   private double outputPivot;
@@ -40,5 +40,13 @@ public class SuperStructure {
 
   public Command followTrajectory(ArmvatorTrajectory traj) {
     return traj.follow(this::followSample, pivot, telescope);
+  }
+
+  public Pivot getPivot() {
+    return pivot;
+  }
+
+  public Telescope getTelescope() {
+    return telescope;
   }
 }

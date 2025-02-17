@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.Teleop;
 import frc.robot.controllers.Controllers;
+import frc.robot.subsystems.MechanismViz;
 import frc.robot.subsystems.arm.SuperStructure;
 import frc.robot.subsystems.swerve.Swerve;
 
@@ -19,6 +20,9 @@ public class RobotContainer {
   private final SuperStructure superStructure = new SuperStructure();
   private final Autos autos = new Autos(swerve);
   private final SysidAutoPicker sysidAuto = new SysidAutoPicker();
+
+  private final MechanismViz mechanismViz = new MechanismViz(swerve, superStructure.getPivot(), superStructure.getTelescope());
+
   public RobotContainer() {
     swerve.setDefaultCommand(new Teleop(swerve));
     sysidAuto.addSysidRoutine(swerve.sysIdForwardDynamic(Direction.kForward), "Swerve Dynamic ->");
