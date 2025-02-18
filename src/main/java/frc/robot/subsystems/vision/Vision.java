@@ -38,7 +38,7 @@ public class Vision extends SubsystemBase {
 
   
     for (int i = 0; i<CAMERA_NAMES.length; i++) {
-      cameras[i] = new Camera(field, CAMERA_NAMES[i], CAMERA_TRANSFORMS[i], CAMERA_INTRINSICS[i]);
+      cameras[i] = new Camera(field, new PhotonCamera(CAMERA_NAMES[i]), CAMERA_TRANSFORMS[i], CAMERA_INTRINSICS[i]);
       sim.addCamera(cameras[i]);
     }
 

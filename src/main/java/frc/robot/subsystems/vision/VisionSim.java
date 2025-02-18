@@ -31,9 +31,9 @@ public class VisionSim {
 
   public void addCamera(Camera cam) {
     if(Robot.isReal()) return;
-    var camera = new PhotonCameraSim(cam.camera, cam.getSimProperties());
+    var camera = new PhotonCameraSim(cam.getCamera(), cam.getSimProperties());
     cameras.add(camera);
-    sim.addCamera(camera, cam.transform);
+    sim.addCamera(camera, cam.getTransform());
   }
 
   public void periodic(Pose2d robotPose) {
