@@ -19,6 +19,9 @@ public class WristConstants {
 
   public static final double MIN_WRIST_ANGLE = Units.degreesToRadians(0);
   public static final double MAX_WRIST_ANGLE = Units.degreesToRadians(180);
+  public static final double MIN_SYSID_ANGLE = Units.degreesToRadians(2);
+  public static final double MAX_SYSID_ANGLE = Units.degreesToRadians(178);
+
 
   public static final double WRIST_ANGLE_TOLERANCE = Units.degreesToRadians(1);
 }

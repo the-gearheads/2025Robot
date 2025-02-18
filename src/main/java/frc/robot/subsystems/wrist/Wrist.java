@@ -1,6 +1,8 @@
 package frc.robot.subsystems.wrist;
 
 import static edu.wpi.first.units.Units.Rotation;
+import static edu.wpi.first.units.Units.Second;
+import static edu.wpi.first.units.Units.Volts;
 import static frc.robot.constants.WristConstants.*;
 
 import org.littletonrobotics.junction.AutoLogOutput;
@@ -22,7 +24,10 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.SuperStructure.RunMode;
 
 public class Wrist extends SubsystemBase {
@@ -34,6 +39,7 @@ public class Wrist extends SubsystemBase {
 
   private ProfiledPIDController pid = new ProfiledPIDController(WRIST_PID[0], WRIST_PID[1], WRIST_PID[2],
       WRIST_CONSTRAINTS);
+  private SysIdRoutine sysIdRoutine;
 
   double output;
   double ff;
@@ -42,6 +48,11 @@ public class Wrist extends SubsystemBase {
   public Wrist() {
     configure();
     wristEncoder.setPosition(wristAbsEncoder.getPosition());
+    sysIdRoutine = new SysIdRoutine(
+        new SysIdRoutine.Config(Volts.of(5).per(Second), Volts.of(1), null,
+            (state) -> Logger.recordOutput("Pivot/SysIdTestState", state.toString())),
+        new SysIdRoutine.Mechanism(this::setVoltage, null, this)
+    );
   }
 
   @Override
@@ -50,7 +61,6 @@ public class Wrist extends SubsystemBase {
       wristEncoder.setPosition(wristAbsEncoder.getPosition());
 
     ff = WRIST_FF.calculate(pid.getGoal().position, pid.getGoal().velocity);
-    
 
     output = pid.calculate(getAngle().getRadians()) + ff;
     if (manualVoltage != null) {
@@ -122,5 +132,17 @@ public class Wrist extends SubsystemBase {
 
   public boolean atPoint(double angle, double tolerance) {
     return MathUtil.isNear(getAngle().getRadians(), angle, tolerance);
+  }
+
+  public boolean withinSysidConstraints() {
+    return (getAngle().getRadians() > MIN_SYSID_ANGLE && getAngle().getRadians() < MAX_SYSID_ANGLE);
+  }
+
+  public Command sysIdQuasistatic(Direction direction) {
+    return sysIdRoutine.quasistatic(direction).until(() -> !withinSysidConstraints());
+  }
+
+  public Command sysIdDynamic(Direction direction) {
+    return sysIdRoutine.dynamic(direction).until(() -> !withinSysidConstraints());
   }
 }
