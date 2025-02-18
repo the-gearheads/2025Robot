@@ -35,8 +35,10 @@ import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.SuperStructure.RunMode;
 import frc.robot.util.ArmvatorSample;
 
@@ -44,20 +46,22 @@ public class Pivot extends SubsystemBase {
   /*
    * stand for parmensan arm
    */
-  SparkFlex pivot = new SparkFlex(PIVOT_MOTOR_ID, MotorType.kBrushless);
-  SparkFlex pivotFollower = new SparkFlex(PIVOT_MOTOR_FOLLOWER_ID, MotorType.kBrushless);
-  SparkFlexConfig pivotConfig = new SparkFlexConfig();
-  SparkFlexConfig pivotFollowerConfig = new SparkFlexConfig();
+  private SparkFlex pivot = new SparkFlex(PIVOT_MOTOR_ID, MotorType.kBrushless);
+  private SparkFlex pivotFollower = new SparkFlex(PIVOT_MOTOR_FOLLOWER_ID, MotorType.kBrushless);
+  private SparkFlexConfig pivotConfig = new SparkFlexConfig();
+  private SparkFlexConfig pivotFollowerConfig = new SparkFlexConfig();
 
-  RelativeEncoder pivotEncoder = pivot.getEncoder();
-  DutyCycleEncoder pivotAbsEnc = new DutyCycleEncoder(0);
-  ProfiledPIDController profiliedPid = new ProfiledPIDController(PIVOT_PID[0], PIVOT_PID[1], PIVOT_PID[2],
+  private RelativeEncoder pivotEncoder = pivot.getEncoder();
+  private DutyCycleEncoder pivotAbsEnc = new DutyCycleEncoder(0);
+  private ProfiledPIDController profiliedPid = new ProfiledPIDController(PIVOT_PID[0], PIVOT_PID[1], PIVOT_PID[2],
       PIVOT_CONSTRAINTS,
       0.02);
-  PIDController pid = new PIDController(PIVOT_PID[0], PIVOT_PID[1], PIVOT_PID[2]);
+  private PIDController pid = new PIDController(PIVOT_PID[0], PIVOT_PID[1], PIVOT_PID[2]);
 
-  RunMode defaultMode = RunMode.VOLTAGE;
-  RunMode mode = defaultMode;
+  private RunMode defaultMode = RunMode.VOLTAGE;
+  private RunMode mode = defaultMode;
+
+  private SysIdRoutine sysIdRoutine;
 
   private ArmvatorSample sample;
   private double ff;
@@ -69,6 +73,14 @@ public class Pivot extends SubsystemBase {
     pivotEncoder.setPosition(pivotAbsEnc.get());
     profiliedPid.reset(getAngle().getRadians());
     profiliedPid.setGoal(getAngle().getRadians());
+    sysIdRoutine = new SysIdRoutine(
+      new SysIdRoutine.Config(Volts.of(0.8).per(Seconds), Volts.of(5), null,
+          (state) -> Logger.recordOutput("Pivot/SysIdTestState", state.toString())),
+      new SysIdRoutine.Mechanism((Voltage v) -> {
+        setMode(RunMode.VOLTAGE);
+        setVoltage(v);
+      }, null, this)
+    );
   }
 
   @Override
@@ -201,13 +213,11 @@ public class Pivot extends SubsystemBase {
     return MathUtil.isNear(getAngle().getRadians(), angle, tolerance);
   }
 
-  public SysIdRoutine getSysIdRoutine() {
-    return new SysIdRoutine(
-        new SysIdRoutine.Config(Volts.of(0.8).per(Seconds), Volts.of(6), null,
-            (state) -> Logger.recordOutput("SysIdTestState", state.toString())),
-        new SysIdRoutine.Mechanism(
-            this::setVoltage,
-            null,
-            this));
+  public Command sysIdQuasistatic(Direction direction) {
+    return sysIdRoutine.quasistatic(direction);
+  }
+
+  public Command sysIdDynamic(Direction direction) {
+    return sysIdRoutine.dynamic(direction);
   }
 }

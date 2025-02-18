@@ -52,7 +52,10 @@ public class RobotContainer {
     sysidAuto.addSysidRoutine(swerve.sysIdAngularQuasistatic(Direction.kForward), "Swerve Angular Quasistatic ->");
     sysidAuto.addSysidRoutine(swerve.sysIdAngularDynamic(Direction.kReverse), "Swerve Angular Dynamic <-");
     sysidAuto.addSysidRoutine(swerve.sysIdAngularQuasistatic(Direction.kReverse), "Swerve Angular Quasistatic <-");
-
+    sysidAuto.addSysidRoutine(pivot.sysIdDynamic(Direction.kForward), "Pivot Dynamic ->");
+    sysidAuto.addSysidRoutine(pivot.sysIdQuasistatic(Direction.kForward), "Pivot Quasistatic ->");
+    sysidAuto.addSysidRoutine(pivot.sysIdDynamic(Direction.kReverse), "Pivot Dynamic <-");
+    sysidAuto.addSysidRoutine(pivot.sysIdQuasistatic(Direction.kReverse), "Pivot Quasistatic <-");
   }
 
   public void configureBindings() {
@@ -82,8 +85,8 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    return autos.getAutonomousRoutine();
-    // return sysidAuto.get();
+    // return autos.getAutonomousRoutine();
+    return sysidAuto.get();
   }
 
   public double getCurrentDrawSim() {
