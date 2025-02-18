@@ -3,7 +3,9 @@ package frc.robot.subsystems.arm;
 import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 import static frc.robot.constants.ArmConstants.MAX_ANGLE;
+import static frc.robot.constants.ArmConstants.MAX_SYSID_ANGLE;
 import static frc.robot.constants.ArmConstants.MIN_ANGLE;
+import static frc.robot.constants.ArmConstants.MIN_SYSID_ANGLE;
 import static frc.robot.constants.ArmConstants.PIVOT_ANGLE_LIVE_FF_THRESHOLD;
 import static frc.robot.constants.ArmConstants.PIVOT_ANGLE_TOLERANCE;
 import static frc.robot.constants.ArmConstants.PIVOT_CONSTRAINTS;
@@ -78,7 +80,11 @@ public class Pivot extends SubsystemBase {
           (state) -> Logger.recordOutput("Pivot/SysIdTestState", state.toString())),
       new SysIdRoutine.Mechanism((Voltage v) -> {
         setMode(RunMode.VOLTAGE);
-        setVoltage(v);
+        if (withinSysidConstraints()) {
+          setVoltage(v);
+        } else {
+          setVoltage(0);
+        }
       }, null, this)
     );
   }
@@ -219,5 +225,9 @@ public class Pivot extends SubsystemBase {
 
   public Command sysIdDynamic(Direction direction) {
     return sysIdRoutine.dynamic(direction);
+  }
+
+  public boolean withinSysidConstraints() {
+    return (getAngle().getRadians() > MIN_SYSID_ANGLE && getAngle().getRadians() < MAX_SYSID_ANGLE);
   }
 }

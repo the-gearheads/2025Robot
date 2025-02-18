@@ -26,6 +26,9 @@ public final class ArmConstants {
 
   public static final double MAX_ANGLE = Units.degreesToRadians(90);
   public static final double MIN_ANGLE = Units.degreesToRadians(15);
+  public static final double MIN_SYSID_ANGLE = Units.degreesToRadians(20);
+  public static final double MAX_SYSID_ANGLE = Units.degreesToRadians(85);
+
   public static final double PIVOT_ANGLE_TOLERANCE = Units.degreesToRadians(0.2);
   public static final double PIVOT_MOI_EST = 0.7895417850; // from cad kg * m^2
 
