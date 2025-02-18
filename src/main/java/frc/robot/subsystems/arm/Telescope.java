@@ -17,9 +17,10 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.subsystems.arm.SuperStructure.RunMode;
+import frc.robot.SuperStructure.RunMode;
 import frc.robot.util.ArmvatorSample;
 
 public class Telescope extends SubsystemBase {
@@ -72,16 +73,22 @@ public class Telescope extends SubsystemBase {
   @Override
   public void periodic() {
     switch (mode) {
-      case PID:
+      case PROFILED_PID:
         ff = ELEVATOR_FEEDFORWARD.calculate(profiliedPid.getSetpoint().velocity);
-        output = profiliedPid.calculate(getPosition()) + ff;
-      case TRAJECTORY:
+        output = profiliedPid.calculate(getPosition() - MIN_ABSOLUTE_HEIGHT) + ff;
+        break;
+      case PID:
         ff = ELEVATOR_FEEDFORWARD.calculate(sample.elevatorVel(), sample.elevatorAccel());
-        output = profiliedPid.calculate(getPosition(), sample.elevatorLen());
+        output = pid.calculate(getPosition(), sample.elevatorLen()-MIN_ABSOLUTE_HEIGHT);
+        break;
       case VOLTAGE:
         output = manualVoltage;
+        break;
     }
 
+    SmartDashboard.putData(pid);
+    Logger.recordOutput("Telescope/pidSetpoint", pid.getSetpoint());
+    Logger.recordOutput("Telescope/profiliedPIDSetpoint", profiliedPid.getSetpoint().position);
     Logger.recordOutput("Telescope/attemptedOutput", output);
     Logger.recordOutput("Telescope/manualVoltage", manualVoltage);
     Logger.recordOutput("Telescope/sample", sample);
@@ -95,12 +102,12 @@ public class Telescope extends SubsystemBase {
     //   output = 0;
     // }
 
-    if (mode == RunMode.PID) {
-      if (profiliedPid.getSetpoint().position < MIN_HEIGHT || profiliedPid.getSetpoint().position > MAX_HEIGHT) {
+    if (mode == RunMode.PROFILED_PID) {
+      if (profiliedPid.getSetpoint().position < MIN_RELATIVE_HEIGHT || profiliedPid.getSetpoint().position > MAX_HEIGHT) {
         output = 0;
         // Might as well just get as close as we can
-        if (profiliedPid.getGoal().position < MIN_HEIGHT || profiliedPid.getGoal().position > MAX_HEIGHT) {
-          profiliedPid.setGoal(MathUtil.clamp(profiliedPid.getGoal().position, MIN_HEIGHT, MAX_HEIGHT));
+        if (profiliedPid.getGoal().position < MIN_RELATIVE_HEIGHT || profiliedPid.getGoal().position > MAX_HEIGHT) {
+          profiliedPid.setGoal(MathUtil.clamp(profiliedPid.getGoal().position, MIN_RELATIVE_HEIGHT, MAX_HEIGHT));
         }
       }
     }

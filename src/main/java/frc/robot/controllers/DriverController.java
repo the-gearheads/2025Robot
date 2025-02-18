@@ -68,6 +68,11 @@ public class DriverController {
     return new Trigger(() -> controller.getYButton());
   }
 
+  public Trigger getBBtn() {
+    if(isNull()) return emptyTrigger();
+    return new Trigger(() -> controller.getBButton());
+  }
+
   public void setRumble(double rumble) {
     if(isNull()) return;
     controller.setRumble(RumbleType.kBothRumble, rumble);

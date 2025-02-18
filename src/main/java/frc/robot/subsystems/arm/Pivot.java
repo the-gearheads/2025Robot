@@ -34,9 +34,10 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.subsystems.arm.SuperStructure.RunMode;
+import frc.robot.SuperStructure.RunMode;
 import frc.robot.util.ArmvatorSample;
 
 public class Pivot extends SubsystemBase {
@@ -76,7 +77,7 @@ public class Pivot extends SubsystemBase {
       pivotEncoder.setPosition(pivotAbsEnc.get());
 
     switch (mode) {
-      case PID:
+      case PROFILED_PID:
         output = profiliedPid.calculate(getAngle().getRadians()) + ff;
 
         // https://gist.github.com/person4268/46710dca9a128a0eb5fbd93029627a6b
@@ -92,12 +93,15 @@ public class Pivot extends SubsystemBase {
       case VOLTAGE:
         output = manualVoltage;
         break;
-      case TRAJECTORY:
+      case PID:
         ff = PIVOT_FEEDFORWARD.calculate(sample.armPos(), sample.armVel(), sample.armAccel());
         output = pid.calculate(getAngle().getRadians(), sample.armPos()) + ff;
         break;
     }
 
+    SmartDashboard.putData(pid);
+    Logger.recordOutput("Pivot/pidSetpoint", pid.getSetpoint());
+    Logger.recordOutput("Pivot/profiliedPidSetpoint", profiliedPid.getSetpoint().position);
     Logger.recordOutput("Pivot/manualVoltage", manualVoltage);
     Logger.recordOutput("Pivot/Sample", sample);
     Logger.recordOutput("Pivot/attemptedOutput", output);
@@ -110,7 +114,7 @@ public class Pivot extends SubsystemBase {
       output = 0;
     }
 
-    if (mode == RunMode.PID) {
+    if (mode == RunMode.PROFILED_PID) {
       if (profiliedPid.getSetpoint().position < MIN_ANGLE || profiliedPid.getSetpoint().position > MAX_ANGLE) {
         output = 0;
       }

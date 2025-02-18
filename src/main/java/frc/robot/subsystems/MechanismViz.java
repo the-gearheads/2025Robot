@@ -15,19 +15,19 @@ import frc.robot.subsystems.swerve.Swerve;
 
 public class MechanismViz extends SubsystemBase {
 
-  public static final boolean doBumpers = true;
+  private static final boolean doBumpers = true;
 
   // cad model is off the ground but we want wheels to be on the ground
-  public final Transform3d ROBOT_OFFSET = new Transform3d(0, 0, 0.065532, new Rotation3d());
+  private final Transform3d ROBOT_OFFSET = new Transform3d(0, 0, 0.065532, new Rotation3d());
   
   // these are the inverse of the zeroed_position offsets in the ascope model config.json
-  public final Transform3d PIVOT_POS = new Transform3d(-0.318, 0, 0.0805, new Rotation3d()).plus(ROBOT_OFFSET);
-  public final Transform3d ELEV1_POS = new Transform3d(-0.358, 0, 0.1805, new Rotation3d()).plus(ROBOT_OFFSET);
-  public final Transform3d ELEV2_POS = new Transform3d(-0.363, 0, 0.217, new Rotation3d()).plus(ROBOT_OFFSET);
-  public final Transform3d WRIST_POS = new Transform3d(-0.363, 0, 0.975, new Rotation3d()).plus(ROBOT_OFFSET);
+  private final Transform3d PIVOT_POS = new Transform3d(-0.318, 0, 0.0805, new Rotation3d()).plus(ROBOT_OFFSET);
+  private final Transform3d ELEV1_POS = new Transform3d(-0.358, 0, 0.1805, new Rotation3d()).plus(ROBOT_OFFSET);
+  private final Transform3d ELEV2_POS = new Transform3d(-0.363, 0, 0.217, new Rotation3d()).plus(ROBOT_OFFSET);
+  private final Transform3d WRIST_POS = new Transform3d(-0.363, 0, 0.975, new Rotation3d()).plus(ROBOT_OFFSET);
 
   // bumpers aren't offset since they dont need to rotate so its dumb to waste effort on that, so 0, 0, 0 is just where they're supposed to be
-  public final Transform3d bumperGonePos = new Transform3d(1000, 100, 0, new Rotation3d()); // i sure hope your field isnt 1km
+  private final Transform3d bumperGonePos = new Transform3d(1000, 100, 0, new Rotation3d()); // i sure hope your field isnt 1km
 
   Swerve swerve;
   Pivot pivot;
@@ -42,12 +42,12 @@ public class MechanismViz extends SubsystemBase {
   @Override
   public void periodic() {
     // So our "cad" coordinate frame is going to have 0 degrees as "pointing straight up", which is uhh, not what we use literally everywhere else
-    Rotation3d pivotAngle = new Rotation3d(0, Math.toRadians(-Timer.getFPGATimestamp() * 10 % 180 + 90), 0);
+    Rotation3d pivotAngle = new Rotation3d(0, Math.toRadians(90) - pivot.getAngle().getRadians(), 0);
     // Rotation3d pivotAngle = new Rotation3d(0, Math.toRadians(0), 0);
-    Transform3d stage1Extension = new Transform3d(0, 0, Timer.getFPGATimestamp() * 50 % 100 / 300.0, new Rotation3d());
-    Transform3d stage2Extension = new Transform3d(0, 0, Timer.getFPGATimestamp() * 50 % 100 / 300.0, new Rotation3d());
+    Transform3d stage1Extension = new Transform3d(0, 0, telescope.getPosition()/2.0, new Rotation3d());
+    Transform3d stage2Extension = new Transform3d(0, 0, telescope.getPosition()/2.0, new Rotation3d());
     Transform3d totalExtension = stage1Extension.plus(stage2Extension);
-    Rotation3d wristAngle = new Rotation3d(0, Math.toRadians(-Timer.getFPGATimestamp() * 10 % 180 + 90), 0);
+    Rotation3d wristAngle = new Rotation3d(0, Math.toRadians(-Timer.getFPGATimestamp() * 15 % 360 + 90), 0);
 
     Transform3d stage0PivotPose = rotateIntrinsically(PIVOT_POS, pivotAngle);
     // We want our extended elevator to extend relative to the pivot, and this gives us the position of the elevator from the pivot

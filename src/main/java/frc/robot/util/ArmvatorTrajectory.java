@@ -155,4 +155,10 @@ public record ArmvatorTrajectory(String name, List<ArmvatorSample> samples) {
 
     return new ArmvatorTrajectory(name, samples);
   }
+
+  public static ArmvatorTrajectory load(ArmvatorPosition start, ArmvatorPosition end) {
+    return load(start.toString() + "," + end.toString());
+  }
+
+  
 }

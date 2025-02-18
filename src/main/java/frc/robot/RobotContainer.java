@@ -6,25 +6,44 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
+import frc.robot.commands.ManualPivot;
+import frc.robot.commands.ManualTelescope;
 import frc.robot.commands.Teleop;
 import frc.robot.controllers.Controllers;
 import frc.robot.subsystems.MechanismViz;
-import frc.robot.subsystems.arm.SuperStructure;
+import frc.robot.subsystems.arm.Pivot;
+import frc.robot.subsystems.arm.PivotSim;
+import frc.robot.subsystems.arm.Telescope;
+import frc.robot.subsystems.arm.TelescopeSim;
 import frc.robot.subsystems.swerve.Swerve;
+import frc.robot.util.ArmvatorPosition;
+import frc.robot.util.ArmvatorTrajectory;
 
 public class RobotContainer {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   private final Swerve swerve = new Swerve();
-  private final SuperStructure superStructure = new SuperStructure();
+  private final Pivot pivot;
+  private final Telescope telescope;
+  private final SuperStructure superStructure;
   private final Autos autos = new Autos(swerve);
   private final SysidAutoPicker sysidAuto = new SysidAutoPicker();
-
-  private final MechanismViz mechanismViz = new MechanismViz(swerve, superStructure.getPivot(), superStructure.getTelescope());
+  private final MechanismViz viz;
 
   public RobotContainer() {
+    if (Robot.isReal()) {
+      pivot = new Pivot();
+      telescope = new Telescope();
+    } else {
+      pivot = new PivotSim();
+      telescope = new TelescopeSim();
+    }
+    superStructure = new SuperStructure(pivot, telescope);
+    viz = new MechanismViz(swerve, pivot, telescope);
     swerve.setDefaultCommand(new Teleop(swerve));
+    pivot.setDefaultCommand(new ManualPivot(pivot));
+    telescope.setDefaultCommand(new ManualTelescope(telescope));
+
     sysidAuto.addSysidRoutine(swerve.sysIdForwardDynamic(Direction.kForward), "Swerve Dynamic ->");
     sysidAuto.addSysidRoutine(swerve.sysIdForwardQuasistatic(Direction.kForward), "Swerve Quasistatic ->");
     sysidAuto.addSysidRoutine(swerve.sysIdForwardDynamic(Direction.kReverse), "Swerve Dynamic <-");
@@ -47,9 +66,13 @@ public class RobotContainer {
     Controllers.updateActiveControllerInstance();
 
     // teleop controlls
-    Controllers.driverController.getYBtn().whileTrue(new InstantCommand(() -> {
-      swerve.zeroGyro();
-    }));
+    Controllers.driverController.getYBtn().onTrue(
+      superStructure.followTrajectory(ArmvatorTrajectory.load(ArmvatorPosition.HP, ArmvatorPosition.L4))
+    );
+
+    Controllers.driverController.getBBtn().onTrue(
+      superStructure.followTrajectory(ArmvatorTrajectory.load(ArmvatorPosition.L4, ArmvatorPosition.HP))
+    );
   }
 
   /**

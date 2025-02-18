@@ -1,9 +1,9 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.SuperStructure.RunMode;
 import frc.robot.controllers.Controllers;
 import frc.robot.subsystems.arm.Telescope;
-import frc.robot.subsystems.arm.SuperStructure.RunMode;
 
 public class ManualTelescope extends Command {
   Telescope telescope;
@@ -16,7 +16,7 @@ public class ManualTelescope extends Command {
   public void initialize() {
     telescope.setMode(RunMode.VOLTAGE);
   }
-  
+
   @Override
   public void execute() {
     double voltage = 12;

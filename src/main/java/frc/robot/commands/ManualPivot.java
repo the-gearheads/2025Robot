@@ -2,9 +2,9 @@ package frc.robot.commands;
 
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.SuperStructure.RunMode;
 import frc.robot.controllers.Controllers;
 import frc.robot.subsystems.arm.Pivot;
-import frc.robot.subsystems.arm.SuperStructure.RunMode;
 
 public class ManualPivot extends Command {
   Pivot pivot;
