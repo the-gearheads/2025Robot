@@ -22,6 +22,10 @@ public class WristConstants {
   public static final double MIN_SYSID_ANGLE = Units.degreesToRadians(2);
   public static final double MAX_SYSID_ANGLE = Units.degreesToRadians(178);
 
-
   public static final double WRIST_ANGLE_TOLERANCE = Units.degreesToRadians(1);
+
+  // all for sim
+  public static final double WRIST_MOI_EST = 0.0933520493; // kg * m^2, VERY rough estimate from cad;
+  public static final double WRIST_LENGTH = Units.inchesToMeters(17.0541);
+  
 }
