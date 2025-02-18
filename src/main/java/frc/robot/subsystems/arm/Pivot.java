@@ -203,6 +203,7 @@ public class Pivot extends SubsystemBase {
   protected void setMotorVoltage(double volts) {
     pivot.setVoltage(output);
   }
+  
   public void setVoltage(Voltage volts) {
     manualVoltage = volts.magnitude();
   }
