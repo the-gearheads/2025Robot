@@ -80,11 +80,7 @@ public class Pivot extends SubsystemBase {
           (state) -> Logger.recordOutput("Pivot/SysIdTestState", state.toString())),
       new SysIdRoutine.Mechanism((Voltage v) -> {
         setMode(RunMode.VOLTAGE);
-        if (withinSysidConstraints()) {
-          setVoltage(v);
-        } else {
-          setVoltage(0);
-        }
+        setVoltage(v);
       }, null, this)
     );
   }
@@ -220,11 +216,11 @@ public class Pivot extends SubsystemBase {
   }
 
   public Command sysIdQuasistatic(Direction direction) {
-    return sysIdRoutine.quasistatic(direction);
+    return sysIdRoutine.quasistatic(direction).until(() -> !withinSysidConstraints());
   }
 
   public Command sysIdDynamic(Direction direction) {
-    return sysIdRoutine.dynamic(direction);
+    return sysIdRoutine.dynamic(direction).until(() -> !withinSysidConstraints());
   }
 
   public boolean withinSysidConstraints() {
