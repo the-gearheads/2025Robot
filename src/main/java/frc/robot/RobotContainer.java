@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.commands.ManualPivot;
@@ -50,8 +51,8 @@ public class RobotContainer {
 
     sysidAuto.addSysidRoutines("Swerve", swerve.getDriveSysIdRoutine());
     sysidAuto.addSysidRoutines("Swerve Angular", swerve.getAngularSysIdRoutine());
-    sysidAuto.addSysidRoutines("Pivot", pivot.getSysidRoutine(), pivot::withinSysidConstraints);
-    sysidAuto.addSysidRoutines("Wrist", wrist.getSysidRoutine(), wrist::withinSysidConstraints);
+    sysidAuto.addSysidRoutines("Pivot", pivot.getSysidRoutine(), pivot::forwardSysidLimti, pivot::reverseSysidLimit);
+    sysidAuto.addSysidRoutines("Wrist", wrist.getSysidRoutine(), wrist::forwardSysidLimit, wrist::reverseSysidLimit);
   }
 
   public void configureBindings() {

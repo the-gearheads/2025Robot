@@ -122,8 +122,12 @@ public class Wrist extends SubsystemBase {
     return MathUtil.isNear(getAngle().getRadians(), angle, tolerance);
   }
 
-  public boolean withinSysidConstraints() {
-    return (getAngle().getRadians() > MIN_SYSID_ANGLE && getAngle().getRadians() < MAX_SYSID_ANGLE);
+  public boolean forwardSysidLimit() {
+    return getAngle().getRadians() > MAX_SYSID_ANGLE;
+  }
+
+  public boolean reverseSysidLimit() {
+    return getAngle().getRadians() < MIN_SYSID_ANGLE;
   }
 
   public SysIdRoutine getSysidRoutine() {
