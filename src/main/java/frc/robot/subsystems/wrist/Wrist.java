@@ -35,7 +35,6 @@ public class Wrist extends SubsystemBase {
 
   private ProfiledPIDController pid = new ProfiledPIDController(WRIST_PID[0], WRIST_PID[1], WRIST_PID[2],
       WRIST_CONSTRAINTS);
-  private SysIdRoutine sysIdRoutine;
 
   double output;
   double ff;
@@ -44,11 +43,6 @@ public class Wrist extends SubsystemBase {
   public Wrist() {
     configure();
     wristEncoder.setPosition(wristAbsEncoder.getPosition());
-    sysIdRoutine = new SysIdRoutine(
-        new SysIdRoutine.Config(Volts.of(5).per(Second), Volts.of(1), null,
-            (state) -> Logger.recordOutput("Pivot/SysIdTestState", state.toString())),
-        new SysIdRoutine.Mechanism(this::setVoltage, null, this)
-    );
   }
 
   @Override
@@ -134,11 +128,11 @@ public class Wrist extends SubsystemBase {
     return (getAngle().getRadians() > MIN_SYSID_ANGLE && getAngle().getRadians() < MAX_SYSID_ANGLE);
   }
 
-  public Command sysIdQuasistatic(Direction direction) {
-    return sysIdRoutine.quasistatic(direction).until(() -> !withinSysidConstraints());
-  }
-
-  public Command sysIdDynamic(Direction direction) {
-    return sysIdRoutine.dynamic(direction).until(() -> !withinSysidConstraints());
+  public SysIdRoutine getSysidRoutine() {
+    return new SysIdRoutine(
+      new SysIdRoutine.Config(Volts.of(5).per(Second), Volts.of(1), null,
+          (state) -> Logger.recordOutput("Pivot/SysIdTestState", state.toString())),
+      new SysIdRoutine.Mechanism(this::setVoltage, null, this)
+    );
   }
 }

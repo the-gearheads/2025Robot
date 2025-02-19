@@ -6,7 +6,6 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.ManualPivot;
 import frc.robot.commands.ManualTelescope;
 import frc.robot.commands.Teleop;
@@ -17,6 +16,8 @@ import frc.robot.subsystems.arm.PivotSim;
 import frc.robot.subsystems.arm.Telescope;
 import frc.robot.subsystems.arm.TelescopeSim;
 import frc.robot.subsystems.swerve.Swerve;
+import frc.robot.subsystems.wrist.Wrist;
+import frc.robot.subsystems.wrist.WristSim;
 import frc.robot.util.ArmvatorPosition;
 import frc.robot.util.ArmvatorTrajectory;
 
@@ -25,6 +26,7 @@ public class RobotContainer {
   private final Swerve swerve = new Swerve();
   private final Pivot pivot;
   private final Telescope telescope;
+  private final Wrist wrist;
   private final SuperStructure superStructure;
   private final Autos autos = new Autos(swerve);
   private final SysidAutoPicker sysidAuto = new SysidAutoPicker();
@@ -34,9 +36,11 @@ public class RobotContainer {
     if (Robot.isReal()) {
       pivot = new Pivot();
       telescope = new Telescope();
+      wrist = new Wrist();
     } else {
       pivot = new PivotSim();
       telescope = new TelescopeSim();
+      wrist = new WristSim();
     }
     superStructure = new SuperStructure(pivot, telescope);
     viz = new MechanismViz(swerve, pivot, telescope);
@@ -44,18 +48,10 @@ public class RobotContainer {
     pivot.setDefaultCommand(new ManualPivot(pivot));
     telescope.setDefaultCommand(new ManualTelescope(telescope));
 
-    sysidAuto.addSysidRoutine(swerve.sysIdForwardDynamic(Direction.kForward), "Swerve Dynamic ->");
-    sysidAuto.addSysidRoutine(swerve.sysIdForwardQuasistatic(Direction.kForward), "Swerve Quasistatic ->");
-    sysidAuto.addSysidRoutine(swerve.sysIdForwardDynamic(Direction.kReverse), "Swerve Dynamic <-");
-    sysidAuto.addSysidRoutine(swerve.sysIdForwardQuasistatic(Direction.kReverse), "Swerve Quasistatic <-");
-    sysidAuto.addSysidRoutine(swerve.sysIdAngularDynamic(Direction.kForward), "Swerve Angular Dynamic ->");
-    sysidAuto.addSysidRoutine(swerve.sysIdAngularQuasistatic(Direction.kForward), "Swerve Angular Quasistatic ->");
-    sysidAuto.addSysidRoutine(swerve.sysIdAngularDynamic(Direction.kReverse), "Swerve Angular Dynamic <-");
-    sysidAuto.addSysidRoutine(swerve.sysIdAngularQuasistatic(Direction.kReverse), "Swerve Angular Quasistatic <-");
-    sysidAuto.addSysidRoutine(pivot.sysIdDynamic(Direction.kForward), "Pivot Dynamic ->");
-    sysidAuto.addSysidRoutine(pivot.sysIdQuasistatic(Direction.kForward), "Pivot Quasistatic ->");
-    sysidAuto.addSysidRoutine(pivot.sysIdDynamic(Direction.kReverse), "Pivot Dynamic <-");
-    sysidAuto.addSysidRoutine(pivot.sysIdQuasistatic(Direction.kReverse), "Pivot Quasistatic <-");
+    sysidAuto.addSysidRoutines("Swerve", swerve.getDriveSysIdRoutine());
+    sysidAuto.addSysidRoutines("Swerve Angular", swerve.getAngularSysIdRoutine());
+    sysidAuto.addSysidRoutines("Pivot", pivot.getSysidRoutine(), pivot::withinSysidConstraints);
+    sysidAuto.addSysidRoutines("Wrist", wrist.getSysidRoutine(), wrist::withinSysidConstraints);
   }
 
   public void configureBindings() {

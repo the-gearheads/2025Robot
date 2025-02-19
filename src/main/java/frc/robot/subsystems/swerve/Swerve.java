@@ -67,9 +67,6 @@ public class Swerve extends SubsystemBase {
   ModuleLimits limits = new ModuleLimits(MAX_ROBOT_TRANS_SPEED, MAX_ROBOT_ACCEL, MAX_MOD_STEER_VEL);
   double lastTime = Timer.getTimestamp();
 
-  SysIdRoutine driveRoutine;
-  SysIdRoutine angularRoutine;
-
   public Swerve() {
     this.vision = new Vision(this);
     if (Robot.isSimulation()) {
@@ -92,28 +89,6 @@ public class Swerve extends SubsystemBase {
     headingController.setTolerance(HEADING_CONTROLLER_TOLERANCE);
 
     rotPid.enableContinuousInput(-Math.PI, Math.PI);
-
-    driveRoutine = new SysIdRoutine(
-      new SysIdRoutine.Config(null, Volts.of(5.5), null, (state) -> Logger.recordOutput("SysIdTestState", state.toString())),
-      new SysIdRoutine.Mechanism((Voltage v) -> {
-        modules[0].steer.setAngle(new Rotation2d());
-        modules[1].steer.setAngle(new Rotation2d());
-        modules[2].steer.setAngle(new Rotation2d());
-        modules[3].steer.setAngle(new Rotation2d());
-        setDriveVoltage(v);
-      }, null, this)
-    );
-
-    angularRoutine = new SysIdRoutine(
-      new SysIdRoutine.Config(Volts.of(0.5).per(Seconds), Volts.of(3.5), null, (state) -> Logger.recordOutput("SysIdTestState", state.toString())), 
-      new SysIdRoutine.Mechanism((Voltage v) -> {
-        var states = kinematics.toSwerveModuleStates(new ChassisSpeeds(0, 0, 100));
-        for(int i = 0; i < modules.length; i++) {
-          modules[i].steer.setAngle(states[i].angle);
-        }
-        setDriveVoltage(v);
-      }, null, this)
-    );
   }
 
   public Rotation2d getGyroRotation() {
@@ -290,20 +265,29 @@ public class Swerve extends SubsystemBase {
     }
   }
 
-
-  public Command sysIdForwardQuasistatic(SysIdRoutine.Direction direction) {
-    return driveRoutine.quasistatic(direction);
+  public SysIdRoutine getDriveSysIdRoutine() {
+    return new SysIdRoutine(
+      new SysIdRoutine.Config(null, Volts.of(5.5), null, (state) -> Logger.recordOutput("SysIdTestState", state.toString())),
+      new SysIdRoutine.Mechanism((Voltage v) -> {
+        modules[0].steer.setAngle(new Rotation2d());
+        modules[1].steer.setAngle(new Rotation2d());
+        modules[2].steer.setAngle(new Rotation2d());
+        modules[3].steer.setAngle(new Rotation2d());
+        setDriveVoltage(v);
+      }, null, this)
+    );
   }
 
-  public Command sysIdForwardDynamic(SysIdRoutine.Direction direction) {
-    return driveRoutine.dynamic(direction);
-  }
-
-  public Command sysIdAngularQuasistatic(SysIdRoutine.Direction direction) {
-    return angularRoutine.quasistatic(direction);
-  }
-
-  public Command sysIdAngularDynamic(SysIdRoutine.Direction direction) {
-    return angularRoutine.dynamic(direction);
+  public SysIdRoutine getAngularSysIdRoutine() {
+    return new SysIdRoutine(
+      new SysIdRoutine.Config(Volts.of(0.5).per(Seconds), Volts.of(3.5), null, (state) -> Logger.recordOutput("SysIdTestState", state.toString())), 
+      new SysIdRoutine.Mechanism((Voltage v) -> {
+        var states = kinematics.toSwerveModuleStates(new ChassisSpeeds(0, 0, 100));
+        for(int i = 0; i < modules.length; i++) {
+          modules[i].steer.setAngle(states[i].angle);
+        }
+        setDriveVoltage(v);
+      }, null, this)
+    );
   }
 }
