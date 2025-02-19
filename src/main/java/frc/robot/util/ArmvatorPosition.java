@@ -10,10 +10,22 @@ public enum ArmvatorPosition {
   HP(new Translation2d(0.508, 1)),
   NET(new Translation2d(0.01, 1.942));
 
-
   public final Translation2d endeffPos;
 
   private ArmvatorPosition(Translation2d endeffPos) {
     this.endeffPos = endeffPos;
+  }
+
+  public static ArmvatorPosition getNearest(Translation2d endeffPos) {
+    ArmvatorPosition best = null;
+    double bestDist = Double.POSITIVE_INFINITY;
+    for (ArmvatorPosition pos : ArmvatorPosition.values()) {
+      double dist = pos.endeffPos.getDistance(endeffPos);
+      if (dist < bestDist) {
+        best = pos;
+        bestDist = dist;
+      }
+    }
+    return best;
   }
 }
