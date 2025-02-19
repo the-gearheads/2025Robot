@@ -11,7 +11,7 @@ public enum ArmvatorPosition {
   NET(new Translation2d(0.01, 1.942));
 
 
-  Translation2d endeffPos;
+  public final Translation2d endeffPos;
 
   private ArmvatorPosition(Translation2d endeffPos) {
     this.endeffPos = endeffPos;
