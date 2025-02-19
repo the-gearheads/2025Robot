@@ -44,5 +44,20 @@ def generate_ungenerated_traj_file(start: str, end: str):
   with open(f"{os.path.dirname(__file__)}/trajs/{start},{end}.atraj", "w") as f:
     f.write(json.dumps(traj_json, indent=2))
 
+def generate_armvatorposition_java():
+  positions = ""
+  for i, place in enumerate(places):
+    positions += f"  {place}(new Translation2d({places[place]["pose"][0]}, {places[place]["pose"][1]}))"
+    if i != len(places) - 1:
+      positions += ","
+    else:
+      positions += ";"
+    positions += "\n"
+  with open(f"{os.path.dirname(__file__)}/ArmvatorPosition.java.template", "r") as f:
+    template = f.read()
+  with open(f"{os.path.dirname(__file__)}/../src/main/java/frc/robot/util/ArmvatorPosition.java", "w") as f:
+    f.write(template.replace("{{ENDEFF_POSITIONS}}", positions))
+
+generate_armvatorposition_java()
 for start, end in itertools.permutations(places.keys(), 2):
   generate_ungenerated_traj_file(start, end)
