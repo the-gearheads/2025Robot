@@ -18,16 +18,67 @@
   ],
   "cameras": [
     {
-      "name": "Front Camera",
-      "rotations": [],
+      "name": "Rear Left",
+      "rotations": [
+        {
+          "axis": "y",
+          "degrees": -20
+        },
+        {
+          "axis": "z",
+          "degrees": 180
+        }
+      ],
       "position": [
-        0,
-        0,
-        1.1
+        -0.37465,
+        0.1778,
+        0.154432
       ],
       "resolution": [
         1280,
-        720
+        800
+      ],
+      "fov": 75
+    },
+    {
+      "name": "Rear Right",
+      "rotations": [
+        {
+          "axis": "y",
+          "degrees": -20
+        },
+        {
+          "axis": "z",
+          "degrees": 180
+        }
+      ],
+      "position": [
+        -0.37465,
+        -0.1778,
+        0.154432
+      ],
+      "resolution": [
+        1280,
+        800
+      ],
+      "fov": 75
+    },
+    {
+      "name": "Front Left",
+      "rotations": [
+        {
+          "axis": "y",
+          "degrees": -20
+        }
+      ],
+      "position": [
+        0.37465,
+        0.1778,
+        0.154432
+      ],
+      "resolution": [
+        1280,
+        800
       ],
       "fov": 75
     }
