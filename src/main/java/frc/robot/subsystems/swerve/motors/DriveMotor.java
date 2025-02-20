@@ -100,7 +100,6 @@ public class DriveMotor {
     config.voltageCompensation(12);
     config.encoder.positionConversionFactor(DRIVE_POS_FACTOR);
     config.encoder.velocityConversionFactor(DRIVE_VEL_FACTOR);
-
     config.closedLoop.p((DRIVE_PID[0] / 12.0) * DRIVE_VEL_FACTOR);
     config.closedLoop.i(0);
     config.closedLoop.d(0);

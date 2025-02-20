@@ -310,18 +310,18 @@ public class Swerve extends SubsystemBase {
         new WaitCommand(1.0),
         Commands.runOnce(
           () -> {
-            state.positions = swerve.getDrivePositions();
-            state.lastAngle = swerve.getRotation();
+            state.positions = swerve.getDrivePositionsRad();
+            state.lastAngle = swerve.getGyroRotation();
             state.gyroDelta = 0.0;
           }),
 
         Commands.run(
           () -> {
-            var rotation = swerve.getRotation();
+            var rotation = swerve.getGyroRotation();
             state.gyroDelta += Math.abs(rotation.minus(state.lastAngle).getRadians());
             state.lastAngle = rotation;
             
-            double[] positions = swerve.getDrivePositions();
+            double[] positions = swerve.getDrivePositionsRad();
             double wheelDelta = 0.0;
             for (int i = 0; i < 4; i++) {
                       wheelDelta += Math.abs(positions[i] - state.positions[i]) / 4.0;
@@ -332,7 +332,7 @@ public class Swerve extends SubsystemBase {
             Logger.recordOutput("Swerve/WheelRadCharacterization/CurrentRadius", wheelRadius);
           }).finallyDo(
             () -> {
-              double[] positions = swerve.getDrivePositions();
+              double[] positions = swerve.getDrivePositionsRad();
               double wheelDelta = 0.0;
               for (int i = 0; i < 4; i++) {
                 wheelDelta += Math.abs(positions[i] - state.positions[i]) / 4.0;
@@ -354,10 +354,12 @@ public class Swerve extends SubsystemBase {
     double gyroDelta = 0.0;
   }
 
-  public double[] getDrivePositions() {
+  // in Radians
+  @AutoLogOutput
+  public double[] getDrivePositionsRad() {
     double[] positions = new double[4];
     for (int i = 0; i < modules.length; i++) {
-      positions[i] = modules[i].drive.getPosition();
+      positions[i] = (modules[i].drive.getPosition() / WHEEL_CIRCUMFERENCE) * 2 * Math.PI;
     }
     return positions;
   }
