@@ -83,6 +83,7 @@ public class RobotContainer {
     // An example command will be run in autonomous
     // return autos.getAutonomousRoutine();
     return sysidAuto.get();
+    // return Swerve.wheelRadiusCharacterization(swerve);
   }
 
   public double getCurrentDrawSim() {

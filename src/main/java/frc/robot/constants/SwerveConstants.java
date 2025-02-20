@@ -24,6 +24,7 @@ public final class SwerveConstants {
     // ----------------- TODO: everything here is a placeholder 
     public static final double WHEEL_BASE = WHEEL_POSITIONS[0].getX() - WHEEL_POSITIONS[2].getX();
     public static final double TRACK_WIDTH = WHEEL_POSITIONS[0].getY() - WHEEL_POSITIONS[1].getY();
+    public static final double DRIVE_BASE_RADIUS = Math.hypot(TRACK_WIDTH / 2.0, WHEEL_BASE / 2.0);
 
     public static final double[] WHEEL_OFFSETS = {0, 0, 0, 180};
     public static final boolean[] IS_INVERTED = {true, false, true, false};
@@ -68,5 +69,8 @@ public final class SwerveConstants {
 
     public static double[] XY_PATH_FOLLOWING_PID = {3.6, 0, 0.0};
     public static double[] ROT_PATH_FOLLOWING_PID = {3.6, 0, 0};
+
+    public static final double WHEEL_RADIUS_RAMP_RATE = 0.05; // rad/s^2
+    public static final double WHEEL_RADIUS_MAX_VEL = 0.25; // rad/s
 
 }

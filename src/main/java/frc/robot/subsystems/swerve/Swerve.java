@@ -14,6 +14,7 @@ import org.littletonrobotics.junction.Logger;
 import choreo.trajectory.SwerveSample;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -27,7 +28,10 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Robot;
 import frc.robot.subsystems.swerve.gyro.Gyro;
@@ -288,5 +292,73 @@ public class Swerve extends SubsystemBase {
         setDriveVoltage(v);
       }, null, this)
     );
+  }
+
+  public static Command wheelRadiusCharacterization(Swerve swerve) {
+    SlewRateLimiter limiter = new SlewRateLimiter(WHEEL_RADIUS_RAMP_RATE);
+    WheelRadiusCharacterizationState state = new WheelRadiusCharacterizationState();
+
+    return Commands.parallel(
+      Commands.sequence(
+        Commands.runOnce(()->limiter.reset(0.0)),
+        Commands.run(() -> {
+          double speed = limiter.calculate(WHEEL_RADIUS_MAX_VEL);
+          swerve.drive(new ChassisSpeeds(0, 0, speed));
+        }, swerve)
+      ),
+      Commands.sequence(
+        new WaitCommand(1.0),
+        Commands.runOnce(
+          () -> {
+            state.positions = swerve.getDrivePositions();
+            state.lastAngle = swerve.getRotation();
+            state.gyroDelta = 0.0;
+          }),
+
+        Commands.run(
+          () -> {
+            var rotation = swerve.getRotation();
+            state.gyroDelta += Math.abs(rotation.minus(state.lastAngle).getRadians());
+            state.lastAngle = rotation;
+            
+            double[] positions = swerve.getDrivePositions();
+            double wheelDelta = 0.0;
+            for (int i = 0; i < 4; i++) {
+                      wheelDelta += Math.abs(positions[i] - state.positions[i]) / 4.0;
+              }
+            double wheelRadius = (state.gyroDelta * DRIVE_BASE_RADIUS) / wheelDelta;
+            Logger.recordOutput("Swerve/WheelRadCharacterization/WheelDelta", positions);
+            Logger.recordOutput("Swerve/WheelRadCharacterization/GyroDelta", state.gyroDelta);
+            Logger.recordOutput("Swerve/WheelRadCharacterization/CurrentRadius", wheelRadius);
+          }).finallyDo(
+            () -> {
+              double[] positions = swerve.getDrivePositions();
+              double wheelDelta = 0.0;
+              for (int i = 0; i < 4; i++) {
+                wheelDelta += Math.abs(positions[i] - state.positions[i]) / 4.0;
+              }
+              double wheelRadius = (state.gyroDelta * DRIVE_BASE_RADIUS) / wheelDelta;
+              Logger.recordOutput("Swerve/WheelRadCharacterization/FinalWheelDelta", positions);
+              Logger.recordOutput("Swerve/WheelRadCharacterization/FinalGyroDelta", state.gyroDelta);
+              Logger.recordOutput("Swerve/WheelRadCharacterization/FinalEffectiveRadius", wheelRadius);
+              System.out.println("Final Effective Radius: " + wheelRadius);
+            }
+        )
+      )
+    );
+  }
+
+  private static class WheelRadiusCharacterizationState {
+    double[] positions = new double[4];
+    Rotation2d lastAngle = new Rotation2d();
+    double gyroDelta = 0.0;
+  }
+
+  public double[] getDrivePositions() {
+    double[] positions = new double[4];
+    for (int i = 0; i < modules.length; i++) {
+      positions[i] = modules[i].drive.getPosition();
+    }
+    return positions;
   }
 }
