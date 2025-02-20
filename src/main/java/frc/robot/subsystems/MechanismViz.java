@@ -5,6 +5,7 @@ import org.littletonrobotics.junction.Logger;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -48,7 +49,7 @@ public class MechanismViz extends SubsystemBase {
     Transform3d stage1Extension = new Transform3d(0, 0, telescope.getPosition()/2.0, new Rotation3d());
     Transform3d stage2Extension = new Transform3d(0, 0, telescope.getPosition()/2.0, new Rotation3d());
     Transform3d totalExtension = stage1Extension.plus(stage2Extension);
-    Rotation3d wristAngle = new Rotation3d(0, wrist.getAngle().getRadians(), 0);
+    Rotation3d wristAngle = new Rotation3d(0, wrist.getAngle().getRadians()-Units.degreesToRadians(4), 0);
 
     Transform3d stage0PivotPose = rotateIntrinsically(PIVOT_POS, pivotAngle);
     // We want our extended elevator to extend relative to the pivot, and this gives us the position of the elevator from the pivot
