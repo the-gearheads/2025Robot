@@ -20,9 +20,10 @@ public class SuperStructure {
   Wrist wrist;
 
   ArmvatorSample lastSample;
-  public SuperStructure(Pivot pivot, Telescope telescope) {
+  public SuperStructure(Pivot pivot, Telescope telescope, Wrist wrist) {
     this.pivot = pivot;
     this.telescope = telescope;
+    this.wrist = wrist;
   }
 
   private void followSample(ArmvatorSample sample) {

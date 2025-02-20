@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 
 public class WristSim extends Wrist {
   DCMotor wristMotorSim = DCMotor.getNeo550(1);
-  SingleJointedArmSim wristSim = new SingleJointedArmSim(LinearSystemId.createSingleJointedArmSystem(wristMotorSim, WRIST_MOI_EST, WRIST_GEAR_RATIO), wristMotorSim, WRIST_GEAR_RATIO, WRIST_LENGTH, MIN_WRIST_ANGLE, MAX_WRIST_ANGLE, false, 0);
+  SingleJointedArmSim wristSim = new SingleJointedArmSim(LinearSystemId.createSingleJointedArmSystem(wristMotorSim, WRIST_MOI_EST, WRIST_GEAR_RATIO), wristMotorSim, WRIST_GEAR_RATIO, WRIST_LENGTH, MIN_WRIST_ANGLE, MAX_WRIST_ANGLE, false, 1);
 
   double output;
   public WristSim() {

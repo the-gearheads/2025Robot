@@ -29,9 +29,9 @@ public final class SwerveConstants {
     public static final double[] WHEEL_OFFSETS = {0, 0, 0, 180};
     public static final boolean[] IS_INVERTED = {true, false, true, false};
 
-    public static final double WHEEL_DIAMETER = 0.073800;
+    public static final double WHEEL_RADIUS = 0.073800 / 2.0;
+    public static final double WHEEL_DIAMETER = WHEEL_RADIUS * 2.0;
     public static final double WHEEL_CIRCUMFERENCE = Math.PI * WHEEL_DIAMETER;
-    public static final double WHEEL_RADIUS = WHEEL_DIAMETER / 2.0;
 
     public static final double DRIVE_PINION_TOOTH_COUNT = 14;
     // 45 teeth on the wheel's bevel gear, 22 teeth on the first-stage spur gear, 15 teeth on the bevel pinion

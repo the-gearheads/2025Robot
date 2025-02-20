@@ -43,8 +43,8 @@ public class RobotContainer {
       telescope = new TelescopeSim();
       wrist = new WristSim();
     }
-    superStructure = new SuperStructure(pivot, telescope);
-    viz = new MechanismViz(swerve, pivot, telescope);
+    superStructure = new SuperStructure(pivot, telescope, wrist);
+    viz = new MechanismViz(swerve, pivot, telescope, wrist);
     swerve.setDefaultCommand(new Teleop(swerve));
     pivot.setDefaultCommand(new ManualPivot(pivot));
     telescope.setDefaultCommand(new ManualTelescope(telescope));
