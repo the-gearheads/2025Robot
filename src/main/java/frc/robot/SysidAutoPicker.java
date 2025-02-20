@@ -23,17 +23,18 @@ public class SysidAutoPicker {
    *  Add all relevant sysidRoutines within constraints to the chooser
    * @param name Name to append routine types to in chooser
    * @param routine Routine to use
-   * @param withinConstraints Should return true if the subsystem is still within safe constraints
+   * @param forwardLimit Should return true if subsytem is past a safe position in the forward direction
+   * @param reverseLimit Should return true if subsystem is past a safe position in the reverse direction
    */
-  public void addSysidRoutines(String name, SysIdRoutine routine, BooleanSupplier withinConstraints) {
-    chooser.addOption(name + " Quasi ->", routine.quasistatic(Direction.kForward).until(() -> !withinConstraints.getAsBoolean()));
-    chooser.addOption(name + " Quasi <-", routine.quasistatic(Direction.kReverse).until(() -> !withinConstraints.getAsBoolean()));
-    chooser.addOption(name + " Dynamic ->", routine.dynamic(Direction.kForward).until(() -> !withinConstraints.getAsBoolean()));
-    chooser.addOption(name + " Dynamic <-", routine.dynamic(Direction.kReverse).until(() -> !withinConstraints.getAsBoolean()));
+  public void addSysidRoutines(String name, SysIdRoutine routine, BooleanSupplier forwardLimit, BooleanSupplier reverseLimit) {
+    chooser.addOption(name + " Quasi ->", routine.quasistatic(Direction.kForward).until(forwardLimit));
+    chooser.addOption(name + " Quasi <-", routine.quasistatic(Direction.kReverse).until(reverseLimit));
+    chooser.addOption(name + " Dynamic ->", routine.dynamic(Direction.kForward).until(forwardLimit));
+    chooser.addOption(name + " Dynamic <-", routine.dynamic(Direction.kReverse).until(reverseLimit));
   }
 
   public void addSysidRoutines(String name, SysIdRoutine routine) {
-    addSysidRoutines(name, routine, () -> true);
+    addSysidRoutines(name, routine, () -> false, () -> false);
   }
 
   public Command get() {

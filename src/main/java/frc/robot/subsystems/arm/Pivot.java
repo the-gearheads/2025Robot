@@ -215,7 +215,11 @@ public class Pivot extends SubsystemBase {
     );
   }
 
-  public boolean withinSysidConstraints() {
-    return (getAngle().getRadians() > MIN_SYSID_ANGLE && getAngle().getRadians() < MAX_SYSID_ANGLE);
+  public boolean forwardSysidLimti() {
+    return getAngle().getRadians() > MAX_SYSID_ANGLE;
+  }
+
+  public boolean reverseSysidLimit() {
+    return getAngle().getRadians() < MIN_SYSID_ANGLE;
   }
 }

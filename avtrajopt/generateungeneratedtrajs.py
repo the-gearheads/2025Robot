@@ -11,12 +11,15 @@ samples_per_meter_travelled = 200
 
 # all randomly guessed placeholders
 places = {
+  "L1": {"pose": [front_x, 0.95], "vel": [0, 0]},
   "L2": {"pose": [back_x+0.01, 0.92], "vel": [0, 0]},
   "L3": {"pose": [back_x+0.01, 1.6], "vel": [0, 0]},
   "L4": {"pose": [back_x+0.01, 1.8], "vel": [0, 0]},
   # "I-": {"pose": [back_x+0.2, 1], "vel": [-0.2, -0.2]},
   # "I+": {"pose": [back_x+0.2, 1], "vel": [0.2, 0.2]},
   "HP": {"pose": [front_x, 1], "vel": [0, 0]},
+  "GROUND_INTAKE": {"pose": [front_x, 0.92], "vel": [0, 0]},
+  "PROCESSOR": {"pose": [front_x, 0.8], "vel": [0, 0]},
   "NET": {"pose": [back_x+0.01, constants.elevator_max_len - 0.09], "vel": [0, 0]},
 }
 
