@@ -1,5 +1,7 @@
 package frc.robot.subsystems.arm;
 
+import static edu.wpi.first.units.Units.Seconds;
+import static edu.wpi.first.units.Units.Volts;
 import static frc.robot.constants.ArmConstants.*;
 
 import org.littletonrobotics.junction.AutoLogOutput;
@@ -20,6 +22,7 @@ import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.SuperStructure.RunMode;
 import frc.robot.util.ArmvatorSample;
 
@@ -172,5 +175,24 @@ public class Telescope extends SubsystemBase {
       setVoltage(0);
       setEncoder(0);
     }).until(this::getLimitswitch);
+  }
+
+  public SysIdRoutine getSysidRoutine() {
+    return new SysIdRoutine(
+      new SysIdRoutine.Config(Volts.of(0.25).per(Seconds), Volts.of(0.2), null,
+          (state) -> Logger.recordOutput("Telescope/SysIdTestState", state.toString())),
+      new SysIdRoutine.Mechanism((Voltage v) -> {
+        setMode(RunMode.VOLTAGE);
+        setVoltage(v);
+      }, null, this)
+    );
+  }
+
+  public boolean getSysidForwardLimit() {
+    return getPosition() > MAX_SYSID_HEIGHT;
+  }
+
+  public boolean getSysidReverseLimit() {
+    return getPosition() < MIN_SYSID_HEIGHT;
   }
 }

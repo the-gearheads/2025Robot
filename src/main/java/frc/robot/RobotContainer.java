@@ -53,6 +53,7 @@ public class RobotContainer {
     sysidAuto.addSysidRoutines("Swerve Angular", swerve.getAngularSysIdRoutine());
     sysidAuto.addSysidRoutines("Pivot", pivot.getSysidRoutine(), pivot::forwardSysidLimti, pivot::reverseSysidLimit);
     sysidAuto.addSysidRoutines("Wrist", wrist.getSysidRoutine(), wrist::forwardSysidLimit, wrist::reverseSysidLimit);
+    sysidAuto.addSysidRoutines("Telescope", telescope.getSysidRoutine(), telescope::getSysidForwardLimit, telescope::getSysidReverseLimit);
   }
 
   public void configureBindings() {
@@ -82,8 +83,8 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    return autos.getAutonomousRoutine();
-    // return sysidAuto.get();
+    // return autos.getAutonomousRoutine();
+    return sysidAuto.get();
     // return Swerve.wheelRadiusCharacterization(swerve);
   }
 

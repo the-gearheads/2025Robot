@@ -48,6 +48,9 @@ public final class ArmConstants {
   public static final double MIN_ABSOLUTE_HEIGHT  = Units.inchesToMeters(36);
   public static final double MAX_HEIGHT = Units.inchesToMeters(77.6) - MIN_ABSOLUTE_HEIGHT;
 
+  public static final double MIN_SYSID_HEIGHT = Units.inchesToMeters(2);
+  public static final double MAX_SYSID_HEIGHT = Units.inchesToMeters(74.6) - MIN_ABSOLUTE_HEIGHT;
+
   public static final int ELEVATOR_CURRENT_LIMIT = 80;
   public static final double HOMING_VOLTAGE = -2;
   
