@@ -15,6 +15,7 @@ public final class ArmConstants {
   public static final double PIVOT_GEAR_RATIO = 256.0/1.0;
   public static final double PIVOT_POS_FACTOR = PIVOT_GEAR_RATIO * 2 * Math.PI;
   public static final double PIVOT_VEL_FACTOR = (PIVOT_GEAR_RATIO * 2 * Math.PI) / 60;  // Rad per Sec
+  public static final double PIVOT_ABS_ENCODER_OFFSET = (Math.PI / 2);
   public static final int PIVOT_CURRENT_LIMIT = 60;
   public static final double PIVOT_ANGLE_LIVE_FF_THRESHOLD = 10;
 

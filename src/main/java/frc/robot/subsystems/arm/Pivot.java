@@ -153,7 +153,7 @@ public class Pivot extends SubsystemBase {
 
   @AutoLogOutput
   public Rotation2d getAngle() {
-    return new Rotation2d(((Math.PI / 2) + Units.rotationsToRadians(pivotAbsEnc.getAbsPosition())) % (2 * Math.PI));
+    return new Rotation2d((PIVOT_ABS_ENCODER_OFFSET + Units.rotationsToRadians(pivotAbsEnc.getAbsPosition())) % (2 * Math.PI));
   }
 
   @AutoLogOutput
