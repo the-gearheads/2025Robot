@@ -7,6 +7,7 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.commands.ManualPivot;
 import frc.robot.commands.ManualTelescope;
 import frc.robot.commands.Teleop;
@@ -19,8 +20,6 @@ import frc.robot.subsystems.arm.TelescopeSim;
 import frc.robot.subsystems.swerve.Swerve;
 import frc.robot.subsystems.wrist.Wrist;
 import frc.robot.subsystems.wrist.WristSim;
-import frc.robot.util.ArmvatorPosition;
-import frc.robot.util.ArmvatorTrajectory;
 
 public class RobotContainer {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -37,7 +36,7 @@ public class RobotContainer {
     if (Robot.isReal()) {
       pivot = new Pivot();
       telescope = new Telescope();
-      wrist = new Wrist();
+      wrist = new WristSim();
     } else {
       pivot = new PivotSim();
       telescope = new TelescopeSim();
@@ -68,12 +67,13 @@ public class RobotContainer {
 
     // teleop controlls
     Controllers.driverController.getYBtn().onTrue(
-      superStructure.followTrajectory(ArmvatorTrajectory.load(ArmvatorPosition.HP, ArmvatorPosition.L4))
+      // superStructure.followTrajectory(ArmvatorTrajectory.load(ArmvatorPosition.HP, ArmvatorPosition.L4))
+      Commands.runOnce(()->{telescope.setEncoderPosition(0);})
     );
 
-    Controllers.driverController.getBBtn().onTrue(
-      superStructure.followTrajectory(ArmvatorTrajectory.load(ArmvatorPosition.L4, ArmvatorPosition.HP))
-    );
+    // Controllers.driverController.getBBtn().onTrue(
+    //   superStructure.followTrajectory(ArmvatorTrajectory.load(ArmvatorPosition.L4, ArmvatorPosition.HP))
+    // );
   }
 
   /**

@@ -26,8 +26,8 @@ public final class SwerveConstants {
     public static final double TRACK_WIDTH = WHEEL_POSITIONS[0].getY() - WHEEL_POSITIONS[1].getY();
     public static final double DRIVE_BASE_RADIUS = Math.hypot(TRACK_WIDTH / 2.0, WHEEL_BASE / 2.0);
 
-    public static final double[] WHEEL_OFFSETS = {0, 0, 0, 180};
-    public static final boolean[] IS_INVERTED = {true, false, true, false};
+    public static final double[] WHEEL_OFFSETS = {90, 0, 0, 90};
+    public static final boolean[] IS_INVERTED = {false, true, false, true};
 
     public static final double WHEEL_RADIUS = 1.462 / 100.0 * 2.54;  // derived from wheel radius characterizaiton
     public static final double WHEEL_DIAMETER = WHEEL_RADIUS * 2.0;
@@ -55,7 +55,7 @@ public final class SwerveConstants {
     public static final double[] DRIVE_PID = {0.2591652738, 0, 0};
     public static final SimpleMotorFeedforward DRIVE_FEEDFORWARD = new SimpleMotorFeedforward(0.18826, 2.1455, 0.19756);
 
-    public static final int DRIVE_CURRENT_LIMIT = 80;
+    public static final int DRIVE_CURRENT_LIMIT = 60;
     public static final int STEER_CURRENT_LIMIT = 20;
     
     public static final double MAX_MOD_SPEED = DRIVE_FREE_SPD;  // m/s, placeholders

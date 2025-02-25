@@ -42,6 +42,7 @@ public class Telescope extends SubsystemBase {
   double ff;
   double output;
   double manualVoltage;
+  boolean isHomed = false;
 
   public Telescope() {
     configure();
@@ -62,7 +63,7 @@ public class Telescope extends SubsystemBase {
     elevator.configure(elevatorConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
 
     elevatorFollowerConfig.smartCurrentLimit(ELEVATOR_CURRENT_LIMIT);
-    elevatorFollowerConfig.follow(elevator);
+    elevatorFollowerConfig.follow(elevator, true);
     elevatorFollowerConfig.idleMode(IdleMode.kBrake);
     elevatorFollowerConfig.voltageCompensation(12);
 
@@ -95,24 +96,30 @@ public class Telescope extends SubsystemBase {
     Logger.recordOutput("Telescope/attemptedOutput", output);
     Logger.recordOutput("Telescope/manualVoltage", manualVoltage);
     Logger.recordOutput("Telescope/sample", sample);
+    Logger.recordOutput("Telescope/isHomed", isHomed);
 
     // stops robot from runnign into itself
-    // if (output > 0 && getPosition() > MAX_HEIGHT) {
-    //   output = 0;
-    // }
+    if (output > 0 && getPosition() > MAX_RELATIVE_HEIGHT) {
+      output = 0;
+    }
 
-    // if (output < 0 && getPosition() < MIN_HEIGHT) {
-    //   output = 0;
-    // }
+    if (isHomed == true && (output < 0 && getPosition() < MIN_RELATIVE_HEIGHT)) {
+      output = 0;
+    }
 
     if (mode == RunMode.PROFILED_PID) {
-      if (profiliedPid.getSetpoint().position < MIN_RELATIVE_HEIGHT || profiliedPid.getSetpoint().position > MAX_HEIGHT) {
+      if (profiliedPid.getSetpoint().position < MIN_RELATIVE_HEIGHT || profiliedPid.getSetpoint().position > MAX_RELATIVE_HEIGHT) {
         output = 0;
         // Might as well just get as close as we can
-        if (profiliedPid.getGoal().position < MIN_RELATIVE_HEIGHT || profiliedPid.getGoal().position > MAX_HEIGHT) {
-          profiliedPid.setGoal(MathUtil.clamp(profiliedPid.getGoal().position, MIN_RELATIVE_HEIGHT, MAX_HEIGHT));
+        if (profiliedPid.getGoal().position < MIN_RELATIVE_HEIGHT || profiliedPid.getGoal().position > MAX_RELATIVE_HEIGHT) {
+          profiliedPid.setGoal(MathUtil.clamp(profiliedPid.getGoal().position, MIN_RELATIVE_HEIGHT, MAX_RELATIVE_HEIGHT));
         }
       }
+    }
+
+    if (getLimitswitch()) {
+      setEncoderPosition(0);
+      isHomed = true;
     }
 
 
@@ -125,7 +132,7 @@ public class Telescope extends SubsystemBase {
     return elevator.getReverseLimitSwitch().isPressed();
   }
 
-  public void setPosition(double setpointLength) {
+  public void setGoalPosition(double setpointLength) {
     profiliedPid.setGoal(setpointLength);
   }
 
@@ -164,7 +171,7 @@ public class Telescope extends SubsystemBase {
     manualVoltage = volts.magnitude();
   }
 
-  public void setEncoder(double position) {
+  public void setEncoderPosition(double position) {
     elevatorEncoder.setPosition(position);
   }
 
@@ -173,7 +180,7 @@ public class Telescope extends SubsystemBase {
       setVoltage(HOMING_VOLTAGE);
     }, () -> {
       setVoltage(0);
-      setEncoder(0);
+      setEncoderPosition(0);
     }).until(this::getLimitswitch);
   }
 

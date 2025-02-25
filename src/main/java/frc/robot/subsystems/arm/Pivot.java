@@ -6,6 +6,7 @@ import static frc.robot.constants.ArmConstants.MAX_ANGLE;
 import static frc.robot.constants.ArmConstants.MAX_SYSID_ANGLE;
 import static frc.robot.constants.ArmConstants.MIN_ANGLE;
 import static frc.robot.constants.ArmConstants.MIN_SYSID_ANGLE;
+import static frc.robot.constants.ArmConstants.PIVOT_ABS_ENCODER_ID;
 import static frc.robot.constants.ArmConstants.PIVOT_ANGLE_LIVE_FF_THRESHOLD;
 import static frc.robot.constants.ArmConstants.PIVOT_ANGLE_TOLERANCE;
 import static frc.robot.constants.ArmConstants.PIVOT_CONSTRAINTS;
@@ -20,7 +21,7 @@ import static frc.robot.constants.ArmConstants.PIVOT_VEL_FACTOR;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
-import com.revrobotics.RelativeEncoder;
+import com.reduxrobotics.sensors.canandmag.Canandmag;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkFlex;
@@ -34,8 +35,6 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Voltage;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -51,8 +50,7 @@ public class Pivot extends SubsystemBase {
   private SparkFlexConfig pivotConfig = new SparkFlexConfig();
   private SparkFlexConfig pivotFollowerConfig = new SparkFlexConfig();
 
-  private RelativeEncoder pivotEncoder = pivot.getEncoder();
-  private DutyCycleEncoder pivotAbsEnc = new DutyCycleEncoder(0);
+  private Canandmag pivotAbsEnc = new Canandmag(PIVOT_ABS_ENCODER_ID);
   private ProfiledPIDController profiliedPid = new ProfiledPIDController(PIVOT_PID[0], PIVOT_PID[1], PIVOT_PID[2],
       PIVOT_CONSTRAINTS,
       0.02);
@@ -68,16 +66,12 @@ public class Pivot extends SubsystemBase {
 
   public Pivot() {
     configure();
-    pivotEncoder.setPosition(pivotAbsEnc.get());
     profiliedPid.reset(getAngle().getRadians());
     profiliedPid.setGoal(getAngle().getRadians());
   }
 
   @Override
   public void periodic() {
-    if (DriverStation.isDisabled())
-      pivotEncoder.setPosition(pivotAbsEnc.get());
-
     switch (mode) {
       case PROFILED_PID:
         output = profiliedPid.calculate(getAngle().getRadians()) + ff;
@@ -138,6 +132,7 @@ public class Pivot extends SubsystemBase {
     pivotConfig.smartCurrentLimit(PIVOT_CURRENT_LIMIT);
     pivotConfig.voltageCompensation(12);
     pivotConfig.idleMode(IdleMode.kBrake);
+    pivotConfig.inverted(true);
 
     pivotConfig.signals.appliedOutputPeriodMs(10);
     pivotConfig.encoder.positionConversionFactor(PIVOT_POS_FACTOR);
@@ -146,7 +141,7 @@ public class Pivot extends SubsystemBase {
     pivot.configure(pivotConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
 
     pivotFollowerConfig.smartCurrentLimit(PIVOT_CURRENT_LIMIT);
-    pivotFollowerConfig.follow(pivot);
+    pivotFollowerConfig.follow(pivot, true);
     pivotFollowerConfig.idleMode(IdleMode.kBrake);
     pivotFollowerConfig.voltageCompensation(12);
 
@@ -158,12 +153,12 @@ public class Pivot extends SubsystemBase {
 
   @AutoLogOutput
   public Rotation2d getAngle() {
-    return new Rotation2d(pivotEncoder.getPosition());
+    return new Rotation2d(((Math.PI / 2) + Units.rotationsToRadians(pivotAbsEnc.getAbsPosition())) % (2 * Math.PI));
   }
 
   @AutoLogOutput
   public double getVelocity() {
-    return pivotEncoder.getVelocity();
+    return Units.rotationsToRadians(pivotAbsEnc.getVelocity());
   }
 
   public void setAngle(double angleRad) {

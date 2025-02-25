@@ -19,9 +19,9 @@ public class ManualTelescope extends Command {
 
   @Override
   public void execute() {
-    double voltage = 12;
-    voltage = Controllers.driverController.getSpeedUpAxis() * 12;
-    voltage -= Controllers.driverController.getSlowDownAxis() * 12;
+    double voltage = 6;
+    voltage = Controllers.driverController.getSpeedUpAxis() * 6;
+    voltage -= Controllers.driverController.getSlowDownAxis() * 6;
     telescope.setVoltage(voltage);
   }
 }
