@@ -93,4 +93,10 @@ public class RobotContainer {
   public double getCurrentDrawSim() {
     return swerve.getCurrentDraw();
   }
+
+  public void setAllBrakeCoast(boolean willBrake) {
+    pivot.setBrakeCoast(willBrake);
+    telescope.setBrakeCoast(willBrake);
+    swerve.setBrakeCoast(willBrake);
+  }
 }

@@ -18,12 +18,15 @@ import org.littletonrobotics.urcl.URCL;
 
 import com.reduxrobotics.canand.CanandEventLoop;
 
+import edu.wpi.first.math.filter.Debouncer;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.simulation.BatterySim;
 import edu.wpi.first.wpilibj.simulation.RoboRioSim;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.constants.MiscConstants;
 import frc.robot.util.TriConsumer;
 
 /**
@@ -37,6 +40,11 @@ public class Robot extends LoggedRobot {
   private Command autonomousCommand;
 
   private final RobotContainer robotContainer;
+  private DigitalInput brakeCoastButton = new DigitalInput(MiscConstants.BREAK_COAST_BUTTON_PORT);
+  private Debouncer brakeCoastButtonDebouncer = new Debouncer(0.05);
+  private boolean lastBrakeCoastButton = false;
+  private boolean isBraken = true;
+
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -133,6 +141,16 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void disabledPeriodic() {
+    boolean output = brakeCoastButtonDebouncer.calculate(!brakeCoastButton.get());
+    // m_robotContainer.leds.setState(LedState.RAINBOW);
+    if(output && !lastBrakeCoastButton) {
+      isBraken = !isBraken;
+      robotContainer.setAllBrakeCoast(isBraken);
+      System.out.println("Brake/Coast: " + (isBraken ? "Brake" : "Coast"));
+    }
+
+    lastBrakeCoastButton = output;
+
   }
 
   /**

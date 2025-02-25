@@ -203,4 +203,18 @@ public class Pivot extends SubsystemBase {
   public boolean reverseSysidLimit() {
     return getAngle().getRadians() < MIN_SYSID_ANGLE;
   }
+
+  public void setBrakeCoast(boolean willBrake) {
+    pivot.setCANTimeout(250);
+    pivotFollower.setCANTimeout(250);
+
+    pivotConfig.idleMode(willBrake ? IdleMode.kBrake : IdleMode.kCoast);
+    pivotFollowerConfig.idleMode(willBrake ? IdleMode.kBrake : IdleMode.kCoast);
+    pivot.configure(pivotConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
+    pivotFollower.configure(pivotFollowerConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
+    
+    pivot.setCANTimeout(0);
+    pivotFollower.setCANTimeout(0);
+    Logger.recordOutput("Pivot/isBraken", willBrake);
+  }
 }

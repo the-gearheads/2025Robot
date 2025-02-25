@@ -363,4 +363,11 @@ public class Swerve extends SubsystemBase {
     }
     return positions;
   }
+
+  public void setBrakeCoast(boolean willBrake) {
+    for(var module: modules) {
+      module.setBrakeCoast(willBrake);
+    }
+    Logger.recordOutput("Swerve/IsBraken", willBrake);
+  }
 }

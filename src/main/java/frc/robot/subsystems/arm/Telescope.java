@@ -202,4 +202,18 @@ public class Telescope extends SubsystemBase {
   public boolean getSysidReverseLimit() {
     return getPosition() < MIN_SYSID_HEIGHT;
   }
+
+  public void setBrakeCoast(boolean willBrake) {
+    elevator.setCANTimeout(250);
+    elevatorFollower.setCANTimeout(250);
+
+    elevatorConfig.idleMode(willBrake ? IdleMode.kBrake : IdleMode.kCoast);
+    elevatorFollowerConfig.idleMode(willBrake ? IdleMode.kBrake : IdleMode.kCoast);
+    elevator.configure(elevatorConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
+    elevatorFollower.configure(elevatorFollowerConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
+    
+    elevator.setCANTimeout(0);
+    elevatorFollower.setCANTimeout(0);
+    Logger.recordOutput("Telescope/isBraken", willBrake);
+  }
 }

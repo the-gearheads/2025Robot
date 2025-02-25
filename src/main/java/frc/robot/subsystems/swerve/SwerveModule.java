@@ -133,4 +133,9 @@ public class SwerveModule {
     }
     return positions;
   }
+
+  public void setBrakeCoast(boolean willBrake) {
+    drive.setBrakeCoast(willBrake);
+    steer.setBrakeCoast(willBrake);
+  }  
 }

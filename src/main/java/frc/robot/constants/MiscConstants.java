@@ -4,6 +4,8 @@ package frc.robot.constants;
 public final class MiscConstants {
   public static final double JOYSTICK_DEADBAND = 0.02;
 
+  public static final int BREAK_COAST_BUTTON_PORT = 0;
+
   // robot constants, unused; for reference
   public static final double ROBOT_MOI = 3.070789055; // kg * m^2   - for rinzlers drive base
   public static final double ROBOT_MASS = 31.5; // kg
