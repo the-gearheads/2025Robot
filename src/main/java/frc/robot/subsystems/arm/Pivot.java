@@ -2,21 +2,7 @@ package frc.robot.subsystems.arm;
 
 import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
-import static frc.robot.constants.ArmConstants.MAX_ANGLE;
-import static frc.robot.constants.ArmConstants.MAX_SYSID_ANGLE;
-import static frc.robot.constants.ArmConstants.MIN_ANGLE;
-import static frc.robot.constants.ArmConstants.MIN_SYSID_ANGLE;
-import static frc.robot.constants.ArmConstants.PIVOT_ABS_ENCODER_ID;
-import static frc.robot.constants.ArmConstants.PIVOT_ANGLE_LIVE_FF_THRESHOLD;
-import static frc.robot.constants.ArmConstants.PIVOT_ANGLE_TOLERANCE;
-import static frc.robot.constants.ArmConstants.PIVOT_CONSTRAINTS;
-import static frc.robot.constants.ArmConstants.PIVOT_CURRENT_LIMIT;
-import static frc.robot.constants.ArmConstants.PIVOT_FEEDFORWARD;
-import static frc.robot.constants.ArmConstants.PIVOT_MOTOR_FOLLOWER_ID;
-import static frc.robot.constants.ArmConstants.PIVOT_MOTOR_ID;
-import static frc.robot.constants.ArmConstants.PIVOT_PID;
-import static frc.robot.constants.ArmConstants.PIVOT_POS_FACTOR;
-import static frc.robot.constants.ArmConstants.PIVOT_VEL_FACTOR;
+import static frc.robot.constants.ArmConstants.*;
 
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;

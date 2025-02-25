@@ -1,4 +1,4 @@
-package frc.robot.subsystems.Intake;
+package frc.robot.subsystems.intake;
 
 import static frc.robot.constants.IntakeConstants.*;
 

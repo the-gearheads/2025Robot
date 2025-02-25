@@ -12,6 +12,7 @@ import frc.robot.commands.ManualPivot;
 import frc.robot.commands.ManualTelescope;
 import frc.robot.commands.Teleop;
 import frc.robot.controllers.Controllers;
+import frc.robot.subsystems.Leds;
 import frc.robot.subsystems.MechanismViz;
 import frc.robot.subsystems.arm.Pivot;
 import frc.robot.subsystems.arm.PivotSim;
@@ -31,6 +32,7 @@ public class RobotContainer {
   private final Autos autos = new Autos(swerve);
   private final SysidAutoPicker sysidAuto = new SysidAutoPicker();
   private final MechanismViz viz;
+  private final Leds leds = new Leds();
 
   public RobotContainer() {
     if (Robot.isReal()) {
