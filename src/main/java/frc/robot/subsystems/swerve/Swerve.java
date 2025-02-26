@@ -35,12 +35,13 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Robot;
 import frc.robot.subsystems.swerve.gyro.Gyro;
-import frc.robot.subsystems.swerve.gyro.GyroRedux;
+import frc.robot.subsystems.swerve.gyro.GyroNavx;
 import frc.robot.subsystems.swerve.gyro.GyroSim;
 import frc.robot.subsystems.swerve.setpointgen.ModuleLimits;
 import frc.robot.subsystems.swerve.setpointgen.SwerveSetpoint;
 import frc.robot.subsystems.swerve.setpointgen.SwerveSetpointGenerator;
 import frc.robot.subsystems.vision.Vision;
+import frc.robot.util.ObjectiveTracker;
 
 public class Swerve extends SubsystemBase {
 
@@ -50,6 +51,7 @@ public class Swerve extends SubsystemBase {
   SwerveDriveOdometry wheelOdometry;
   Field2d field = new Field2d();
   Vision vision;
+  ObjectiveTracker tracker = new ObjectiveTracker(this);
 
   Gyro gyro;
   PIDController headingController = new PIDController(5.2, 0, 0.5);
@@ -75,7 +77,7 @@ public class Swerve extends SubsystemBase {
     if (Robot.isSimulation()) {
       gyro = new GyroSim();
     } else {
-      gyro = new GyroRedux();
+      gyro = new GyroNavx();
     }
     gyro.reset();
     SmartDashboard.putData("Field", field);
@@ -236,6 +238,8 @@ public class Swerve extends SubsystemBase {
     vision.feedPoseEstimator(multitagPoseEstimator);
     multitagPoseEstimator.update(getGyroRotation(), getModulePositions());
     field.setRobotPose(getPose());
+
+    tracker.getCoralObjective();
   }
 
   public Pose2d getPoseWheelsOnly() {

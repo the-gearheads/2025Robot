@@ -5,6 +5,9 @@
 package frc.robot;
 
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -70,7 +73,7 @@ public class RobotContainer {
     // teleop controlls
     Controllers.driverController.getYBtn().onTrue(
       // superStructure.followTrajectory(ArmvatorTrajectory.load(ArmvatorPosition.HP, ArmvatorPosition.L4))
-      Commands.runOnce(()->{telescope.setEncoderPosition(0);})
+      Commands.runOnce(()->{swerve.setPose(new Pose2d(new Translation2d(5.080, 2.874), Rotation2d.fromDegrees(120)));})
     );
 
     // Controllers.driverController.getBBtn().onTrue(
@@ -86,8 +89,8 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
     // return autos.getAutonomousRoutine();
-    return sysidAuto.get();
-    // return Swerve.wheelRadiusCharacterization(swerve);
+    // return sysidAuto.get();
+    return Swerve.wheelRadiusCharacterization(swerve);
   }
 
   public double getCurrentDrawSim() {
