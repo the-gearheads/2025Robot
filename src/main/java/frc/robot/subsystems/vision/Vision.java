@@ -17,7 +17,7 @@ import frc.robot.subsystems.swerve.Swerve;
 import static frc.robot.constants.VisionConstants.*;
 
 public class Vision extends SubsystemBase {
-  private AprilTagFieldLayout field;
+  public static AprilTagFieldLayout field;
   private VisionSim sim = new VisionSim();
   private Swerve swerve;
 
