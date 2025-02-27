@@ -1,6 +1,8 @@
 package frc.robot;
 
 
+import org.littletonrobotics.junction.AutoLogOutput;
+
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.commands.WristTrajFollower;
@@ -38,6 +40,7 @@ public class SuperStructure {
     return traj.follow(this::followSample, pivot, telescope).deadlineFor(new WristTrajFollower(traj, wrist, this));
   }
 
+  @AutoLogOutput
   public Translation2d getEndEffPos() {
     double x = telescope.getPosition() * Math.cos(pivot.getAngle().getRadians());
     double y = telescope.getPosition() * Math.sin(pivot.getAngle().getRadians());
