@@ -1,7 +1,9 @@
 package frc.robot.constants;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
 
 public final class SwerveConstants {
@@ -69,6 +71,8 @@ public final class SwerveConstants {
 
     public static double[] XY_PATH_FOLLOWING_PID = {3.6, 0, 0.0};
     public static double[] ROT_PATH_FOLLOWING_PID = {3.6, 0, 0};
+    public static Constraints ALIGNMENT_DRIVE_CONSTRAINTS = new Constraints(5, 2);
+    public static Constraints ALIGNMENT_ROT_CONSTRAINTS = new Constraints(6, 2);
 
     public static final double WHEEL_RADIUS_RAMP_RATE = 0.05; // rad/s^2
     public static final double WHEEL_RADIUS_MAX_VEL = 0.25; // rad/s
