@@ -14,6 +14,7 @@ import frc.robot.controllers.Controllers;
 import frc.robot.subsystems.Leds;
 import frc.robot.subsystems.MechanismViz;
 import frc.robot.subsystems.Superstructure;
+import frc.robot.subsystems.SuperstructurePosition;
 import frc.robot.subsystems.arm.Pivot;
 import frc.robot.subsystems.arm.PivotSim;
 import frc.robot.subsystems.arm.Telescope;
@@ -21,8 +22,6 @@ import frc.robot.subsystems.arm.TelescopeSim;
 import frc.robot.subsystems.swerve.Swerve;
 import frc.robot.subsystems.wrist.Wrist;
 import frc.robot.subsystems.wrist.WristSim;
-import frc.robot.util.ArmvatorPosition;
-import frc.robot.util.ArmvatorTrajectory;
 
 public class RobotContainer {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -71,12 +70,12 @@ public class RobotContainer {
 
     // teleop controlls
     Controllers.driverController.getYBtn().onTrue(
-      superStructure.followAvTrajectory(ArmvatorTrajectory.load(ArmvatorPosition.HP, ArmvatorPosition.L4))
+      superStructure.goTo(SuperstructurePosition.L4)
       // Commands.runOnce(()->{swerve.setPose(new Pose2d(new Translation2d(5.080, 2.874), Rotation2d.fromDegrees(120)));})
     );
 
     Controllers.driverController.getBBtn().onTrue(
-      superStructure.followAvTrajectory(ArmvatorTrajectory.load(ArmvatorPosition.L4, ArmvatorPosition.HP))
+      superStructure.goTo(SuperstructurePosition.HP)
     );
   }
 
