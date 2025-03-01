@@ -9,6 +9,7 @@ public final class MiscConstants {
 
   public static final double DISTANCE_TO_REEF = 0.45;
   public static final double AUTO_ALIGN_FILTER_ANGLE = Units.degreesToRadians(70);
+  public static final double REEF_FACE_LENGTH = Units.inchesToMeters(36.792600);
 
   // robot constants, unused; for reference
   public static final double ROBOT_MOI = 3.070789055; // kg * m^2   - for rinzlers drive base

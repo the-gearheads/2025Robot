@@ -22,9 +22,6 @@ public class ObjectiveTracker {
     this.swerve = swerve;
   }
 
-  public void periodic() {
-  }
-
   public Pose2d getCoralObjective() {
     predictedRobot = swerve.getPose().exp(
         swerve.getRobotRelativeSpeeds().toTwist2d(lookAheadS));
