@@ -16,7 +16,7 @@ public final class ArmConstants {
   public static final double PIVOT_ABS_ENCODER_OFFSET = (Math.PI / 2);
   public static final int PIVOT_CURRENT_LIMIT = 60;
   public static final double PIVOT_ANGLE_LIVE_FF_THRESHOLD = 10;
-
+ 
   public static final double PIVOT_KS = 0;
   public static final double PIVOT_KG = 0;
   public static final double PIVOT_KV = 0;

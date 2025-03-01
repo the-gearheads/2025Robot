@@ -7,6 +7,7 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.commands.AlignToPose;
 import frc.robot.commands.ManualPivot;
 import frc.robot.commands.ManualTelescope;
 import frc.robot.commands.Teleop;
@@ -22,6 +23,7 @@ import frc.robot.subsystems.arm.TelescopeSim;
 import frc.robot.subsystems.swerve.Swerve;
 import frc.robot.subsystems.wrist.Wrist;
 import frc.robot.subsystems.wrist.WristSim;
+import frc.robot.util.ObjectiveTracker;
 
 public class RobotContainer {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -32,6 +34,7 @@ public class RobotContainer {
   private final Superstructure superStructure;
   private final Autos autos = new Autos(swerve);
   private final SysidAutoPicker sysidAuto = new SysidAutoPicker();
+  private final ObjectiveTracker tracker;
   private final MechanismViz viz;
   private final Leds leds = new Leds();
 
@@ -45,9 +48,10 @@ public class RobotContainer {
       telescope = new TelescopeSim();
       wrist = new WristSim();
     }
+    tracker = new ObjectiveTracker(swerve);
     superStructure = new Superstructure(pivot, telescope, wrist);
     viz = new MechanismViz(swerve, pivot, telescope, wrist);
-    swerve.setDefaultCommand(new Teleop(swerve));
+    swerve.setDefaultCommand(new AlignToPose(swerve, tracker::getCoralObjective));
     pivot.setDefaultCommand(new ManualPivot(pivot));
     telescope.setDefaultCommand(new ManualTelescope(telescope));
 
@@ -62,7 +66,7 @@ public class RobotContainer {
     if (!Controllers.didControllersChange())
       return;
     
-        // Clear buttons
+    // Clear buttons
     CommandScheduler.getInstance().getActiveButtonLoop().clear();
 
     // Find new controllers

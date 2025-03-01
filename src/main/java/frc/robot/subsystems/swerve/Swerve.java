@@ -113,7 +113,7 @@ public class Swerve extends SubsystemBase {
       ((GyroSim) gyro).setVelocityYaw(rotationSpeed);
       ((GyroSim) gyro).setYaw(gyro.getRotation2d().getRadians() + rotationSpeed * 0.02);
     }
-    aligner.execute();
+    // aligner.execute();
   }
 
 

@@ -22,9 +22,9 @@ public class ManualPivot extends Command {
   @Override
   public void execute() {
     if (Controllers.driverController.getXBtn()) {
-      pivot.setVoltage(-3);
+      pivot.setVoltage(-2);
     } else if (Controllers.driverController.getABtn()) {
-      pivot.setVoltage(3);
+      pivot.setVoltage(2);
     } else {
       pivot.setVoltage(0);
     }
