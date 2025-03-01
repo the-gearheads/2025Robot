@@ -26,6 +26,9 @@ public class TelescopeSim extends Telescope {
 
   @Override
   public double getPosition() {
+    if (teleSim == null) {
+      return 0;
+    }
     return teleSim.getPositionMeters();
   }
 
@@ -37,6 +40,9 @@ public class TelescopeSim extends Telescope {
 
   @Override
   public double getVelocity() {
+    if (teleSim == null) {
+      return 0;
+    }
     return teleSim.getVelocityMetersPerSecond();
   }
 

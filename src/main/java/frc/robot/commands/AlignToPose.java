@@ -1,6 +1,7 @@
 package frc.robot.commands;
 
 import static frc.robot.constants.MiscConstants.REEF_FACE_LENGTH;
+import static frc.robot.constants.MiscConstants.MAX_REEF_LINEUP_DIST;
 import static frc.robot.constants.SwerveConstants.ALIGNMENT_DRIVE_CONSTRAINTS;
 import static frc.robot.constants.SwerveConstants.ALIGNMENT_ROT_CONSTRAINTS;
 import static frc.robot.constants.SwerveConstants.XY_PATH_FOLLOWING_PID;
@@ -68,13 +69,13 @@ public class AlignToPose extends Command {
         (yDist / (REEF_FACE_LENGTH * 2)) + ((xDist - 0.3) / (REEF_FACE_LENGTH * 3)),
         0.0,
         1.0);
-    double shiftYT = MathUtil.clamp(offset.getX() / REEF_FACE_LENGTH, 0.0, 1.0);
-
+    double shiftYT = MathUtil.clamp(-MathUtil.clamp(offset.getX(), -MAX_REEF_LINEUP_DIST, 0) / REEF_FACE_LENGTH, 0.0, 1.0);
+    Logger.recordOutput("AlignToPose/offsetX", offset.getX());
+    Logger.recordOutput("AlignToPose/offsetY", offset.getY());
     return goal.transformBy(
         new Transform2d(
             shiftXT * 1.5,
-            // Math.copySign(shiftYT * 1.5 * 0.8, offset.getY())
-            0
+            Math.copySign(shiftYT * MAX_REEF_LINEUP_DIST * 0.8, offset.getY())
             , new Rotation2d()
           )
         );
