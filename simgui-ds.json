@@ -16,16 +16,18 @@
           "incKey": 83
         },
         {
+          "decKey": 69,
           "decayRate": 0.0,
+          "incKey": 82,
           "keyRate": 0.009999999776482582
         },
         {},
         {
-          "decKey": 69,
-          "incKey": 82
+          "decKey": 72,
+          "incKey": 71
         }
       ],
-      "axisCount": 5,
+      "axisCount": 6,
       "buttonCount": 4,
       "buttonKeys": [
         90,
@@ -60,6 +62,7 @@
     {
       "axisConfig": [
         {
+          "decKey": 74,
           "incKey": 76
         },
         {
@@ -108,8 +111,7 @@
   ],
   "robotJoysticks": [
     {
-      "guid": "78696e70757401000000000000000000",
-      "useGamepad": true
+      "guid": "Keyboard0"
     }
   ]
 }
