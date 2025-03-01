@@ -19,7 +19,11 @@ public final class ArmConstants {
   public static final int PIVOT_CURRENT_LIMIT = 60;
   public static final double PIVOT_ANGLE_LIVE_FF_THRESHOLD = 10;
 
-  public static final ArmFeedforward PIVOT_FEEDFORWARD = new ArmFeedforward(0, 0, 0, 0);  
+  public static final double PIVOT_KS = 0;
+  public static final double PIVOT_KG = 0;
+  public static final double PIVOT_KV = 0;
+  public static final double PIVOT_KA = 0;
+
   public static final double[] PIVOT_PID = {0, 0, 0};  // placeholder
   public static final Constraints PIVOT_CONSTRAINTS = new Constraints( // placeholders
     Units.degreesToRadians(150.905432596),
@@ -56,8 +60,12 @@ public final class ArmConstants {
   public static final int ELEVATOR_CURRENT_LIMIT = 80;
   public static final double HOMING_VOLTAGE = -2;
   
+  public static final double ELEVATOR_KS = 0;
+  public static final double ELEVATOR_KG = 0;
+  public static final double ELEVATOR_KV = 0;
+  public static final double ELEVATOR_KA = 0;
+  
   public static final double[] ELEVATOR_PID = {0, 0, 0};
-  public static final ElevatorFeedforward ELEVATOR_FEEDFORWARD = new ElevatorFeedforward(0, 0, 0);
   public static final Constraints ELEVATOR_CONSTRAINTS = new Constraints(
     0.5,
     1

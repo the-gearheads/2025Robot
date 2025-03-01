@@ -26,6 +26,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.SuperStructure.RunMode;
 import frc.robot.util.ArmvatorSample;
+import frc.robot.util.vendor.ArmfeedforwardSettable;
 
 public class Pivot extends SubsystemBase {
   /*
@@ -40,6 +41,7 @@ public class Pivot extends SubsystemBase {
   private ProfiledPIDController profiliedPid = new ProfiledPIDController(PIVOT_PID[0], PIVOT_PID[1], PIVOT_PID[2],
       PIVOT_CONSTRAINTS,
       0.02);
+  private ArmfeedforwardSettable pivotFeedforward = new ArmfeedforwardSettable(PIVOT_KS, PIVOT_KG, PIVOT_KV, PIVOT_KA);
   private PIDController pid = new PIDController(PIVOT_PID[0], PIVOT_PID[1], PIVOT_PID[2]);
 
   private RunMode defaultMode = RunMode.VOLTAGE;
@@ -65,9 +67,9 @@ public class Pivot extends SubsystemBase {
         // https://gist.github.com/person4268/46710dca9a128a0eb5fbd93029627a6b
         if (Math.abs(Units.radiansToDegrees(
             getAngle().getRadians() - profiliedPid.getSetpoint().position)) > PIVOT_ANGLE_LIVE_FF_THRESHOLD) {
-          ff = PIVOT_FEEDFORWARD.calculate(getAngle().getRadians(), profiliedPid.getSetpoint().velocity);
+          ff = pivotFeedforward.calculate(getAngle().getRadians(), profiliedPid.getSetpoint().velocity);
         } else {
-          ff = PIVOT_FEEDFORWARD.calculate(profiliedPid.getSetpoint().position, profiliedPid.getSetpoint().velocity);
+          ff = pivotFeedforward.calculate(profiliedPid.getSetpoint().position, profiliedPid.getSetpoint().velocity);
         }
 
         output = profiliedPid.calculate(getAngle().getRadians()) + ff;
@@ -76,7 +78,7 @@ public class Pivot extends SubsystemBase {
         output = manualVoltage;
         break;
       case PID:
-        ff = PIVOT_FEEDFORWARD.calculate(sample.armPos(), sample.armVel(), sample.armAccel());
+        ff = pivotFeedforward.calculate(sample.armPos(), sample.armVel(), sample.armAccel());
         output = pid.calculate(getAngle().getRadians(), sample.armPos()) + ff;
         break;
     }
@@ -182,7 +184,7 @@ public class Pivot extends SubsystemBase {
   }
 
   public boolean atPoint(double angle) {
-    return MathUtil.isNear(getAngle().getRadians(), angle, PIVOT_ANGLE_TOLERANCE);
+    return atPoint(angle, PIVOT_ANGLE_TOLERANCE);
   }
 
   public boolean atPoint(double angle, double tolerance) {

@@ -25,24 +25,29 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.SuperStructure.RunMode;
 import frc.robot.util.ArmvatorSample;
+import frc.robot.util.vendor.ElevatorFeedforwardSettable;
 
 public class Telescope extends SubsystemBase {
-  SparkFlex elevator = new SparkFlex(ELEVATOR_MOTOR_ID, MotorType.kBrushless);
-  SparkFlex elevatorFollower = new SparkFlex(ELEVATOR_MOTOR_FOLLOWER_ID, MotorType.kBrushless);
-  SparkFlexConfig elevatorConfig = new SparkFlexConfig();
-  SparkFlexConfig elevatorFollowerConfig = new SparkFlexConfig();
-  RelativeEncoder elevatorEncoder = elevator.getEncoder();
-  ProfiledPIDController profiliedPid = new ProfiledPIDController(ELEVATOR_PID[0], ELEVATOR_PID[1], ELEVATOR_PID[2],
-      ELEVATOR_CONSTRAINTS);
-  PIDController pid = new PIDController(ELEVATOR_PID[0], ELEVATOR_PID[1], ELEVATOR_PID[2]);
+  private SparkFlex elevator = new SparkFlex(ELEVATOR_MOTOR_ID, MotorType.kBrushless);
+  private SparkFlex elevatorFollower = new SparkFlex(ELEVATOR_MOTOR_FOLLOWER_ID, MotorType.kBrushless);
+  private SparkFlexConfig elevatorConfig = new SparkFlexConfig();
+  private SparkFlexConfig elevatorFollowerConfig = new SparkFlexConfig();
+  private RelativeEncoder elevatorEncoder = elevator.getEncoder();
+  
 
-  RunMode defaultMode = RunMode.VOLTAGE;
-  RunMode mode = defaultMode;
-  ArmvatorSample sample;
-  double ff;
-  double output;
-  double manualVoltage;
-  boolean isHomed = false;
+  private ElevatorFeedforwardSettable elevatorFeedforward = new ElevatorFeedforwardSettable(ELEVATOR_KS, ELEVATOR_KG, ELEVATOR_KV, ELEVATOR_KA);
+
+  private ProfiledPIDController profiliedPid = new ProfiledPIDController(ELEVATOR_PID[0], ELEVATOR_PID[1], ELEVATOR_PID[2],
+      ELEVATOR_CONSTRAINTS);
+  private PIDController pid = new PIDController(ELEVATOR_PID[0], ELEVATOR_PID[1], ELEVATOR_PID[2]);
+
+  private RunMode defaultMode = RunMode.VOLTAGE;
+  private RunMode mode = defaultMode;
+  private ArmvatorSample sample;
+  private double ff;
+  private double output;
+  private double manualVoltage;
+  private boolean isHomed = false;
 
   public Telescope() {
     configure();
@@ -78,11 +83,11 @@ public class Telescope extends SubsystemBase {
   public void periodic() {
     switch (mode) {
       case PROFILED_PID:
-        ff = ELEVATOR_FEEDFORWARD.calculate(profiliedPid.getSetpoint().velocity);
+        ff = elevatorFeedforward.calculate(profiliedPid.getSetpoint().velocity);
         output = profiliedPid.calculate(getPosition() - MIN_ABSOLUTE_HEIGHT) + ff;
         break;
       case PID:
-        ff = ELEVATOR_FEEDFORWARD.calculate(sample.elevatorVel(), sample.elevatorAccel());
+        ff = elevatorFeedforward.calculate(sample.elevatorVel(), sample.elevatorAccel());
         output = pid.calculate(getPosition(), sample.elevatorLen()-MIN_ABSOLUTE_HEIGHT);
         break;
       case VOLTAGE:
