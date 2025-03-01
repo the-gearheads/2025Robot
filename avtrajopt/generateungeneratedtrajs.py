@@ -9,14 +9,19 @@ back_x = 0
 
 samples_per_meter_travelled = 200
 
-# all randomly guessed placeholders
+def endeff_pos(ext_len, theta_deg):
+  x = (constants.elevator_min_len + ext_len) * math.cos(math.radians(theta_deg))
+  y = (constants.elevator_min_len + ext_len) * math.sin(math.radians(theta_deg))
+  return x, y
+
+
+# mostly randomly guessed placeholders
 places = {
-  "L1": {"pose": [front_x, 0.95], "vel": [0, 0]},
-  "L2": {"pose": [back_x+0.01, 0.92], "vel": [0, 0]},
-  "L3": {"pose": [back_x+0.01, 1.6], "vel": [0, 0]},
-  "L4": {"pose": [back_x+0.01, 1.8], "vel": [0, 0]},
-  # "I-": {"pose": [back_x+0.2, 1], "vel": [-0.2, -0.2]},
-  # "I+": {"pose": [back_x+0.2, 1], "vel": [0.2, 0.2]},
+  "L1": {"pose": endeff_pos(0.06, 50), "vel": [0, 0]}, # placeholder
+  "L2": {"pose": endeff_pos(0.20, 50), "vel": [0, 0]},
+  "L3": {"pose": endeff_pos(0.06, 86), "vel": [0, 0]},
+  "L4": {"pose": endeff_pos(0.88, 86), "vel": [0, 0]},
+
   "HP": {"pose": [front_x, 1], "vel": [0, 0]},
   "GROUND_INTAKE": {"pose": [front_x, 0.92], "vel": [0, 0]},
   "PROCESSOR": {"pose": [front_x, 0.8], "vel": [0, 0]},

@@ -48,6 +48,12 @@ def main(input_file, output_dir):
     endeff_pos = waypoint["pose"]
     vels = waypoint.get("vel", None)
     pose_pivot_elevator = get_elevator_len_arm_angle(endeff_pos[0], endeff_pos[1])
+    if endeff_pos[0] < constants.endeff_x_min:
+      raise ValueError(f"End effector x position is too small to reach {waypoint} ({endeff_pos[0]} < {constants.endeff_x_min})")
+    if endeff_pos[0] > constants.endeff_x_max:
+      raise ValueError(f"End effector x position is too large to reach {waypoint} ({endeff_pos[0]} > {constants.endeff_x_max})")
+    if endeff_pos[1] < constants.endeff_y_min:
+      raise ValueError(f"End effector y position is too small to reach {waypoint} ({endeff_pos[1]} < {constants.endeff_y_min})")
     if pose_pivot_elevator[0] < constants.elevator_min_len:
       raise ValueError(f"Elevator length is too short to reach {waypoint} ({pose_pivot_elevator[0]} < {constants.elevator_min_len})")
     if pose_pivot_elevator[0] > constants.elevator_max_len:
@@ -59,15 +65,15 @@ def main(input_file, output_dir):
     p.subject_to(pivot[0, int(sample)] == pose_pivot_elevator[1])
     p.subject_to(elevator[0, int(sample)] == pose_pivot_elevator[0])
     # populate an initial position guess from the last waypoint to this one
-    if i > 0:
-      start_sample = int(waypoints[i - 1]["at_sample"] * N)
-      this_sample = int(sample)
-      start_elev_arm_angle = (waypoints[i - 1]["pose"][0], waypoints[i - 1]["pose"][1])
-      this_elev_arm_angle = pose_pivot_elevator
-      for k in range(start_sample + 1, this_sample):
-        t = (k - start_sample) / (this_sample - start_sample)
-        pivot[0, k].set_value(lerp(start_elev_arm_angle[1], this_elev_arm_angle[1], t))
-        elevator[0, k].set_value(lerp(start_elev_arm_angle[0], this_elev_arm_angle[0], t))
+    # if i > 0:
+    #   start_sample = int(waypoints[i - 1]["at_sample"] * N)
+    #   this_sample = int(sample)
+    #   start_elev_arm_angle = (waypoints[i - 1]["pose"][0], waypoints[i - 1]["pose"][1])
+    #   this_elev_arm_angle = pose_pivot_elevator
+    #   for k in range(start_sample + 1, this_sample):
+    #     t = (k - start_sample) / (this_sample - start_sample)
+    #     pivot[0, k].set_value(lerp(start_elev_arm_angle[1], this_elev_arm_angle[1], t))
+    #     elevator[0, k].set_value(lerp(start_elev_arm_angle[0], this_elev_arm_angle[0], t))
     if vels is not None:
       p.subject_to(pivot[1, int(sample)] == vels[0])
       p.subject_to(elevator[1, int(sample)] == vels[1])
