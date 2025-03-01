@@ -35,9 +35,13 @@ public class SuperStructure {
     telescope.setSample(sample);
     lastSample = sample;
   }
+  
+  private boolean atPidSetpoint() {
+    return pivot.atPidSetpoint() && telescope.atPidSetpoint();
+  }
 
   public Command followTrajectory(ArmvatorTrajectory traj) {
-    return traj.follow(this::followSample, pivot, telescope).deadlineFor(new WristTrajFollower(traj, wrist, this));
+    return traj.follow(this::followSample, this::atPidSetpoint, true, true, pivot, telescope).deadlineFor(new WristTrajFollower(traj, wrist, this));
   }
 
   @AutoLogOutput

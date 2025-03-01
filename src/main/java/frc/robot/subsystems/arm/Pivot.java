@@ -177,6 +177,10 @@ public class Pivot extends SubsystemBase {
     manualVoltage = volts.magnitude();
   }
 
+  public boolean atPidSetpoint() {
+    return mode == RunMode.PID && pid.atSetpoint();
+  }
+
   public boolean atPoint(double angle) {
     return MathUtil.isNear(getAngle().getRadians(), angle, PIVOT_ANGLE_TOLERANCE);
   }

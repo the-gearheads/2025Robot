@@ -163,6 +163,10 @@ public class Telescope extends SubsystemBase {
     elevator.setVoltage(output);
   }
 
+  public boolean atPidSetpoint() {
+    return mode == RunMode.PID && pid.atSetpoint();
+  }
+
   public void setVoltage(double volts) {
     manualVoltage = volts;
   }

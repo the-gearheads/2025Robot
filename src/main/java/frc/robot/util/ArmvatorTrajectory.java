@@ -6,7 +6,9 @@ import java.io.FileReader;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -16,7 +18,9 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 
 public record ArmvatorTrajectory(String name, List<ArmvatorSample> samples) {
@@ -87,9 +91,12 @@ public record ArmvatorTrajectory(String name, List<ArmvatorSample> samples) {
   }
   
   // Follows an armvator trajectory, sampling periodically. Consumer is expected to actually do the following.
-  public Command follow(Consumer<ArmvatorSample> consumer, Subsystem... requirements) {
+  public Command follow(Consumer<ArmvatorSample> consumer, BooleanSupplier atSetpoint, boolean waitUntilAtStart, boolean waitUntilAtEnd, Subsystem... requirements) {
     Timer timer = new Timer();
-    return new FunctionalCommand(
+
+    var gotoStartComamnd = Commands.run(() -> {consumer.accept(sampleAt(0));}, requirements).until(atSetpoint).withName("ArmTrajFollowerGotoStart " + name);
+    var waitUntilEndCommand = Commands.run(() -> {consumer.accept(sampleAt(getDuration()));}, requirements).until(atSetpoint).withName("ArmTrajFollowerWaitUntilEnd " + name);
+    var trajCommand = new FunctionalCommand(
       // On init
       () -> {
         timer.start();
@@ -115,6 +122,16 @@ public record ArmvatorTrajectory(String name, List<ArmvatorSample> samples) {
       },
       requirements
     );
+
+    var sequence = new SequentialCommandGroup();
+    if(waitUntilAtStart) {
+      sequence.addCommands(gotoStartComamnd);
+    }
+    sequence.addCommands(trajCommand);
+    if(waitUntilAtEnd) {
+      sequence.addCommands(waitUntilEndCommand);
+    }
+    return sequence.withName("ArmvatorTrajFollower " + name);
   }
 
   public static ArmvatorTrajectory load(String filename) {
