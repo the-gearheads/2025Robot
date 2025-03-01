@@ -9,8 +9,6 @@ import java.util.function.Supplier;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.swerve.Swerve;
 
@@ -34,7 +32,7 @@ public class AlignToPose extends Command {
   @Override
   public void execute() {
     Pose2d currentPose = swerve.getPose();
-    double currentDistance = currentPose.relativeTo(target.get()).getTranslation().getNorm();
+    // double currentDistance = currentPose.relativeTo(target.get()).getTranslation().getNorm();
 
 
     // u=(1−α)⋅udriver​+α⋅uauto​
