@@ -19,6 +19,8 @@ import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.controllers.Controllers;
+import frc.robot.controllers.DriverController;
 import frc.robot.subsystems.swerve.Swerve;
 
 public class AlignToPose extends Command {
@@ -70,8 +72,7 @@ public class AlignToPose extends Command {
     // u=(1−α)⋅udriver​+α⋅uauto​
     // scale α smoothly (quadratic?) based on distance from alignment pose
     // scale α based on velocity direction, if driver is going in similar direction
-    // to automatic adjustment, increase α
-    // scale α based on controller direction, large changes will decrease α
+     // scale α based on controller direction, large changes will decrease α
     // g(θ)=0l5(1+cos(θ)) where theta is the different in driver direction and
     // commanded direction
 
@@ -80,6 +81,7 @@ public class AlignToPose extends Command {
 
     double targetDist = currentPose.getTranslation().getDistance(currentTarget.getTranslation());
     double driveVelocity = driveController.calculate(targetDist, 0.0);
+    double driveScalar = driveVelocity * distanceScalar;
     double rotVelocity = rotController.calculate(currentPose.getRotation().getRadians(),
         currentTarget.getRotation().getRadians());
     Logger.recordOutput("AlignToPose/driveVelocitySetpoint", driveVelocity);
@@ -87,8 +89,9 @@ public class AlignToPose extends Command {
 
     var driveTranslation = new Pose2d(Translation2d.kZero,
         currentPose.getTranslation().minus(currentTarget.getTranslation()).getAngle())
-        .transformBy(new Transform2d(new Translation2d(driveVelocity, 0.0), Rotation2d.kZero))
+        .transformBy(new Transform2d(new Translation2d(driveScalar, 0.0), Rotation2d.kZero))
         .getTranslation();
+    driveTranslation.toVector().unit();
     swerve.drive(ChassisSpeeds.fromFieldRelativeSpeeds(driveTranslation.getX(), driveTranslation.getY(), rotVelocity, currentPose.getRotation()));
   }
 
