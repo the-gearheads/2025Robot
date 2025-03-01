@@ -73,6 +73,16 @@ public class DriverController {
     return new Trigger(() -> controller.getBButton());
   }
 
+  public Trigger getLeftBumper() {
+    if(isNull()) return emptyTrigger();
+    return new Trigger(() -> controller.getLeftBumperButton());
+  }
+
+  public Trigger getRightBumper() {
+    if(isNull()) return emptyTrigger();
+    return new Trigger(() -> controller.getRightBumperButton());
+  }
+
   public void setRumble(double rumble) {
     if(isNull()) return;
     controller.setRumble(RumbleType.kBothRumble, rumble);

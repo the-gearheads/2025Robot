@@ -51,7 +51,7 @@ public class RobotContainer {
     tracker = new ObjectiveTracker(swerve);
     superStructure = new Superstructure(pivot, telescope, wrist);
     viz = new MechanismViz(swerve, pivot, telescope, wrist);
-    swerve.setDefaultCommand(new AlignToPose(swerve, tracker::getCoralObjective));
+    swerve.setDefaultCommand(new Teleop(swerve));
     pivot.setDefaultCommand(new ManualPivot(pivot));
     telescope.setDefaultCommand(new ManualTelescope(telescope));
 
@@ -81,6 +81,8 @@ public class RobotContainer {
     Controllers.driverController.getBBtn().onTrue(
       superStructure.goTo(SuperstructurePosition.HP)
     );
+
+    Controllers.driverController.getLeftBumper().whileTrue(new AlignToPose(swerve, tracker::getCoralObjective));
   }
 
   /**
