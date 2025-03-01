@@ -55,6 +55,8 @@ public final class ArmConstants {
   public static final double MIN_SYSID_HEIGHT = Units.inchesToMeters(2);
   public static final double MAX_SYSID_HEIGHT = Units.inchesToMeters(74.6) - MIN_ABSOLUTE_HEIGHT;
 
+  public static final double ELEVATOR_LENGTH_TOLERANCE = Units.inchesToMeters(0.5);
+
   public static final int ELEVATOR_CURRENT_LIMIT = 80;
   public static final double HOMING_VOLTAGE = -2;
   
@@ -62,7 +64,7 @@ public final class ArmConstants {
   public static final double ELEVATOR_KG = 0;
   public static final double ELEVATOR_KV = 0;
   public static final double ELEVATOR_KA = 0;
-  
+
   public static final double[] ELEVATOR_PID = {0, 0, 0};
   public static final Constraints ELEVATOR_CONSTRAINTS = new Constraints(
     0.5,

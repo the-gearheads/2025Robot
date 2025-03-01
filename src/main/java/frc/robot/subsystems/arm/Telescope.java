@@ -37,7 +37,7 @@ public class Telescope extends SubsystemBase {
 
   private ElevatorFeedforwardSettable elevatorFeedforward = new ElevatorFeedforwardSettable(ELEVATOR_KS, ELEVATOR_KG, ELEVATOR_KV, ELEVATOR_KA);
 
-  private ProfiledPIDController profiliedPid = new ProfiledPIDController(ELEVATOR_PID[0], ELEVATOR_PID[1], ELEVATOR_PID[2],
+  private ProfiledPIDController profiledPid = new ProfiledPIDController(ELEVATOR_PID[0], ELEVATOR_PID[1], ELEVATOR_PID[2],
       ELEVATOR_CONSTRAINTS);
   private PIDController pid = new PIDController(ELEVATOR_PID[0], ELEVATOR_PID[1], ELEVATOR_PID[2]);
 
@@ -51,6 +51,9 @@ public class Telescope extends SubsystemBase {
 
   public Telescope() {
     configure();
+    profiledPid.setTolerance(ELEVATOR_LENGTH_TOLERANCE);
+    profiledPid.reset(getPosition(), getVelocity());
+    pid.setTolerance(ELEVATOR_LENGTH_TOLERANCE);
   }
 
   public void configure() {
@@ -83,8 +86,8 @@ public class Telescope extends SubsystemBase {
   public void periodic() {
     switch (mode) {
       case PROFILED_PID:
-        ff = elevatorFeedforward.calculate(profiliedPid.getSetpoint().velocity);
-        output = profiliedPid.calculate(getPosition() - MIN_ABSOLUTE_HEIGHT) + ff;
+        ff = elevatorFeedforward.calculate(profiledPid.getSetpoint().velocity);
+        output = profiledPid.calculate(getPosition() - MIN_ABSOLUTE_HEIGHT) + ff;
         break;
       case PID:
         ff = elevatorFeedforward.calculate(sample.elevatorVel(), sample.elevatorAccel());
@@ -97,7 +100,7 @@ public class Telescope extends SubsystemBase {
 
     SmartDashboard.putData(pid);
     Logger.recordOutput("Telescope/pidSetpoint", pid.getSetpoint());
-    Logger.recordOutput("Telescope/profiliedPIDSetpoint", profiliedPid.getSetpoint().position);
+    Logger.recordOutput("Telescope/profiliedPIDSetpoint", profiledPid.getSetpoint().position);
     Logger.recordOutput("Telescope/attemptedOutput", output);
     Logger.recordOutput("Telescope/manualVoltage", manualVoltage);
     Logger.recordOutput("Telescope/sample", sample);
@@ -113,11 +116,11 @@ public class Telescope extends SubsystemBase {
     }
 
     if (mode == RunMode.PROFILED_PID) {
-      if (profiliedPid.getSetpoint().position < MIN_RELATIVE_HEIGHT || profiliedPid.getSetpoint().position > MAX_RELATIVE_HEIGHT) {
+      if (profiledPid.getSetpoint().position < MIN_RELATIVE_HEIGHT || profiledPid.getSetpoint().position > MAX_RELATIVE_HEIGHT) {
         output = 0;
         // Might as well just get as close as we can
-        if (profiliedPid.getGoal().position < MIN_RELATIVE_HEIGHT || profiliedPid.getGoal().position > MAX_RELATIVE_HEIGHT) {
-          profiliedPid.setGoal(MathUtil.clamp(profiliedPid.getGoal().position, MIN_RELATIVE_HEIGHT, MAX_RELATIVE_HEIGHT));
+        if (profiledPid.getGoal().position < MIN_RELATIVE_HEIGHT || profiledPid.getGoal().position > MAX_RELATIVE_HEIGHT) {
+          profiledPid.setGoal(MathUtil.clamp(profiledPid.getGoal().position, MIN_RELATIVE_HEIGHT, MAX_RELATIVE_HEIGHT));
         }
       }
     }
@@ -138,7 +141,7 @@ public class Telescope extends SubsystemBase {
   }
 
   public void setGoalPosition(double setpointLength) {
-    profiliedPid.setGoal(setpointLength);
+    profiledPid.setGoal(setpointLength);
   }
 
   public void setSample(ArmvatorSample sample) {

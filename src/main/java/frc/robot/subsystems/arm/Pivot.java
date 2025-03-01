@@ -56,6 +56,8 @@ public class Pivot extends SubsystemBase {
     configure();
     profiliedPid.reset(getAngle().getRadians());
     profiliedPid.setGoal(getAngle().getRadians());
+    pid.setTolerance(PIVOT_ANGLE_TOLERANCE);
+    profiliedPid.setTolerance(PIVOT_ANGLE_TOLERANCE);
   }
 
   @Override
