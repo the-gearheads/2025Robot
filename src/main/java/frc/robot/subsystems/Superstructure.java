@@ -1,4 +1,4 @@
-package frc.robot;
+package frc.robot.subsystems;
 
 
 import org.littletonrobotics.junction.AutoLogOutput;
@@ -9,10 +9,11 @@ import frc.robot.commands.WristTrajFollower;
 import frc.robot.subsystems.arm.Pivot;
 import frc.robot.subsystems.arm.Telescope;
 import frc.robot.subsystems.wrist.Wrist;
+import frc.robot.util.ArmvatorPosition;
 import frc.robot.util.ArmvatorSample;
 import frc.robot.util.ArmvatorTrajectory;
 
-public class SuperStructure {
+public class Superstructure {
   public static enum RunMode {
     PROFILED_PID, VOLTAGE, PID
   }
@@ -22,7 +23,7 @@ public class SuperStructure {
   Wrist wrist;
 
   ArmvatorSample lastSample;
-  public SuperStructure(Pivot pivot, Telescope telescope, Wrist wrist) {
+  public Superstructure(Pivot pivot, Telescope telescope, Wrist wrist) {
     this.pivot = pivot;
     this.telescope = telescope;
     this.wrist = wrist;
@@ -40,8 +41,14 @@ public class SuperStructure {
     return pivot.atPidSetpoint() && telescope.atPidSetpoint();
   }
 
-  public Command followTrajectory(ArmvatorTrajectory traj) {
-    return traj.follow(this::followSample, this::atPidSetpoint, true, true, pivot, telescope).deadlineFor(new WristTrajFollower(traj, wrist, this));
+  public Command followAvTrajectory(ArmvatorTrajectory traj) {
+    return traj.follow(this::followSample, this::atPidSetpoint, true, true, pivot, telescope);
+  }
+
+  public Command goTo(SuperstructurePosition pos) {
+    var currentPos = ArmvatorPosition.getNearest(getEndEffPos());
+    var traj = ArmvatorTrajectory.load(currentPos, pos.armvatorPosition);
+    return followAvTrajectory(traj).deadlineFor(new WristTrajFollower(traj, pos, wrist, () -> lastSample));
   }
 
   @AutoLogOutput

@@ -13,6 +13,7 @@ import frc.robot.commands.Teleop;
 import frc.robot.controllers.Controllers;
 import frc.robot.subsystems.Leds;
 import frc.robot.subsystems.MechanismViz;
+import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.arm.Pivot;
 import frc.robot.subsystems.arm.PivotSim;
 import frc.robot.subsystems.arm.Telescope;
@@ -29,7 +30,7 @@ public class RobotContainer {
   private final Pivot pivot;
   private final Telescope telescope;
   private final Wrist wrist;
-  private final SuperStructure superStructure;
+  private final Superstructure superStructure;
   private final Autos autos = new Autos(swerve);
   private final SysidAutoPicker sysidAuto = new SysidAutoPicker();
   private final MechanismViz viz;
@@ -45,7 +46,7 @@ public class RobotContainer {
       telescope = new TelescopeSim();
       wrist = new WristSim();
     }
-    superStructure = new SuperStructure(pivot, telescope, wrist);
+    superStructure = new Superstructure(pivot, telescope, wrist);
     viz = new MechanismViz(swerve, pivot, telescope, wrist);
     swerve.setDefaultCommand(new Teleop(swerve));
     pivot.setDefaultCommand(new ManualPivot(pivot));
@@ -70,12 +71,12 @@ public class RobotContainer {
 
     // teleop controlls
     Controllers.driverController.getYBtn().onTrue(
-      superStructure.followTrajectory(ArmvatorTrajectory.load(ArmvatorPosition.HP, ArmvatorPosition.L4))
+      superStructure.followAvTrajectory(ArmvatorTrajectory.load(ArmvatorPosition.HP, ArmvatorPosition.L4))
       // Commands.runOnce(()->{swerve.setPose(new Pose2d(new Translation2d(5.080, 2.874), Rotation2d.fromDegrees(120)));})
     );
 
     Controllers.driverController.getBBtn().onTrue(
-      superStructure.followTrajectory(ArmvatorTrajectory.load(ArmvatorPosition.L4, ArmvatorPosition.HP))
+      superStructure.followAvTrajectory(ArmvatorTrajectory.load(ArmvatorPosition.L4, ArmvatorPosition.HP))
     );
   }
 

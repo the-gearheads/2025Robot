@@ -31,7 +31,7 @@ public class AlignToPose extends Command {
 
   @Override
   public void execute() {
-    Pose2d currentPose = swerve.getPose();
+    // Pose2d currentPose = swerve.getPose();
     // double currentDistance = currentPose.relativeTo(target.get()).getTranslation().getNorm();
 
 

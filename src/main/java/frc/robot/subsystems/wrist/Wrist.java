@@ -98,6 +98,10 @@ public class Wrist extends SubsystemBase {
     return wristAbsEncoder.getVelocity();
   }
 
+  public void setAngle(Rotation2d angle) {
+    pid.setGoal(angle.getRadians());
+  }
+
   public void setAngle(double angle) {
     pid.setGoal(angle);
   }
@@ -115,7 +119,7 @@ public class Wrist extends SubsystemBase {
   }
 
   public boolean atPoint(double angle) {
-    return MathUtil.isNear(getAngle().getRadians(), angle, WRIST_ANGLE_TOLERANCE);
+    return atPoint(angle, WRIST_ANGLE_TOLERANCE);
   }
 
   public boolean atPoint(double angle, double tolerance) {

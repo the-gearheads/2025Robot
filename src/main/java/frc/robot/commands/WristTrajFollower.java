@@ -1,30 +1,31 @@
 package frc.robot.commands;
 
+import java.util.function.Supplier;
+
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.SuperStructure;
+import frc.robot.subsystems.SuperstructurePosition;
 import frc.robot.subsystems.wrist.Wrist;
-import frc.robot.subsystems.wrist.WristPositions;
-import frc.robot.util.ArmvatorPosition;
+import frc.robot.util.ArmvatorSample;
 import frc.robot.util.ArmvatorTrajectory;
 
 public class WristTrajFollower extends Command {
   Wrist wrist;
-  SuperStructure superStructure;
   ArmvatorTrajectory traj;
-  ArmvatorPosition endPos;
+  SuperstructurePosition endPos;
+  Supplier<ArmvatorSample> lastSampleSupplier;
 
-  public WristTrajFollower(ArmvatorTrajectory traj, Wrist wrist, SuperStructure superStructure) {
+  public WristTrajFollower(ArmvatorTrajectory traj, SuperstructurePosition endPos, Wrist wrist, Supplier<ArmvatorSample> lastSampleSupplier) {
     this.wrist = wrist;
-    this.superStructure = superStructure;
     this.traj = traj;
-    endPos = ArmvatorPosition.getNearest(traj.getFinalSample().endeffPos());
+    this.endPos = endPos;
+    this.lastSampleSupplier = lastSampleSupplier;
     addRequirements(wrist);
   }
 
   @Override
   public void execute() {
-    if (superStructure.getLastSample().t() > (traj.getDuration() / 2.0)) {
-      wrist.setAngle(WristPositions.getFromArmvatorPosition(endPos).wristAngle.getRadians());
+    if (lastSampleSupplier.get().t() > (traj.getDuration() / 2.0)) {
+      wrist.setAngle(endPos.wristAngle);
     }
   }
 }
