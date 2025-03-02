@@ -13,6 +13,7 @@ import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
@@ -20,7 +21,6 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.controllers.Controllers;
-import frc.robot.controllers.DriverController;
 import frc.robot.subsystems.swerve.Swerve;
 
 public class AlignToPose extends Command {
@@ -30,6 +30,9 @@ public class AlignToPose extends Command {
       XY_PATH_FOLLOWING_PID[2], ALIGNMENT_DRIVE_CONSTRAINTS);
   ProfiledPIDController rotController = new ProfiledPIDController(ROT_PATH_FOLLOWING_PID[0], ROT_PATH_FOLLOWING_PID[1],
       ROT_PATH_FOLLOWING_PID[2], ALIGNMENT_ROT_CONSTRAINTS);
+
+  LinearFilter controllerXFilter = LinearFilter.highPass(0.1, 0.02);
+  LinearFilter controllerYFilter = LinearFilter.highPass(0.1, 0.02);
 
   public AlignToPose(Swerve swerve, Supplier<Pose2d> target) {
     this.swerve = swerve;
@@ -57,10 +60,24 @@ public class AlignToPose extends Command {
                         .getAngle()
                         .unaryMinus())
                 .getX()));
+
+    controllerXFilter.reset();
+    double x = Controllers.driverController.getTranslateXAxis();
+    double y = Controllers.driverController.getTranslateYAxis();
+    controllerXFilter.calculate(x);
+    controllerYFilter.calculate(y);
   }
 
   @Override
   public void execute() {
+    double x = Controllers.driverController.getTranslateXAxis();
+    double y = Controllers.driverController.getTranslateYAxis();
+    Translation2d controllerTranslation = new Translation2d(x, y);
+    double highPassValue = (Math.abs(controllerXFilter.calculate(x)) + Math.abs(controllerYFilter.calculate(y))) / 2.0;
+    Logger.recordOutput("AlignToPose/highpassFilterOut", highPassValue);
+    // 0.4
+    
+
     Pose2d currentPose = swerve.getPose();
     double currentDistance = currentPose.relativeTo(target.get()).getTranslation().getNorm();
 
@@ -73,26 +90,26 @@ public class AlignToPose extends Command {
     // scale α smoothly (quadratic?) based on distance from alignment pose
     // scale α based on velocity direction, if driver is going in similar direction
      // scale α based on controller direction, large changes will decrease α
-    // g(θ)=0l5(1+cos(θ)) where theta is the different in driver direction and
-    // commanded direction
-
+     
     // all factors made 0 to 1 and then multiplied together, plug into original
     // equation.
 
     double targetDist = currentPose.getTranslation().getDistance(currentTarget.getTranslation());
     double driveVelocity = driveController.calculate(targetDist, 0.0);
-    double driveScalar = driveVelocity * distanceScalar;
     double rotVelocity = rotController.calculate(currentPose.getRotation().getRadians(),
-        currentTarget.getRotation().getRadians());
+    currentTarget.getRotation().getRadians());
     Logger.recordOutput("AlignToPose/driveVelocitySetpoint", driveVelocity);
     Logger.recordOutput("AlignToPose/rotVelocitySetpoint", rotVelocity);
+    double driveScalar = driveVelocity * distanceScalar;
 
-    var driveTranslation = new Pose2d(Translation2d.kZero,
+    var autoTranslation = new Pose2d(Translation2d.kZero,
         currentPose.getTranslation().minus(currentTarget.getTranslation()).getAngle())
         .transformBy(new Transform2d(new Translation2d(driveScalar, 0.0), Rotation2d.kZero))
         .getTranslation();
-    driveTranslation.toVector().unit();
-    swerve.drive(ChassisSpeeds.fromFieldRelativeSpeeds(driveTranslation.getX(), driveTranslation.getY(), rotVelocity, currentPose.getRotation()));
+
+    double translationVectorError = autoTranslation.getAngle().getRadians() - controllerTranslation.getAngle().getRadians();
+    double vectorErrorScalar = -1.53 * translationVectorError + 0.8;
+    swerve.drive(ChassisSpeeds.fromFieldRelativeSpeeds(autoTranslation.getX(), autoTranslation.getY(), rotVelocity, currentPose.getRotation()));
   }
 
   private static Pose2d getDriveTarget(Pose2d robot, Pose2d goal) {
@@ -113,4 +130,5 @@ public class AlignToPose extends Command {
             shiftXT * 1.5,
             Math.copySign(shiftYT * MAX_REEF_LINEUP_DIST * 0.8, offset.getY()), new Rotation2d()));
   }
+
 }
