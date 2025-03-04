@@ -19,6 +19,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.controllers.Controllers;
 import frc.robot.subsystems.swerve.Swerve;
@@ -66,51 +67,77 @@ public class AlignToPose extends Command {
     double y = Controllers.driverController.getTranslateYAxis();
     controllerXFilter.calculate(x);
     controllerYFilter.calculate(y);
+    double distanceScalarSlope = -0.7679;
+    SmartDashboard.putNumber("AlignToPose/DistanceScalarSlope", distanceScalarSlope);
+
   }
 
   @Override
   public void execute() {
+    Pose2d currentPose = swerve.getPose();
     double x = Controllers.driverController.getTranslateXAxis();
     double y = Controllers.driverController.getTranslateYAxis();
-    Translation2d controllerTranslation = new Translation2d(x, y);
-    double highPassValue = (Math.abs(controllerXFilter.calculate(x)) + Math.abs(controllerYFilter.calculate(y))) / 2.0;
-    Logger.recordOutput("AlignToPose/highpassFilterOut", highPassValue);
-    // 0.4
     
-
-    Pose2d currentPose = swerve.getPose();
-    double currentDistance = currentPose.relativeTo(target.get()).getTranslation().getNorm();
-
-    double distanceScalar = MathUtil.clamp(-0.7679 * currentDistance + 1, 0, 1);
-    driveController.calculate(currentDistance, 0.0);
-
-    Pose2d currentTarget = getDriveTarget(currentPose, target.get());
-    Logger.recordOutput("AlignToPose/DriveTarget", currentTarget);
-    // u=(1−α)⋅udriver​+α⋅uauto​
-    // scale α smoothly (quadratic?) based on distance from alignment pose
-    // scale α based on velocity direction, if driver is going in similar direction
-     // scale α based on controller direction, large changes will decrease α
-     
-    // all factors made 0 to 1 and then multiplied together, plug into original
-    // equation.
-
-    double targetDist = currentPose.getTranslation().getDistance(currentTarget.getTranslation());
-    double driveVelocity = driveController.calculate(targetDist, 0.0);
-    double rotVelocity = rotController.calculate(currentPose.getRotation().getRadians(),
-    currentTarget.getRotation().getRadians());
-    Logger.recordOutput("AlignToPose/driveVelocitySetpoint", driveVelocity);
-    Logger.recordOutput("AlignToPose/rotVelocitySetpoint", rotVelocity);
-    double driveScalar = driveVelocity * distanceScalar;
-
-    var autoTranslation = new Pose2d(Translation2d.kZero,
-        currentPose.getTranslation().minus(currentTarget.getTranslation()).getAngle())
-        .transformBy(new Transform2d(new Translation2d(driveScalar, 0.0), Rotation2d.kZero))
-        .getTranslation();
-
-    double translationVectorError = autoTranslation.getAngle().getRadians() - controllerTranslation.getAngle().getRadians();
-    double vectorErrorScalar = -1.53 * translationVectorError + 0.8;
-    swerve.drive(ChassisSpeeds.fromFieldRelativeSpeeds(autoTranslation.getX(), autoTranslation.getY(), rotVelocity, currentPose.getRotation()));
+    // double linearSSz
   }
+
+//   @Override
+//   public void execute() {
+//     Pose2d currentPose = swerve.getPose();
+//     double x = Controllers.driverController.getTranslateXAxis();
+//     double y = Controllers.driverController.getTranslateYAxis();
+//     Translation2d controllerTranslation = new Translation2d(x, y);
+//     double currentDistance = currentPose.relativeTo(target.get()).getTranslation().getNorm();
+//     // double highPassValue = (Math.abs(controllerXFilter.calculate(x)) + Math.abs(controllerYFilter.calculate(y))) / 2.0;
+//     // Logger.recordOutput("AlignToPose/highpassFilterOut", highPassValue);
+//     // 0.4
+    
+//     double distanceScalarSlope = SmartDashboard.getNumber("AlignToPose/DistanceScalarSlope", 0.5);
+
+//     double distanceScalar = MathUtil.clamp(distanceScalarSlope * currentDistance + 1, 0, 1);
+//     driveController.calculate(currentDistance, 0.0);
+
+//     Pose2d currentTarget = getDriveTarget(currentPose, target.get());
+//     Logger.recordOutput("AlignToPose/DriveTarget", currentTarget);
+//     // u=(1−α)⋅udriver​+α⋅uauto​
+//     // scale α smoothly (quadratic?) based on distance from alignment pose
+//     // scale α based on velocity direction, if driver is going in similar direction
+//      // scale α based on controller direction, large changes will decrease α
+     
+//     // all factors made 0 to 1 and then multiplied together, plug into original
+//     // equation.
+
+//     double targetDist = currentPose.getTranslation().getDistance(currentTarget.getTranslation());
+//     double driveVelocity = driveController.calculate(targetDist, 0.0);
+//     double rotVelocity = rotController.calculate(currentPose.getRotation().getRadians(),
+//     currentTarget.getRotation().getRadians());
+//     Logger.recordOutput("AlignToPose/driveVelocitySetpoint", driveVelocity);
+//     Logger.recordOutput("AlignToPose/rotVelocitySetpoint", rotVelocity);
+    
+//     Rotation2d angleError = currentPose.getTranslation().minus(currentTarget.getTranslation()).getAngle();
+//     double translationVectorError = angleError.getRadians() - controllerTranslation.getAngle().getRadians();
+//     double vectorErrorScalar = MathUtil.clamp(-1.53 * translationVectorError + 0.8, 0, 1);
+//     Logger.recordOutput("AlignToPose/vectorErrorScalar", vectorErrorScalar);
+//     Logger.recordOutput("AlignToPose/translationVectorError", translationVectorError);
+    
+//     boolean vectorErrorThreshold = Math.abs(x) + Math.abs(y) > 0.4; 
+//     if (vectorErrorThreshold)
+//         vectorErrorScalar = 1;
+//     double totalScalingFactor = distanceScalar * vectorErrorScalar;
+//     double driveScaledVel = driveVelocity * totalScalingFactor;
+//     var autoTranslation = new Pose2d(Translation2d.kZero,
+//         angleError)
+//         .transformBy(new Transform2d(new Translation2d(driveScaledVel, 0.0), Rotation2d.kZero))
+//         .getTranslation();
+
+
+//     // driver controls
+//     double xDriver = Controllers.driverController.getTranslateXAxis() * MAX_ROBOT_TRANS_SPEED;
+//     double yDriver = Controllers.driverController.getTranslateYAxis() * MAX_ROBOT_TRANS_SPEED;
+//     double rotDriver = Controllers.driverController.getRotateAxis() * MAX_ROBOT_ROT_SPEED;
+    
+//     swerve.drive(ChassisSpeeds.fromFieldRelativeSpeeds(autoTranslation.getX() + xDriver * (1-totalScalingFactor), autoTranslation.getY() + yDriver * (1-totalScalingFactor), rotVelocity * distanceScalar + rotDriver * (1-totalScalingFactor), currentPose.getRotation()));
+//   }
 
   private static Pose2d getDriveTarget(Pose2d robot, Pose2d goal) {
     Pose2d offset = robot.relativeTo(goal);

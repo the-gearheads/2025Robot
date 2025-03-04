@@ -18,11 +18,13 @@ import org.littletonrobotics.urcl.URCL;
 
 import com.reduxrobotics.canand.CanandEventLoop;
 
+import edu.wpi.first.hal.AllianceStationID;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.simulation.BatterySim;
+import edu.wpi.first.wpilibj.simulation.DriverStationSim;
 import edu.wpi.first.wpilibj.simulation.RoboRioSim;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -202,6 +204,7 @@ public class Robot extends LoggedRobot {
   /** This function is called once when the robot is first started up. */
   @Override
   public void simulationInit() {
+    DriverStationSim.setAllianceStationId(AllianceStationID.Blue1); // default is red grrr
   }
 
   /** This function is called periodically whilst in simulation. */

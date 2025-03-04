@@ -7,7 +7,6 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.commands.AlignToPose;
 import frc.robot.commands.ManualPivot;
 import frc.robot.commands.ManualTelescope;
 import frc.robot.commands.Teleop;
@@ -15,7 +14,6 @@ import frc.robot.controllers.Controllers;
 import frc.robot.subsystems.Leds;
 import frc.robot.subsystems.MechanismViz;
 import frc.robot.subsystems.Superstructure;
-import frc.robot.subsystems.SuperstructurePosition;
 import frc.robot.subsystems.arm.Pivot;
 import frc.robot.subsystems.arm.PivotSim;
 import frc.robot.subsystems.arm.Telescope;
@@ -51,6 +49,7 @@ public class RobotContainer {
     tracker = new ObjectiveTracker(swerve);
     superStructure = new Superstructure(pivot, telescope, wrist);
     viz = new MechanismViz(swerve, pivot, telescope, wrist);
+    // swerve.setDefaultCommand(new AlignToPose(swerve, tracker::getCoralObjective));
     swerve.setDefaultCommand(new Teleop(swerve));
     pivot.setDefaultCommand(new ManualPivot(pivot));
     telescope.setDefaultCommand(new ManualTelescope(telescope));
@@ -73,15 +72,15 @@ public class RobotContainer {
     Controllers.updateActiveControllerInstance();
 
     // teleop controlls
-    Controllers.driverController.getYBtn().onTrue(
-      superStructure.goTo(SuperstructurePosition.L4)
-    );
+    // Controllers.driverController.getYBtn().onTrue(
+    //   superStructure.goTo(SuperstructurePosition.L4)
+    // );
 
-    Controllers.driverController.getBBtn().onTrue(
-      superStructure.goTo(SuperstructurePosition.HP)
-    );
+    // Controllers.driverController.getBBtn().onTrue(
+    //   superStructure.goTo(SuperstructurePosition.HP)
+    // );
 
-    Controllers.driverController.getLeftBumper().whileTrue(new AlignToPose(swerve, tracker::getCoralObjective));
+    // Controllers.driverController.getLeftBumper().whileTrue(new AlignToPose(swerve, tracker::getCoralObjective));
   }
 
   /**
