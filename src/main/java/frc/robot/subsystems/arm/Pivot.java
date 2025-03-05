@@ -10,6 +10,7 @@ import org.littletonrobotics.junction.Logger;
 import com.reduxrobotics.sensors.canandmag.Canandmag;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
@@ -21,6 +22,7 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -33,6 +35,7 @@ public class Pivot extends SubsystemBase {
    * stand for parmensan arm
    */
   private SparkFlex pivot = new SparkFlex(PIVOT_MOTOR_ID, MotorType.kBrushless);
+  private RelativeEncoder pivotRelEnc;
   private SparkFlex pivotFollower = new SparkFlex(PIVOT_MOTOR_FOLLOWER_ID, MotorType.kBrushless);
   private SparkFlexConfig pivotConfig = new SparkFlexConfig();
   private SparkFlexConfig pivotFollowerConfig = new SparkFlexConfig();
@@ -54,6 +57,7 @@ public class Pivot extends SubsystemBase {
 
   public Pivot() {
     configure();
+    pivotRelEnc = pivot.getEncoder();
     profiliedPid.reset(getAngle().getRadians());
     profiliedPid.setGoal(getAngle().getRadians());
     pid.setTolerance(PIVOT_ANGLE_TOLERANCE);
@@ -62,6 +66,11 @@ public class Pivot extends SubsystemBase {
 
   @Override
   public void periodic() {
+
+    if(DriverStation.isDisabled()) {
+      pivotRelEnc.setPosition(getAbsAngle().getRadians());
+    }
+
     switch (mode) {
       case PROFILED_PID:
         output = profiliedPid.calculate(getAngle().getRadians()) + ff;
@@ -142,8 +151,13 @@ public class Pivot extends SubsystemBase {
   }
 
   @AutoLogOutput
-  public Rotation2d getAngle() {
+  public Rotation2d getAbsAngle() {
     return new Rotation2d((PIVOT_ABS_ENCODER_OFFSET + Units.rotationsToRadians(pivotAbsEnc.getAbsPosition())) % (2 * Math.PI));
+  }
+
+  @AutoLogOutput
+  public Rotation2d getAngle() {
+    return new Rotation2d(pivotRelEnc.getPosition());
   }
 
   public double getAngleRad() {
