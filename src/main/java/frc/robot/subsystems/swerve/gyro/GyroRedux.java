@@ -8,6 +8,8 @@ import com.reduxrobotics.sensors.canandgyro.Canandgyro;
 import com.reduxrobotics.sensors.canandgyro.CanandgyroFaults;
 import com.reduxrobotics.sensors.canandgyro.CanandgyroSettings;
 
+import edu.wpi.first.math.geometry.CoordinateAxis;
+import edu.wpi.first.math.geometry.CoordinateSystem;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 
@@ -29,9 +31,11 @@ public class GyroRedux implements Gyro {
     return gyro.getRotation2d();
   }
 
+  private final CoordinateSystem ENU = new CoordinateSystem(CoordinateAxis.E(), CoordinateAxis.N(), CoordinateAxis.U());
+
   @AutoLogOutput(key="Swerve/GyroRedux/rotation3d")
   public Rotation3d getRotation3d() {
-    return gyro.getRotation3d();
+    return CoordinateSystem.convert(gyro.getRotation3d(), ENU, CoordinateSystem.NWU()); // pitch and yaw are swapped and facing the wrong way
   }
 
   @AutoLogOutput(key="Swerve/GyroRedux/yaw")

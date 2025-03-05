@@ -4,6 +4,8 @@ import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 import static frc.robot.constants.ArmConstants.*;
 
+import java.util.function.DoubleSupplier;
+
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
@@ -49,11 +51,17 @@ public class Telescope extends SubsystemBase {
   private double manualVoltage;
   private boolean isHomed = false;
 
+  private DoubleSupplier pivotAngleRadSupplier = () -> {return Math.PI / 2;};
+
   public Telescope() {
     configure();
     profiledPid.setTolerance(ELEVATOR_LENGTH_TOLERANCE);
     profiledPid.reset(getPosition(), getVelocity());
     pid.setTolerance(ELEVATOR_LENGTH_TOLERANCE);
+  }
+
+  public void setPivotAngleRadSupplier(DoubleSupplier pivotAngleRadSupplier) {
+    this.pivotAngleRadSupplier = pivotAngleRadSupplier;
   }
 
   public void configure() {
@@ -84,6 +92,8 @@ public class Telescope extends SubsystemBase {
 
   @Override
   public void periodic() {
+    // Impact of gravity changes with elevator angle
+    elevatorFeedforward.setKg(ELEVATOR_KG * Math.sin(pivotAngleRadSupplier.getAsDouble()));
     switch (mode) {
       case PROFILED_PID:
         ff = elevatorFeedforward.calculate(profiledPid.getSetpoint().velocity);

@@ -146,6 +146,10 @@ public class Pivot extends SubsystemBase {
     return new Rotation2d((PIVOT_ABS_ENCODER_OFFSET + Units.rotationsToRadians(pivotAbsEnc.getAbsPosition())) % (2 * Math.PI));
   }
 
+  public double getAngleRad() {
+    return getAngle().getRadians();
+  }
+
   @AutoLogOutput
   public double getVelocity() {
     return Units.rotationsToRadians(pivotAbsEnc.getVelocity());
