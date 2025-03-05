@@ -8,8 +8,8 @@ package frc.robot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.commands.ManualPivot;
-import frc.robot.commands.ManualTelescope;
 import frc.robot.commands.Teleop;
+import frc.robot.commands.NTControl.TelescopeNTControl;
 import frc.robot.controllers.Controllers;
 import frc.robot.subsystems.Leds;
 import frc.robot.subsystems.MechanismViz;
@@ -52,7 +52,7 @@ public class RobotContainer {
     // swerve.setDefaultCommand(new AlignToPose(swerve, tracker::getCoralObjective));
     swerve.setDefaultCommand(new Teleop(swerve));
     pivot.setDefaultCommand(new ManualPivot(pivot));
-    telescope.setDefaultCommand(new ManualTelescope(telescope));
+    telescope.setDefaultCommand(new TelescopeNTControl(telescope));
 
     sysidAuto.addSysidRoutines("Swerve", swerve.getDriveSysIdRoutine());
     sysidAuto.addSysidRoutines("Swerve Angular", swerve.getAngularSysIdRoutine());

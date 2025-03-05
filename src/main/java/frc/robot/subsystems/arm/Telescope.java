@@ -97,7 +97,7 @@ public class Telescope extends SubsystemBase {
     switch (mode) {
       case PROFILED_PID:
         ff = elevatorFeedforward.calculate(profiledPid.getSetpoint().velocity);
-        output = profiledPid.calculate(getPosition() - MIN_ABSOLUTE_HEIGHT) + ff;
+        output = profiledPid.calculate(getPosition()) + ff;
         break;
       case PID:
         ff = elevatorFeedforward.calculate(sample.elevatorVel(), sample.elevatorAccel());
@@ -230,6 +230,8 @@ public class Telescope extends SubsystemBase {
     elevatorFollower.setCANTimeout(250);
 
     elevatorConfig.idleMode(willBrake ? IdleMode.kBrake : IdleMode.kCoast);
+    elevatorConfig.encoder.positionConversionFactor(ELEVATOR_POS_FACTOR);
+    elevatorConfig.encoder.positionConversionFactor(ELEVATOR_VEL_FACTOR);
     elevatorFollowerConfig.idleMode(willBrake ? IdleMode.kBrake : IdleMode.kCoast);
     elevator.configure(elevatorConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
     elevatorFollower.configure(elevatorFollowerConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
