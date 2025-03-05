@@ -30,10 +30,10 @@ public class Vision extends SubsystemBase {
       PhotonCamera.setVersionCheckEnabled(false);  
 
     try {
-      field = AprilTagFieldLayout.loadFromResource(AprilTagFields.k2025Reefscape.m_resourceFile);
+      field = AprilTagFieldLayout.loadFromResource(AprilTagFields.k2025ReefscapeWelded.m_resourceFile);
     } catch (IOException e) {
       System.out.println("ERROR Opening apriltag field layout file");
-      System.out.println(AprilTagFields.k2025Reefscape.m_resourceFile);
+      System.out.println(AprilTagFields.k2025ReefscapeWelded.m_resourceFile);
     }
 
   

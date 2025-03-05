@@ -195,7 +195,7 @@ public class Pivot extends SubsystemBase {
 
   public SysIdRoutine getSysidRoutine() {
     return new SysIdRoutine(
-      new SysIdRoutine.Config(Volts.of(0.8).per(Seconds), Volts.of(5), null,
+      new SysIdRoutine.Config(Volts.of(0.8).per(Seconds), Volts.of(3.2), null,
           (state) -> Logger.recordOutput("Pivot/SysIdTestState", state.toString())),
       new SysIdRoutine.Mechanism((Voltage v) -> {
         setMode(RunMode.VOLTAGE);

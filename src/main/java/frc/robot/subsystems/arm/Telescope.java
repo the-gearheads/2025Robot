@@ -198,7 +198,7 @@ public class Telescope extends SubsystemBase {
 
   public SysIdRoutine getSysidRoutine() {
     return new SysIdRoutine(
-      new SysIdRoutine.Config(Volts.of(0.25).per(Seconds), Volts.of(0.2), null,
+      new SysIdRoutine.Config(Volts.of(0.3).per(Seconds), Volts.of(3), null,
           (state) -> Logger.recordOutput("Telescope/SysIdTestState", state.toString())),
       new SysIdRoutine.Mechanism((Voltage v) -> {
         setMode(RunMode.VOLTAGE);
