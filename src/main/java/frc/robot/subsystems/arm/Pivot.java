@@ -208,7 +208,7 @@ public class Pivot extends SubsystemBase {
     );
   }
 
-  public boolean forwardSysidLimti() {
+  public boolean forwardSysidLimit() {
     return getAngle().getRadians() > MAX_SYSID_ANGLE;
   }
 

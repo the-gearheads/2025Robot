@@ -56,7 +56,7 @@ public class RobotContainer {
 
     sysidAuto.addSysidRoutines("Swerve", swerve.getDriveSysIdRoutine());
     sysidAuto.addSysidRoutines("Swerve Angular", swerve.getAngularSysIdRoutine());
-    sysidAuto.addSysidRoutines("Pivot", pivot.getSysidRoutine(), pivot::forwardSysidLimti, pivot::reverseSysidLimit);
+    sysidAuto.addSysidRoutines("Pivot", pivot.getSysidRoutine(), pivot::forwardSysidLimit, pivot::reverseSysidLimit);
     sysidAuto.addSysidRoutines("Wrist", wrist.getSysidRoutine(), wrist::forwardSysidLimit, wrist::reverseSysidLimit);
     sysidAuto.addSysidRoutines("Telescope", telescope.getSysidRoutine(), telescope::getSysidForwardLimit, telescope::getSysidReverseLimit);
   }
