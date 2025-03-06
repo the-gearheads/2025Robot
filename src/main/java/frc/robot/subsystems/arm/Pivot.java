@@ -88,7 +88,7 @@ public class Pivot extends SubsystemBase {
       case VOLTAGE:
         output = manualVoltage;
         break;
-      case PID:
+      case TRAJECTORY:
         ff = pivotFeedforward.calculate(sample.armPos(), sample.armVel(), sample.armAccel());
         output = pid.calculate(getAngle().getRadians(), sample.armPos()) + ff;
         break;
@@ -98,7 +98,7 @@ public class Pivot extends SubsystemBase {
       profiledPid.reset(getAngleRad());
     } 
 
-    if(mode != RunMode.PID) {
+    if(mode != RunMode.TRAJECTORY) {
       pid.reset();
     }
 
@@ -177,7 +177,7 @@ public class Pivot extends SubsystemBase {
     return Units.rotationsToRadians(pivotAbsEnc.getVelocity());
   }
 
-  public void setAngle(double angleRad) {
+  public void setGoalAngle(double angleRad) {
     angleRad = MathUtil.clamp(angleRad, MIN_ANGLE, MAX_ANGLE);
     profiledPid.setGoal(angleRad);
   }
@@ -208,7 +208,7 @@ public class Pivot extends SubsystemBase {
   }
 
   public boolean atPidSetpoint() {
-    return mode == RunMode.PID && pid.atSetpoint();
+    return mode == RunMode.TRAJECTORY && pid.atSetpoint();
   }
 
   public boolean atPoint(double angle) {

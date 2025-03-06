@@ -99,7 +99,7 @@ public class Telescope extends SubsystemBase {
         ff = elevatorFeedforward.calculate(profiledPid.getSetpoint().velocity);
         output = profiledPid.calculate(getPosition()) + ff;
         break;
-      case PID:
+      case TRAJECTORY:
         ff = elevatorFeedforward.calculate(sample.elevatorVel(), sample.elevatorAccel());
         output = pid.calculate(getPosition(), sample.elevatorLen()-MIN_ABSOLUTE_HEIGHT);
         break;
@@ -112,7 +112,7 @@ public class Telescope extends SubsystemBase {
       profiledPid.reset(getPosition());
     } 
 
-    if(mode != RunMode.PID) {
+    if(mode != RunMode.TRAJECTORY) {
       pid.reset();
     }
 
@@ -192,7 +192,7 @@ public class Telescope extends SubsystemBase {
   }
 
   public boolean atPidSetpoint() {
-    return mode == RunMode.PID && pid.atSetpoint();
+    return mode == RunMode.TRAJECTORY && pid.atSetpoint();
   }
 
   public void setVoltage(double volts) {

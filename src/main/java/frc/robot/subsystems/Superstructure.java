@@ -15,7 +15,7 @@ import frc.robot.util.ArmvatorTrajectory;
 
 public class Superstructure {
   public static enum RunMode {
-    PROFILED_PID, VOLTAGE, PID
+    PROFILED_PID, VOLTAGE, TRAJECTORY
   }
 
   Pivot pivot;
@@ -31,8 +31,8 @@ public class Superstructure {
   }
 
   private void followSample(ArmvatorSample sample) {
-    pivot.setMode(RunMode.PID);
-    telescope.setMode(RunMode.PID);
+    pivot.setMode(RunMode.TRAJECTORY);
+    telescope.setMode(RunMode.TRAJECTORY);
     pivot.setSample(sample); 
     telescope.setSample(sample);
     lastSample = sample;

@@ -1,0 +1,27 @@
+package frc.robot.commands.NTControl;
+
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.subsystems.Superstructure.RunMode;
+import frc.robot.subsystems.arm.Pivot;
+
+public class PivotNTControl extends Command {
+  Pivot pivot;
+  String NTPath = "Pivot/manualPosition";
+  
+  public PivotNTControl(Pivot pivot) {
+    this.pivot = pivot;
+    addRequirements(pivot);
+  }
+
+  @Override
+  public void initialize() {
+    SmartDashboard.putNumber(NTPath, pivot.getAngleRad());
+    pivot.setMode(RunMode.PROFILED_PID);
+  }
+
+  @Override
+  public void execute() {
+    pivot.setGoalAngle(SmartDashboard.getNumber(NTPath, pivot.getAngleRad()));
+  }
+}
