@@ -10,26 +10,26 @@ public final class ArmConstants {
   public static final int PIVOT_MOTOR_FOLLOWER_ID = 10;
   public static final int PIVOT_ABS_ENCODER_ID = 2;
 
-  public static final double PIVOT_GEAR_RATIO = 256.0/1.0;
-  public static final double PIVOT_POS_FACTOR = PIVOT_GEAR_RATIO * 2 * Math.PI;
-  public static final double PIVOT_VEL_FACTOR = (PIVOT_GEAR_RATIO * 2 * Math.PI) / 60;  // Rad per Sec
+  public static final double PIVOT_GEAR_RATIO = 500.0/1.0;
+  public static final double PIVOT_POS_FACTOR = (1.0 / PIVOT_GEAR_RATIO) * 2 * Math.PI;
+  public static final double PIVOT_VEL_FACTOR = ((1.0 / PIVOT_GEAR_RATIO) * 2 * Math.PI) / 60;  // Rad per Sec
   public static final double PIVOT_ABS_ENCODER_OFFSET = (Math.PI / 2);
   public static final int PIVOT_CURRENT_LIMIT = 60;
   public static final double PIVOT_ANGLE_LIVE_FF_THRESHOLD = 10;
  
-  public static final double PIVOT_KS = 0;
-  public static final double PIVOT_KG = 0;
-  public static final double PIVOT_KV = 0;
-  public static final double PIVOT_KA = 0;
+  public static final double PIVOT_KS = 0.1983;
+  public static final double PIVOT_KG = 0.1305;
+  public static final double PIVOT_KV = 8.3892;
+  public static final double PIVOT_KA = 0.61006;
 
-  public static final double[] PIVOT_PID = {0, 0, 0};  // placeholder
+  public static final double[] PIVOT_PID = {37.038, 0, 5.655};  // placeholder
   public static final Constraints PIVOT_CONSTRAINTS = new Constraints( // placeholders
     Units.degreesToRadians(150.905432596),
     Units.degreesToRadians(2515)
   );
 
   public static final double MAX_ANGLE = Units.degreesToRadians(90);
-  public static final double MIN_ANGLE = Units.degreesToRadians(20);
+  public static final double MIN_ANGLE = Units.degreesToRadians(15);
   public static final double MAX_SYSID_ANGLE = Units.degreesToRadians(80);
   public static final double MIN_SYSID_ANGLE = Units.degreesToRadians(30);
 
@@ -68,8 +68,8 @@ public final class ArmConstants {
 
   public static final double[] ELEVATOR_PID = {29.982, 0, 2.6721};
   public static final Constraints ELEVATOR_CONSTRAINTS = new Constraints(
-    4,
-    2
+    6,
+    8
   );
 
 }

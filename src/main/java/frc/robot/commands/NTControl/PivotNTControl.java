@@ -1,5 +1,6 @@
 package frc.robot.commands.NTControl;
 
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Superstructure.RunMode;
@@ -16,12 +17,13 @@ public class PivotNTControl extends Command {
 
   @Override
   public void initialize() {
-    SmartDashboard.putNumber(NTPath, pivot.getAngleRad());
+    SmartDashboard.putNumber(NTPath, Units.radiansToDegrees(pivot.getAngleRad()));
     pivot.setMode(RunMode.PROFILED_PID);
   }
 
   @Override
   public void execute() {
-    pivot.setGoalAngle(SmartDashboard.getNumber(NTPath, pivot.getAngleRad()));
+    pivot.setMode(RunMode.PROFILED_PID);
+    pivot.setGoalAngle(Units.degreesToRadians(SmartDashboard.getNumber(NTPath, pivot.getAngleRad())));
   }
 }

@@ -22,6 +22,7 @@ public class TelescopeNTControl extends Command {
 
   @Override
   public void execute() {
+    telescope.setMode(RunMode.PROFILED_PID);
     telescope.setGoalPosition(SmartDashboard.getNumber(NTPath, telescope.getPosition()));
   }
 }

@@ -4,6 +4,8 @@ import static frc.robot.constants.MiscConstants.REEF_FACE_LENGTH;
 import static frc.robot.constants.MiscConstants.MAX_REEF_LINEUP_DIST;
 import static frc.robot.constants.SwerveConstants.ALIGNMENT_DRIVE_CONSTRAINTS;
 import static frc.robot.constants.SwerveConstants.ALIGNMENT_ROT_CONSTRAINTS;
+import static frc.robot.constants.SwerveConstants.MAX_ROBOT_ROT_SPEED;
+import static frc.robot.constants.SwerveConstants.MAX_ROBOT_TRANS_SPEED;
 import static frc.robot.constants.SwerveConstants.XY_PATH_FOLLOWING_PID;
 import static frc.robot.constants.SwerveConstants.ROT_PATH_FOLLOWING_PID;
 
@@ -35,6 +37,7 @@ public class AlignToPose extends Command {
   LinearFilter controllerXFilter = LinearFilter.highPass(0.1, 0.02);
   LinearFilter controllerYFilter = LinearFilter.highPass(0.1, 0.02);
 
+  
   public AlignToPose(Swerve swerve, Supplier<Pose2d> target) {
     this.swerve = swerve;
     this.target = target;
@@ -75,10 +78,31 @@ public class AlignToPose extends Command {
   @Override
   public void execute() {
     Pose2d currentPose = swerve.getPose();
+    Pose2d currentTarget = target.get();
     double x = Controllers.driverController.getTranslateXAxis();
     double y = Controllers.driverController.getTranslateYAxis();
     
-    // double linearSSz
+    double controllerMagnitude = MathUtil.clamp((Math.abs(x) + Math.abs(y)) / 2, 0, 0.33);
+    Rotation2d angleError = currentPose.getTranslation().minus(currentTarget.getTranslation()).getAngle();
+    double targetDist = currentPose.getTranslation().getDistance(currentTarget.getTranslation());
+
+    // calculate scaling factors
+    // $$ y=8.6711x^{2}-5.89177x+1 $$
+    // $$ \ce{H2O + H2O -> 2H2O}$$
+    double controllerMagScalingFactor = 8.6711 * Math.pow((controllerMagnitude/2.0), 2) - 5.89177 * (controllerMagnitude/2.0) + 1;
+    double driveScaledVel = driveController.calculate(targetDist, 0.0) * controllerMagScalingFactor;
+    double rotScaledVel = rotController.calculate(angleError.getRadians(), 0.0) * controllerMagScalingFactor;
+    var autoTranslation = new Pose2d(Translation2d.kZero,
+        angleError)
+        .transformBy(new Transform2d(new Translation2d(driveScaledVel, 0.0), Rotation2d.kZero))
+        .getTranslation();
+
+    double xDriver = Controllers.driverController.getTranslateXAxis() * MAX_ROBOT_TRANS_SPEED;
+    double yDriver = Controllers.driverController.getTranslateYAxis() * MAX_ROBOT_TRANS_SPEED;
+    double rotDriver = Controllers.driverController.getRotateAxis() * MAX_ROBOT_ROT_SPEED;
+    
+    swerve.drive(ChassisSpeeds.fromFieldRelativeSpeeds(autoTranslation.getX() + xDriver * (1-controllerMagScalingFactor), autoTranslation.getY() + yDriver * (1-controllerMagScalingFactor), rotScaledVel + rotDriver * (1-controllerMagScalingFactor), currentPose.getRotation()));
+
   }
 
 //   @Override
@@ -107,14 +131,14 @@ public class AlignToPose extends Command {
 //     // all factors made 0 to 1 and then multiplied together, plug into original
 //     // equation.
 
-//     double targetDist = currentPose.getTranslation().getDistance(currentTarget.getTranslation());
+    // double targetDist = currentPose.getTranslation().getDistance(currentTarget.getTranslation());
 //     double driveVelocity = driveController.calculate(targetDist, 0.0);
-//     double rotVelocity = rotController.calculate(currentPose.getRotation().getRadians(),
+    // double rotVelocity = rotController.calculate(currentPose.getRotation().getRadians(),
 //     currentTarget.getRotation().getRadians());
 //     Logger.recordOutput("AlignToPose/driveVelocitySetpoint", driveVelocity);
 //     Logger.recordOutput("AlignToPose/rotVelocitySetpoint", rotVelocity);
     
-//     Rotation2d angleError = currentPose.getTranslation().minus(currentTarget.getTranslation()).getAngle();
+    // Rotation2d angleError = currentPose.getTranslation().minus(currentTarget.getTranslation()).getAngle();
 //     double translationVectorError = angleError.getRadians() - controllerTranslation.getAngle().getRadians();
 //     double vectorErrorScalar = MathUtil.clamp(-1.53 * translationVectorError + 0.8, 0, 1);
 //     Logger.recordOutput("AlignToPose/vectorErrorScalar", vectorErrorScalar);
@@ -124,19 +148,19 @@ public class AlignToPose extends Command {
 //     if (vectorErrorThreshold)
 //         vectorErrorScalar = 1;
 //     double totalScalingFactor = distanceScalar * vectorErrorScalar;
-//     double driveScaledVel = driveVelocity * totalScalingFactor;
-//     var autoTranslation = new Pose2d(Translation2d.kZero,
-//         angleError)
-//         .transformBy(new Transform2d(new Translation2d(driveScaledVel, 0.0), Rotation2d.kZero))
-//         .getTranslation();
+    // double driveScaledVel = driveVelocity * totalScalingFactor;
+    // var autoTranslation = new Pose2d(Translation2d.kZero,
+    //     angleError)
+    //     .transformBy(new Transform2d(new Translation2d(driveScaledVel, 0.0), Rotation2d.kZero))
+    //     .getTranslation();
 
 
 //     // driver controls
-//     double xDriver = Controllers.driverController.getTranslateXAxis() * MAX_ROBOT_TRANS_SPEED;
-//     double yDriver = Controllers.driverController.getTranslateYAxis() * MAX_ROBOT_TRANS_SPEED;
-//     double rotDriver = Controllers.driverController.getRotateAxis() * MAX_ROBOT_ROT_SPEED;
+    // double xDriver = Controllers.driverController.getTranslateXAxis() * MAX_ROBOT_TRANS_SPEED;
+    // double yDriver = Controllers.driverController.getTranslateYAxis() * MAX_ROBOT_TRANS_SPEED;
+    // double rotDriver = Controllers.driverController.getRotateAxis() * MAX_ROBOT_ROT_SPEED;
     
-//     swerve.drive(ChassisSpeeds.fromFieldRelativeSpeeds(autoTranslation.getX() + xDriver * (1-totalScalingFactor), autoTranslation.getY() + yDriver * (1-totalScalingFactor), rotVelocity * distanceScalar + rotDriver * (1-totalScalingFactor), currentPose.getRotation()));
+    // swerve.drive(ChassisSpeeds.fromFieldRelativeSpeeds(autoTranslation.getX() + xDriver * (1-totalScalingFactor), autoTranslation.getY() + yDriver * (1-totalScalingFactor), rotVelocity * distanceScalar + rotDriver * (1-totalScalingFactor), currentPose.getRotation()));
 //   }
 
   private static Pose2d getDriveTarget(Pose2d robot, Pose2d goal) {

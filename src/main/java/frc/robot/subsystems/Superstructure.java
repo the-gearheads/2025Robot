@@ -5,7 +5,6 @@ import org.littletonrobotics.junction.AutoLogOutput;
 
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.commands.WristTrajFollower;
 import frc.robot.subsystems.arm.Pivot;
 import frc.robot.subsystems.arm.Telescope;
 import frc.robot.subsystems.wrist.Wrist;
@@ -49,7 +48,7 @@ public class Superstructure {
   public Command goTo(SuperstructurePosition pos) {
     var currentPos = ArmvatorPosition.getNearest(getEndEffPos());
     var traj = ArmvatorTrajectory.load(currentPos, pos.armvatorPosition);
-    return followAvTrajectory(traj).deadlineFor(new WristTrajFollower(traj, pos, wrist, () -> lastSample));
+    return followAvTrajectory(traj);
   }
 
   @AutoLogOutput
