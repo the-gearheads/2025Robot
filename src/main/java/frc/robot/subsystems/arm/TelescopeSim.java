@@ -22,7 +22,7 @@ public class TelescopeSim extends Telescope {
   }
 
   @Override
-  public double getPosition() {
+  public double getLength() {
     if (teleSim == null) {
       return 0;
     }

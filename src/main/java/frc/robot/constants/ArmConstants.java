@@ -33,7 +33,7 @@ public final class ArmConstants {
   public static final double MAX_SYSID_ANGLE = Units.degreesToRadians(80);
   public static final double MIN_SYSID_ANGLE = Units.degreesToRadians(30);
 
-  public static final double PIVOT_ANGLE_TOLERANCE = Units.degreesToRadians(0.2);
+  public static final double PIVOT_ANGLE_TOLERANCE = Units.degreesToRadians(1);
   public static final double PIVOT_MOI_EST = 0.7895417850; // from cad kg * m^2
 
   // -- elevator contants --
@@ -48,14 +48,15 @@ public final class ArmConstants {
 
   public static final double ELEVATOR_MASS = 13.6078; // mass of elevator carriage (kg)
   public static final double ELEVATOR_RADIUS = 1; // radius of elevator driving drum
-  public static final double MIN_RELATIVE_HEIGHT = Units.inchesToMeters(2);
   public static final double MIN_ABSOLUTE_HEIGHT  = Units.inchesToMeters(36);
+
+  public static final double MIN_RELATIVE_HEIGHT = Units.inchesToMeters(2);
   public static final double MAX_RELATIVE_HEIGHT = Units.inchesToMeters(76.5) - MIN_ABSOLUTE_HEIGHT;
 
   public static final double MIN_SYSID_HEIGHT = Units.inchesToMeters(4);
   public static final double MAX_SYSID_HEIGHT = MAX_RELATIVE_HEIGHT - Units.inchesToMeters(4);
 
-  public static final double ELEVATOR_LENGTH_TOLERANCE = Units.inchesToMeters(0.5);
+  public static final double ELEVATOR_LENGTH_TOLERANCE = Units.inchesToMeters(0.8);
 
   public static final int ELEVATOR_CURRENT_LIMIT = 80;
   public static final double HOMING_VOLTAGE = -2;

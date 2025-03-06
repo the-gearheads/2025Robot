@@ -56,7 +56,7 @@ public class Telescope extends SubsystemBase {
   public Telescope() {
     configure();
     profiledPid.setTolerance(ELEVATOR_LENGTH_TOLERANCE);
-    profiledPid.reset(getPosition(), getVelocity());
+    profiledPid.reset(getLength(), getVelocity());
     pid.setTolerance(ELEVATOR_LENGTH_TOLERANCE);
   }
 
@@ -97,11 +97,11 @@ public class Telescope extends SubsystemBase {
     switch (mode) {
       case PROFILED_PID:
         ff = elevatorFeedforward.calculate(profiledPid.getSetpoint().velocity);
-        output = profiledPid.calculate(getPosition()) + ff;
+        output = profiledPid.calculate(getLength()) + ff;
         break;
       case TRAJECTORY:
         ff = elevatorFeedforward.calculate(sample.elevatorVel(), sample.elevatorAccel());
-        output = pid.calculate(getPosition(), sample.elevatorLen()-MIN_ABSOLUTE_HEIGHT);
+        output = pid.calculate(getLength(), sample.elevatorLen()-MIN_ABSOLUTE_HEIGHT);
         break;
       case VOLTAGE:
         output = manualVoltage;
@@ -109,7 +109,7 @@ public class Telescope extends SubsystemBase {
     }
 
     if(mode != RunMode.PROFILED_PID) {
-      profiledPid.reset(getPosition());
+      profiledPid.reset(getLength());
     } 
 
     if(mode != RunMode.TRAJECTORY) {
@@ -125,11 +125,11 @@ public class Telescope extends SubsystemBase {
     Logger.recordOutput("Telescope/isHomed", isHomed);
 
     // stops robot from runnign into itself
-    if (output > 0 && (!isHomed || getPosition() > MAX_RELATIVE_HEIGHT)) {
+    if (output > 0 && (!isHomed || getLength() > MAX_RELATIVE_HEIGHT)) {
       output = 0;
     }
 
-    if (isHomed == true && (output < 0 && getPosition() < MIN_RELATIVE_HEIGHT)) {
+    if (isHomed == true && (output < 0 && getLength() < MIN_RELATIVE_HEIGHT)) {
       output = 0;
     }
 
@@ -178,8 +178,13 @@ public class Telescope extends SubsystemBase {
   }
 
   @AutoLogOutput
-  public double getPosition() {
+  public double getLength() {
     return elevatorEncoder.getPosition();
+  }
+
+  @AutoLogOutput
+  public double getTotalLength() {
+    return getLength() + MIN_ABSOLUTE_HEIGHT;
   }
 
   @AutoLogOutput
@@ -228,11 +233,11 @@ public class Telescope extends SubsystemBase {
   }
 
   public boolean getSysidForwardLimit() {
-    return getPosition() > MAX_SYSID_HEIGHT;
+    return getLength() > MAX_SYSID_HEIGHT;
   }
 
   public boolean getSysidReverseLimit() {
-    return getPosition() < MIN_SYSID_HEIGHT;
+    return getLength() < MIN_SYSID_HEIGHT;
   }
 
   public void setBrakeCoast(boolean willBrake) {

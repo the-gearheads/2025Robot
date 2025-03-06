@@ -53,8 +53,8 @@ public class Superstructure {
 
   @AutoLogOutput
   public Translation2d getEndEffPos() {
-    double x = telescope.getPosition() * Math.cos(pivot.getAngle().getRadians());
-    double y = telescope.getPosition() * Math.sin(pivot.getAngle().getRadians());
+    double x = telescope.getTotalLength() * Math.cos(pivot.getAngle().getRadians());
+    double y = telescope.getTotalLength() * Math.sin(pivot.getAngle().getRadians());
     return new Translation2d(x, y);
   }
 
