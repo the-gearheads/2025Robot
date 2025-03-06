@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 
 import org.littletonrobotics.junction.AutoLogOutput;
+import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -48,6 +49,8 @@ public class Superstructure {
   public Command goTo(SuperstructurePosition pos) {
     var currentPos = ArmvatorPosition.getNearest(getEndEffPos());
     var traj = ArmvatorTrajectory.load(currentPos, pos.armvatorPosition);
+    Logger.recordOutput("Superstructure/goToFrom", currentPos);
+    Logger.recordOutput("Superstructure/goToTo", pos);
     return followAvTrajectory(traj);
   }
 
@@ -60,6 +63,11 @@ public class Superstructure {
 
   public ArmvatorSample getLastSample() {
     return lastSample;
+  }
+
+  @AutoLogOutput
+  public ArmvatorPosition getClosestArmvatorPosition() {
+    return ArmvatorPosition.getNearest(getEndEffPos());
   }
 
 }
