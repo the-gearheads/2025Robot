@@ -51,7 +51,7 @@ public class Telescope extends SubsystemBase {
   private double manualVoltage;
   private boolean isHomed = false;
 
-  private DoubleSupplier pivotAngleRadSupplier = () -> {return Math.PI / 2;};
+  protected DoubleSupplier pivotAngleRadSupplier = () -> {return Math.PI / 2;};
 
   public Telescope() {
     configure();
@@ -108,6 +108,14 @@ public class Telescope extends SubsystemBase {
         break;
     }
 
+    if(mode != RunMode.PROFILED_PID) {
+      profiledPid.reset(getPosition());
+    } 
+
+    if(mode != RunMode.PID) {
+      pid.reset();
+    }
+
     SmartDashboard.putData(pid);
     Logger.recordOutput("Telescope/pidSetpoint", pid.getSetpoint());
     Logger.recordOutput("Telescope/profiliedPIDSetpoint", profiledPid.getSetpoint().position);
@@ -117,13 +125,15 @@ public class Telescope extends SubsystemBase {
     Logger.recordOutput("Telescope/isHomed", isHomed);
 
     // stops robot from runnign into itself
-    if (output > 0 && getPosition() > MAX_RELATIVE_HEIGHT) {
+    if (output > 0 && (!isHomed || getPosition() > MAX_RELATIVE_HEIGHT)) {
       output = 0;
     }
 
     if (isHomed == true && (output < 0 && getPosition() < MIN_RELATIVE_HEIGHT)) {
       output = 0;
     }
+
+    if (!isHomed) output = MathUtil.clamp(output, -2, 2);
 
     if (mode == RunMode.PROFILED_PID) {
       if (profiledPid.getSetpoint().position < MIN_RELATIVE_HEIGHT || profiledPid.getSetpoint().position > MAX_RELATIVE_HEIGHT) {
@@ -230,11 +240,9 @@ public class Telescope extends SubsystemBase {
     elevatorFollower.setCANTimeout(250);
 
     elevatorConfig.idleMode(willBrake ? IdleMode.kBrake : IdleMode.kCoast);
-    elevatorConfig.encoder.positionConversionFactor(ELEVATOR_POS_FACTOR);
-    elevatorConfig.encoder.positionConversionFactor(ELEVATOR_VEL_FACTOR);
     elevatorFollowerConfig.idleMode(willBrake ? IdleMode.kBrake : IdleMode.kCoast);
-    elevator.configure(elevatorConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
-    elevatorFollower.configure(elevatorFollowerConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
+    elevator.configureAsync(elevatorConfig, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
+    elevatorFollower.configureAsync(elevatorFollowerConfig, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
     
     elevator.setCANTimeout(0);
     elevatorFollower.setCANTimeout(0);

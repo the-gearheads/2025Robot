@@ -68,8 +68,8 @@ public final class ArmConstants {
 
   public static final double[] ELEVATOR_PID = {29.982, 0, 2.6721};
   public static final Constraints ELEVATOR_CONSTRAINTS = new Constraints(
-    0.5,
-    1
+    4,
+    2
   );
 
 }

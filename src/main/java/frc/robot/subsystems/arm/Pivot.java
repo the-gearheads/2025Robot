@@ -41,7 +41,7 @@ public class Pivot extends SubsystemBase {
   private SparkFlexConfig pivotFollowerConfig = new SparkFlexConfig();
 
   private Canandmag pivotAbsEnc = new Canandmag(PIVOT_ABS_ENCODER_ID);
-  private ProfiledPIDController profiliedPid = new ProfiledPIDController(PIVOT_PID[0], PIVOT_PID[1], PIVOT_PID[2],
+  private ProfiledPIDController profiledPid = new ProfiledPIDController(PIVOT_PID[0], PIVOT_PID[1], PIVOT_PID[2],
       PIVOT_CONSTRAINTS,
       0.02);
   private ArmfeedforwardSettable pivotFeedforward = new ArmfeedforwardSettable(PIVOT_KS, PIVOT_KG, PIVOT_KV, PIVOT_KA);
@@ -58,10 +58,10 @@ public class Pivot extends SubsystemBase {
   public Pivot() {
     configure();
     pivotRelEnc = pivot.getEncoder();
-    profiliedPid.reset(getAngle().getRadians());
-    profiliedPid.setGoal(getAngle().getRadians());
+    profiledPid.reset(getAngle().getRadians());
+    profiledPid.setGoal(getAngle().getRadians());
     pid.setTolerance(PIVOT_ANGLE_TOLERANCE);
-    profiliedPid.setTolerance(PIVOT_ANGLE_TOLERANCE);
+    profiledPid.setTolerance(PIVOT_ANGLE_TOLERANCE);
   }
 
   @Override
@@ -73,17 +73,17 @@ public class Pivot extends SubsystemBase {
 
     switch (mode) {
       case PROFILED_PID:
-        output = profiliedPid.calculate(getAngle().getRadians()) + ff;
+        output = profiledPid.calculate(getAngle().getRadians()) + ff;
 
         // https://gist.github.com/person4268/46710dca9a128a0eb5fbd93029627a6b
         if (Math.abs(Units.radiansToDegrees(
-            getAngle().getRadians() - profiliedPid.getSetpoint().position)) > PIVOT_ANGLE_LIVE_FF_THRESHOLD) {
-          ff = pivotFeedforward.calculate(getAngle().getRadians(), profiliedPid.getSetpoint().velocity);
+            getAngle().getRadians() - profiledPid.getSetpoint().position)) > PIVOT_ANGLE_LIVE_FF_THRESHOLD) {
+          ff = pivotFeedforward.calculate(getAngle().getRadians(), profiledPid.getSetpoint().velocity);
         } else {
-          ff = pivotFeedforward.calculate(profiliedPid.getSetpoint().position, profiliedPid.getSetpoint().velocity);
+          ff = pivotFeedforward.calculate(profiledPid.getSetpoint().position, profiledPid.getSetpoint().velocity);
         }
 
-        output = profiliedPid.calculate(getAngle().getRadians()) + ff;
+        output = profiledPid.calculate(getAngle().getRadians()) + ff;
         break;
       case VOLTAGE:
         output = manualVoltage;
@@ -94,9 +94,17 @@ public class Pivot extends SubsystemBase {
         break;
     }
 
+    if(mode != RunMode.PROFILED_PID) {
+      profiledPid.reset(getAngleRad());
+    } 
+
+    if(mode != RunMode.PID) {
+      pid.reset();
+    }
+
     SmartDashboard.putData(pid);
     Logger.recordOutput("Pivot/pidSetpoint", pid.getSetpoint());
-    Logger.recordOutput("Pivot/profiliedPidSetpoint", profiliedPid.getSetpoint().position);
+    Logger.recordOutput("Pivot/profiliedPidSetpoint", profiledPid.getSetpoint().position);
     Logger.recordOutput("Pivot/manualVoltage", manualVoltage);
     Logger.recordOutput("Pivot/Sample", sample);
     Logger.recordOutput("Pivot/attemptedOutput", output);
@@ -110,13 +118,13 @@ public class Pivot extends SubsystemBase {
     }
 
     if (mode == RunMode.PROFILED_PID) {
-      if (profiliedPid.getSetpoint().position < MIN_ANGLE || profiliedPid.getSetpoint().position > MAX_ANGLE) {
+      if (profiledPid.getSetpoint().position < MIN_ANGLE || profiledPid.getSetpoint().position > MAX_ANGLE) {
         output = 0;
       }
 
       // Might as well just get as close as we can
-      if (profiliedPid.getGoal().position < MIN_ANGLE || profiliedPid.getGoal().position > MAX_ANGLE) {
-        profiliedPid.setGoal(MathUtil.clamp(profiliedPid.getGoal().position, MIN_ANGLE, MAX_ANGLE));
+      if (profiledPid.getGoal().position < MIN_ANGLE || profiledPid.getGoal().position > MAX_ANGLE) {
+        profiledPid.setGoal(MathUtil.clamp(profiledPid.getGoal().position, MIN_ANGLE, MAX_ANGLE));
       }
     }
 
@@ -171,7 +179,7 @@ public class Pivot extends SubsystemBase {
 
   public void setAngle(double angleRad) {
     angleRad = MathUtil.clamp(angleRad, MIN_ANGLE, MAX_ANGLE);
-    profiliedPid.setGoal(angleRad);
+    profiledPid.setGoal(angleRad);
   }
 
   public void setSample(ArmvatorSample sample) {
@@ -236,8 +244,8 @@ public class Pivot extends SubsystemBase {
 
     pivotConfig.idleMode(willBrake ? IdleMode.kBrake : IdleMode.kCoast);
     pivotFollowerConfig.idleMode(willBrake ? IdleMode.kBrake : IdleMode.kCoast);
-    pivot.configure(pivotConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
-    pivotFollower.configure(pivotFollowerConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
+    pivot.configureAsync(pivotConfig, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
+    pivotFollower.configureAsync(pivotFollowerConfig, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
     
     pivot.setCANTimeout(0);
     pivotFollower.setCANTimeout(0);
