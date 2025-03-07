@@ -145,7 +145,7 @@ public class Telescope extends SubsystemBase {
       }
     }
 
-    if (getLimitswitch()) {
+   if (getLimitswitch()) {
       setEncoderPosition(0);
       isHomed = true;
     }

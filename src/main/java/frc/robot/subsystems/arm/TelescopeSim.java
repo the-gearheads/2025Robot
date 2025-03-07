@@ -43,4 +43,9 @@ public class TelescopeSim extends Telescope {
     return teleSim.getVelocityMetersPerSecond();
   }
 
+  @Override
+  public boolean getLimitswitch() {
+    return getLength() < 0.051;
+  }
+
 }
