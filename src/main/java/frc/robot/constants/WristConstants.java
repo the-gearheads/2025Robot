@@ -5,7 +5,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
 
 public class WristConstants {
-  public static final int WRIST_PIVOT_ID = 62;
+  public static final int WRIST_PIVOT_ID = 36;
 
   public static final int WRIST_CURRENT_LIMIT = 60;
  
