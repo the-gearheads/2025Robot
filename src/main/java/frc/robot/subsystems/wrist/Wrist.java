@@ -77,12 +77,14 @@ public class Wrist extends SubsystemBase {
     wristConfig.smartCurrentLimit(WRIST_CURRENT_LIMIT);
     wristConfig.voltageCompensation(12);
     wristConfig.idleMode(IdleMode.kBrake);
+    wristConfig.inverted(true);
 
     wristConfig.signals.appliedOutputPeriodMs(10);
     wristConfig.encoder.positionConversionFactor(WRIST_POS_FACTOR);
     wristConfig.encoder.velocityConversionFactor(WRIST_VEL_FACTOR);
     wristConfig.absoluteEncoder.velocityConversionFactor(WRIST_VEL_FACTOR);
     wristConfig.absoluteEncoder.positionConversionFactor(WRIST_POS_FACTOR);
+    wristConfig.absoluteEncoder.zeroCentered(true);
 
     wrist.configure(wristConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
     wrist.setCANTimeout(0);
@@ -136,9 +138,18 @@ public class Wrist extends SubsystemBase {
 
   public SysIdRoutine getSysidRoutine() {
     return new SysIdRoutine(
-      new SysIdRoutine.Config(Volts.of(5).per(Second), Volts.of(1), null,
-          (state) -> Logger.recordOutput("Pivot/SysIdTestState", state.toString())),
+      new SysIdRoutine.Config(Volts.of(.5).per(Second), Volts.of(2.5), null,
+          (state) -> Logger.recordOutput("Wrist/SysIdTestState", state.toString())),
       new SysIdRoutine.Mechanism(this::setVoltage, null, this)
     );
+  }
+
+  public void setBrakeCoast(boolean willBrake) {
+    wrist.setCANTimeout(250);
+    wristConfig.idleMode(willBrake ? IdleMode.kBrake : IdleMode.kCoast);
+    wrist.configureAsync(wristConfig, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
+    
+    wrist.setCANTimeout(0);
+    Logger.recordOutput("Wrist/isBraken", willBrake);
   }
 }

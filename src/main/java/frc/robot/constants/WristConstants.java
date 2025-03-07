@@ -17,10 +17,10 @@ public class WristConstants {
   public static final ArmFeedforward WRIST_FF = new ArmFeedforward(0, 0, 0, 0);
   public static final Constraints WRIST_CONSTRAINTS = new Constraints(2, 1);
 
-  public static final double MIN_WRIST_ANGLE = Units.degreesToRadians(0);
-  public static final double MAX_WRIST_ANGLE = Units.degreesToRadians(180);
-  public static final double MIN_SYSID_ANGLE = Units.degreesToRadians(2);
-  public static final double MAX_SYSID_ANGLE = Units.degreesToRadians(178);
+  public static final double MIN_WRIST_ANGLE = Units.degreesToRadians(-74);
+  public static final double MAX_WRIST_ANGLE = Units.degreesToRadians(120);
+  public static final double MIN_SYSID_ANGLE = Units.degreesToRadians(-69);
+  public static final double MAX_SYSID_ANGLE = Units.degreesToRadians(105);
 
   public static final double WRIST_ANGLE_TOLERANCE = Units.degreesToRadians(1);
 

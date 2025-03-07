@@ -19,6 +19,11 @@ public class Intake extends SubsystemBase {
     configure();
   }
 
+  @Override
+  public void periodic() {
+    
+  }
+
   public void configure() {
     intake.setCANTimeout(250);
     intakeConfig.smartCurrentLimit(INTAKE_CURRENT_LIMIT);
@@ -27,5 +32,9 @@ public class Intake extends SubsystemBase {
 
     intake.configure(intakeConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
     intake.setCANTimeout(0);
+  }
+
+  public void setVoltage(double volts) {
+    intake.setVoltage(volts);
   }
 }
