@@ -61,6 +61,11 @@ public class Intake extends SubsystemBase {
     intake.setVoltage(volts);
   }
 
+  @AutoLogOutput
+  public boolean isStalled() {
+    return stallDebouncer.calculate(isCurrentlyStuck());
+  } 
+
   public Command runIntake() {
     return this.runEnd(() -> {
       if(!stallDebouncer.calculate(isCurrentlyStuck())) {
