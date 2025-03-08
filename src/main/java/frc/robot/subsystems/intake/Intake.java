@@ -61,14 +61,15 @@ public class Intake extends SubsystemBase {
     intake.setVoltage(volts);
   }
 
-  public Command run() {
-    return this.run(() -> {
+  public Command runIntake() {
+    return this.runEnd(() -> {
       if(!stallDebouncer.calculate(isCurrentlyStuck())) {
         this.setVoltage(INTAKE_VOLTAGE);
       } else {
         this.setVoltage(INTAKE_STALL_VOLTAGE);
       }
-    });
+    }, 
+    () -> intake.setVoltage(0));
   }
 
   public Command stop() {
@@ -76,6 +77,6 @@ public class Intake extends SubsystemBase {
   }
 
   private boolean isCurrentlyStuck() {
-    return (Math.abs(intakeEncoder.getVelocity()) < STALL_VELOCITY_THRESHOLD) && (Math.abs(manualVoltage) > 1);
+    return (Math.abs(getVelocity()) < STALL_VELOCITY_THRESHOLD) && (Math.abs(manualVoltage) > 1);
   }
 }

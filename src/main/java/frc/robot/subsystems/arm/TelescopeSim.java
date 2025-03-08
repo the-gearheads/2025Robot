@@ -4,11 +4,11 @@ import static frc.robot.constants.ArmConstants.*;
 
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
-import frc.robot.util.vendor.TiltedElevatorSim;
+import edu.wpi.first.wpilibj.simulation.ElevatorSim;
 
 public class TelescopeSim extends Telescope {
   DCMotor elevatorMotor = DCMotor.getNeoVortex(2);
-  TiltedElevatorSim teleSim = new TiltedElevatorSim(LinearSystemId.identifyPositionSystem(ELEVATOR_KV, ELEVATOR_KA), elevatorMotor, MIN_RELATIVE_HEIGHT, MAX_RELATIVE_HEIGHT, true, MIN_RELATIVE_HEIGHT, Math.PI/2.0 );
+  ElevatorSim teleSim = new ElevatorSim(LinearSystemId.identifyPositionSystem(ELEVATOR_KV, ELEVATOR_KA), elevatorMotor, MIN_RELATIVE_HEIGHT, MAX_RELATIVE_HEIGHT, false, MIN_RELATIVE_HEIGHT );
   double output = 0;
 
   public TelescopeSim() {
@@ -17,7 +17,6 @@ public class TelescopeSim extends Telescope {
 
   @Override
   public void simulationPeriodic() {
-    teleSim.setAngle(pivotAngleRadSupplier.getAsDouble());
     teleSim.update(0.02);
   }
 

@@ -113,6 +113,11 @@ public class Wrist extends SubsystemBase {
     pid.setGoal(angle);
   }
 
+  @AutoLogOutput
+  public Rotation2d getGoalAngle() {
+    return Rotation2d.fromRadians(pid.getGoal().position);
+  }
+
   public void setVoltage(double volts) {
     manualVoltage = volts;
   }

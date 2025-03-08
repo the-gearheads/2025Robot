@@ -20,6 +20,7 @@ import frc.robot.subsystems.arm.PivotSim;
 import frc.robot.subsystems.arm.Telescope;
 import frc.robot.subsystems.arm.TelescopeSim;
 import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.intake.IntakeSim;
 import frc.robot.subsystems.swerve.Swerve;
 import frc.robot.subsystems.wrist.Wrist;
 import frc.robot.subsystems.wrist.WristSim;
@@ -44,12 +45,13 @@ public class RobotContainer {
       pivot = new Pivot();
       telescope = new Telescope();
       wrist = new Wrist();
+      intake = new Intake();
     } else {
       pivot = new PivotSim();
       telescope = new TelescopeSim();
       wrist = new WristSim();
+      intake = new IntakeSim();
     }
-    intake = new Intake();
     tracker = new ObjectiveTracker(swerve);
     superStructure = new Superstructure(pivot, telescope, wrist);
     viz = new MechanismViz(swerve, pivot, telescope, wrist);
@@ -75,6 +77,8 @@ public class RobotContainer {
 
     // Find new controllers
     Controllers.updateActiveControllerInstance();
+
+    Controllers.driverController.getRightBumper().whileTrue(intake.runIntake());
 
     // Controllers.driverController.getYBtn().onTrue(new PivotNTControl(pivot));
     // Controllers.driverController.getBBtn().onTrue(new ManualPivot(pivot));
