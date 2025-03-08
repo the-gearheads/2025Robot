@@ -25,7 +25,7 @@ public class WristTrajFollower extends Command {
   @Override
   public void execute() {
     if (lastSampleSupplier.get().t() > (traj.getDuration() / 2.0)) {
-      wrist.setAngle(endPos.wristAngle);
+      wrist.setGoal(endPos.wristAngle);
     }
   }
 }

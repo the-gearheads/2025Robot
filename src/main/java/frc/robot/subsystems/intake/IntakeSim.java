@@ -9,7 +9,7 @@ import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 
 public class IntakeSim extends Intake {
-  FlywheelSim intakeSim = new FlywheelSim(LinearSystemId.createFlywheelSystem(DCMotor.getNeo550(1), 0.09, INTAKE_GEAR_RATIO), DCMotor.getNeo550(1), INTAKE_GEAR_RATIO);
+  FlywheelSim intakeSim = new FlywheelSim(LinearSystemId.createFlywheelSystem(DCMotor.getNeo550(1), 1, INTAKE_GEAR_RATIO), DCMotor.getNeo550(1), INTAKE_GEAR_RATIO);
 
   @AutoLogOutput
   public double getVelocity() {

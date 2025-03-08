@@ -54,6 +54,7 @@ public class Wrist extends SubsystemBase {
 
     output = pid.calculate(getAngle().getRadians()) + ff;
     if (manualVoltage != null) {
+      Logger.recordOutput("Wrist/manualVoltage", manualVoltage);
       output = manualVoltage;
       manualVoltage = null;
     }
@@ -107,7 +108,7 @@ public class Wrist extends SubsystemBase {
     return wristAbsEncoder.getVelocity();
   }
 
-  public void setAngle(Rotation2d angle) {
+  public void setGoal(Rotation2d angle) {
     pid.setGoal(angle.getRadians());
   }
 
@@ -115,7 +116,7 @@ public class Wrist extends SubsystemBase {
     pid.reset(angle, 0);
   }
 
-  public void setAngle(double angle) {
+  public void setGoal(double angle) {
     pid.setGoal(angle);
   }
 

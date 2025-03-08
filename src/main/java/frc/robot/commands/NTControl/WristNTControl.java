@@ -21,6 +21,6 @@ public class WristNTControl extends Command {
 
   @Override
   public void execute() {
-    wrist.setAngle(Units.degreesToRadians(SmartDashboard.getNumber(NTPath, wrist.getGoalAngle().getRadians())));
+    wrist.setGoal(Units.degreesToRadians(SmartDashboard.getNumber(NTPath, wrist.getGoalAngle().getRadians())));
   }
 }

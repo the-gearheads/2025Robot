@@ -47,7 +47,7 @@ public class Superstructure {
     return pivot.atPidSetpoint() && telescope.atPidSetpoint();
   }
 
-  public Command followAvTrajectory(ArmvatorTrajectory traj) {
+  public Command followAvTrajectory(ArmvatorTrajectory traj) {   
     return traj.follow(this::followSample, this::atPidSetpoint, true, true, pivot, telescope);
   }
 

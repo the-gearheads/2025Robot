@@ -21,7 +21,7 @@ public class Intake extends SubsystemBase {
   SparkMax intake = new SparkMax(INTAKE_ID, MotorType.kBrushless);
   RelativeEncoder intakeEncoder = intake.getEncoder();
   SparkMaxConfig intakeConfig = new SparkMaxConfig();
-  Debouncer stallDebouncer = new Debouncer(0.5);
+  Debouncer stallDebouncer = new Debouncer(0.001);
 
   double manualVoltage;
   
@@ -67,15 +67,19 @@ public class Intake extends SubsystemBase {
     return stallDebouncer.calculate(isCurrentlyStuck());
   } 
 
+  @AutoLogOutput
+  public double getOutputCurrent() {
+    return intake.getOutputCurrent();
+  }
+
   public Command runIntake() {
-    return this.runEnd(() -> {
+    return this.run(() -> {
       if(!stallDebouncer.calculate(isCurrentlyStuck())) {
         this.setVoltage(INTAKE_VOLTAGE);
       } else {
         this.setVoltage(INTAKE_STALL_VOLTAGE);
       }
-    }, 
-    () -> intake.setVoltage(0));
+    });
   }
 
   public Command runOuttake() {
@@ -87,6 +91,7 @@ public class Intake extends SubsystemBase {
   }
 
   private boolean isCurrentlyStuck() {
-    return (Math.abs(getVelocity()) < STALL_VELOCITY_THRESHOLD) && (Math.abs(manualVoltage) > 1);
+    // return (Math.abs(getVelocity()) < STALL_VELOCITY_THRESHOLD) && (Math.abs(manualVoltage) > 0.1);
+    return getOutputCurrent() > 35;
   }
 }

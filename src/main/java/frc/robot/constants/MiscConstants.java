@@ -5,7 +5,7 @@ import edu.wpi.first.math.util.Units;
 /* One-off non subsystem-specific thinigs that aren't worth creating a full file for. If there's more than like 3 constants assosciated with one thing, just make a new file. */
 public final class MiscConstants {
   public static final double JOYSTICK_DEADBAND = 0.02;
-  public static final int BREAK_COAST_BUTTON_PORT = 0;
+  public static final int BREAK_COAST_BUTTON_PORT = 9;
 
   public static final double DISTANCE_TO_REEF = 0.45;
   public static final double AUTO_ALIGN_FILTER_ANGLE = Units.degreesToRadians(70);
