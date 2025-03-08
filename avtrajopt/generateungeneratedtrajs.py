@@ -22,7 +22,7 @@ places = {
   "L3": {"pose": endeff_pos(0.06, 86), "vel": [0, 0]},
   "L4": {"pose": endeff_pos(0.88, 86), "vel": [0, 0]},
 
-  "HP": {"pose": [front_x, 1], "vel": [0, 0]},
+  "HP": {"pose": endeff_pos(0.0879, 46.62), "vel": [0, 0]},
   "GROUND_INTAKE": {"pose": [front_x, 0.92], "vel": [0, 0]},
   "PROCESSOR": {"pose": [front_x, 0.8], "vel": [0, 0]},
   "NET": {"pose": [back_x+0.01, constants.elevator_max_len - 0.09], "vel": [0, 0]},

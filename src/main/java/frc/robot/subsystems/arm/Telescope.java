@@ -47,8 +47,7 @@ public class Telescope extends SubsystemBase {
   private RunMode defaultMode = RunMode.VOLTAGE;
   private RunMode mode = defaultMode;
   private ArmvatorSample sample;
-  private double ff;
-  private double output;
+
   private double manualVoltage;
   private boolean isHomed = false;
 
@@ -70,7 +69,7 @@ public class Telescope extends SubsystemBase {
     elevatorFollower.setCANTimeout(250);
 
     elevatorConfig.smartCurrentLimit(ELEVATOR_CURRENT_LIMIT);
-    elevatorConfig.voltageCompensation(12);
+    // elevatorConfig.voltageCompensation(12); // TODO: ?
     elevatorConfig.idleMode(IdleMode.kBrake);
 
     elevatorConfig.signals.appliedOutputPeriodMs(10);
@@ -95,19 +94,25 @@ public class Telescope extends SubsystemBase {
   public void periodic() {
     // Impact of gravity changes with elevator angle
     elevatorFeedforward.setKg(ELEVATOR_KG * Math.sin(pivotAngleRadSupplier.getAsDouble()));
+    double ff = 0, pidOutput = 0, output = 0;
     switch (mode) {
       case PROFILED_PID:
         ff = elevatorFeedforward.calculate(profiledPid.getSetpoint().velocity);
-        output = profiledPid.calculate(getExtension()) + ff;
+        pidOutput = profiledPid.calculate(getExtension());
         break;
       case TRAJECTORY:
         ff = elevatorFeedforward.calculate(sample.elevatorVel(), sample.elevatorAccel());
-        output = pid.calculate(getExtension(), sample.elevatorLen()-MIN_ABSOLUTE_HEIGHT);
+        pidOutput = pid.calculate(getExtension(), sample.elevatorLen()-MIN_ABSOLUTE_HEIGHT);
         break;
       case VOLTAGE:
-        output = manualVoltage;
+        pidOutput = manualVoltage;
         break;
     }
+
+
+    Logger.recordOutput("Telescope/ffVolts", ff);
+    Logger.recordOutput("Telescope/pidVolts", pidOutput);
+    output = ff + pidOutput; // TODO: add this to telescope
 
     if(mode != RunMode.PROFILED_PID) {
       profiledPid.reset(getExtension());
@@ -208,7 +213,7 @@ public class Telescope extends SubsystemBase {
   }
 
   protected void setMotorVoltage(double voltage) {
-    elevator.setVoltage(output);
+    elevator.setVoltage(voltage);
   }
 
   public boolean atPidSetpoint() {

@@ -92,7 +92,7 @@ public class RobotContainer {
     );
 
     Controllers.driverController.getBBtn().onTrue(
-      superStructure.goTo(SuperstructurePosition.L3)
+      superStructure.goTo(SuperstructurePosition.HP)
     );
 
     Controllers.driverController.getLeftBumper().onTrue(Commands.runOnce(() -> { swerve.setPose(new Pose2d(1, 1, Rotation2d.fromDegrees(0))); }));
