@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.util.Units;
@@ -30,28 +31,25 @@ public class MechanismViz extends SubsystemBase {
   // bumpers aren't offset since they dont need to rotate so its dumb to waste effort on that, so 0, 0, 0 is just where they're supposed to be
   private final Transform3d bumperGonePos = new Transform3d(1000, 100, 0, new Rotation3d()); // i sure hope your field isnt 1km
 
-  Swerve swerve;
   Pivot pivot;
   Telescope telescope;
   Wrist wrist;
   public MechanismViz(Swerve swerve, Pivot pivot, Telescope telescope, Wrist wrist) {
-    this.swerve = swerve;
     this.pivot = pivot;
     this.telescope = telescope;
     this.wrist = wrist;
   }
 
-  @Override
-  public void periodic() {
+  public Transform3d[] getComponentPosesFor(double telescopeLength, Rotation2d pivotAngle, Rotation2d wristAngle) {
     // So our "cad" coordinate frame is going to have 0 degrees as "pointing straight up", which is uhh, not what we use literally everywhere else
-    Rotation3d pivotAngle = new Rotation3d(0, Math.toRadians(90) - pivot.getAngle().getRadians(), 0);
+    Rotation3d pivotAngle3d = new Rotation3d(0, Math.toRadians(90) - pivot.getAngle().getRadians(), 0);
     // Rotation3d pivotAngle = new Rotation3d(0, Math.toRadians(0), 0);
     Transform3d stage1Extension = new Transform3d(0, 0, telescope.getLength()/2.0, new Rotation3d());
     Transform3d stage2Extension = new Transform3d(0, 0, telescope.getLength()/2.0, new Rotation3d());
     Transform3d totalExtension = stage1Extension.plus(stage2Extension);
-    Rotation3d wristAngle = new Rotation3d(0, wrist.getAngle().getRadians()-Units.degreesToRadians(4), 0);
+    Rotation3d wristAngle3d = new Rotation3d(0, wrist.getAngle().getRadians()-Units.degreesToRadians(4), 0);
 
-    Transform3d stage0PivotPose = rotateIntrinsically(PIVOT_POS, pivotAngle);
+    Transform3d stage0PivotPose = rotateIntrinsically(PIVOT_POS, pivotAngle3d);
     // We want our extended elevator to extend relative to the pivot, and this gives us the position of the elevator from the pivot
     // a.plus(b.inverse()) is the same as a - b, which is the same as a.relativeTo(b) (which only exists for Pose3d) 
     Transform3d stage1ElevRelativeTo = ELEV1_POS.plus(stage1Extension).plus(PIVOT_POS.inverse());
@@ -64,7 +62,7 @@ public class MechanismViz extends SubsystemBase {
 
     // Pretty much the same for wrist, except we rotate at the end
     Transform3d wristPoseRelativeTo = WRIST_POS.plus(totalExtension).plus(PIVOT_POS.inverse());;
-    Transform3d wristPos = rotateIntrinsically(stage0PivotPose.plus(wristPoseRelativeTo), wristAngle);
+    Transform3d wristPos = rotateIntrinsically(stage0PivotPose.plus(wristPoseRelativeTo), wristAngle3d);
 
 
     // Now lets figure out which bumpers to use. We won't use any if alliance is invalid
@@ -80,8 +78,16 @@ public class MechanismViz extends SubsystemBase {
     }
 
     Transform3d[] componentPoses = {stage0PivotPose, stage1ElevatorPos, stage2ElevatorPos, wristPos, bumperBluePos, bumperRedPos};
-    Logger.recordOutput("ComponentPoses", componentPoses);
-    Logger.recordOutput("Origin", new Pose3d());
+    return componentPoses;
+  }
+
+  @Override
+  public void periodic() {
+    Transform3d[] componentPoses = getComponentPosesFor(telescope.getLength(), pivot.getAngle(), wrist.getAngle());
+    Transform3d[] setpointPoses = getComponentPosesFor(telescope.getTargetLength(), pivot.getTargetAngle(), wrist.getTargetAngle());
+    Logger.recordOutput("MechanismViz/ComponentPoses", componentPoses);
+    Logger.recordOutput("MechanismViz/SetpointPoses", setpointPoses);
+
   }
 
   private Transform3d rotateIntrinsically(Transform3d pose, Rotation3d rotation) {

@@ -6,6 +6,7 @@ import static frc.robot.constants.ArmConstants.*;
 
 import java.util.function.DoubleSupplier;
 
+import org.littletonrobotics.junction.AutoLog;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
@@ -117,8 +118,6 @@ public class Telescope extends SubsystemBase {
     }
 
     SmartDashboard.putData(pid);
-    Logger.recordOutput("Telescope/pidSetpoint", pid.getSetpoint());
-    Logger.recordOutput("Telescope/profiliedPIDSetpoint", profiledPid.getSetpoint().position);
     Logger.recordOutput("Telescope/attemptedOutput", output);
     Logger.recordOutput("Telescope/manualVoltage", manualVoltage);
     Logger.recordOutput("Telescope/sample", sample);
@@ -180,6 +179,17 @@ public class Telescope extends SubsystemBase {
   @AutoLogOutput
   public double getLength() {
     return elevatorEncoder.getPosition();
+  }
+
+  @AutoLogOutput
+  public double getTargetLength() {
+    if (mode == RunMode.TRAJECTORY) {
+      return pid.getSetpoint();
+    } else if (mode == RunMode.PROFILED_PID) {
+      return profiledPid.getGoal().position;
+    } else {
+      return getLength();
+    }
   }
 
   @AutoLogOutput

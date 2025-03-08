@@ -103,8 +103,6 @@ public class Pivot extends SubsystemBase {
     }
 
     SmartDashboard.putData(pid);
-    Logger.recordOutput("Pivot/pidSetpoint", pid.getSetpoint());
-    Logger.recordOutput("Pivot/profiliedPidSetpoint", profiledPid.getSetpoint().position);
     Logger.recordOutput("Pivot/manualVoltage", manualVoltage);
     Logger.recordOutput("Pivot/Sample", sample);
     Logger.recordOutput("Pivot/attemptedOutput", output);
@@ -175,6 +173,17 @@ public class Pivot extends SubsystemBase {
   @AutoLogOutput
   public double getVelocity() {
     return Units.rotationsToRadians(pivotAbsEnc.getVelocity());
+  }
+
+  @AutoLogOutput
+  public Rotation2d getTargetAngle() {
+    if (mode == RunMode.PROFILED_PID) {
+      return new Rotation2d(profiledPid.getSetpoint().position);
+    } else if (mode == RunMode.TRAJECTORY) {
+      return new Rotation2d(pid.getSetpoint());
+    } else {
+      return getAngle();
+    }
   }
 
   public void setGoalAngle(double angleRad) {
