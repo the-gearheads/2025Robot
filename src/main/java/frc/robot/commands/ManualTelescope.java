@@ -22,16 +22,16 @@ public class ManualTelescope extends Command {
   @Override
   public void initialize() {
     telescope.setMode(RunMode.PROFILED_PID);
-    targetPos = telescope.getLength();
+    targetPos = telescope.getExtension();
     telescope.setGoalPosition(targetPos);
     telescope.resetProfiledPidTo(targetPos);
   }
 
   @Override
   public void execute() {
-    double speed = Units.inchesToMeters(4);
-    speed = Controllers.driverController.getSpeedUpAxis() * 4;
-    speed -= Controllers.driverController.getSlowDownAxis() * 4;
+    double speed = Units.inchesToMeters(1);
+    speed = Controllers.driverController.getLeftTriggerAxis() * 1;
+    speed -= Controllers.driverController.getRightTriggerAxis() * 1;
     targetPos += (speed * 0.02);
     targetPos = MathUtil.clamp(targetPos, MIN_RELATIVE_HEIGHT, MAX_RELATIVE_HEIGHT);
     telescope.setGoalPosition(targetPos);

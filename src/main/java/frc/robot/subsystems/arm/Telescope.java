@@ -57,7 +57,7 @@ public class Telescope extends SubsystemBase {
   public Telescope() {
     configure();
     profiledPid.setTolerance(ELEVATOR_LENGTH_TOLERANCE);
-    profiledPid.reset(getLength(), getVelocity());
+    profiledPid.reset(getExtension(), getVelocity());
     pid.setTolerance(ELEVATOR_LENGTH_TOLERANCE);
   }
 
@@ -98,11 +98,11 @@ public class Telescope extends SubsystemBase {
     switch (mode) {
       case PROFILED_PID:
         ff = elevatorFeedforward.calculate(profiledPid.getSetpoint().velocity);
-        output = profiledPid.calculate(getLength()) + ff;
+        output = profiledPid.calculate(getExtension()) + ff;
         break;
       case TRAJECTORY:
         ff = elevatorFeedforward.calculate(sample.elevatorVel(), sample.elevatorAccel());
-        output = pid.calculate(getLength(), sample.elevatorLen()-MIN_ABSOLUTE_HEIGHT);
+        output = pid.calculate(getExtension(), sample.elevatorLen()-MIN_ABSOLUTE_HEIGHT);
         break;
       case VOLTAGE:
         output = manualVoltage;
@@ -110,7 +110,7 @@ public class Telescope extends SubsystemBase {
     }
 
     if(mode != RunMode.PROFILED_PID) {
-      profiledPid.reset(getLength());
+      profiledPid.reset(getExtension());
     } 
 
     if(mode != RunMode.TRAJECTORY) {
@@ -124,11 +124,11 @@ public class Telescope extends SubsystemBase {
     Logger.recordOutput("Telescope/isHomed", isHomed);
 
     // stops robot from runnign into itself
-    if (output > 0 && (!isHomed || getLength() > MAX_RELATIVE_HEIGHT)) {
+    if (output > 0 && (!isHomed || getExtension() > MAX_RELATIVE_HEIGHT)) {
       output = 0;
     }
 
-    if (isHomed == true && (output < 0 && getLength() < MIN_RELATIVE_HEIGHT)) {
+    if (isHomed == true && (output < 0 && getExtension() < MIN_RELATIVE_HEIGHT)) {
       output = 0;
     }
 
@@ -182,7 +182,7 @@ public class Telescope extends SubsystemBase {
   }
 
   @AutoLogOutput
-  public double getLength() {
+  public double getExtension() {
     return elevatorEncoder.getPosition();
   }
 
@@ -193,13 +193,13 @@ public class Telescope extends SubsystemBase {
     } else if (mode == RunMode.PROFILED_PID) {
       return profiledPid.getGoal().position;
     } else {
-      return getLength();
+      return getExtension();
     }
   }
 
   @AutoLogOutput
   public double getTotalLength() {
-    return getLength() + MIN_ABSOLUTE_HEIGHT;
+    return getExtension() + MIN_ABSOLUTE_HEIGHT;
   }
 
   @AutoLogOutput
@@ -266,11 +266,11 @@ public class Telescope extends SubsystemBase {
   }
 
   public boolean getSysidForwardLimit() {
-    return getLength() > MAX_SYSID_HEIGHT;
+    return getExtension() > MAX_SYSID_HEIGHT;
   }
 
   public boolean getSysidReverseLimit() {
-    return getLength() < MIN_SYSID_HEIGHT;
+    return getExtension() < MIN_SYSID_HEIGHT;
   }
 
   public void setBrakeCoast(boolean willBrake) {

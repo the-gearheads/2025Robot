@@ -43,8 +43,8 @@ public class MechanismViz extends SubsystemBase {
     // So our "cad" coordinate frame is going to have 0 degrees as "pointing straight up", which is uhh, not what we use literally everywhere else
     Rotation3d pivotAngle3d = new Rotation3d(0, Math.toRadians(90) - pivot.getAngle().getRadians(), 0);
     // Rotation3d pivotAngle = new Rotation3d(0, Math.toRadians(0), 0);
-    Transform3d stage1Extension = new Transform3d(0, 0, telescope.getLength()/2.0, new Rotation3d());
-    Transform3d stage2Extension = new Transform3d(0, 0, telescope.getLength()/2.0, new Rotation3d());
+    Transform3d stage1Extension = new Transform3d(0, 0, telescope.getExtension()/2.0, new Rotation3d());
+    Transform3d stage2Extension = new Transform3d(0, 0, telescope.getExtension()/2.0, new Rotation3d());
     Transform3d totalExtension = stage1Extension.plus(stage2Extension);
     Rotation3d wristAngle3d = new Rotation3d(0, wrist.getAngle().getRadians()-Units.degreesToRadians(4), 0);
 
@@ -82,7 +82,7 @@ public class MechanismViz extends SubsystemBase {
 
   @Override
   public void periodic() {
-    Transform3d[] componentPoses = getComponentPosesFor(telescope.getLength(), pivot.getAngle(), wrist.getAngle());
+    Transform3d[] componentPoses = getComponentPosesFor(telescope.getExtension(), pivot.getAngle(), wrist.getAngle());
     Transform3d[] setpointPoses = getComponentPosesFor(telescope.getTargetLength(), pivot.getTargetAngle(), wrist.getTargetAngle());
     Logger.recordOutput("MechanismViz/ComponentPoses", componentPoses);
     Logger.recordOutput("MechanismViz/SetpointPoses", setpointPoses);

@@ -28,7 +28,7 @@ public final class ArmConstants {
     Units.degreesToRadians(2515)
   );
 
-  public static final double MAX_ANGLE = Units.degreesToRadians(98);
+  public static final double MAX_ANGLE = Units.degreesToRadians(92);
   public static final double MIN_ANGLE = Units.degreesToRadians(15);
   public static final double MAX_SYSID_ANGLE = Units.degreesToRadians(80);
   public static final double MIN_SYSID_ANGLE = Units.degreesToRadians(30);

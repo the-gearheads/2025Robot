@@ -43,12 +43,12 @@ public class DriverController {
     return Controllers.deadband(-controller.getRightX());
   }
 
-  public double getSpeedUpAxis() {
+  public double getLeftTriggerAxis() {
     if(isNull()) return 0;
     return Controllers.deadband(controller.getLeftTriggerAxis());
   }
   
-  public double getSlowDownAxis() {
+  public double getRightTriggerAxis() {
     if(isNull()) return 0;
     return Controllers.deadband(controller.getRightTriggerAxis());
   }
