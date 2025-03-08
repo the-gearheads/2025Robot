@@ -27,6 +27,7 @@ public class Intake extends SubsystemBase {
   
   public Intake() {
     configure();
+    setDefaultCommand(this.run(()->{setVoltage(0);}));
   }
 
   @Override
@@ -75,6 +76,10 @@ public class Intake extends SubsystemBase {
       }
     }, 
     () -> intake.setVoltage(0));
+  }
+
+  public Command runOuttake() {
+    return this.runEnd(() -> intake.setVoltage(-INTAKE_VOLTAGE), () -> intake.setVoltage(0));
   }
 
   public Command stop() {

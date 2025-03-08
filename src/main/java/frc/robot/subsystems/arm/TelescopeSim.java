@@ -43,7 +43,7 @@ public class TelescopeSim extends Telescope {
   }
 
   @Override
-  public boolean getLimitswitch() {
+  public boolean getLimitSwitch() {
     return getLength() < 0.051;
   }
 

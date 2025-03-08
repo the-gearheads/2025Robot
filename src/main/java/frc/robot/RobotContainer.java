@@ -5,11 +5,15 @@
 package frc.robot;
 
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.commands.ManualPivot;
 import frc.robot.commands.ManualTelescope;
 import frc.robot.commands.Teleop;
+import frc.robot.commands.NTControl.WristNTControl;
 import frc.robot.controllers.Controllers;
 import frc.robot.subsystems.Leds;
 import frc.robot.subsystems.MechanismViz;
@@ -58,8 +62,8 @@ public class RobotContainer {
     // swerve.setDefaultCommand(new AlignToPose(swerve, tracker::getCoralObjective));
     swerve.setDefaultCommand(new Teleop(swerve));
     pivot.setDefaultCommand(new ManualPivot(pivot));
-    telescope.setDefaultCommand(new ManualTelescope(telescope));
-    // wrist.setDefaultCommand(Commands.run(() -> {wrist.setVoltage(0);}, wrist));
+    telescope.setDefaultCommand(telescope.homeIfNeeded().andThen(new ManualTelescope(telescope)));
+    wrist.setDefaultCommand(new WristNTControl(wrist));
 
     sysidAuto.addSysidRoutines("Swerve", swerve.getDriveSysIdRoutine());
     sysidAuto.addSysidRoutines("Swerve Angular", swerve.getAngularSysIdRoutine());
@@ -78,7 +82,7 @@ public class RobotContainer {
     // Find new controllers
     Controllers.updateActiveControllerInstance();
 
-    Controllers.driverController.getRightBumper().whileTrue(intake.runIntake());
+    // Controllers.driverController.getRightBumper().whileTrue(intake.runIntake());
 
     // Controllers.driverController.getYBtn().onTrue(new PivotNTControl(pivot));
     // Controllers.driverController.getBBtn().onTrue(new ManualPivot(pivot));
@@ -88,10 +92,15 @@ public class RobotContainer {
     );
 
     Controllers.driverController.getBBtn().onTrue(
-      superStructure.goTo(SuperstructurePosition.HP)
+      superStructure.goTo(SuperstructurePosition.L3)
     );
-    // Controllers.driverController.getYBtn().whileTrue(Commands.runEnd(() -> {intake.setVoltage(-12);}, ()->{intake.setVoltage(0);}, intake));
-    // Controllers.driverController.getBBtn().whileTrue(Commands.runEnd(() -> {intake.setVoltage(12);}, ()->{intake.setVoltage(0);}, intake));
+
+    Controllers.driverController.getLeftBumper().onTrue(Commands.runOnce(() -> { swerve.setPose(new Pose2d(1, 1, Rotation2d.fromDegrees(0))); }));
+    // Controllers.driverController.getPovLeft().whileTrue(Commands.runEnd(() -> {intake.setVoltage(-12);}, ()->{intake.setVoltage(0);}, intake));
+    // Controllers.driverController.getPovRight().whileTrue(Commands.runEnd(() -> {intake.setVoltage(12);}, ()->{intake.setVoltage(0);}, intake));
+
+    Controllers.driverController.getPovLeft().whileTrue(intake.runIntake());
+    Controllers.driverController.getPovRight().whileTrue(intake.runOuttake());
 
     // Controllers.driverController.getLeftBumper().whileTrue(new AlignToPose(swerve, tracker::getCoralObjective));
   }

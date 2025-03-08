@@ -9,7 +9,7 @@ public class IntakeConstants {
 
   public static final int INTAKE_CURRENT_LIMIT = 20;
 
-  public static final int INTAKE_VOLTAGE = -12;
-  public static final int INTAKE_STALL_VOLTAGE = -2;
+  public static final int INTAKE_VOLTAGE = 12;
+  public static final int INTAKE_STALL_VOLTAGE = 2;
   public static final double STALL_VELOCITY_THRESHOLD = 0.25;
 }

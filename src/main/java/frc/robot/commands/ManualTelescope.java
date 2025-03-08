@@ -1,5 +1,10 @@
 package frc.robot.commands;
 
+import static frc.robot.constants.ArmConstants.MAX_RELATIVE_HEIGHT;
+import static frc.robot.constants.ArmConstants.MIN_RELATIVE_HEIGHT;
+
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.controllers.Controllers;
 import frc.robot.subsystems.Superstructure.RunMode;
@@ -12,16 +17,23 @@ public class ManualTelescope extends Command {
     addRequirements(telescope);
   }
 
+  double targetPos = MIN_RELATIVE_HEIGHT;
+
   @Override
   public void initialize() {
-    telescope.setMode(RunMode.VOLTAGE);
+    telescope.setMode(RunMode.PROFILED_PID);
+    targetPos = telescope.getLength();
+    telescope.setGoalPosition(targetPos);
+    telescope.resetProfiledPidTo(targetPos);
   }
 
   @Override
   public void execute() {
-    double voltage = 2;
-    voltage = Controllers.driverController.getSpeedUpAxis() * 2;
-    voltage -= Controllers.driverController.getSlowDownAxis() * 2;
-    telescope.setVoltage(voltage);
+    double speed = Units.inchesToMeters(4);
+    speed = Controllers.driverController.getSpeedUpAxis() * 4;
+    speed -= Controllers.driverController.getSlowDownAxis() * 4;
+    targetPos += (speed * 0.02);
+    targetPos = MathUtil.clamp(targetPos, MIN_RELATIVE_HEIGHT, MAX_RELATIVE_HEIGHT);
+    telescope.setGoalPosition(targetPos);
   }
 }

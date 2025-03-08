@@ -36,7 +36,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Robot;
 import frc.robot.commands.AlignToPose;
 import frc.robot.subsystems.swerve.gyro.Gyro;
-import frc.robot.subsystems.swerve.gyro.GyroNavx;
+import frc.robot.subsystems.swerve.gyro.GyroRedux;
 import frc.robot.subsystems.swerve.gyro.GyroSim;
 import frc.robot.subsystems.swerve.setpointgen.ModuleLimits;
 import frc.robot.subsystems.swerve.setpointgen.SwerveSetpoint;
@@ -79,7 +79,7 @@ public class Swerve extends SubsystemBase {
     if (Robot.isSimulation()) {
       gyro = new GyroSim();
     } else {
-      gyro = new GyroNavx();
+      gyro = new GyroRedux();
     }
     gyro.reset();
     SmartDashboard.putData("Field", field);

@@ -5,11 +5,11 @@ import edu.wpi.first.math.util.Units;
 import frc.robot.util.ArmvatorPosition;
 
 public enum SuperstructurePosition {
-  HP(ArmvatorPosition.HP, Units.degreesToRadians(-5)),
-  L1(ArmvatorPosition.L1, Units.degreesToRadians(-7)),
-  L2(ArmvatorPosition.L2, Units.degreesToRadians(150)), // actual
-  L3(ArmvatorPosition.L3, Units.degreesToRadians(-20)), // actual
-  L4(ArmvatorPosition.L4, Units.degreesToRadians(-50)), // actual
+  HP(ArmvatorPosition.HP, Units.degreesToRadians(-5 - 30)),
+  L1(ArmvatorPosition.L1, Units.degreesToRadians(-7 - 30)),
+  L2(ArmvatorPosition.L2, Units.degreesToRadians(150 - 30)), // actual
+  L3(ArmvatorPosition.L3, Units.degreesToRadians(-20 - 30)), // actual
+  L4(ArmvatorPosition.L4, Units.degreesToRadians(-50 - 30)), // actual
   NET(ArmvatorPosition.NET, Units.degreesToRadians(20)),
   GROUND_INTAKE(ArmvatorPosition.GROUND_INTAKE, Units.degreesToRadians(-20)),
   PROCESSOR(ArmvatorPosition.PROCESSOR, Units.degreesToRadians(-10));

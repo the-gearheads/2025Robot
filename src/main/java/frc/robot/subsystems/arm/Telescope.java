@@ -23,6 +23,7 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.subsystems.Superstructure.RunMode;
@@ -143,7 +144,7 @@ public class Telescope extends SubsystemBase {
       }
     }
 
-   if (getLimitswitch()) {
+   if (getLimitSwitch()) {
       setEncoderPosition(0);
       isHomed = true;
     }
@@ -154,7 +155,7 @@ public class Telescope extends SubsystemBase {
   }
 
   @AutoLogOutput
-  public boolean getLimitswitch() {
+  public boolean getLimitSwitch() {
     return elevator.getReverseLimitSwitch().isPressed();
   }
 
@@ -162,11 +163,16 @@ public class Telescope extends SubsystemBase {
     profiledPid.setGoal(setpointLength);
   }
 
+  public void resetProfiledPidTo(double length) {
+    profiledPid.reset(length, 0);
+  }
+
   public void setSample(ArmvatorSample sample) {
     this.sample = sample;
   }
 
   public void setMode(RunMode mode) {
+    // todo: handle some state changes
     this.mode = mode;
   }
   
@@ -221,13 +227,31 @@ public class Telescope extends SubsystemBase {
     elevatorEncoder.setPosition(position);
   }
 
-  public Command getHomingRoutine() {
-    return this.startEnd(() -> {
-      setVoltage(HOMING_VOLTAGE);
+  public Command setModeTemporarilyTo(RunMode newMode) {
+    // intentionally does not require this subsystem
+    RunMode originalMode = null;
+    return Commands.startEnd(() -> {
+      setMode(newMode);
     }, () -> {
-      setVoltage(0);
-      setEncoderPosition(0);
-    }).until(this::getLimitswitch);
+      setMode(originalMode);
+    });
+  }
+
+  public Command getHomingRoutine() {
+    return Commands.sequence(
+      this.run(() -> {setVoltage(HOMING_VOLTAGE);}).until(this::getLimitSwitch),
+      this.run(() -> {setVoltage(-HOMING_VOLTAGE/2.0);}).until(()->!getLimitSwitch())
+    ).deadlineFor(setModeTemporarilyTo(RunMode.VOLTAGE));
+  }
+
+  public Command homeIfNeeded() {
+    return this.defer(() ->{
+      if (!isHomed) {
+        return getHomingRoutine();
+      } else {
+        return this.runOnce(()->{});
+      }
+    });
   }
 
   public SysIdRoutine getSysidRoutine() {

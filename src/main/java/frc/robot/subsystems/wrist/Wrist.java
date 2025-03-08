@@ -41,6 +41,8 @@ public class Wrist extends SubsystemBase {
   public Wrist() {
     configure();
     wristEncoder.setPosition(wristAbsEncoder.getPosition());
+    pid.setGoal(0);
+    pid.reset(0, 0);
   }
 
   @Override
@@ -107,6 +109,10 @@ public class Wrist extends SubsystemBase {
 
   public void setAngle(Rotation2d angle) {
     pid.setGoal(angle.getRadians());
+  }
+
+  public void resetProfiledPidTo(double angle) {
+    pid.reset(angle, 0);
   }
 
   public void setAngle(double angle) {

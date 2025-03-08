@@ -1,11 +1,16 @@
 package frc.robot.subsystems;
 
 
+import java.util.List;
+import java.util.Set;
+
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
+import frc.robot.commands.WristTrajFollower;
 import frc.robot.subsystems.arm.Pivot;
 import frc.robot.subsystems.arm.Telescope;
 import frc.robot.subsystems.wrist.Wrist;
@@ -47,11 +52,24 @@ public class Superstructure {
   }
 
   public Command goTo(SuperstructurePosition pos) {
-    var currentPos = ArmvatorPosition.getNearest(getEndEffPos());
-    var traj = ArmvatorTrajectory.load(currentPos, pos.armvatorPosition);
-    Logger.recordOutput("Superstructure/goToFrom", currentPos);
-    Logger.recordOutput("Superstructure/goToTo", pos);
-    return followAvTrajectory(traj);
+    return Commands.defer(()-> {
+      var currentPos = ArmvatorPosition.getNearest(getEndEffPos());
+      ArmvatorTrajectory traj;
+      if (currentPos != pos.armvatorPosition) {
+        traj = ArmvatorTrajectory.load(currentPos, pos.armvatorPosition);
+      } else {
+        var targetEndeffPos = currentPos.endeffPos;
+        var elevatorLength = targetEndeffPos.getNorm();
+        var pivotAngle = Math.atan2(targetEndeffPos.getY(), targetEndeffPos.getX());
+        traj = new ArmvatorTrajectory(
+          pos.name(),
+          List.of(new ArmvatorSample(0, 0, pivotAngle, 0, elevatorLength, 0, 0, 0, targetEndeffPos))
+        );
+      }
+      Logger.recordOutput("Superstructure/goToFrom", currentPos);
+      Logger.recordOutput("Superstructure/goToTo", pos);
+      return followAvTrajectory(traj).deadlineFor(new WristTrajFollower(traj, pos, wrist, this::getLastSample));
+    }, Set.of(pivot, telescope));
   }
 
   @AutoLogOutput

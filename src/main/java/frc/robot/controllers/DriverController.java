@@ -88,6 +88,16 @@ public class DriverController {
     controller.setRumble(RumbleType.kBothRumble, rumble);
   }
 
+  public Trigger getPovLeft() {
+    if(isNull()) return emptyTrigger();
+    return new Trigger(() -> controller.getPOV() == 270);
+  }
+
+  public Trigger getPovRight() {
+    if(isNull()) return emptyTrigger();
+    return new Trigger(() -> controller.getPOV() == 90);
+  }
+
   public Command getRumbleCommand(double rumble, double seconds) {
     return Commands.runEnd(()->setRumble(rumble), ()->setRumble(0)).withTimeout(seconds);
   }
