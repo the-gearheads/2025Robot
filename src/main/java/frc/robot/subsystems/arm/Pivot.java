@@ -107,11 +107,11 @@ public class Pivot extends SubsystemBase {
     Logger.recordOutput("Pivot/Sample", sample);
     Logger.recordOutput("Pivot/attemptedOutput", output);
     // stops robot from runnign into itself
-    if (output > 0 && getAngle().getRadians() > MAX_ANGLE) {
+    if (output > 0 && getAbsAngle().getRadians() > MAX_ANGLE) {
       output = 0;
     }
 
-    if (output < 0 && getAngle().getRadians() < MIN_ANGLE) {
+    if (output < 0 && getAbsAngle().getRadians() < MIN_ANGLE) {
       output = 0;
     }
 

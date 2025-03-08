@@ -7,7 +7,6 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.commands.ManualPivot;
 import frc.robot.commands.ManualTelescope;
 import frc.robot.commands.Teleop;
@@ -15,6 +14,7 @@ import frc.robot.controllers.Controllers;
 import frc.robot.subsystems.Leds;
 import frc.robot.subsystems.MechanismViz;
 import frc.robot.subsystems.Superstructure;
+import frc.robot.subsystems.SuperstructurePosition;
 import frc.robot.subsystems.arm.Pivot;
 import frc.robot.subsystems.arm.PivotSim;
 import frc.robot.subsystems.arm.Telescope;
@@ -59,7 +59,7 @@ public class RobotContainer {
     swerve.setDefaultCommand(new Teleop(swerve));
     pivot.setDefaultCommand(new ManualPivot(pivot));
     telescope.setDefaultCommand(new ManualTelescope(telescope));
-    wrist.setDefaultCommand(Commands.run(() -> {wrist.setVoltage(0);}, wrist));
+    // wrist.setDefaultCommand(Commands.run(() -> {wrist.setVoltage(0);}, wrist));
 
     sysidAuto.addSysidRoutines("Swerve", swerve.getDriveSysIdRoutine());
     sysidAuto.addSysidRoutines("Swerve Angular", swerve.getAngularSysIdRoutine());
@@ -83,13 +83,13 @@ public class RobotContainer {
     // Controllers.driverController.getYBtn().onTrue(new PivotNTControl(pivot));
     // Controllers.driverController.getBBtn().onTrue(new ManualPivot(pivot));
     // teleop controlls
-    // Controllers.driverController.getYBtn().onTrue(
-    //   superStructure.goTo(SuperstructurePosition.L4)
-    // );
+    Controllers.driverController.getYBtn().onTrue(
+      superStructure.goTo(SuperstructurePosition.L4)
+    );
 
-    // Controllers.driverController.getBBtn().onTrue(
-    //   superStructure.goTo(SuperstructurePosition.HP)
-    // // );
+    Controllers.driverController.getBBtn().onTrue(
+      superStructure.goTo(SuperstructurePosition.HP)
+    );
     // Controllers.driverController.getYBtn().whileTrue(Commands.runEnd(() -> {intake.setVoltage(-12);}, ()->{intake.setVoltage(0);}, intake));
     // Controllers.driverController.getBBtn().whileTrue(Commands.runEnd(() -> {intake.setVoltage(12);}, ()->{intake.setVoltage(0);}, intake));
 

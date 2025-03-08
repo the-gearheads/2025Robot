@@ -6,7 +6,6 @@ import static frc.robot.constants.ArmConstants.*;
 
 import java.util.function.DoubleSupplier;
 
-import org.littletonrobotics.junction.AutoLog;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 

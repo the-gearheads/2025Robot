@@ -93,8 +93,8 @@ public record ArmvatorTrajectory(String name, List<ArmvatorSample> samples) {
   public Command follow(Consumer<ArmvatorSample> consumer, BooleanSupplier atSetpoint, boolean waitUntilAtStart, boolean waitUntilAtEnd, Subsystem... requirements) {
     Timer timer = new Timer();
 
-    var gotoStartComamnd = Commands.run(() -> {consumer.accept(sampleAt(0));}, requirements).until(atSetpoint).withName("ArmTrajFollowerGotoStart " + name);
-    var waitUntilEndCommand = Commands.run(() -> {consumer.accept(sampleAt(getDuration()));}, requirements).until(atSetpoint).withName("ArmTrajFollowerWaitUntilEnd " + name);
+    var gotoStartComamnd = Commands.run(() -> {consumer.accept(sampleAt(0));}, requirements).until(atSetpoint).withName("ArmTrajFollowerGotoStart " + name).withTimeout(2);
+    var waitUntilEndCommand = Commands.run(() -> {consumer.accept(sampleAt(getDuration()));}, requirements).until(atSetpoint).withName("ArmTrajFollowerWaitUntilEnd " + name).withTimeout(2);
     var trajCommand = new FunctionalCommand(
       // On init
       () -> {
