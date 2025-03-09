@@ -25,7 +25,7 @@ public class WristConstants {
   public static final double WRIST_ANGLE_TOLERANCE = Units.degreesToRadians(1);
 
   // all for sim
-  public static final double WRIST_MOI_EST = 0.0933520493; // kg * m^2, VERY rough estimate from cad;
+  public static final double WRIST_MOI_EST = 2; // kg * m^2, VERY rough estimate from cad;
   public static final double WRIST_LENGTH = Units.inchesToMeters(17.0541);
   
 }

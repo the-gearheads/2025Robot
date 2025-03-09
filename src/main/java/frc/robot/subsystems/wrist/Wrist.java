@@ -31,7 +31,7 @@ public class Wrist extends SubsystemBase {
   private RelativeEncoder wristEncoder = wrist.getEncoder();
   private AbsoluteEncoder wristAbsEncoder = wrist.getAbsoluteEncoder();
 
-  private ProfiledPIDController pid = new ProfiledPIDController(WRIST_PID[0], WRIST_PID[1], WRIST_PID[2],
+  protected ProfiledPIDController pid = new ProfiledPIDController(WRIST_PID[0], WRIST_PID[1], WRIST_PID[2],
       WRIST_CONSTRAINTS);
 
   double output;

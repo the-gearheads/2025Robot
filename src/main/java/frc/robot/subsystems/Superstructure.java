@@ -32,6 +32,7 @@ public class Superstructure {
     this.pivot = pivot;
     this.telescope = telescope;
     this.wrist = wrist;
+    ArmvatorTrajectory.loadAll();
     telescope.setPivotAngleRadSupplier(pivot::getAngleRad);
   }
 

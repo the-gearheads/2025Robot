@@ -5,7 +5,9 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 
@@ -25,6 +27,7 @@ import edu.wpi.first.wpilibj2.command.Subsystem;
 public record ArmvatorTrajectory(String name, List<ArmvatorSample> samples) {
   
   private static final Gson GSON = new Gson();
+  private static final Map<String, ArmvatorTrajectory> trajectoryCache = new HashMap<>();
 
   public ArmvatorSample getInitialSample() {
     if(samples.isEmpty()) {
@@ -133,7 +136,13 @@ public record ArmvatorTrajectory(String name, List<ArmvatorSample> samples) {
     return sequence.withName("ArmvatorTrajFollower " + name);
   }
 
-  public static ArmvatorTrajectory load(String filename) {
+
+  /**
+   * Loads ArmvatorTrajectory from file. Slow.
+   * @param filename trajectory name
+   * @return armvator trajectory
+   */
+  private static ArmvatorTrajectory load(String filename) {
     File deployDir = Filesystem.getDeployDirectory();
     File file = new File(deployDir, "avtrajopt/" + filename + ".agentraj"); // json
     if (!file.exists()) {
@@ -172,8 +181,42 @@ public record ArmvatorTrajectory(String name, List<ArmvatorSample> samples) {
     return new ArmvatorTrajectory(name, samples);
   }
 
+  /**
+   * Loads all trajectories from file into the trajectory cache. Needs to be called before using any trajectories.
+   */
+  public static void loadAll() {
+    if(!trajectoryCache.isEmpty()) {
+      return;
+    }
+    File deployDir = Filesystem.getDeployDirectory();
+    File trajDir = new File(deployDir, "avtrajopt");
+
+    for (File file : trajDir.listFiles()) {
+      if (file.getName().endsWith(".agentraj")) {
+        String name = file.getName().replace(".agentraj", "");
+        trajectoryCache.put(name, load(name));
+      }
+    }
+  }
+
+  /**
+   * Loads from cache instead of from file
+   * @param start start position
+   * @param end endposition
+   * @return
+   */
   public static ArmvatorTrajectory load(ArmvatorPosition start, ArmvatorPosition end) {
-    return load(start.toString() + "," + end.toString());
+    if(trajectoryCache.isEmpty()) {
+      DriverStation.reportError("Trajectory cache is empty, call loadAll() plz, thx", true);
+      // eh whats the point of throwing an error properly if things are gonna crash anyways
+    }
+
+    String name = start.name() + "," + end.name();
+    if (!trajectoryCache.containsKey(name)) {
+      DriverStation.reportError("Trajectory not found: " + name, true);
+    }
+
+    return trajectoryCache.get(name);
   }
 
   
