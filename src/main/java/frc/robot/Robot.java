@@ -167,6 +167,10 @@ public class Robot extends LoggedRobot {
     if (autonomousCommand != null) {
       autonomousCommand.schedule();
     }
+
+    isBraken = true;
+    lastBrakeCoastButton = true;
+    robotContainer.setAllBrakeCoast(true);
   }
 
   /** This function is called periodically during autonomous. */
@@ -183,6 +187,9 @@ public class Robot extends LoggedRobot {
     if (autonomousCommand != null) {
       autonomousCommand.cancel();
     }
+    isBraken = true;
+    lastBrakeCoastButton = true;
+    robotContainer.setAllBrakeCoast(true);
   }
 
   /** This function is called periodically during operator control. */
