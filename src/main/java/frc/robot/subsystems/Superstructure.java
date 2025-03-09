@@ -70,7 +70,7 @@ public class Superstructure {
       Logger.recordOutput("Superstructure/goToFrom", currentPos);
       Logger.recordOutput("Superstructure/goToTo", pos);
       return followAvTrajectory(traj).deadlineFor(new WristTrajFollower(traj, pos, wrist, this::getLastSample));
-    }, Set.of(pivot, telescope));
+    }, Set.of(pivot, telescope, wrist));
   }
 
   @AutoLogOutput
