@@ -9,6 +9,7 @@ import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import frc.robot.subsystems.swerve.Swerve;
 
 public class ObjectiveTracker {
@@ -22,7 +23,7 @@ public class ObjectiveTracker {
     this.swerve = swerve;
   }
 
-  public Pose2d getCoralObjective() {
+  public Pose2d getCoralObjective(Rotation2d controllerVectorAngle) {
     predictedRobot = swerve.getPose().exp(
         swerve.getRobotRelativeSpeeds().toTwist2d(lookAheadS));
     // filter poses by angle

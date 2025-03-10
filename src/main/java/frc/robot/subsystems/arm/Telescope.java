@@ -122,7 +122,7 @@ public class Telescope extends SubsystemBase {
       pid.reset();
     }
 
-    SmartDashboard.putData(pid);
+    SmartDashboard.putData("Telescope/pidController", pid);
     Logger.recordOutput("Telescope/attemptedOutput", output);
     Logger.recordOutput("Telescope/manualVoltage", manualVoltage);
     Logger.recordOutput("Telescope/sample", sample);

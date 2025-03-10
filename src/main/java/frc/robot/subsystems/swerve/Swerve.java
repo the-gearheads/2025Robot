@@ -34,7 +34,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Robot;
-import frc.robot.commands.AlignToPose;
 import frc.robot.subsystems.swerve.gyro.Gyro;
 import frc.robot.subsystems.swerve.gyro.GyroRedux;
 import frc.robot.subsystems.swerve.gyro.GyroSim;
@@ -53,7 +52,6 @@ public class Swerve extends SubsystemBase {
   Field2d field = new Field2d();
   Vision vision;
   ObjectiveTracker tracker = new ObjectiveTracker(this);
-  AlignToPose aligner = new AlignToPose(this, tracker::getCoralObjective);
 
   Gyro gyro;
   PIDController headingController = new PIDController(5.2, 0, 0.5);
@@ -242,7 +240,7 @@ public class Swerve extends SubsystemBase {
     multitagPoseEstimator.update(getGyroRotation(), getModulePositions());
     field.setRobotPose(getPose());
 
-    tracker.getCoralObjective();
+    // tracker.getCoralObjective();
   }
 
   public Pose2d getPoseWheelsOnly() {

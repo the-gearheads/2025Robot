@@ -102,7 +102,7 @@ public class Pivot extends SubsystemBase {
       pid.reset();
     }
 
-    SmartDashboard.putData(pid);
+    SmartDashboard.putData("Pivot/pidController", pid);
     Logger.recordOutput("Pivot/manualVoltage", manualVoltage);
     Logger.recordOutput("Pivot/Sample", sample);
     Logger.recordOutput("Pivot/attemptedOutput", output);
