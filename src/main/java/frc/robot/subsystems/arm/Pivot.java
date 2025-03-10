@@ -47,7 +47,7 @@ public class Pivot extends SubsystemBase {
   private ArmfeedforwardSettable pivotFeedforward = new ArmfeedforwardSettable(PIVOT_KS, PIVOT_KG, PIVOT_KV, PIVOT_KA);
   private PIDController pid = new PIDController(PIVOT_PID[0], PIVOT_PID[1], PIVOT_PID[2]);
 
-  private RunMode defaultMode = RunMode.VOLTAGE;
+  private RunMode defaultMode = RunMode.TRAJECTORY;
   private RunMode mode = defaultMode;
 
   private ArmvatorSample sample;

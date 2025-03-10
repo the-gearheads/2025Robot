@@ -44,7 +44,7 @@ public class Telescope extends SubsystemBase {
       ELEVATOR_CONSTRAINTS);
   private PIDController pid = new PIDController(ELEVATOR_PID[0], ELEVATOR_PID[1], ELEVATOR_PID[2]);
 
-  private RunMode defaultMode = RunMode.VOLTAGE;
+  private RunMode defaultMode = RunMode.TRAJECTORY;
   private RunMode mode = defaultMode;
   private ArmvatorSample sample;
 
