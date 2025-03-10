@@ -100,10 +100,9 @@ public class AlignToPose extends Command {
     Logger.recordOutput("AlignToPose/currentTarget", currentTarget);
 
     double controllerMagnitude = MathUtil.clamp((Math.abs(x) + Math.abs(y)) / 2, 0, 0.33);
-    Rotation2d translationVectorAngleError = currentPose.getTranslation().minus(currentTarget.getTranslation()).getAngle();
-    Rotation2d rotationError = currentPose.getRotation().minus(currentTarget.getRotation());
+    Rotation2d rotationErrorToGoal = currentPose.getRotation().minus(currentTarget.getRotation());
     double targetDist = currentPose.getTranslation().getDistance(currentTarget.getTranslation());
-
+    
     // calculate scaling factors
     // $$ y=8.6711x^{2}-5.89177x+1 $$
     // $$ \ce{H2O + H2O -> 2H2O}$$
@@ -115,19 +114,26 @@ public class AlignToPose extends Command {
     double distScalingFactor = MathUtil.clamp(-0.7679 * targetDist + 1, 0, 1);
     Logger.recordOutput("AlignToPose/ControllerScalingFactor", controllerMagScalingFactor);
     Logger.recordOutput("AlignToPose/DistanceScalingFactor", distScalingFactor);
-
+    
     double totalScalingFactor = controllerMagScalingFactor * distScalingFactor;
     Logger.recordOutput("AlignToPose/TotalScalingFactor", totalScalingFactor);
-
+    
     double driveScaledVel = driveController.calculate(targetDist, 0.0) * totalScalingFactor;
-    Logger.recordOutput("AlignToPose/angleError", rotationError);
-    double rotScaledVel = rotController.calculate(rotationError.getRadians(), 0.0) * totalScalingFactor;
+    Logger.recordOutput("AlignToPose/GoalAngleError", rotationErrorToGoal);
     Logger.recordOutput("AlignToPose/driveScaledVel", driveScaledVel);
-    Logger.recordOutput("AlignToPose/rotScaledVel", rotScaledVel);
+    
+    // actual drive to pose stuff, throw in reef avoidance getDriveTarget stuff
+    Pose2d reefAvoidanceTarget = getDriveTarget(currentPose, currentTarget);
+    Rotation2d rotationErrorToCurrentTarget = currentPose.getRotation().minus(reefAvoidanceTarget.getRotation());
+    Rotation2d translationVectorAngleError = currentPose.getTranslation().minus(reefAvoidanceTarget.getTranslation()).getAngle();
+    Logger.recordOutput("AlignToPose/ReefAvoidanceTarget", reefAvoidanceTarget);
     var autoTranslation = new Pose2d(Translation2d.kZero,
-        translationVectorAngleError)
-        .transformBy(new Transform2d(new Translation2d(driveScaledVel, 0.0), Rotation2d.kZero))
-        .getTranslation();
+      translationVectorAngleError)
+      .transformBy(new Transform2d(new Translation2d(driveScaledVel, 0.0), Rotation2d.kZero))
+      .getTranslation();
+
+    double rotScaledVel = rotController.calculate(rotationErrorToCurrentTarget.getRadians(), 0.0) * totalScalingFactor;
+    Logger.recordOutput("AlignToPose/rotScaledVel", rotScaledVel);
 
     double xDriver = Controllers.driverController.getTranslateXAxis() * MAX_ROBOT_TRANS_SPEED;
     double yDriver = Controllers.driverController.getTranslateYAxis() * MAX_ROBOT_TRANS_SPEED;
@@ -156,7 +162,7 @@ public class AlignToPose extends Command {
     return goal.transformBy(
         new Transform2d(
             shiftXT * 1.5,
-            Math.copySign(shiftYT * MAX_REEF_LINEUP_DIST * 0.8, offset.getY()), new Rotation2d()));
+            Math.copySign(shiftYT * MAX_REEF_LINEUP_DIST * 1, offset.getY()), new Rotation2d()));
   }
 
   public Pose2d getCoralObjective(Rotation2d controllerVectorAngle) {
