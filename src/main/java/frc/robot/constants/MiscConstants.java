@@ -11,7 +11,7 @@ public final class MiscConstants {
   public static final double AUTO_ALIGN_FILTER_ANGLE = Units.degreesToRadians(70);
   public static final double REEF_FACE_LENGTH = Units.inchesToMeters(36.792600);
   public static final double MAX_REEF_LINEUP_DIST = 1.5;
-  public static final double VECTOR_ERROR_SCALAR = 2.5;
+  public static final double VECTOR_ERROR_SCALAR = 10;
   public static final double MAX_AUTO_VELOCITY = 2; // m/s;
 
   // robot constants, unused; for reference

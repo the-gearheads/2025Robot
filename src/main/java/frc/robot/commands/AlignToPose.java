@@ -162,17 +162,24 @@ public class AlignToPose extends Command {
   public Pose2d getCoralObjective(Rotation2d controllerVectorAngle) {
     Pair<Pose2d, Double> bestReefPose = new Pair<Pose2d,Double>(null, 1000.0);
     ArrayList<Pose2d> reefPoses = new ArrayList<>(ReefPositions.getReefPoses());
+    double bestVectorError = Double.MAX_VALUE;  // only for logging
+    double bestWeight = Double.MAX_VALUE;  // only for logging
     // Logger.recordOutput("AlignToPose/reefPoses", Pose2d.struct, reefPoses.stream().toArray(Pose2d[]::new));
     for (int i = 0; i < reefPoses.size(); i++) {
       Pose2d reefPose = reefPoses.get(i);
       double dist = reefPose.getTranslation().getDistance(swerve.getPose().getTranslation());
       
-      double vectorError = controllerVectorAngle.minus(reefPose.getTranslation().getAngle()).getRotations();
+      double vectorError = Math.abs(controllerVectorAngle.minus(reefPose.getTranslation().getAngle()).getRotations());
 
-      double weight = dist + vectorError * VECTOR_ERROR_SCALAR;
-      if (weight < bestReefPose.getSecond())
+      double weight = dist + (vectorError * VECTOR_ERROR_SCALAR);
+      if (weight < bestReefPose.getSecond()) {
+        bestWeight = weight;
+        bestVectorError = vectorError;
         bestReefPose = new Pair<Pose2d, Double>(reefPose, weight);
+      }
     }
+    Logger.recordOutput("AlignToPose/CoralObjective/bestVectorError", bestVectorError);
+    Logger.recordOutput("AlignToPose/CoralObjective/bestWeight", bestWeight);
     return bestReefPose.getFirst();
   }
 }
