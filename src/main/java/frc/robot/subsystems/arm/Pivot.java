@@ -191,6 +191,10 @@ public class Pivot extends SubsystemBase {
     profiledPid.setGoal(angleRad);
   }
 
+  public void setGoalAngle(Rotation2d angle) {
+    setGoalAngle(angle.getRadians());
+  }
+
   public void setSample(ArmvatorSample sample) {
     this.sample = sample;
   }
@@ -214,6 +218,10 @@ public class Pivot extends SubsystemBase {
   
   public void setVoltage(Voltage volts) {
     manualVoltage = volts.magnitude();
+  }
+
+  public void resetProfiledPidTo(Rotation2d angle) {
+    profiledPid.reset(angle.getRadians(), 0);
   }
 
   public boolean atPidSetpoint() {

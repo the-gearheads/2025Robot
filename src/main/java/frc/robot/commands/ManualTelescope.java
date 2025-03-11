@@ -35,5 +35,11 @@ public class ManualTelescope extends Command {
     targetPos += (speed * 0.02);
     targetPos = MathUtil.clamp(targetPos, MIN_RELATIVE_HEIGHT, MAX_RELATIVE_HEIGHT);
     telescope.setGoalPosition(targetPos);
+
+    // telescope.setMode(RunMode.VOLTAGE);
+    // double voltage = 2;
+    // voltage = Controllers.driverController.getLeftTriggerAxis() * 2;
+    // voltage -= Controllers.driverController.getRightTriggerAxis() * 2;
+    // telescope.setVoltage(voltage);
   }
 }
