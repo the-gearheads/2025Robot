@@ -32,10 +32,10 @@ public class ManualPivot extends Command {
   public void execute() {
     targetAngle = pivot.getAngle();
     if (Controllers.driverController.getXBtn()) {
-      targetAngle = targetAngle.plus(Rotation2d.fromDegrees(1));
+      targetAngle = targetAngle.plus(Rotation2d.fromDegrees(2));
     }
     if (Controllers.driverController.getABtn()) {
-      targetAngle = targetAngle.minus(Rotation2d.fromDegrees(1));
+      targetAngle = targetAngle.minus(Rotation2d.fromDegrees(2));
     }
 
     double targetAngleRad = MathUtil.clamp(targetAngle.getRadians(), MIN_ANGLE, MAX_ANGLE);

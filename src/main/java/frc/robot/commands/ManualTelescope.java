@@ -1,10 +1,7 @@
 package frc.robot.commands;
 
-import static frc.robot.constants.ArmConstants.MAX_RELATIVE_HEIGHT;
 import static frc.robot.constants.ArmConstants.MIN_RELATIVE_HEIGHT;
 
-import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.controllers.Controllers;
 import frc.robot.subsystems.Superstructure.RunMode;
@@ -29,17 +26,17 @@ public class ManualTelescope extends Command {
 
   @Override
   public void execute() {
-    double speed = Units.inchesToMeters(1);
-    speed = Controllers.driverController.getLeftTriggerAxis() * 1;
-    speed -= Controllers.driverController.getRightTriggerAxis() * 1;
-    targetPos += (speed * 0.02);
-    targetPos = MathUtil.clamp(targetPos, MIN_RELATIVE_HEIGHT, MAX_RELATIVE_HEIGHT);
-    telescope.setGoalPosition(targetPos);
+    // double speed = Units.inchesToMeters(1);
+    // speed = Controllers.driverController.getLeftTriggerAxis() * 1;
+    // speed -= Controllers.driverController.getRightTriggerAxis() * 1;
+    // targetPos += (speed * 0.02);
+    // targetPos = MathUtil.clamp(targetPos, MIN_RELATIVE_HEIGHT, MAX_RELATIVE_HEIGHT);
+    // telescope.setGoalPosition(targetPos);
 
-    // telescope.setMode(RunMode.VOLTAGE);
-    // double voltage = 2;
-    // voltage = Controllers.driverController.getLeftTriggerAxis() * 2;
-    // voltage -= Controllers.driverController.getRightTriggerAxis() * 2;
-    // telescope.setVoltage(voltage);
+    telescope.setMode(RunMode.VOLTAGE);
+    double voltage = 2;
+    voltage = Controllers.driverController.getLeftTriggerAxis() * 2;
+    voltage -= Controllers.driverController.getRightTriggerAxis() * 2;
+    telescope.setVoltage(voltage);
   }
 }

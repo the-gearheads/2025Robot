@@ -75,7 +75,7 @@ public class Telescope extends SubsystemBase {
     elevatorConfig.signals.appliedOutputPeriodMs(10);
     elevatorConfig.encoder.positionConversionFactor(ELEVATOR_POS_FACTOR);
     elevatorConfig.encoder.velocityConversionFactor(ELEVATOR_VEL_FACTOR);
-    elevatorConfig.limitSwitch.reverseLimitSwitchEnabled(false);
+    elevatorConfig.limitSwitch.reverseLimitSwitchEnabled(true);
     elevator.configure(elevatorConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
 
     elevatorFollowerConfig.smartCurrentLimit(ELEVATOR_CURRENT_LIMIT);
@@ -161,7 +161,7 @@ public class Telescope extends SubsystemBase {
 
   @AutoLogOutput
   public boolean getLimitSwitch() {
-    return isHomed ? false : elevator.getReverseLimitSwitch().isPressed(); 
+    return elevator.getReverseLimitSwitch().isPressed(); 
   }
 
   public void setGoalPosition(double setpointLength) {
