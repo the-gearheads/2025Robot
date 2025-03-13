@@ -171,6 +171,7 @@ public class Camera {
       Logger.recordOutput(path + "/NumTargets", 0);
       Logger.recordOutput(path + "/AvgTagArea", -1d);
       Logger.recordOutput(path + "/EstPose", new Pose3d(new Translation3d(-100, -100, -100), new Rotation3d()));
+      Logger.recordOutput(path + "/EstPoseUnfiltered", new Pose3d(new Translation3d(-100, -100, -100), new Rotation3d()));
       Logger.recordOutput(path + "/TagPoses", new Pose3d[0]);
       return false;
     }
