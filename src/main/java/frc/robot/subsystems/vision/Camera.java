@@ -3,8 +3,7 @@ package frc.robot.subsystems.vision;
 import java.util.Optional;
 import java.util.function.DoubleSupplier;
 
-import static frc.robot.constants.VisionConstants.USE_CONSTRAINED_PNP;
-import static frc.robot.constants.VisionConstants.CONSTRAINED_PNP_HEADING_SCALE_FACTOR;
+import static frc.robot.constants.VisionConstants.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -89,10 +88,10 @@ public class Camera {
         || Math.abs(estPose.getTranslation().getZ()) > MAX_Z) {
       return Optional.empty();
     }
-    // TODO: readd
-    // if (!FIELD.contains(estPose.toPose2d())) {
-    // return Optional.empty();
-    // } TODO: polygon lmao
+
+    if (!FIELD.contains(estPose.toPose2d().getTranslation())) {
+      return Optional.empty();
+    }
 
     // advantagekit viz stuff
     ArrayList<Pose3d> allTagPoses = new ArrayList<>();

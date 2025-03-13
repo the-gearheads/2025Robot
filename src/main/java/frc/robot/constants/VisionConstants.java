@@ -1,7 +1,9 @@
 package frc.robot.constants;
 
+import edu.wpi.first.math.geometry.Rectangle2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 import frc.robot.subsystems.vision.CameraIntrinsics;
@@ -39,4 +41,10 @@ public class VisionConstants {
           903.6362625357887, 904.0894526094557, 659.272169009578, 419.33183667235414,
           new double[] { 0.04817038713247634,-0.06653199679614717,2.440943204330648E-4,-1.1668007422068571E-4,0.010742825203920284,-0.00217144171086648,0.0051145983132926676,0.0012068741948585884 })
   };
+
+  // cad guesstimate
+  public static final Rectangle2d FIELD = new Rectangle2d(
+    new Translation2d(0, 0),
+    new Translation2d(17.558, 8.065)
+  );
 }
