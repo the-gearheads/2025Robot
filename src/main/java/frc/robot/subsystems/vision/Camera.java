@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.littletonrobotics.junction.Logger;
+import org.littletonrobotics.junction.networktables.LoggedNetworkNumber;
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
@@ -56,6 +57,8 @@ public class Camera {
   DoubleSupplier fusedHeadingSupplier;
   DoubleSupplier gyroAngleSupplier;
   Rotation2d gyroOffset = new Rotation2d();
+
+  LoggedNetworkNumber headingScaleFactor = new LoggedNetworkNumber("Vision/HeadingScaleFactor", CONSTRAINED_PNP_HEADING_SCALE_FACTOR);
 
   public Camera(AprilTagFieldLayout field, String name, Transform3d transform, CameraIntrinsics intrinsics, DoubleSupplier fusedHeadingSupplier, DoubleSupplier gyroAngleSupplier) {
     this.name = name;
@@ -120,7 +123,7 @@ public class Camera {
     for (PhotonPipelineResult result : pipelineResults) {
       if(USE_CONSTRAINED_PNP) {
         boolean headingFree = DriverStation.isDisabled();
-        var constrainedPnpParams = new PhotonPoseEstimator.ConstrainedSolvepnpParams(headingFree, CONSTRAINED_PNP_HEADING_SCALE_FACTOR);
+        var constrainedPnpParams = new PhotonPoseEstimator.ConstrainedSolvepnpParams(headingFree, headingScaleFactor.get());
         Rotation2d gyroAngle = Rotation2d.fromRadians(gyroAngleSupplier.getAsDouble());
         estimator.addHeadingData(Timer.getFPGATimestamp(), gyroAngle.plus(gyroOffset));
         poseResult = estimator.update(result, camera.getCameraMatrix(), camera.getDistCoeffs(), Optional.of(constrainedPnpParams));
