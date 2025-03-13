@@ -14,6 +14,7 @@ import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
+import org.photonvision.estimation.OpenCVHelp;
 import org.photonvision.simulation.SimCameraProperties;
 import org.photonvision.targeting.PhotonPipelineResult;
 
@@ -63,10 +64,11 @@ public class Camera {
     this.intrinsics = intrinsics;
     this.field = field;
     path = "Vision/" + name.replace("_", "");
+    OpenCVHelp.forceLoadOpenCV();
 
     camera = new PhotonCamera(name);
 
-    var strategy = PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR;
+    var strategy = PoseStrategy.CONSTRAINED_SOLVEPNP;
     var fallbackStrategy = PoseStrategy.CLOSEST_TO_CAMERA_HEIGHT;
     estimator = new PhotonPoseEstimator(this.field, strategy, transform);
     estimator.setMultiTagFallbackStrategy(fallbackStrategy);
@@ -90,7 +92,7 @@ public class Camera {
     // TODO: readd
     // if (!FIELD.contains(estPose.toPose2d())) {
     // return Optional.empty();
-    // }
+    // } TODO: polygon lmao
 
     // advantagekit viz stuff
     ArrayList<Pose3d> allTagPoses = new ArrayList<>();
@@ -111,7 +113,7 @@ public class Camera {
     Logger.recordOutput(path + "/CamTransform", camPose);
   }
 
-  public boolean feedPoseEstimator(SwerveDrivePoseEstimator poseEstimator) {
+  public boolean feedPoseEstimator(SwerveDrivePoseEstimator poseEstimator, Rotation2d gyroOffset) {
     lastRobotPose = poseEstimator.getEstimatedPosition();
     boolean visionWasMeasured = false;
     List<PhotonPipelineResult> pipelineResults = getPipelineResults();
@@ -121,12 +123,7 @@ public class Camera {
         boolean headingFree = DriverStation.isDisabled();
         var constrainedPnpParams = new PhotonPoseEstimator.ConstrainedSolvepnpParams(headingFree, CONSTRAINED_PNP_HEADING_SCALE_FACTOR);
         Rotation2d gyroAngle = Rotation2d.fromRadians(gyroAngleSupplier.getAsDouble());
-        Rotation2d fusedHeading = Rotation2d.fromRadians(fusedHeadingSupplier.getAsDouble());
-        if(!headingFree) {
-          gyroOffset = fusedHeading.minus(gyroAngle);
-        } else {
-          estimator.addHeadingData(Timer.getFPGATimestamp(), gyroAngle.plus(gyroOffset));
-        }
+        estimator.addHeadingData(Timer.getFPGATimestamp(), gyroAngle.plus(gyroOffset));
         poseResult = estimator.update(result, Optional.of(intrinsics.getCameraMatrix()), Optional.of(intrinsics.getDistCoeffs()), Optional.of(constrainedPnpParams));
       }
       else {
@@ -153,8 +150,8 @@ public class Camera {
       double xyStdDev = xyStdDevCoefficient * Math.pow(avgTagArea, 2.0) / numTargets * coefficientFactor;
       double thetaStdDev = thetaStdDevCoefficient * Math.pow(avgTagArea, 2.0) / numTargets * coefficientFactor;
 
-      if (numTargets <= 1)
-        thetaStdDev = Double.POSITIVE_INFINITY;
+      // if (numTargets <= 1)
+      //   thetaStdDev = Double.POSITIVE_INFINITY;
 
       Logger.recordOutput(path + "/XyStdDev", xyStdDev);
       Logger.recordOutput(path + "/ThetaStdDev", thetaStdDev);

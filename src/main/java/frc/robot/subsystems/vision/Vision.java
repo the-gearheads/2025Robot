@@ -10,6 +10,7 @@ import org.photonvision.PhotonCamera;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Robot;
 import frc.robot.subsystems.swerve.Swerve;
@@ -20,6 +21,7 @@ public class Vision extends SubsystemBase {
   public static AprilTagFieldLayout field;
   private VisionSim sim = new VisionSim();
   private Swerve swerve;
+  private Rotation2d gyroOffset;
 
   private Camera[] cameras = new Camera[CAMERA_NAMES.length];
 
@@ -51,8 +53,9 @@ public class Vision extends SubsystemBase {
    */
   public boolean feedPoseEstimator(SwerveDrivePoseEstimator poseEstimator) {
     boolean posed = false;
+    gyroOffset = swerve.getPose().getRotation().minus(swerve.getGyroRotation());
     for (Camera camera : cameras) {
-      posed |= camera.feedPoseEstimator(poseEstimator);
+      posed |= camera.feedPoseEstimator(poseEstimator, gyroOffset);
     }
     
     return posed;

@@ -36,7 +36,7 @@ public class ManualPivot extends Command {
     }
     if (Controllers.driverController.getABtn()) {
       targetAngle = targetAngle.minus(Rotation2d.fromDegrees(3));
-    }
+    }  // TODO: fix
 
     double targetAngleRad = MathUtil.clamp(targetAngle.getRadians(), MIN_ANGLE, MAX_ANGLE);
     pivot.setGoalAngle(targetAngleRad);

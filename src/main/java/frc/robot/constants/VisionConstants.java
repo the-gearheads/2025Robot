@@ -10,6 +10,7 @@ public class VisionConstants {
   public static final boolean USE_CONSTRAINED_PNP = true;
   // sane values somewhere between 1e-7 and 10000. low == trust initial guess heading less.
   public static final double CONSTRAINED_PNP_HEADING_SCALE_FACTOR = 1;
+  ;
   public static final String[] CAMERA_NAMES = { "FRONT_LEFT_2025",  "BACK_LEFT_2025", "BACK_RIGHT"};
   public static final Transform3d[] CAMERA_TRANSFORMS = {
       new Transform3d(  // FRONT_LEFT_2025
