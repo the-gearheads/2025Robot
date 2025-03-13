@@ -11,6 +11,7 @@ import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Robot;
 import frc.robot.subsystems.swerve.Swerve;
@@ -53,7 +54,9 @@ public class Vision extends SubsystemBase {
    */
   public boolean feedPoseEstimator(SwerveDrivePoseEstimator poseEstimator) {
     boolean posed = false;
-    gyroOffset = swerve.getPose().getRotation().minus(swerve.getGyroRotation());
+    if(DriverStation.isDisabled()) {
+      gyroOffset = swerve.getPose().getRotation().minus(swerve.getGyroRotation());
+    }
     for (Camera camera : cameras) {
       posed |= camera.feedPoseEstimator(poseEstimator, gyroOffset);
     }
