@@ -1,6 +1,11 @@
 package frc.robot.subsystems.vision;
 
 import java.util.Optional;
+import java.util.function.DoubleSupplier;
+
+import static frc.robot.constants.VisionConstants.USE_CONSTRAINED_PNP;
+import static frc.robot.constants.VisionConstants.CONSTRAINED_PNP_HEADING_SCALE_FACTOR;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,10 +23,13 @@ import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
 
 public class Camera {
 
@@ -45,7 +53,11 @@ public class Camera {
 
   private final AprilTagFieldLayout field;
 
-  public Camera(AprilTagFieldLayout field, String name, Transform3d transform, CameraIntrinsics intrinsics) {
+  DoubleSupplier fusedHeadingSupplier;
+  DoubleSupplier gyroAngleSupplier;
+  Rotation2d gyroOffset = new Rotation2d();
+
+  public Camera(AprilTagFieldLayout field, String name, Transform3d transform, CameraIntrinsics intrinsics, DoubleSupplier fusedHeadingSupplier, DoubleSupplier gyroAngleSupplier) {
     this.name = name;
     this.transform = transform;
     this.intrinsics = intrinsics;
@@ -58,6 +70,9 @@ public class Camera {
     var fallbackStrategy = PoseStrategy.CLOSEST_TO_CAMERA_HEIGHT;
     estimator = new PhotonPoseEstimator(this.field, strategy, transform);
     estimator.setMultiTagFallbackStrategy(fallbackStrategy);
+    this.fusedHeadingSupplier = fusedHeadingSupplier;
+    this.gyroAngleSupplier = gyroAngleSupplier;
+
   }
 
   public List<PhotonPipelineResult> getPipelineResults() {
@@ -97,17 +112,32 @@ public class Camera {
   }
 
   public boolean feedPoseEstimator(SwerveDrivePoseEstimator poseEstimator) {
-
     lastRobotPose = poseEstimator.getEstimatedPosition();
     boolean visionWasMeasured = false;
     List<PhotonPipelineResult> pipelineResults = getPipelineResults();
+    Optional<EstimatedRobotPose> poseResult;
     for (PhotonPipelineResult result : pipelineResults) {
-      Optional<EstimatedRobotPose> poseResult = estimator.update(result);
+      if(USE_CONSTRAINED_PNP) {
+        boolean headingFree = DriverStation.isDisabled();
+        var constrainedPnpParams = new PhotonPoseEstimator.ConstrainedSolvepnpParams(headingFree, CONSTRAINED_PNP_HEADING_SCALE_FACTOR);
+        Rotation2d gyroAngle = Rotation2d.fromRadians(gyroAngleSupplier.getAsDouble());
+        Rotation2d fusedHeading = Rotation2d.fromRadians(fusedHeadingSupplier.getAsDouble());
+        if(!headingFree) {
+          gyroOffset = fusedHeading.minus(gyroAngle);
+        } else {
+          estimator.addHeadingData(Timer.getFPGATimestamp(), gyroAngle.plus(gyroOffset));
+        }
+        poseResult = estimator.update(result, Optional.of(intrinsics.getCameraMatrix()), Optional.of(intrinsics.getDistCoeffs()), Optional.of(constrainedPnpParams));
+      }
+      else {
+        poseResult = estimator.update(result);
+      }
       if (poseResult.isEmpty())
         continue;
 
       EstimatedRobotPose pose = poseResult.get();
 
+      Logger.recordOutput(path + "/Result", result);
       Logger.recordOutput(path + "/EstPoseUnfiltered", pose.estimatedPose);
       var filteredPose = filterPose(pose);
       if (filteredPose.isEmpty())
