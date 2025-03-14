@@ -86,6 +86,10 @@ public class Intake extends SubsystemBase {
     return this.runEnd(() -> intake.setVoltage(-INTAKE_VOLTAGE), () -> intake.setVoltage(0));
   }
 
+  public Command runOuttake(double volts) {
+    return this.runEnd(() -> intake.setVoltage(-volts), () -> intake.setVoltage(0));
+  }
+
   public Command stop() {
     return this.runOnce(() -> intake.setVoltage(0));
   }

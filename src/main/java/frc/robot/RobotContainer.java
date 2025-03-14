@@ -103,7 +103,8 @@ public class RobotContainer {
 
     Controllers.driverController.getPovLeft().whileTrue(intake.runIntake());
     Controllers.driverController.getPovRight().whileTrue(intake.runOuttake());
-
+    Controllers.driverController.getPovUp().whileTrue(intake.runOuttake(6));
+    
     // Controllers.driverController.getLeftBumper().whileTrue(new AlignToPose(swerve, tracker::getCoralObjective));
   }
 

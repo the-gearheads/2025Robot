@@ -6,6 +6,7 @@ import static frc.robot.constants.ArmConstants.MIN_ANGLE;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.controllers.Controllers;
 import frc.robot.subsystems.Superstructure.RunMode;
@@ -18,27 +19,32 @@ public class ManualPivot extends Command {
     addRequirements(pivot);
   }
 
-  Rotation2d targetAngle = Rotation2d.kCW_90deg;
+  double targetAngleRad = Math.PI / 2.0;
 
   @Override
   public void initialize() {
     pivot.setMode(RunMode.PROFILED_PID);
-    targetAngle = pivot.getAngle();
-    pivot.setGoalAngle(targetAngle);
-    pivot.resetProfiledPidTo(targetAngle);
+    targetAngleRad = pivot.getAngle().getRadians();
+    pivot.setGoalAngle(targetAngleRad);
+    pivot.resetProfiledPidTo(Rotation2d.fromRadians(targetAngleRad));
+
   }
 
   @Override
   public void execute() {
-    targetAngle = pivot.getAngle();
+    pivot.setGoalAngle(targetAngleRad);
+    
+    double speed = Units.inchesToMeters(0);
     if (Controllers.driverController.getXBtn()) {
-      targetAngle = targetAngle.plus(Rotation2d.fromDegrees(3));
+      speed = -1;
     }
     if (Controllers.driverController.getABtn()) {
-      targetAngle = targetAngle.minus(Rotation2d.fromDegrees(3));
-    }  // TODO: fix
-
-    double targetAngleRad = MathUtil.clamp(targetAngle.getRadians(), MIN_ANGLE, MAX_ANGLE);
+      speed = 1;
+    }
+    targetAngleRad += (speed * 0.003);
+    targetAngleRad = MathUtil.clamp(targetAngleRad, MIN_ANGLE, MAX_ANGLE);
     pivot.setGoalAngle(targetAngleRad);
+
+
   }
 }
