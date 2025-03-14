@@ -47,7 +47,7 @@ public class Camera {
 
   private final double xyStdDevCoefficient = 0.08;
   private final double thetaStdDevCoefficient = 0.16;
-  private final double coefficientFactor = 10_000.0;
+  private final double coefficientFactor = 400.0;
 
   // kinda ugly ik ik
   private Pose2d lastRobotPose;
