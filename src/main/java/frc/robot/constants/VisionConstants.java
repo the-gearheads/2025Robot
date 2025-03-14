@@ -9,7 +9,7 @@ import edu.wpi.first.math.util.Units;
 import frc.robot.subsystems.vision.CameraIntrinsics;
 
 public class VisionConstants {
-  public static final boolean USE_CONSTRAINED_PNP = true;
+  public static final boolean USE_CONSTRAINED_PNP = false;
   // sane values somewhere between 1e-7 and 10000. low == trust initial guess heading less.
   public static final double CONSTRAINED_PNP_HEADING_SCALE_FACTOR = 1;
   ;

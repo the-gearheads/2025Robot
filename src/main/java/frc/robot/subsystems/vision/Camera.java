@@ -70,7 +70,7 @@ public class Camera {
 
     camera = new PhotonCamera(name);
 
-    var strategy = PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR;
+    var strategy = USE_CONSTRAINED_PNP ? PoseStrategy.CONSTRAINED_SOLVEPNP : PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR;
     var fallbackStrategy = PoseStrategy.CLOSEST_TO_CAMERA_HEIGHT;
     estimator = new PhotonPoseEstimator(this.field, strategy, transform);
     estimator.setMultiTagFallbackStrategy(fallbackStrategy);
