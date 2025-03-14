@@ -7,11 +7,11 @@ IN_TO_M = 0.0254
 elevator_min_len = 36 * IN_TO_M
 elevator_max_len = 80 * IN_TO_M
 
-pivot_min = math.radians(30)
+pivot_min = math.radians(15)
 pivot_max = math.radians(90.1)
 
 endeff_x_min = -1e-6
-endeff_x_max = 28.25 * IN_TO_M
+endeff_x_max = 40 * IN_TO_M
 endeff_y_min = 0
 
 elevator_max_accel = 1.2 # m/s^2

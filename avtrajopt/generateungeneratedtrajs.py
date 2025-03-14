@@ -17,15 +17,15 @@ def endeff_pos(ext_len, theta_deg):
 
 # mostly randomly guessed placeholders
 places = {
-  "L1": {"pose": endeff_pos(0.06, 50), "vel": [0, 0]}, # placeholder
-  "L2": {"pose": endeff_pos(0.20, 50), "vel": [0, 0]},
-  "L3": {"pose": endeff_pos(0.06, 86), "vel": [0, 0]},
-  "L4": {"pose": endeff_pos(0.88, 86), "vel": [0, 0]},
+  "L1": {"pose": endeff_pos(0.06, 25), "vel": [0, 0]},
+  "L2": {"pose": endeff_pos(0.20261, 50.83751384), "vel": [0, 0]},  # good
+  "L3": {"pose": endeff_pos(0.04739, 84.13681249), "vel": [0, 0]},  # good
+  "L4": {"pose": endeff_pos(0.84325, 85.23199839), "vel": [0, 0]},  # good
 
-  "HP": {"pose": endeff_pos(0.0879, 46.62), "vel": [0, 0]},
-  "GROUND_INTAKE": {"pose": [front_x, 0.92], "vel": [0, 0]},
+  "HP": {"pose": endeff_pos(0.0462, 53.96229960), "vel": [0, 0]},  # good
+  "GROUND_INTAKE": {"pose": endeff_pos(0.0527, 15), "vel": [0, 0]},  # good
   "PROCESSOR": {"pose": [front_x, 0.8], "vel": [0, 0]},
-  "NET": {"pose": [back_x+0.01, constants.elevator_max_len - 0.09], "vel": [0, 0]},
+  "NET": {"pose": endeff_pos(1.0275, 90), "vel": [0, 0]},  # good
 }
 
 

@@ -93,9 +93,25 @@ public class RobotContainer {
     );
 
     Controllers.driverController.getBBtn().onTrue(
+      superStructure.goTo(SuperstructurePosition.L3)
+    );
+
+    Controllers.driverController.getBackButton().onTrue(
+      superStructure.goTo(SuperstructurePosition.NET)
+    );
+
+    Controllers.driverController.getStartButton().onTrue(
+      superStructure.goTo(SuperstructurePosition.GROUND_INTAKE)
+    );
+
+    Controllers.driverController.getLeftPaddle().onTrue(
       superStructure.goTo(SuperstructurePosition.HP)
     );
 
+    Controllers.driverController.getRightPaddle().onTrue(
+      superStructure.goTo(SuperstructurePosition.L2)
+    );
+    
     Controllers.driverController.getLeftBumper().onTrue(Commands.runOnce(() -> { swerve.setPose(new Pose2d(1, 1, Rotation2d.fromDegrees(0))); }));
     Controllers.driverController.getRightBumper().whileTrue(new AlignToPose(swerve));
     // Controllers.driverController.getPovLeft().whileTrue(Commands.runEnd(() -> {intake.setVoltage(-12);}, ()->{intake.setVoltage(0);}, intake));

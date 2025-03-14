@@ -82,25 +82,50 @@ public class DriverController {
     if(isNull()) return emptyTrigger();
     return new Trigger(() -> controller.getRightBumperButton());
   }
-
-  public void setRumble(double rumble) {
-    if(isNull()) return;
-    controller.setRumble(RumbleType.kBothRumble, rumble);
-  }
-
+  
   public Trigger getPovLeft() {
     if(isNull()) return emptyTrigger();
     return new Trigger(() -> controller.getPOV() == 270);
   }
-
+  
   public Trigger getPovRight() {
     if(isNull()) return emptyTrigger();
     return new Trigger(() -> controller.getPOV() == 90);
   }
-
+  
   public Trigger getPovUp() {
     if(isNull()) return emptyTrigger();
     return new Trigger(() -> controller.getPOV() == 0);
+  }
+  
+  public Trigger getPovDown() {
+    if(isNull()) return emptyTrigger();
+    return new Trigger(() -> controller.getPOV() == 180);
+  }
+  
+  public Trigger getLeftPaddle() {
+    if(isNull()) return emptyTrigger();
+    return new Trigger(() -> controller.getLeftStickButton());
+  }
+
+  public Trigger getRightPaddle() {
+    if(isNull()) return emptyTrigger();
+    return new Trigger(() -> controller.getRightStickButton());
+  }
+
+  public Trigger getBackButton() {
+    if(isNull()) return emptyTrigger();
+    return new Trigger(() -> controller.getBackButton());
+  }
+
+  public Trigger getStartButton() {
+    if(isNull()) return emptyTrigger();
+    return new Trigger(() -> controller.getStartButton());
+  }
+
+  public void setRumble(double rumble) {
+    if(isNull()) return;
+    controller.setRumble(RumbleType.kBothRumble, rumble);
   }
 
   public Command getRumbleCommand(double rumble, double seconds) {
