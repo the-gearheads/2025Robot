@@ -62,12 +62,12 @@ public final class ArmConstants {
   public static final double HOMING_VOLTAGE = -2;
   
   // from 90_adj
-  public static final double ELEVATOR_KS = 0.11985;
-  public static final double ELEVATOR_KG = 0.109;
-  public static final double ELEVATOR_KV = 8.1978;
-  public static final double ELEVATOR_KA = 0.34791;
+  public static final double ELEVATOR_KS = 0.08291;
+  public static final double ELEVATOR_KG = 0.14926;
+  public static final double ELEVATOR_KV = 8.3753;
+  public static final double ELEVATOR_KA = 0.59784;
 
-  public static final double[] ELEVATOR_PID = {29.982, 0, 2.2721};
+  public static final double[] ELEVATOR_PID = {37.428, 0, 1};
   public static final Constraints ELEVATOR_CONSTRAINTS = new Constraints(
     6,
     8

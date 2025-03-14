@@ -57,7 +57,6 @@ public class Pivot extends SubsystemBase {
 
   public Pivot() {
     configure();
-    pivotRelEnc = pivot.getEncoder();
     profiledPid.reset(getAngle().getRadians());
     profiledPid.setGoal(getAngle().getRadians());
     pid.setTolerance(PIVOT_ANGLE_TOLERANCE);
@@ -151,6 +150,9 @@ public class Pivot extends SubsystemBase {
     pivotFollowerConfig.voltageCompensation(12);
 
     pivotFollower.configure(pivotFollowerConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
+
+    pivotRelEnc = pivot.getEncoder();
+    pivotRelEnc.setPosition(getAbsAngle().getRadians());
 
     pivot.setCANTimeout(0);
     pivotFollower.setCANTimeout(0);
