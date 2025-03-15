@@ -16,10 +16,10 @@ public final class SwerveConstants {
     public static final int BORON_ID = 1;
     
     public static final Translation2d[] WHEEL_POSITIONS = {
-      new Translation2d(0.3305, 0.3313), // TODO: placeholders, note that +x is forward and +y is left
-      new Translation2d(0.3305, -0.3313),
-      new Translation2d(-0.3305, 0.3313),
-      new Translation2d(-0.3305, -0.3313)
+      new Translation2d(0.3556, 0.31115), // TODO: placeholders, note that +x is forward and +y is left
+      new Translation2d(0.3556, -0.31115),
+      new Translation2d(-0.3556, 0.31115),
+      new Translation2d(-0.3556, -0.31115)
     };
 
     // ----------------- TODO: everything here is a placeholder 
@@ -34,7 +34,7 @@ public final class SwerveConstants {
     public static final double WHEEL_DIAMETER = WHEEL_RADIUS * 2.0;
     public static final double WHEEL_CIRCUMFERENCE = Math.PI * WHEEL_DIAMETER;
 
-    public static final double DRIVE_PINION_TOOTH_COUNT = 14;
+    public static final double DRIVE_PINION_TOOTH_COUNT = 12;
     // 45 teeth on the wheel's bevel gear, 22 teeth on the first-stage spur gear, 15 teeth on the bevel pinion
     public static final double DRIVE_RATIO = (45.0 * 22) / (DRIVE_PINION_TOOTH_COUNT * 15);
 
