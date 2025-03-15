@@ -55,7 +55,7 @@ public class Wrist extends SubsystemBase {
 
     ff = WRIST_FF.calculate(pid.getSetpoint().position + 2.8076, pid.getSetpoint().velocity);
 
-    output = pid.calculate(getAngle().getRadians()) + ff;
+    output = pid.calculate(getIntregratedEncoderAngle().getRadians()) + ff;
     if (manualVoltage != null) {
       Logger.recordOutput("Wrist/manualVoltage", manualVoltage);
       output = manualVoltage;
