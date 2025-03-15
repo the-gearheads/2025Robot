@@ -4,14 +4,17 @@
 
 package frc.robot.subsystems.vision;
 
+import java.io.File;
 import java.io.IOException;
 import org.photonvision.PhotonCamera;
 
+import edu.wpi.first.apriltag.AprilTag;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Robot;
 import frc.robot.subsystems.swerve.Swerve;
@@ -33,7 +36,8 @@ public class Vision extends SubsystemBase {
       PhotonCamera.setVersionCheckEnabled(false);  
 
     try {
-      field = AprilTagFieldLayout.loadFromResource(AprilTagFields.k2025ReefscapeWelded.m_resourceFile);
+      // field = AprilTagFieldLayout.loadFromResource(AprilTagFields.k2025ReefscapeWelded.m_resourceFile);
+      field = AprilTagFieldLayout.loadFromResource(new File(Filesystem.getDeployDirectory(), "fieldmap.json").getAbsolutePath());
     } catch (IOException e) {
       System.out.println("ERROR Opening apriltag field layout file");
       System.out.println(AprilTagFields.k2025ReefscapeWelded.m_resourceFile);

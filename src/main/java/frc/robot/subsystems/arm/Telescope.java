@@ -94,7 +94,7 @@ public class Telescope extends SubsystemBase {
   public void periodic() {
     // Impact of gravity changes with elevator angle
     elevatorFeedforward.setKg(ELEVATOR_KG * Math.sin(pivotAngleRadSupplier.getAsDouble()));
-    double ff = 0, pidOutput = 0, output = 0;
+    double ff = 0, pidOutput = 0;
     switch (mode) {
       case PROFILED_PID:
         ff = elevatorFeedforward.calculate(profiledPid.getSetpoint().velocity);
@@ -112,7 +112,7 @@ public class Telescope extends SubsystemBase {
 
     Logger.recordOutput("Telescope/ffVolts", ff);
     Logger.recordOutput("Telescope/pidVolts", pidOutput);
-    output = ff + pidOutput; // TODO: add this to telescope
+    double output = ff + pidOutput;
 
     if(mode != RunMode.PROFILED_PID) {
       profiledPid.reset(getExtension());
