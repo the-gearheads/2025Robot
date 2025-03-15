@@ -6,6 +6,7 @@ import com.revrobotics.sim.SparkFlexSim;
 
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
+import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import edu.wpi.first.wpilibj.simulation.RoboRioSim;
 import frc.robot.constants.SwerveConstants;
@@ -14,7 +15,7 @@ public class DriveMotorSim extends DriveMotor {
 
   SparkFlexSim simDrive;
   DCMotor flexGearbox = DCMotor.getNeoVortex(1).withReduction(SwerveConstants.DRIVE_RATIO);
-  FlywheelSim flywheelSim = new FlywheelSim(LinearSystemId.identifyVelocitySystem(DRIVE_FEEDFORWARD.getKv(), DRIVE_FEEDFORWARD.getKa()), flexGearbox);
+  DCMotorSim flywheelSim = new DCMotorSim(LinearSystemId.createDCMotorSystem(DRIVE_FEEDFORWARD.getKv(), DRIVE_FEEDFORWARD.getKa()), flexGearbox);
 
   public DriveMotorSim(int id, int index, String modulePath) {
     super(id, index, modulePath);
