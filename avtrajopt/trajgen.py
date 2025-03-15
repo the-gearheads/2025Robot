@@ -17,6 +17,111 @@ def get_elevator_len_arm_angle(x, y):
 def lerp(a, b, t):
   return a + (b - a) * t
 
+# begin giant ai generated function that looks sane to me
+def resample_traj(trajectory_data, new_dt):
+	"""
+	Resample a trajectory with a constant, larger time step.
+	
+	Args:
+		trajectory_data: Original trajectory data structure
+		new_dt: New time step (larger than original to reduce sample count)
+		
+	Returns:
+		Resampled trajectory data
+	"""
+	# Create a new trajectory data structure
+	resampled_traj = {
+		"name": trajectory_data["name"],
+		"total_time": trajectory_data["total_time"],
+		"waypoints": trajectory_data["waypoints"]
+	}
+	
+	original_samples = trajectory_data["samples"]
+	total_time = trajectory_data["total_time"]
+	
+	# Generate new time points with constant spacing
+	time_points = []
+	current_time = 0.0
+	while current_time < total_time:
+		time_points.append(current_time)
+		current_time += new_dt
+	# Ensure the last point is exactly at total_time
+	if abs(time_points[-1] - total_time) > 1e-10:
+		time_points.append(total_time)
+	
+	# Create new samples at each time point
+	resampled_traj["samples"] = []
+	for sample_num, current_time in enumerate(time_points):
+		# Find the two neighboring samples in the original trajectory
+		next_idx = next((i for i, sample in enumerate(original_samples) 
+						if sample["time"] >= current_time), len(original_samples)-1)
+		prev_idx = max(0, next_idx - 1)
+		
+		# Get the bracketing samples
+		prev_sample = original_samples[prev_idx]
+		next_sample = original_samples[next_idx]
+		
+		# Handle case where current_time exactly matches an original sample time
+		if abs(prev_sample["time"] - current_time) < 1e-10:
+			new_sample = prev_sample.copy()
+			new_sample["sample_num"] = sample_num
+			resampled_traj["samples"].append(new_sample)
+		elif next_idx == prev_idx or abs(prev_sample["time"] - next_sample["time"]) < 1e-10:
+			# Edge case: at the boundary or duplicate times
+			new_sample = next_sample.copy()
+			new_sample["sample_num"] = sample_num
+			resampled_traj["samples"].append(new_sample)
+		else:
+			# Interpolate between prev_sample and next_sample
+			t1 = prev_sample["time"]
+			t2 = next_sample["time"]
+			t = (current_time - t1) / (t2 - t1)  # Interpolation parameter
+			dt = current_time - t1
+			
+			# Create new interpolated sample
+			new_sample = {
+				"time": current_time,
+				"sample_num": sample_num
+			}
+			
+			# Kinematic interpolation for pivot
+			p1 = prev_sample["pivot_angle"]
+			v1 = prev_sample["pivot_velocity"]
+			a1 = prev_sample["pivot_accel"]
+			new_sample["pivot_angle"] = p1 + v1*dt + 0.5*a1*dt*dt
+			new_sample["pivot_velocity"] = v1 + a1*dt
+			
+			# Use lerp for acceleration
+			a2 = next_sample["pivot_accel"]
+			new_sample["pivot_accel"] = lerp(a1, a2, t)
+			
+			# Kinematic interpolation for elevator
+			p1 = prev_sample["elevator_length"]
+			v1 = prev_sample["elevator_velocity"]
+			a1 = prev_sample["elevator_accel"]
+			new_sample["elevator_length"] = p1 + v1*dt + 0.5*a1*dt*dt
+			new_sample["elevator_velocity"] = v1 + a1*dt
+			
+			# Use lerp for acceleration
+			a2 = next_sample["elevator_accel"]
+			new_sample["elevator_accel"] = lerp(a1, a2, t)
+			
+			# Use lerp for end effector position
+			endeff_pos1 = prev_sample["endeff_pos"]
+			endeff_pos2 = next_sample["endeff_pos"]
+			new_sample["endeff_pos"] = [
+				lerp(endeff_pos1[0], endeff_pos2[0], t),
+				lerp(endeff_pos1[1], endeff_pos2[1], t)
+			]
+			
+			resampled_traj["samples"].append(new_sample)
+	
+	# Update the total number of samples
+	resampled_traj["N_total"] = len(resampled_traj["samples"]) - 1
+	
+	return resampled_traj
+# end giant ai generated function that looks sane to me
+
 def main(input_file, output_dir):
   with open(input_file, 'r') as f:
     data = json.load(f)
@@ -170,8 +275,9 @@ def main(input_file, output_dir):
       "endeff_pos": [endeff_pos[0].value(), endeff_pos[1].value()]
     })
     time += dt[0, k].value()
+  resampled = resample_traj(trajectory_data, 0.015)
   with open(f"{output_dir}/{os.path.splitext(os.path.basename(input_file))[0]}.agentraj", "w") as f:
-    json.dump(trajectory_data, f, indent = 2)
+    json.dump(resampled, f, indent = 2)
   return 0
 
 
