@@ -51,8 +51,6 @@ public class Pivot extends SubsystemBase {
   private RunMode mode = defaultMode;
 
   private ArmvatorSample sample;
-  private double ff;
-  private double output;
   private Double manualVoltage = 0.0;
 
   public Pivot() {
@@ -70,10 +68,10 @@ public class Pivot extends SubsystemBase {
       pivotRelEnc.setPosition(getAbsAngle().getRadians());
     }
 
+    double pidOutput = 0, ff = 0;
+
     switch (mode) {
       case PROFILED_PID:
-        output = profiledPid.calculate(getAngle().getRadians()) + ff;
-
         // https://gist.github.com/person4268/46710dca9a128a0eb5fbd93029627a6b
         if (Math.abs(Units.radiansToDegrees(
             getAngle().getRadians() - profiledPid.getSetpoint().position)) > PIVOT_ANGLE_LIVE_FF_THRESHOLD) {
@@ -82,16 +80,20 @@ public class Pivot extends SubsystemBase {
           ff = pivotFeedforward.calculate(profiledPid.getSetpoint().position, profiledPid.getSetpoint().velocity);
         }
 
-        output = profiledPid.calculate(getAngle().getRadians()) + ff;
+        pidOutput = profiledPid.calculate(getAngle().getRadians());
         break;
       case VOLTAGE:
-        output = manualVoltage;
+        pidOutput = manualVoltage;
         break;
       case TRAJECTORY:
         ff = pivotFeedforward.calculate(sample.armPos(), sample.armVel(), sample.armAccel());
-        output = pid.calculate(getAngle().getRadians(), sample.armPos()) + ff;
+        pidOutput = pid.calculate(getAngle().getRadians(), sample.armPos());
         break;
     }
+
+    Logger.recordOutput("Pivot/ffVolts", ff);
+    Logger.recordOutput("Pivot/pidVolts", pidOutput);
+    double output = pidOutput + ff;
 
     if(mode != RunMode.PROFILED_PID) {
       profiledPid.reset(getAngleRad());
@@ -215,7 +217,7 @@ public class Pivot extends SubsystemBase {
   }
 
   protected void setMotorVoltage(double volts) {
-    pivot.setVoltage(output);
+    pivot.setVoltage(volts);
   }
   
   public void setVoltage(Voltage volts) {
