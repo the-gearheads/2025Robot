@@ -23,9 +23,17 @@ public class Teleop extends Command {
 
     @Override
     public void execute() {
-        double x = Controllers.driverController.getTranslateXAxis() * MAX_ROBOT_TRANS_SPEED;
-        double y = Controllers.driverController.getTranslateYAxis() * MAX_ROBOT_TRANS_SPEED;
-        double rot = Controllers.driverController.getRotateAxis() * MAX_ROBOT_ROT_SPEED;
+        double x = Controllers.driverController.getTranslateXAxis();
+        double y = Controllers.driverController.getTranslateYAxis();
+        double rot = Controllers.driverController.getRotateAxis();
+
+        x = Math.signum(x) * Math.pow(x, 2);
+        y = Math.signum(y) * Math.pow(y, 2);
+        rot = Math.signum(rot) * Math.pow(rot, 2);
+
+        x *= MAX_ROBOT_TRANS_SPEED;
+        y *= MAX_ROBOT_TRANS_SPEED;
+        rot *= MAX_ROBOT_TRANS_SPEED;
 
         var speeds = new ChassisSpeeds(x, y, rot);
 

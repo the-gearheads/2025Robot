@@ -41,8 +41,8 @@ public class Wrist extends SubsystemBase {
   public Wrist() {
     configure();
     wristEncoder.setPosition(wristAbsEncoder.getPosition());
-    pid.setGoal(0);
-    pid.reset(0, 0);
+    pid.setGoal(getAngle().getRadians());
+    pid.reset(getAngle().getRadians(), 0);
     // pid.setGoal(getAngle().getRadians());
     // pid.reset(getAngle().getRadians(), 0);
     
@@ -50,11 +50,10 @@ public class Wrist extends SubsystemBase {
 
   @Override
   public void periodic() {
-    if (DriverStation.isDisabled())
+    if (DriverStation.isDisabled()) {
       wristEncoder.setPosition(wristAbsEncoder.getPosition());
-
-
-    
+      pid.setGoal(getAngle().getRadians()); // TODO: controversial?
+    }
     double ff = WRIST_FF.calculate(pid.getSetpoint().position + WRIST_FF_OFFSET_RAD, pid.getSetpoint().velocity);
 
     double pidVolts = pid.calculate(getIntregratedEncoderAngle().getRadians());

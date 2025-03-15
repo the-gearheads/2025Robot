@@ -90,29 +90,29 @@ public class RobotContainer {
     // Controllers.driverController.getYBtn().onTrue(new PivotNTControl(pivot));
     // Controllers.driverController.getBBtn().onTrue(new ManualPivot(pivot));
     // teleop controlls
-    Controllers.driverController.getYBtn().onTrue(
-      superStructure.goTo(SuperstructurePosition.L4)
-    );
+    // Controllers.driverController.getYBtn().onTrue(
+    //   superStructure.goTo(SuperstructurePosition.L4)
+    // );
 
-    Controllers.driverController.getBBtn().onTrue(
-      superStructure.goTo(SuperstructurePosition.L3)
-    );
+    // Controllers.driverController.getBBtn().onTrue(
+    //   superStructure.goTo(SuperstructurePosition.L3)
+    // );
 
-    Controllers.driverController.getBackButton().onTrue(
+    // Controllers.driverController.getBackButton().onTrue(
+    //   superStructure.goTo(SuperstructurePosition.NET)
+    // );
+
+    // Controllers.driverController.getStartButton().onTrue(
+    //   superStructure.goTo(SuperstructurePosition.GROUND_INTAKE)
+    // );
+
+    Controllers.driverController.getLeftPaddle().onTrue(
       superStructure.goTo(SuperstructurePosition.NET)
     );
 
-    Controllers.driverController.getStartButton().onTrue(
-      superStructure.goTo(SuperstructurePosition.GROUND_INTAKE)
-    );
-
-    Controllers.driverController.getLeftPaddle().onTrue(
-      superStructure.goTo(SuperstructurePosition.HP)
-    );
-
-    Controllers.driverController.getRightPaddle().onTrue(
-      superStructure.goTo(SuperstructurePosition.L2)
-    );
+    // Controllers.driverController.getRightPaddle().onTrue(
+    //   superStructure.goTo(SuperstructurePosition.L2)
+    // );
     
     Controllers.driverController.getLeftBumper().onTrue(Commands.runOnce(() -> { swerve.setPose(new Pose2d(1, 1, Rotation2d.fromDegrees(0))); }));
     Controllers.driverController.getRightBumper().whileTrue(new AlignToPose(swerve));
