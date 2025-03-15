@@ -40,12 +40,12 @@ public class Autos {
 
   public AutoRoutine centerReef() {
     AutoRoutine routine = factory.newRoutine(nameCenterReef);
-    AutoTrajectory lessEpicTraj = routine.trajectory("center_reef");
+    AutoTrajectory trajectory = routine.trajectory("center_reef");
 
     routine.active().onTrue(
       Commands.sequence(
-        lessEpicTraj.resetOdometry(),
-        lessEpicTraj.cmd()
+        trajectory.resetOdometry(),
+        trajectory.cmd()
       )
     );
 
@@ -57,12 +57,12 @@ public class Autos {
 
   public AutoRoutine leftReefFeederReef() {
     AutoRoutine routine = factory.newRoutine(nameLeftReefFeederReef);
-    AutoTrajectory lessEpicTraj = routine.trajectory("left_reef_feeder_reef");
+    AutoTrajectory trajectory = routine.trajectory("left_reef_feeder_reef");
 
     routine.active().onTrue(
       Commands.sequence(
-        lessEpicTraj.resetOdometry(),
-        lessEpicTraj.cmd()
+        trajectory.resetOdometry(),
+        trajectory.cmd()
       )
     );
 
@@ -79,12 +79,16 @@ public class Autos {
 
   public AutoRoutine rightReefFeederReef() {
     AutoRoutine routine = factory.newRoutine(nameRightReefFeederReef);
-    AutoTrajectory lessEpicTraj = routine.trajectory("right_reef_feeder_reef");
+    AutoTrajectory trajectoryStartToReef = routine.trajectory("right_reef_feeder_reef", 0);
+    AutoTrajectory trajectoryReefToFromFeeder = routine.trajectory("right_reef_feeder_reef", 1);
+
 
     routine.active().onTrue(
       Commands.sequence(
-        lessEpicTraj.resetOdometry(),
-        lessEpicTraj.cmd()
+        trajectoryStartToReef.resetOdometry(),
+        trajectoryStartToReef.cmd(),
+        // put auto align command here
+        trajectoryReefToFromFeeder.cmd()
       )
     );
     
@@ -92,6 +96,7 @@ public class Autos {
     // NOTE: may need to add an "alignment" in the case it is not perfectly aligned in relation to the april tag
 
     // Add command to intake when at feeder station
+    // add a wait??
 
     // Add command to place corral on top level of reef
     // NOTE: may need to add an "alignment" in the case it is not perfectly aligned in relation to the april tag
