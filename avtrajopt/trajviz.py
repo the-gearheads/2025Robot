@@ -4,6 +4,12 @@ import math
 import constants
 import json
 
+def endeff_pos(ext_len, theta):
+  x = ext_len * math.cos(theta)
+  y = ext_len * math.sin(theta)
+  return x, y
+
+
 def plot_traj(traj_path):
   with open(traj_path, 'r') as f:
     data = json.load(f)
@@ -17,8 +23,9 @@ def plot_traj(traj_path):
   elevator_velocities = [sample["elevator_velocity"] for sample in samples]
   pivot_accelerations = [sample["pivot_accel"] for sample in samples]
   elevator_accelerations = [sample["elevator_accel"] for sample in samples]
-  endeff_x = [sample["endeff_pos"][0] for sample in samples]
-  endeff_y = [sample["endeff_pos"][1] for sample in samples]
+  endeff_poses = [endeff_pos(sample["elevator_length"], sample["pivot_angle"]) for sample in samples]
+  endeff_x = [pose[0] for pose in endeff_poses]
+  endeff_y = [pose[1] for pose in endeff_poses]
   time = [sample["time"] for sample in samples]
 
   max_pivot_accel = [constants.pivot_accel_scaling(elevator_lengths[k]) for k in range(len(samples))]

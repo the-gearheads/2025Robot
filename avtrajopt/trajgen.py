@@ -106,14 +106,6 @@ def resample_traj(trajectory_data, new_dt):
 			a2 = next_sample["elevator_accel"]
 			new_sample["elevator_accel"] = lerp(a1, a2, t)
 			
-			# Use lerp for end effector position
-			endeff_pos1 = prev_sample["endeff_pos"]
-			endeff_pos2 = next_sample["endeff_pos"]
-			new_sample["endeff_pos"] = [
-				lerp(endeff_pos1[0], endeff_pos2[0], t),
-				lerp(endeff_pos1[1], endeff_pos2[1], t)
-			]
-			
 			resampled_traj["samples"].append(new_sample)
 	
 	# Update the total number of samples
@@ -121,6 +113,25 @@ def resample_traj(trajectory_data, new_dt):
 	
 	return resampled_traj
 # end giant ai generated function that looks sane to me
+
+def round_traj(traj, ndigits):
+  new_traj = traj.copy()
+  new_traj["total_time"] = round(new_traj["total_time"], ndigits)
+  for sample in new_traj["samples"]:
+    sample["time"] = round(sample["time"], ndigits)
+    sample["pivot_angle"] = round(sample["pivot_angle"], ndigits)
+    sample["elevator_length"] = round(sample["elevator_length"], ndigits)
+    sample["pivot_velocity"] = round(sample["pivot_velocity"], ndigits)
+    sample["elevator_velocity"] = round(sample["elevator_velocity"], ndigits)
+    sample["pivot_accel"] = round(sample["pivot_accel"], ndigits)
+    sample["elevator_accel"] = round(sample["elevator_accel"], ndigits)
+  for waypoint in new_traj["waypoints"]:
+    waypoint["pose"][0] = round(waypoint["pose"][0], ndigits)
+    waypoint["pose"][1] = round(waypoint["pose"][1], ndigits)
+    if "vel" in waypoint:
+      waypoint["vel"][0] = round(waypoint["vel"][0], ndigits)
+      waypoint["vel"][1] = round(waypoint["vel"][1], ndigits)
+  return new_traj
 
 def main(input_file, output_dir):
   with open(input_file, 'r') as f:
@@ -272,12 +283,12 @@ def main(input_file, output_dir):
       "elevator_velocity": elevator[1, k].value(),
       "pivot_accel": accel[0, k].value(),
       "elevator_accel": accel[1, k].value(),
-      "endeff_pos": [endeff_pos[0].value(), endeff_pos[1].value()]
     })
     time += dt[0, k].value()
-  resampled = resample_traj(trajectory_data, 0.015)
+  trajectory_data = resample_traj(trajectory_data, 0.015)
+  trajectory_data = round_traj(trajectory_data, 6)
   with open(f"{output_dir}/{os.path.splitext(os.path.basename(input_file))[0]}.agentraj", "w") as f:
-    json.dump(resampled, f, indent = 2)
+    json.dump(trajectory_data, f, indent = 2)
   return 0
 
 

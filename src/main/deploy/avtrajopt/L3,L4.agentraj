@@ -1,11 +1,11 @@
 {
   "name": "L3,L4",
-  "total_time": 1.6369062759910362,
+  "total_time": 1.636906,
   "waypoints": [
     {
       "pose": [
-        0.09825013771960842,
-        0.956758545578809
+        0.09825,
+        0.956759
       ],
       "vel": [
         0,
@@ -15,8 +15,8 @@
     },
     {
       "pose": [
-        0.1460981735259212,
-        1.7515675397176067
+        0.146098,
+        1.751568
       ],
       "vel": [
         0,
@@ -29,1556 +29,1112 @@
     {
       "time": 0,
       "sample_num": 0,
-      "pivot_angle": 1.4684644000835887,
+      "pivot_angle": 1.468464,
       "elevator_length": 0.96179,
-      "pivot_velocity": -3.0800547577430608e-18,
-      "elevator_velocity": -3.6131766954472495e-17,
-      "pivot_accel": 0.9630550902078571,
-      "elevator_accel": 1.199999887296435,
-      "endeff_pos": [
-        0.09825013771960842,
-        0.956758545578809
-      ]
+      "pivot_velocity": -0.0,
+      "elevator_velocity": -0.0,
+      "pivot_accel": 0.963055,
+      "elevator_accel": 1.2
     },
     {
       "time": 0.015,
       "sample_num": 1,
-      "pivot_angle": 1.46855915674636,
-      "pivot_velocity": 0.010482389088194917,
-      "pivot_accel": 0.1303921331942257,
-      "elevator_length": 0.9619249999872939,
-      "elevator_velocity": 0.017999998301583178,
-      "elevator_accel": 1.1999998851641887,
-      "endeff_pos": [
-        0.09817216928358191,
-        0.9569075820357845
-      ]
+      "pivot_angle": 1.468559,
+      "pivot_velocity": 0.010482,
+      "pivot_accel": 0.130392,
+      "elevator_length": 0.961925,
+      "elevator_velocity": 0.018,
+      "elevator_accel": 1.2
     },
     {
       "time": 0.03,
       "sample_num": 2,
-      "pivot_angle": 1.468730059089283,
-      "pivot_velocity": 0.01167457151147131,
-      "pivot_accel": -0.003785737359450111,
-      "elevator_length": 0.9623299999488809,
-      "elevator_velocity": 0.03599999657112456,
-      "elevator_accel": 1.1999998829504643,
-      "endeff_pos": [
-        0.09805182422187675,
-        0.957330364666903
-      ]
+      "pivot_angle": 1.46873,
+      "pivot_velocity": 0.011675,
+      "pivot_accel": -0.003786,
+      "elevator_length": 0.96233,
+      "elevator_velocity": 0.036,
+      "elevator_accel": 1.2
     },
     {
       "time": 0.045,
       "sample_num": 3,
-      "pivot_angle": 1.4689047699112894,
-      "pivot_velocity": 0.011602064560748252,
-      "pivot_accel": -0.0035272068284132236,
-      "elevator_length": 0.9630049998842679,
-      "elevator_velocity": 0.053999994807405145,
-      "elevator_accel": 1.1999998806505414,
-      "endeff_pos": [
-        0.09795342484844766,
-        0.9580202838841003
-      ]
+      "pivot_angle": 1.468905,
+      "pivot_velocity": 0.011602,
+      "pivot_accel": -0.003527,
+      "elevator_length": 0.963005,
+      "elevator_velocity": 0.054,
+      "elevator_accel": 1.2
     },
     {
       "time": 0.06,
       "sample_num": 4,
-      "pivot_angle": 1.4690784214959418,
-      "pivot_velocity": 0.011565045167822204,
-      "pivot_accel": 9.617974027523478e-05,
-      "elevator_length": 0.9639499997929428,
-      "elevator_velocity": 0.07199999300913576,
-      "elevator_accel": 1.1999998782593315,
-      "endeff_pos": [
-        0.09788290847170274,
-        0.9589767307006491
-      ]
+      "pivot_angle": 1.469078,
+      "pivot_velocity": 0.011565,
+      "pivot_accel": 9.6e-05,
+      "elevator_length": 0.96395,
+      "elevator_velocity": 0.072,
+      "elevator_accel": 1.2
     },
     {
       "time": 0.075,
       "sample_num": 5,
-      "pivot_angle": 1.4692519135472593,
-      "pivot_velocity": 0.0115699954033084,
-      "pivot_accel": 0.0007268167085458096,
-      "elevator_length": 0.9651649996743724,
-      "elevator_velocity": 0.0899999911749517,
-      "elevator_accel": 1.1999998757713422,
-      "endeff_pos": [
-        0.09783942300917382,
-        0.9601997923616803
-      ]
+      "pivot_angle": 1.469252,
+      "pivot_velocity": 0.01157,
+      "pivot_accel": 0.000727,
+      "elevator_length": 0.965165,
+      "elevator_velocity": 0.09,
+      "elevator_accel": 1.2
     },
     {
       "time": 0.09,
       "sample_num": 6,
-      "pivot_angle": 1.469425544561401,
-      "pivot_velocity": 0.011580573573948849,
-      "pivot_accel": 0.000573881613637243,
-      "elevator_length": 0.9666499995280028,
-      "elevator_velocity": 0.10799998930340665,
-      "elevator_accel": 1.1999998731806372,
-      "endeff_pos": [
-        0.09782251891427773,
-        0.9616895146318902
-      ]
+      "pivot_angle": 1.469426,
+      "pivot_velocity": 0.011581,
+      "pivot_accel": 0.000574,
+      "elevator_length": 0.96665,
+      "elevator_velocity": 0.108,
+      "elevator_accel": 1.2
     },
     {
       "time": 0.105,
       "sample_num": 7,
-      "pivot_angle": 1.469599315720929,
-      "pivot_velocity": 0.011588551016311175,
-      "pivot_accel": 0.00041987602436667916,
-      "elevator_length": 0.9684049993532566,
-      "elevator_velocity": 0.12599998739167503,
-      "elevator_accel": 1.1999998704770811,
-      "endeff_pos": [
-        0.09783288361875556,
-        0.9634543681625514
-      ]
+      "pivot_angle": 1.469599,
+      "pivot_velocity": 0.011589,
+      "pivot_accel": 0.00042,
+      "elevator_length": 0.968405,
+      "elevator_velocity": 0.126,
+      "elevator_accel": 1.2
     },
     {
       "time": 0.12,
       "sample_num": 8,
-      "pivot_angle": 1.4697731904882145,
-      "pivot_velocity": 0.011594537976937342,
-      "pivot_accel": 0.0003510103665363191,
-      "elevator_length": 0.9704299991495342,
-      "elevator_velocity": 0.1439999854386452,
-      "elevator_accel": 1.1999998676549655,
-      "endeff_pos": [
-        0.09786997140041094,
-        0.9654899736591968
-      ]
+      "pivot_angle": 1.469773,
+      "pivot_velocity": 0.011595,
+      "pivot_accel": 0.000351,
+      "elevator_length": 0.97043,
+      "elevator_velocity": 0.144,
+      "elevator_accel": 1.2
     },
     {
       "time": 0.135,
       "sample_num": 9,
-      "pivot_angle": 1.469947147918312,
-      "pivot_velocity": 0.011599701773775539,
-      "pivot_accel": 0.0003295883139389448,
-      "elevator_length": 0.9727249989162079,
-      "elevator_velocity": 0.16199998344315822,
-      "elevator_accel": 1.1999998647082755,
-      "endeff_pos": [
-        0.0979332608474202,
-        0.9677922776946535
-      ]
+      "pivot_angle": 1.469947,
+      "pivot_velocity": 0.0116,
+      "pivot_accel": 0.00033,
+      "elevator_length": 0.972725,
+      "elevator_velocity": 0.162,
+      "elevator_accel": 1.2
     },
     {
-      "time": 0.15000000000000002,
+      "time": 0.15,
       "sample_num": 10,
-      "pivot_angle": 1.4701211805086465,
-      "pivot_velocity": 0.011604627941424056,
-      "pivot_accel": 0.00032684965096372806,
-      "elevator_length": 0.9752899986526222,
-      "elevator_velocity": 0.17999998140334716,
-      "elevator_accel": 1.199999861628651,
-      "endeff_pos": [
-        0.09802262156899051,
-        0.9703612932291278
-      ]
+      "pivot_angle": 1.470121,
+      "pivot_velocity": 0.011605,
+      "pivot_accel": 0.000327,
+      "elevator_length": 0.97529,
+      "elevator_velocity": 0.18,
+      "elevator_accel": 1.2
     },
     {
-      "time": 0.16500000000000004,
+      "time": 0.165,
       "sample_num": 11,
-      "pivot_angle": 1.4702952867064494,
-      "pivot_velocity": 0.011609537252229808,
-      "pivot_accel": 0.0003293005887942209,
-      "elevator_length": 0.978124998358092,
-      "elevator_velocity": 0.19799997931722077,
-      "elevator_accel": 1.1999998584069749,
-      "endeff_pos": [
-        0.09813791762953669,
-        0.9731970337396435
-      ]
+      "pivot_angle": 1.470295,
+      "pivot_velocity": 0.01161,
+      "pivot_accel": 0.000329,
+      "elevator_length": 0.978125,
+      "elevator_velocity": 0.198,
+      "elevator_accel": 1.2
     },
     {
-      "time": 0.18000000000000005,
+      "time": 0.18,
       "sample_num": 12,
-      "pivot_angle": 1.4704694668303036,
-      "pivot_velocity": 0.01161448644072743,
-      "pivot_accel": 0.000332177310948171,
-      "elevator_length": 0.9812299980319007,
-      "elevator_velocity": 0.21599997718265196,
-      "elevator_accel": 1.1999998550332873,
-      "endeff_pos": [
-        0.09827901112891717,
-        0.9762995128548589
-      ]
+      "pivot_angle": 1.470469,
+      "pivot_velocity": 0.011614,
+      "pivot_accel": 0.000332,
+      "elevator_length": 0.98123,
+      "elevator_velocity": 0.216,
+      "elevator_accel": 1.2
     },
     {
-      "time": 0.19500000000000006,
+      "time": 0.195,
       "sample_num": 13,
-      "pivot_angle": 1.470643721520041,
-      "pivot_velocity": 0.011619477007330218,
-      "pivot_accel": 0.00033431899741242794,
-      "elevator_length": 0.9846049976732975,
-      "elevator_velocity": 0.23399997499648711,
-      "elevator_accel": 1.1999998514937915,
-      "endeff_pos": [
-        0.0984461836243146,
-        0.9796731360096436
-      ]
+      "pivot_angle": 1.470644,
+      "pivot_velocity": 0.011619,
+      "pivot_accel": 0.000334,
+      "elevator_length": 0.984605,
+      "elevator_velocity": 0.234,
+      "elevator_accel": 1.2
     },
     {
-      "time": 0.21000000000000008,
+      "time": 0.21,
       "sample_num": 14,
-      "pivot_angle": 1.470818051302789,
-      "pivot_velocity": 0.011624497562555552,
-      "pivot_accel": 0.00033574589044102146,
-      "elevator_length": 0.9882499972814978,
-      "elevator_velocity": 0.2519999727553552,
-      "elevator_accel": 1.1999998477731302,
-      "endeff_pos": [
-        0.09863964475934656,
-        0.983321659156347
-      ]
+      "pivot_angle": 1.470818,
+      "pivot_velocity": 0.011625,
+      "pivot_accel": 0.000336,
+      "elevator_length": 0.98825,
+      "elevator_velocity": 0.252,
+      "elevator_accel": 1.2
     },
     {
-      "time": 0.2250000000000001,
+      "time": 0.225,
       "sample_num": 15,
-      "pivot_angle": 1.470992456544485,
-      "pivot_velocity": 0.011629537557871073,
-      "pivot_accel": 0.00033673277050203236,
-      "elevator_length": 0.9921649968556759,
-      "elevator_velocity": 0.26999997045815277,
-      "elevator_accel": 1.199999843862896,
-      "endeff_pos": [
-        0.09885847377437369,
-        0.9872369630551475
-      ]
+      "pivot_angle": 1.470992,
+      "pivot_velocity": 0.01163,
+      "pivot_accel": 0.000337,
+      "elevator_length": 0.992165,
+      "elevator_velocity": 0.27,
+      "elevator_accel": 1.2
     },
     {
-      "time": 0.2400000000000001,
+      "time": 0.24,
       "sample_num": 16,
-      "pivot_angle": 1.47116693749373,
-      "pivot_velocity": 0.011634591289024901,
-      "pivot_accel": 0.0003374854656341875,
-      "elevator_length": 0.9963499963949644,
-      "elevator_velocity": 0.28799996810203143,
-      "elevator_accel": 1.1999998397483498,
-      "endeff_pos": [
-        0.09910253225263924,
-        0.9914190611871466
-      ]
+      "pivot_angle": 1.471167,
+      "pivot_velocity": 0.011635,
+      "pivot_accel": 0.000337,
+      "elevator_length": 0.99635,
+      "elevator_velocity": 0.288,
+      "elevator_accel": 1.2
     },
     {
-      "time": 0.2550000000000001,
+      "time": 0.255,
       "sample_num": 17,
-      "pivot_angle": 1.4713414943328498,
-      "pivot_velocity": 0.011639655795085229,
-      "pivot_accel": 0.0003381324108755065,
-      "elevator_length": 1.0008049958984493,
-      "elevator_velocity": 0.30599996568392274,
-      "elevator_accel": 1.1999998354132002,
-      "endeff_pos": [
-        0.09937168171453571,
-        0.9958679669918276
-      ]
+      "pivot_angle": 1.471341,
+      "pivot_velocity": 0.01164,
+      "pivot_accel": 0.000338,
+      "elevator_length": 1.000805,
+      "elevator_velocity": 0.306,
+      "elevator_accel": 1.2
     },
     {
-      "time": 0.27000000000000013,
+      "time": 0.27,
       "sample_num": 18,
-      "pivot_angle": 1.4715161272129473,
-      "pivot_velocity": 0.011644729763074912,
-      "pivot_accel": 0.0003387362760613864,
-      "elevator_length": 1.0055299953651684,
-      "elevator_velocity": 0.32399996320051483,
-      "elevator_accel": 1.199999830839399,
-      "endeff_pos": [
-        0.0996657835869206,
-        1.000583693870059
-      ]
+      "pivot_angle": 1.471516,
+      "pivot_velocity": 0.011645,
+      "pivot_accel": 0.000339,
+      "elevator_length": 1.00553,
+      "elevator_velocity": 0.324,
+      "elevator_accel": 1.2
     },
     {
-      "time": 0.28500000000000014,
+      "time": 0.285,
       "sample_num": 19,
-      "pivot_angle": 1.471690836272184,
-      "pivot_velocity": 0.011649812655558913,
-      "pivot_accel": 0.00033931693493072994,
-      "elevator_length": 1.0105249947941053,
-      "elevator_velocity": 0.34199996064813765,
-      "elevator_accel": 1.1999998260065559,
-      "endeff_pos": [
-        0.09998472925589567,
-        1.00556658047757
-      ]
+      "pivot_angle": 1.471691,
+      "pivot_velocity": 0.01165,
+      "pivot_accel": 0.000339,
+      "elevator_length": 1.010525,
+      "elevator_velocity": 0.342,
+      "elevator_accel": 1.2
     },
     {
-      "time": 0.30000000000000016,
+      "time": 0.3,
       "sample_num": 20,
-      "pivot_angle": 1.4718656216422743,
-      "pivot_velocity": 0.011654904503683141,
-      "pivot_accel": 0.0003398740429130034,
-      "elevator_length": 1.0157899941841892,
-      "elevator_velocity": 0.35999995801943663,
-      "elevator_accel": 1.1999998208784388,
-      "endeff_pos": [
-        0.10032947055603667,
-        1.010828519118234
-      ]
+      "pivot_angle": 1.471866,
+      "pivot_velocity": 0.011655,
+      "pivot_accel": 0.00034,
+      "elevator_length": 1.01579,
+      "elevator_velocity": 0.36,
+      "elevator_accel": 1.2
     },
     {
-      "time": 0.31500000000000017,
+      "time": 0.315,
       "sample_num": 21,
-      "pivot_angle": 1.4720404834499228,
-      "pivot_velocity": 0.011660004561925395,
-      "pivot_accel": 0.0003404087319765334,
-      "elevator_length": 1.021324993534287,
-      "elevator_velocity": 0.3779999553132766,
-      "elevator_accel": 1.1999998154413845,
-      "endeff_pos": [
-        0.1006987334482428,
-        1.0163573201875404
-      ]
+      "pivot_angle": 1.47204,
+      "pivot_velocity": 0.01166,
+      "pivot_accel": 0.00034,
+      "elevator_length": 1.021325,
+      "elevator_velocity": 0.378,
+      "elevator_accel": 1.2
     },
     {
-      "time": 0.3300000000000002,
+      "time": 0.33,
       "sample_num": 22,
-      "pivot_angle": 1.4722154218169627,
-      "pivot_velocity": 0.011665112517244005,
-      "pivot_accel": 0.0003409275027514784,
-      "elevator_length": 1.027129992843194,
-      "elevator_velocity": 0.3959999525249996,
-      "elevator_accel": 1.1999998096668472,
-      "endeff_pos": [
-        0.10109237887178828,
-        1.0221529969338765
-      ]
+      "pivot_angle": 1.472215,
+      "pivot_velocity": 0.011665,
+      "pivot_accel": 0.000341,
+      "elevator_length": 1.02713,
+      "elevator_velocity": 0.396,
+      "elevator_accel": 1.2
     },
     {
-      "time": 0.3450000000000002,
+      "time": 0.345,
       "sample_num": 23,
-      "pivot_angle": 1.4723904368611131,
-      "pivot_velocity": 0.011670228168485307,
-      "pivot_accel": 0.00034144054619656664,
-      "elevator_length": 1.0332049921096322,
-      "elevator_velocity": 0.4139999496495184,
-      "elevator_accel": 1.1999998035226924,
-      "endeff_pos": [
-        0.10151026764528766,
-        1.0282155625692024
-      ]
+      "pivot_angle": 1.47239,
+      "pivot_velocity": 0.01167,
+      "pivot_accel": 0.000341,
+      "elevator_length": 1.033205,
+      "elevator_velocity": 0.414,
+      "elevator_accel": 1.2
     },
     {
-      "time": 0.3600000000000002,
+      "time": 0.36,
       "sample_num": 24,
-      "pivot_angle": 1.4725655286981265,
-      "pivot_velocity": 0.011675351462900663,
-      "pivot_accel": 0.0003419567019035054,
-      "elevator_length": 1.0395499913322412,
-      "elevator_velocity": 0.43199994668126435,
-      "elevator_accel": 1.1999997969726213,
-      "endeff_pos": [
-        0.10195226046450709,
-        1.034545030269164
-      ]
+      "pivot_angle": 1.472566,
+      "pivot_velocity": 0.011675,
+      "pivot_accel": 0.000342,
+      "elevator_length": 1.03955,
+      "elevator_velocity": 0.432,
+      "elevator_accel": 1.2
     },
     {
-      "time": 0.3750000000000002,
+      "time": 0.375,
       "sample_num": 25,
-      "pivot_angle": 1.472740697443972,
-      "pivot_velocity": 0.011680482463945516,
-      "pivot_accel": 0.00034248008563255816,
-      "elevator_length": 1.0461649905095702,
-      "elevator_velocity": 0.44999994361412404,
-      "elevator_accel": 1.199999789975486,
-      "endeff_pos": [
-        0.10241821790009632,
-        1.0411414131732037
-      ]
+      "pivot_angle": 1.472741,
+      "pivot_velocity": 0.01168,
+      "pivot_accel": 0.000342,
+      "elevator_length": 1.046165,
+      "elevator_velocity": 0.45,
+      "elevator_accel": 1.2
     },
     {
-      "time": 0.39000000000000024,
+      "time": 0.39,
       "sample_num": 26,
-      "pivot_angle": 1.47291594321594,
-      "pivot_velocity": 0.011685621540088688,
-      "pivot_accel": 0.00034300989687390687,
-      "elevator_length": 1.0530499896400707,
-      "elevator_velocity": 0.4679999404376143,
-      "elevator_accel": 1.199999782466211,
-      "endeff_pos": [
-        0.10290877969137108,
-        1.0480135137880409
-      ]
+      "pivot_angle": 1.472916,
+      "pivot_velocity": 0.011686,
+      "pivot_accel": 0.000343,
+      "elevator_length": 1.05305,
+      "elevator_velocity": 0.468,
+      "elevator_accel": 1.2
     },
     {
-      "time": 0.40500000000000025,
+      "time": 0.405,
       "sample_num": 27,
-      "pivot_angle": 1.4730912661325835,
-      "pivot_velocity": 0.011690768627718881,
-      "pivot_accel": 0.0003435418951089266,
-      "elevator_length": 1.0602049887220886,
-      "elevator_velocity": 0.4859999371457173,
-      "elevator_accel": 1.1999997743962036,
-      "endeff_pos": [
-        0.10342334647683929,
-        1.0551563008128826
-      ]
+      "pivot_angle": 1.473091,
+      "pivot_velocity": 0.011691,
+      "pivot_accel": 0.000344,
+      "elevator_length": 1.060205,
+      "elevator_velocity": 0.486,
+      "elevator_accel": 1.2
     },
     {
-      "time": 0.42000000000000026,
+      "time": 0.42,
       "sample_num": 28,
-      "pivot_angle": 1.47326666631354,
-      "pivot_velocity": 0.011695923632620895,
-      "pivot_accel": 0.00034407192083452093,
-      "elevator_length": 1.067629987753844,
-      "elevator_velocity": 0.5039999337315231,
-      "elevator_accel": 1.199999765709354,
-      "endeff_pos": [
-        0.10396144431783379,
-        1.0625660435866726
-      ]
+      "pivot_angle": 1.473267,
+      "pivot_velocity": 0.011696,
+      "pivot_accel": 0.000344,
+      "elevator_length": 1.06763,
+      "elevator_velocity": 0.504,
+      "elevator_accel": 1.2
     },
     {
-      "time": 0.4350000000000003,
+      "time": 0.435,
       "sample_num": 29,
-      "pivot_angle": 1.4734421438782994,
-      "pivot_velocity": 0.0117010865146978,
-      "pivot_accel": 0.00034459720008984246,
-      "elevator_length": 1.0753249867334205,
-      "elevator_velocity": 0.5219999301856852,
-      "elevator_accel": 1.1999997563327711,
-      "endeff_pos": [
-        0.10452293325639242,
-        1.0702427550971554
-      ]
+      "pivot_angle": 1.473442,
+      "pivot_velocity": 0.011701,
+      "pivot_accel": 0.000345,
+      "elevator_length": 1.075325,
+      "elevator_velocity": 0.522,
+      "elevator_accel": 1.2
     },
     {
-      "time": 0.4500000000000003,
+      "time": 0.45,
       "sample_num": 30,
-      "pivot_angle": 1.473617698945437,
-      "pivot_velocity": 0.011706257198691696,
-      "pivot_accel": 0.00034511653297912873,
-      "elevator_length": 1.083289985658751,
-      "elevator_velocity": 0.539999926497756,
-      "elevator_accel": 1.199999746181748,
-      "endeff_pos": [
-        0.1051076732088845,
-        1.0781864482953227
-      ]
+      "pivot_angle": 1.473618,
+      "pivot_velocity": 0.011706,
+      "pivot_accel": 0.000345,
+      "elevator_length": 1.08329,
+      "elevator_velocity": 0.54,
+      "elevator_accel": 1.2
     },
     {
-      "time": 0.4650000000000003,
+      "time": 0.465,
       "sample_num": 31,
-      "pivot_angle": 1.4737933316322356,
-      "pivot_velocity": 0.011711435596084143,
-      "pivot_accel": 0.000345629935883898,
-      "elevator_length": 1.0915249845275965,
-      "elevator_velocity": 0.5579999226560083,
-      "elevator_accel": 1.1999997351573068,
-      "endeff_pos": [
-        0.10571552396612885,
-        1.0863971360952784
-      ]
+      "pivot_angle": 1.473793,
+      "pivot_velocity": 0.011711,
+      "pivot_accel": 0.000346,
+      "elevator_length": 1.091525,
+      "elevator_velocity": 0.558,
+      "elevator_accel": 1.2
     },
     {
-      "time": 0.4800000000000003,
+      "time": 0.48,
       "sample_num": 32,
-      "pivot_angle": 1.4739690420545897,
-      "pivot_velocity": 0.011716621754391834,
-      "pivot_accel": 0.00034613798149190045,
-      "elevator_length": 1.1000299833375256,
-      "elevator_velocity": 0.5759999186439803,
-      "elevator_accel": 1.1999997231229553,
-      "endeff_pos": [
-        0.10634674864971874,
-        1.0948795528707083
-      ]
+      "pivot_angle": 1.473969,
+      "pivot_velocity": 0.011717,
+      "pivot_accel": 0.000346,
+      "elevator_length": 1.10003,
+      "elevator_velocity": 0.576,
+      "elevator_accel": 1.2
     },
     {
-      "time": 0.49500000000000033,
+      "time": 0.495,
       "sample_num": 33,
-      "pivot_angle": 1.4741448303268598,
-      "pivot_velocity": 0.01172181568098134,
-      "pivot_accel": 0.00034664145849706515,
-      "elevator_length": 1.1088049820858972,
-      "elevator_velocity": 0.5939999144433274,
-      "elevator_accel": 1.199999709915813,
-      "endeff_pos": [
-        0.10700146115256165,
-        1.103636806357247
-      ]
+      "pivot_angle": 1.474145,
+      "pivot_velocity": 0.011722,
+      "pivot_accel": 0.000347,
+      "elevator_length": 1.108805,
+      "elevator_velocity": 0.594,
+      "elevator_accel": 1.2
     },
     {
-      "time": 0.5100000000000003,
+      "time": 0.51,
       "sample_num": 34,
-      "pivot_angle": 1.4743206965626023,
-      "pivot_velocity": 0.011727017089923138,
-      "pivot_accel": 0.00034714113178023655,
-      "elevator_length": 1.1178499807698157,
-      "elevator_velocity": 0.6119999100414556,
-      "elevator_accel": 1.1999996953951866,
-      "endeff_pos": [
-        0.10767884848740437,
-        1.1126610942865056
-      ]
+      "pivot_angle": 1.474321,
+      "pivot_velocity": 0.011727,
+      "pivot_accel": 0.000347,
+      "elevator_length": 1.11785,
+      "elevator_velocity": 0.612,
+      "elevator_accel": 1.2
     },
     {
-      "time": 0.5250000000000004,
+      "time": 0.525,
       "sample_num": 35,
-      "pivot_angle": 1.4744966408745546,
-      "pivot_velocity": 0.011732225926549284,
-      "pivot_accel": 0.0003476373602306291,
-      "elevator_length": 1.127164979386098,
-      "elevator_velocity": 0.6299999054182964,
-      "elevator_accel": 1.1999996793565821,
-      "endeff_pos": [
-        0.10837876991789137,
-        1.1219524294175531
-      ]
+      "pivot_angle": 1.474497,
+      "pivot_velocity": 0.011732,
+      "pivot_accel": 0.000348,
+      "elevator_length": 1.127165,
+      "elevator_velocity": 0.63,
+      "elevator_accel": 1.2
     },
     {
-      "time": 0.5400000000000004,
+      "time": 0.54,
       "sample_num": 36,
-      "pivot_angle": 1.474672663374651,
-      "pivot_velocity": 0.011737442140685325,
-      "pivot_accel": 0.00034813029521342065,
-      "elevator_length": 1.1367499779312302,
-      "elevator_velocity": 0.6479999005506555,
-      "elevator_accel": 1.1999996615512376,
-      "endeff_pos": [
-        0.10910108458037299,
-        1.1315108244720369
-      ]
+      "pivot_angle": 1.474673,
+      "pivot_velocity": 0.011737,
+      "pivot_accel": 0.000348,
+      "elevator_length": 1.13675,
+      "elevator_velocity": 0.648,
+      "elevator_accel": 1.2
     },
     {
-      "time": 0.5550000000000004,
+      "time": 0.555,
       "sample_num": 37,
-      "pivot_angle": 1.4748487641740682,
-      "pivot_velocity": 0.011742665683832147,
-      "pivot_accel": 0.0003486199431450361,
-      "elevator_length": 1.1466049764013115,
-      "elevator_velocity": 0.6659998954115387,
-      "elevator_accel": 1.199999641673661,
-      "endeff_pos": [
-        0.10984565148361573,
-        1.141336292134056
-      ]
+      "pivot_angle": 1.474849,
+      "pivot_velocity": 0.011743,
+      "pivot_accel": 0.000349,
+      "elevator_length": 1.146605,
+      "elevator_velocity": 0.666,
+      "elevator_accel": 1.2
     },
     {
-      "time": 0.5700000000000004,
+      "time": 0.57,
       "sample_num": 38,
-      "pivot_angle": 1.4750249433832374,
-      "pivot_velocity": 0.011747896524923761,
-      "pivot_accel": 0.0003491062192286792,
-      "elevator_length": 1.1567299747919886,
-      "elevator_velocity": 0.6839998899684532,
-      "elevator_accel": 1.1999996193376175,
-      "endeff_pos": [
-        0.11061238305199445,
-        1.1514294962434795
-      ]
+      "pivot_angle": 1.475025,
+      "pivot_velocity": 0.011748,
+      "pivot_accel": 0.000349,
+      "elevator_length": 1.15673,
+      "elevator_velocity": 0.684,
+      "elevator_accel": 1.2
     },
     {
-      "time": 0.5850000000000004,
+      "time": 0.585,
       "sample_num": 39,
-      "pivot_angle": 1.475201201111591,
-      "pivot_velocity": 0.011753134915333538,
-      "pivot_accel": 0.0003495888764506317,
-      "elevator_length": 1.1671249730983837,
-      "elevator_velocity": 0.7019998841670445,
-      "elevator_accel": 1.1999995939091148,
-      "endeff_pos": [
-        0.11140205437686286,
-        1.1618016883027489
-      ]
+      "pivot_angle": 1.475201,
+      "pivot_velocity": 0.011753,
+      "pivot_accel": 0.00035,
+      "elevator_length": 1.167125,
+      "elevator_velocity": 0.702,
+      "elevator_accel": 1.2
     },
     {
-      "time": 0.6000000000000004,
+      "time": 0.6,
       "sample_num": 40,
-      "pivot_angle": 1.4753775374678306,
-      "pivot_velocity": 0.011758380479325151,
-      "pivot_accel": 0.0003500679702456912,
-      "elevator_length": 1.1777899713149806,
-      "elevator_velocity": 0.7199998779744675,
-      "elevator_accel": 1.1999995648622133,
-      "endeff_pos": [
-        0.11221353953233792,
-        1.1724409920926433
-      ]
+      "pivot_angle": 1.475378,
+      "pivot_velocity": 0.011758,
+      "pivot_accel": 0.00035,
+      "elevator_length": 1.17779,
+      "elevator_velocity": 0.72,
+      "elevator_accel": 1.2
     },
     {
-      "time": 0.6150000000000004,
+      "time": 0.615,
       "sample_num": 41,
-      "pivot_angle": 1.4755539525600525,
-      "pivot_velocity": 0.011763633164029287,
-      "pivot_accel": 0.0003505434283974918,
-      "elevator_length": 1.188724969435479,
-      "elevator_velocity": 0.7379998713345819,
-      "elevator_accel": 1.199999531371493,
-      "endeff_pos": [
-        0.11304669699217004,
-        1.183347420138771
-      ]
+      "pivot_angle": 1.475554,
+      "pivot_velocity": 0.011764,
+      "pivot_accel": 0.000351,
+      "elevator_length": 1.188725,
+      "elevator_velocity": 0.738,
+      "elevator_accel": 1.2
     },
     {
-      "time": 0.6300000000000004,
+      "time": 0.63,
       "sample_num": 42,
-      "pivot_angle": 1.4757304464955323,
-      "pivot_velocity": 0.01176889291558982,
-      "pivot_accel": 0.00035101519571802733,
-      "elevator_length": 1.1999299674526263,
-      "elevator_velocity": 0.7559998641783526,
-      "elevator_accel": 1.1999994923426522,
-      "endeff_pos": [
-        0.11390138510134011,
-        1.1945209849281948
-      ]
+      "pivot_angle": 1.47573,
+      "pivot_velocity": 0.011769,
+      "pivot_accel": 0.000351,
+      "elevator_length": 1.19993,
+      "elevator_velocity": 0.756,
+      "elevator_accel": 1.199999
     },
     {
-      "time": 0.6450000000000005,
+      "time": 0.645,
       "sample_num": 43,
-      "pivot_angle": 1.4759070193807093,
-      "pivot_velocity": 0.011774159679406372,
-      "pivot_accel": 0.0003514832362177706,
-      "elevator_length": 1.2114049653579833,
-      "elevator_velocity": 0.7739998564196352,
-      "elevator_accel": 1.199999446295193,
-      "endeff_pos": [
-        0.11477746207583785,
-        1.2059616989091289
-      ]
+      "pivot_angle": 1.475907,
+      "pivot_velocity": 0.011774,
+      "pivot_accel": 0.000351,
+      "elevator_length": 1.211405,
+      "elevator_velocity": 0.774,
+      "elevator_accel": 1.199999
     },
     {
-      "time": 0.6600000000000005,
+      "time": 0.66,
       "sample_num": 44,
-      "pivot_angle": 1.4760836713211773,
-      "pivot_velocity": 0.01177943340038615,
-      "pivot_accel": 0.0003519475220547886,
-      "elevator_length": 1.223149963141606,
-      "elevator_velocity": 0.7919998479491299,
-      "elevator_accel": 1.1999993911795306,
-      "endeff_pos": [
-        0.11567478600243217,
-        1.2176695744905668
-      ]
+      "pivot_angle": 1.476084,
+      "pivot_velocity": 0.011779,
+      "pivot_accel": 0.000352,
+      "elevator_length": 1.22315,
+      "elevator_velocity": 0.792,
+      "elevator_accel": 1.199999
     },
     {
-      "time": 0.6750000000000005,
+      "time": 0.675,
       "sample_num": 45,
-      "pivot_angle": 1.4762604024215702,
-      "pivot_velocity": 0.011784714256568267,
-      "pivot_accel": 0.0003524079054723028,
-      "elevator_length": 1.2351649607916177,
-      "elevator_velocity": 0.8099998385890466,
-      "elevator_accel": 1.199999323505981,
-      "endeff_pos": [
-        0.1165939299966945,
-        1.2296537472132931
-      ]
+      "pivot_angle": 1.47626,
+      "pivot_velocity": 0.011785,
+      "pivot_accel": 0.000352,
+      "elevator_length": 1.235165,
+      "elevator_velocity": 0.81,
+      "elevator_accel": 1.199999
     },
     {
-      "time": 0.6900000000000005,
+      "time": 0.69,
       "sample_num": 46,
-      "pivot_angle": 1.4764372127854903,
-      "pivot_velocity": 0.011790002041272141,
-      "pivot_accel": 0.00035286444702473075,
-      "elevator_length": 1.2474499582936038,
-      "elevator_velocity": 0.82799982815077,
-      "elevator_accel": 1.1999992387248701,
-      "endeff_pos": [
-        0.11753429220694947,
-        1.2419085289499319
-      ]
+      "pivot_angle": 1.476437,
+      "pivot_velocity": 0.01179,
+      "pivot_accel": 0.000353,
+      "elevator_length": 1.24745,
+      "elevator_velocity": 0.828,
+      "elevator_accel": 1.199999
     },
     {
-      "time": 0.7050000000000005,
+      "time": 0.705,
       "sample_num": 47,
-      "pivot_angle": 1.476614102515958,
-      "pivot_velocity": 0.011795296610086714,
-      "pivot_accel": 0.00035331717886166394,
-      "elevator_length": 1.2600049556296138,
-      "elevator_velocity": 0.8459998163720124,
-      "elevator_accel": 1.1999991297576396,
-      "endeff_pos": [
-        0.11849546008082831,
-        1.254430510538735
-      ]
+      "pivot_angle": 1.476614,
+      "pivot_velocity": 0.011795,
+      "pivot_accel": 0.000353,
+      "elevator_length": 1.260005,
+      "elevator_velocity": 0.846,
+      "elevator_accel": 1.199999
     },
     {
-      "time": 0.7200000000000005,
+      "time": 0.72,
       "sample_num": 48,
-      "pivot_angle": 1.4767910717151451,
-      "pivot_velocity": 0.011800597906722885,
-      "pivot_accel": 0.00035376608344896783,
-      "elevator_length": 1.2728299527767215,
-      "elevator_velocity": 0.8639998028599303,
-      "elevator_accel": 1.1999989846121109,
-      "endeff_pos": [
-        0.11947729116294441,
-        1.2672197042170106
-      ]
+      "pivot_angle": 1.476791,
+      "pivot_velocity": 0.011801,
+      "pivot_accel": 0.000354,
+      "elevator_length": 1.27283,
+      "elevator_velocity": 0.864,
+      "elevator_accel": 1.199999
     },
     {
-      "time": 0.7350000000000005,
+      "time": 0.735,
       "sample_num": 49,
-      "pivot_angle": 1.4769681204843539,
-      "pivot_velocity": 0.011805905874646128,
-      "pivot_accel": 0.0003542111465895378,
-      "elevator_length": 1.2859249497046086,
-      "elevator_velocity": 0.8819997870212131,
-      "elevator_accel": 1.1999987819113866,
-      "endeff_pos": [
-        0.12047964286712295,
-        1.280276122176691
-      ]
+      "pivot_angle": 1.476968,
+      "pivot_velocity": 0.011806,
+      "pivot_accel": 0.000354,
+      "elevator_length": 1.285925,
+      "elevator_velocity": 0.882,
+      "elevator_accel": 1.199999
     },
     {
-      "time": 0.7500000000000006,
+      "time": 0.75,
       "sample_num": 50,
-      "pivot_angle": 1.4771452489240153,
-      "pivot_velocity": 0.011811220457152511,
-      "pivot_accel": 0.0003546523716129427,
-      "elevator_length": 1.2992899463712655,
-      "elevator_velocity": 0.8999997679009216,
-      "elevator_accel": 1.1999984797721666,
-      "endeff_pos": [
-        0.12150237247584625,
-        1.2935997765603156
-      ]
+      "pivot_angle": 1.477145,
+      "pivot_velocity": 0.011811,
+      "pivot_accel": 0.000355,
+      "elevator_length": 1.29929,
+      "elevator_velocity": 0.9,
+      "elevator_accel": 1.199998
     },
     {
-      "time": 0.7650000000000006,
+      "time": 0.765,
       "sample_num": 51,
-      "pivot_angle": 1.4773224571336556,
-      "pivot_velocity": 0.011816541720451728,
-      "pivot_accel": 0.00035508971800240867,
-      "elevator_length": 1.3129249427145002,
-      "elevator_velocity": 0.9179997436660006,
-      "elevator_accel": 1.1999979765822333,
-      "endeff_pos": [
-        0.12254571664875381,
-        1.3071957309922002
-      ]
+      "pivot_angle": 1.477322,
+      "pivot_velocity": 0.011817,
+      "pivot_accel": 0.000355,
+      "elevator_length": 1.312925,
+      "elevator_velocity": 0.918,
+      "elevator_accel": 1.199998
     },
     {
-      "time": 0.7800000000000006,
+      "time": 0.78,
       "sample_num": 52,
-      "pivot_angle": 1.4774997452116772,
-      "pivot_velocity": 0.011821869663950265,
-      "pivot_accel": 0.0003555232038080309,
-      "elevator_length": 1.3268299386328857,
-      "elevator_velocity": 0.9359997102992005,
-      "elevator_accel": 1.1999969470218526,
-      "endeff_pos": [
-        0.12360970569851788,
-        1.3210664435230066
-      ]
+      "pivot_angle": 1.4775,
+      "pivot_velocity": 0.011822,
+      "pivot_accel": 0.000356,
+      "elevator_length": 1.32683,
+      "elevator_velocity": 0.936,
+      "elevator_accel": 1.199997
     },
     {
-      "time": 0.7950000000000006,
+      "time": 0.795,
       "sample_num": 53,
-      "pivot_angle": 1.4776771132558546,
-      "pivot_velocity": 0.011827204047986652,
-      "pivot_accel": 0.00035595273539643904,
-      "elevator_length": 1.3410049339278973,
-      "elevator_velocity": 0.9539996569320733,
-      "elevator_accel": 1.1999936454783653,
-      "endeff_pos": [
-        0.1246936288417324,
-        1.3352044296673384
-      ]
+      "pivot_angle": 1.477677,
+      "pivot_velocity": 0.011827,
+      "pivot_accel": 0.000356,
+      "elevator_length": 1.341005,
+      "elevator_velocity": 0.954,
+      "elevator_accel": 1.199994
     },
     {
-      "time": 0.8100000000000006,
+      "time": 0.81,
       "sample_num": 54,
-      "pivot_angle": 1.4778545613631506,
-      "pivot_velocity": 0.011832544812679492,
-      "pivot_accel": 0.0003563784538753236,
-      "elevator_length": 1.3554499279575742,
-      "elevator_velocity": 0.9719994974245613,
-      "elevator_accel": 0.09115726982973849,
-      "endeff_pos": [
-        0.1257973427483072,
-        1.349609700689129
-      ]
+      "pivot_angle": 1.477855,
+      "pivot_velocity": 0.011833,
+      "pivot_accel": 0.000356,
+      "elevator_length": 1.35545,
+      "elevator_velocity": 0.971999,
+      "elevator_accel": 0.091157
     },
     {
-      "time": 0.8250000000000006,
+      "time": 0.825,
       "sample_num": 55,
-      "pivot_angle": 1.4780320896296444,
-      "pivot_velocity": 0.011837891915584398,
-      "pivot_accel": 0.00035680644589085585,
-      "elevator_length": 1.3700296104938898,
-      "elevator_velocity": 0.9645145569477946,
-      "elevator_accel": -1.199993417477026,
-      "endeff_pos": [
-        0.12690661541030157,
-        1.3641307763604955
-      ]
+      "pivot_angle": 1.478032,
+      "pivot_velocity": 0.011838,
+      "pivot_accel": 0.000357,
+      "elevator_length": 1.37003,
+      "elevator_velocity": 0.964515,
+      "elevator_accel": -1.199993
     },
     {
-      "time": 0.8400000000000006,
+      "time": 0.84,
       "sample_num": 56,
-      "pivot_angle": 1.4782096981514692,
-      "pivot_velocity": 0.011843245417392494,
-      "pivot_accel": 0.00035724331049208054,
-      "elevator_length": 1.3843623295597212,
-      "elevator_velocity": 0.9465146398544464,
-      "elevator_accel": -1.1999968927415108,
-      "endeff_pos": [
-        0.1279898440483719,
-        1.3784280670180393
-      ]
+      "pivot_angle": 1.47821,
+      "pivot_velocity": 0.011843,
+      "pivot_accel": 0.000357,
+      "elevator_length": 1.384362,
+      "elevator_velocity": 0.946515,
+      "elevator_accel": -1.199997
     },
     {
-      "time": 0.8550000000000006,
+      "time": 0.855,
       "sample_num": 57,
-      "pivot_angle": 1.4783873870264426,
-      "pivot_velocity": 0.011848605477379972,
-      "pivot_accel": 0.00035768958210603315,
-      "elevator_length": 1.3984250494957229,
-      "elevator_velocity": 0.9285146822835469,
-      "elevator_accel": -1.1999979509479493,
-      "endeff_pos": [
-        0.12904308052617103,
-        1.3924579521324016
-      ]
+      "pivot_angle": 1.478387,
+      "pivot_velocity": 0.011849,
+      "pivot_accel": 0.000358,
+      "elevator_length": 1.398425,
+      "elevator_velocity": 0.928515,
+      "elevator_accel": -1.199998
     },
     {
-      "time": 0.8700000000000007,
+      "time": 0.87,
       "sample_num": 58,
-      "pivot_angle": 1.4785651563542752,
-      "pivot_velocity": 0.011853972505905083,
-      "pivot_accel": 0.0003581455644838958,
-      "elevator_length": 1.4122177699533704,
-      "elevator_velocity": 0.9105147108567878,
-      "elevator_accel": -1.1999984622404944,
-      "endeff_pos": [
-        0.13006529007457837,
-        1.406209855362335
-      ]
+      "pivot_angle": 1.478565,
+      "pivot_velocity": 0.011854,
+      "pivot_accel": 0.000358,
+      "elevator_length": 1.412218,
+      "elevator_velocity": 0.910515,
+      "elevator_accel": -1.199998
     },
     {
-      "time": 0.8850000000000007,
+      "time": 0.885,
       "sample_num": 59,
-      "pivot_angle": 1.4787430062368347,
-      "pivot_velocity": 0.01185934635737073,
-      "pivot_accel": 0.0003586106423090014,
-      "elevator_length": 1.4257404907867417,
-      "elevator_velocity": 0.8925147326895853,
-      "elevator_accel": -1.19999877132665,
-      "endeff_pos": [
-        0.13105790325955705,
-        1.4196952974790682
-      ]
+      "pivot_angle": 1.478743,
+      "pivot_velocity": 0.011859,
+      "pivot_accel": 0.000359,
+      "elevator_length": 1.42574,
+      "elevator_velocity": 0.892515,
+      "elevator_accel": -1.199999
     },
     {
-      "time": 0.9000000000000007,
+      "time": 0.9,
       "sample_num": 60,
-      "pivot_angle": 1.478920936778241,
-      "pivot_velocity": 0.011864727163975993,
-      "pivot_accel": 0.00035908422953055534,
-      "elevator_length": 1.4389932119142697,
-      "elevator_velocity": 0.8745147503350303,
-      "elevator_accel": -1.1999989775334443,
-      "endeff_pos": [
-        0.1320210567369685,
-        1.4329142644599668
-      ]
+      "pivot_angle": 1.478921,
+      "pivot_velocity": 0.011865,
+      "pivot_accel": 0.000359,
+      "elevator_length": 1.438993,
+      "elevator_velocity": 0.874515,
+      "elevator_accel": -1.199999
     },
     {
-      "time": 0.9150000000000007,
+      "time": 0.915,
       "sample_num": 61,
-      "pivot_angle": 1.4790989480845897,
-      "pivot_velocity": 0.011870115050350481,
-      "pivot_accel": 0.0003595663853476381,
-      "elevator_length": 1.4519759332837021,
-      "elevator_velocity": 0.8565147651352142,
-      "elevator_accel": -1.1999991246923283,
-      "endeff_pos": [
-        0.13295488728550875,
-        1.4458667423450762
-      ]
+      "pivot_angle": 1.479099,
+      "pivot_velocity": 0.01187,
+      "pivot_accel": 0.00036,
+      "elevator_length": 1.451976,
+      "elevator_velocity": 0.856515,
+      "elevator_accel": -1.199999
     },
     {
-      "time": 0.9300000000000007,
+      "time": 0.93,
       "sample_num": 62,
-      "pivot_angle": 1.4792770402639102,
-      "pivot_velocity": 0.011875510146788877,
-      "pivot_accel": 0.0003600585850654091,
-      "elevator_length": 1.4646886548586249,
-      "elevator_velocity": 0.8385147778781871,
-      "elevator_accel": -1.1999992349215862,
-      "endeff_pos": [
-        0.13385953180575869,
-        1.4585527172251807
-      ]
+      "pivot_angle": 1.479277,
+      "pivot_velocity": 0.011876,
+      "pivot_accel": 0.00036,
+      "elevator_length": 1.464689,
+      "elevator_velocity": 0.838515,
+      "elevator_accel": -1.199999
     },
     {
-      "time": 0.9450000000000007,
+      "time": 0.945,
       "sample_num": 63,
-      "pivot_angle": 1.4794552134264134,
-      "pivot_velocity": 0.0118809126068244,
-      "pivot_accel": 0.0003605620546482616,
-      "elevator_length": 1.4771313766121854,
-      "elevator_velocity": 0.8205147890650929,
-      "elevator_accel": -1.19999932054563,
-      "endeff_pos": [
-        0.13473512731946127,
-        1.4709721752360432
-      ]
+      "pivot_angle": 1.479455,
+      "pivot_velocity": 0.011881,
+      "pivot_accel": 0.000361,
+      "elevator_length": 1.477131,
+      "elevator_velocity": 0.820515,
+      "elevator_accel": -1.199999
     },
     {
-      "time": 0.9600000000000007,
+      "time": 0.96,
       "sample_num": 64,
-      "pivot_angle": 1.479633467684675,
-      "pivot_velocity": 0.011886322867650146,
-      "pivot_accel": 0.00036107598359855496,
-      "elevator_length": 1.4893040985237693,
-      "elevator_velocity": 0.8025147990004251,
-      "elevator_accel": -1.1999993885394735,
-      "endeff_pos": [
-        0.1355807940097307,
-        1.4831156763679836
-      ]
+      "pivot_angle": 1.479633,
+      "pivot_velocity": 0.011886,
+      "pivot_accel": 0.000361,
+      "elevator_length": 1.489304,
+      "elevator_velocity": 0.802515,
+      "elevator_accel": -1.199999
     },
     {
-      "time": 0.9750000000000008,
+      "time": 0.975,
       "sample_num": 65,
-      "pivot_angle": 1.4798118031534473,
-      "pivot_velocity": 0.011891740901309325,
-      "pivot_accel": 0.00036159842301439015,
-      "elevator_length": 1.501206820577049,
-      "elevator_velocity": 0.7845148079605743,
-      "elevator_accel": -1.1999994441570134,
-      "endeff_pos": [
-        0.13639736537686725,
-        1.494989543302078
-      ]
+      "pivot_angle": 1.479812,
+      "pivot_velocity": 0.011892,
+      "pivot_accel": 0.000362,
+      "elevator_length": 1.501207,
+      "elevator_velocity": 0.784515,
+      "elevator_accel": -1.199999
     },
     {
-      "time": 0.9900000000000008,
+      "time": 0.99,
       "sample_num": 66,
-      "pivot_angle": 1.4799902199497965,
-      "pivot_velocity": 0.01189716674350053,
-      "pivot_accel": 0.00036212943474727316,
-      "elevator_length": 1.512839542758724,
-      "elevator_velocity": 0.7665148161274971,
-      "elevator_accel": -1.1999994905757208,
-      "endeff_pos": [
-        0.13718531378670937,
-        1.5065968506018843
-      ]
+      "pivot_angle": 1.47999,
+      "pivot_velocity": 0.011897,
+      "pivot_accel": 0.000362,
+      "elevator_length": 1.51284,
+      "elevator_velocity": 0.766515,
+      "elevator_accel": -1.199999
     },
     {
-      "time": 1.0050000000000008,
+      "time": 1.005,
       "sample_num": 67,
-      "pivot_angle": 1.4801687181927239,
-      "pivot_velocity": 0.01190260052433723,
-      "pivot_accel": 0.00036267010345829005,
-      "elevator_length": 1.5242022650577818,
-      "elevator_velocity": 0.7485148236291223,
-      "elevator_accel": -1.1999995298868786,
-      "endeff_pos": [
-        0.13794477676591826,
-        1.51793758456895
-      ]
+      "pivot_angle": 1.480169,
+      "pivot_velocity": 0.011903,
+      "pivot_accel": 0.000363,
+      "elevator_length": 1.524202,
+      "elevator_velocity": 0.748515,
+      "elevator_accel": -1.2
     },
     {
-      "time": 1.0200000000000007,
+      "time": 1.02,
       "sample_num": 68,
-      "pivot_angle": 1.4803472980033534,
-      "pivot_velocity": 0.011908042389429352,
-      "pivot_accel": 0.0003632211898307098,
-      "elevator_length": 1.5352949874649533,
-      "elevator_velocity": 0.7305148305649811,
-      "elevator_accel": -1.1999995635972802,
-      "endeff_pos": [
-        0.13867589196248792,
-        1.5290117315426124
-      ]
+      "pivot_angle": 1.480347,
+      "pivot_velocity": 0.011908,
+      "pivot_accel": 0.000363,
+      "elevator_length": 1.535295,
+      "elevator_velocity": 0.730515,
+      "elevator_accel": -1.2
     },
     {
-      "time": 1.0350000000000006,
+      "time": 1.035,
       "sample_num": 69,
-      "pivot_angle": 1.4805259595051365,
-      "pivot_velocity": 0.01191349249328345,
-      "pivot_accel": 0.00036378277588869037,
-      "elevator_length": 1.546117709972328,
-      "elevator_velocity": 0.7125148370139629,
-      "elevator_accel": -1.1999995928184748,
-      "endeff_pos": [
-        0.13937879714561655,
-        1.5398192778997568
-      ]
+      "pivot_angle": 1.480526,
+      "pivot_velocity": 0.011913,
+      "pivot_accel": 0.000364,
+      "elevator_length": 1.546118,
+      "elevator_velocity": 0.712515,
+      "elevator_accel": -1.2
     },
     {
-      "time": 1.0500000000000005,
+      "time": 1.05,
       "sample_num": 70,
-      "pivot_angle": 1.480704702823863,
-      "pivot_velocity": 0.01191895116236719,
-      "pivot_accel": 0.0003643548167542911,
-      "elevator_length": 1.5566704325730778,
-      "elevator_velocity": 0.6945148430322399,
-      "elevator_accel": -1.1999996183281763,
-      "endeff_pos": [
-        0.14005306843559268,
-        1.5503548454482385
-      ]
+      "pivot_angle": 1.480705,
+      "pivot_velocity": 0.011919,
+      "pivot_accel": 0.000364,
+      "elevator_length": 1.55667,
+      "elevator_velocity": 0.694515,
+      "elevator_accel": -1.2
     },
     {
-      "time": 1.0650000000000004,
+      "time": 1.065,
       "sample_num": 71,
-      "pivot_angle": 1.4808835280873203,
-      "pivot_velocity": 0.011924418615899162,
-      "pivot_accel": 0.00036493728236759466,
-      "elevator_length": 1.5669531552612581,
-      "elevator_velocity": 0.6765148486723468,
-      "elevator_accel": -1.1999996407839895,
-      "endeff_pos": [
-        0.1406986666953883,
-        1.5606166303019156
-      ]
+      "pivot_angle": 1.480884,
+      "pivot_velocity": 0.011924,
+      "pivot_accel": 0.000365,
+      "elevator_length": 1.566953,
+      "elevator_velocity": 0.676515,
+      "elevator_accel": -1.2
     },
     {
-      "time": 1.0800000000000003,
+      "time": 1.08,
       "sample_num": 72,
-      "pivot_angle": 1.481062435425889,
-      "pivot_velocity": 0.011929894778993862,
-      "pivot_accel": 0.00036553006367775825,
-      "elevator_length": 1.5769658780316225,
-      "elevator_velocity": 0.6585148539873864,
-      "elevator_accel": -1.1999996607661505,
-      "endeff_pos": [
-        0.14131648331271798,
-        1.5706117724993576
-      ]
+      "pivot_angle": 1.481062,
+      "pivot_velocity": 0.01193,
+      "pivot_accel": 0.000366,
+      "elevator_length": 1.576966,
+      "elevator_velocity": 0.658515,
+      "elevator_accel": -1.2
     },
     {
-      "time": 1.0950000000000002,
+      "time": 1.095,
       "sample_num": 73,
-      "pivot_angle": 1.4812414249723656,
-      "pivot_velocity": 0.011935379804511115,
-      "pivot_accel": 0.00036613329959206636,
-      "elevator_length": 1.5867086008795175,
-      "elevator_velocity": 0.6405148590124459,
-      "elevator_accel": -1.1999996786586649,
-      "endeff_pos": [
-        0.14190665656433438,
-        1.580340258572908
-      ]
+      "pivot_angle": 1.481241,
+      "pivot_velocity": 0.011935,
+      "pivot_accel": 0.000366,
+      "elevator_length": 1.586709,
+      "elevator_velocity": 0.640515,
+      "elevator_accel": -1.2
     },
     {
       "time": 1.11,
       "sample_num": 74,
-      "pivot_angle": 1.4814204968619136,
-      "pivot_velocity": 0.011940873846747177,
-      "pivot_accel": 0.0003667469416977596,
-      "elevator_length": 1.5961813238007874,
-      "elevator_velocity": 0.6225148637772756,
-      "elevator_accel": -1.1999996947706866,
-      "endeff_pos": [
-        0.14246932484908634,
-        1.5898020750920756
-      ]
+      "pivot_angle": 1.481421,
+      "pivot_velocity": 0.011941,
+      "pivot_accel": 0.000367,
+      "elevator_length": 1.596181,
+      "elevator_velocity": 0.622515,
+      "elevator_accel": -1.2
     },
     {
       "time": 1.125,
       "sample_num": 75,
-      "pivot_angle": 1.4815996512320688,
-      "pivot_velocity": 0.011946377058709537,
-      "pivot_accel": 0.0003673707771090677,
-      "elevator_length": 1.6053840467917018,
-      "elevator_velocity": 0.6045148683073072,
-      "elevator_accel": -1.199999709353726,
-      "endeff_pos": [
-        0.1430046266881321,
-        1.5989972086635458
-      ]
+      "pivot_angle": 1.4816,
+      "pivot_velocity": 0.011946,
+      "pivot_accel": 0.000367,
+      "elevator_length": 1.605384,
+      "elevator_velocity": 0.604515,
+      "elevator_accel": -1.2
     },
     {
       "time": 1.14,
       "sample_num": 76,
-      "pivot_angle": 1.4817788882226908,
-      "pivot_velocity": 0.011951889636162269,
-      "pivot_accel": 0.0003680045437657273,
-      "elevator_length": 1.6143167698488898,
-      "elevator_velocity": 0.5865148726235051,
-      "elevator_accel": -1.1999997226088108,
-      "endeff_pos": [
-        0.14351256867996973,
-        1.6079243454366714
-      ]
+      "pivot_angle": 1.481779,
+      "pivot_velocity": 0.011952,
+      "pivot_accel": 0.000368,
+      "elevator_length": 1.614317,
+      "elevator_velocity": 0.586515,
+      "elevator_accel": -1.2
     },
     {
-      "time": 1.1549999999999998,
+      "time": 1.155,
       "sample_num": 77,
-      "pivot_angle": 1.4819582079755613,
-      "pivot_velocity": 0.01195741208419104,
-      "pivot_accel": 0.0003686481422402932,
-      "elevator_length": 1.6229794929692989,
-      "elevator_velocity": 0.5685148767386237,
-      "elevator_accel": -1.199999734672675,
-      "endeff_pos": [
-        0.14399229017243725,
-        1.6165735499493772
-      ]
+      "pivot_angle": 1.481958,
+      "pivot_velocity": 0.011957,
+      "pivot_accel": 0.000369,
+      "elevator_length": 1.622979,
+      "elevator_velocity": 0.568515,
+      "elevator_accel": -1.2
     },
     {
-      "time": 1.1699999999999997,
+      "time": 1.17,
       "sample_num": 78,
-      "pivot_angle": 1.4821376106347246,
-      "pivot_velocity": 0.01196294414772981,
-      "pivot_accel": 0.00036930053360648515,
-      "elevator_length": 1.6313722161501418,
-      "elevator_velocity": 0.5505148806778635,
-      "elevator_accel": -1.1999997457401728,
-      "endeff_pos": [
-        0.14444507593036437,
-        1.624956030186434
-      ]
+      "pivot_angle": 1.482138,
+      "pivot_velocity": 0.011963,
+      "pivot_accel": 0.000369,
+      "elevator_length": 1.631372,
+      "elevator_velocity": 0.550515,
+      "elevator_accel": -1.2
     },
     {
-      "time": 1.1849999999999996,
+      "time": 1.185,
       "sample_num": 79,
-      "pivot_angle": 1.4823170963464951,
-      "pivot_velocity": 0.011968485954020947,
-      "pivot_accel": 0.0003699610212675872,
-      "elevator_length": 1.6394949393888638,
-      "elevator_velocity": 0.5325148844554942,
-      "elevator_accel": -1.1999997559287585,
-      "endeff_pos": [
-        0.14487106498904628,
-        1.6330717729099502
-      ]
+      "pivot_angle": 1.482317,
+      "pivot_velocity": 0.011968,
+      "pivot_accel": 0.00037,
+      "elevator_length": 1.639495,
+      "elevator_velocity": 0.532515,
+      "elevator_accel": -1.2
     },
     {
-      "time": 1.1999999999999995,
+      "time": 1.2,
       "sample_num": 80,
-      "pivot_angle": 1.4824966652590754,
-      "pivot_velocity": 0.01197403762069447,
-      "pivot_accel": 0.00037062920110698337,
-      "elevator_length": 1.6473476626831163,
-      "elevator_velocity": 0.5145148880841345,
-      "elevator_accel": -1.1999997653383072,
-      "endeff_pos": [
-        0.14527039650815646,
-        1.6409207649193553
-      ]
+      "pivot_angle": 1.482497,
+      "pivot_velocity": 0.011974,
+      "pivot_accel": 0.000371,
+      "elevator_length": 1.647348,
+      "elevator_velocity": 0.514515,
+      "elevator_accel": -1.2
     },
     {
-      "time": 1.2149999999999994,
+      "time": 1.215,
       "sample_num": 81,
-      "pivot_angle": 1.4826763175224364,
-      "pivot_velocity": 0.011979599261849995,
-      "pivot_accel": 0.0003713055907079681,
-      "elevator_length": 1.6549303860307343,
-      "elevator_velocity": 0.4965148915749937,
-      "elevator_accel": -1.199999774054246,
-      "endeff_pos": [
-        0.14564320977219983,
-        1.6485029930514419
-      ]
+      "pivot_angle": 1.482676,
+      "pivot_velocity": 0.01198,
+      "pivot_accel": 0.000371,
+      "elevator_length": 1.65493,
+      "elevator_velocity": 0.496515,
+      "elevator_accel": -1.2
     },
     {
-      "time": 1.2299999999999993,
+      "time": 1.23,
       "sample_num": 82,
-      "pivot_angle": 1.4828560532883752,
-      "pivot_velocity": 0.011985171003557515,
-      "pivot_accel": 0.0003719923593430179,
-      "elevator_length": 1.6622431094297159,
-      "elevator_velocity": 0.4785148949380723,
-      "elevator_accel": -1.199999782150051,
-      "endeff_pos": [
-        0.1459896441907305,
-        1.6558184441804302
-      ]
+      "pivot_angle": 1.482856,
+      "pivot_velocity": 0.011985,
+      "pivot_accel": 0.000372,
+      "elevator_length": 1.662243,
+      "elevator_velocity": 0.478515,
+      "elevator_accel": -1.2
     },
     {
-      "time": 1.2449999999999992,
+      "time": 1.245,
       "sample_num": 83,
-      "pivot_angle": 1.4830358727107364,
-      "pivot_velocity": 0.011990753394859877,
-      "pivot_accel": 0.0003726946096999145,
-      "elevator_length": 1.6692858328782054,
-      "elevator_velocity": 0.4605148981783134,
-      "elevator_accel": -1.199999789671154,
-      "endeff_pos": [
-        0.14630888516726445,
-        1.6628573446464674
-      ]
+      "pivot_angle": 1.483036,
+      "pivot_velocity": 0.011991,
+      "pivot_accel": 0.000373,
+      "elevator_length": 1.669286,
+      "elevator_velocity": 0.460515,
+      "elevator_accel": -1.2
     },
     {
-      "time": 1.2599999999999991,
+      "time": 1.26,
       "sample_num": 84,
-      "pivot_angle": 1.483215775946227,
-      "pivot_velocity": 0.011996346423708188,
-      "pivot_accel": 0.0003734182534620341,
-      "elevator_length": 1.6760585563744788,
-      "elevator_velocity": 0.4425149013073025,
-      "elevator_accel": -1.1999997966900187,
-      "endeff_pos": [
-        0.14660176897066438,
-        1.669626674537748
-      ]
+      "pivot_angle": 1.483216,
+      "pivot_velocity": 0.011996,
+      "pivot_accel": 0.000373,
+      "elevator_length": 1.676059,
+      "elevator_velocity": 0.442515,
+      "elevator_accel": -1.2
     },
     {
-      "time": 1.274999999999999,
+      "time": 1.275,
       "sample_num": 85,
-      "pivot_angle": 1.4833957631563266,
-      "pivot_velocity": 0.0120019503165766,
-      "pivot_accel": 0.000374167550501346,
-      "elevator_length": 1.682561279916924,
-      "elevator_velocity": 0.4245149043334202,
-      "elevator_accel": -1.199999803259572,
-      "endeff_pos": [
-        0.14686870740959523,
-        1.6761291869331147
-      ]
+      "pivot_angle": 1.483396,
+      "pivot_velocity": 0.012002,
+      "pivot_accel": 0.000374,
+      "elevator_length": 1.682561,
+      "elevator_velocity": 0.424515,
+      "elevator_accel": -1.2
     },
     {
-      "time": 1.289999999999999,
+      "time": 1.29,
       "sample_num": 86,
-      "pivot_angle": 1.4835758345080736,
-      "pivot_velocity": 0.012007565451980746,
-      "pivot_accel": 0.00037493983419518333,
-      "elevator_length": 1.688794003504033,
-      "elevator_velocity": 0.4065149072631503,
-      "elevator_accel": -1.1999998094212616,
-      "endeff_pos": [
-        0.14710984040555797,
-        1.6823648688648474
-      ]
+      "pivot_angle": 1.483576,
+      "pivot_velocity": 0.012008,
+      "pivot_accel": 0.000375,
+      "elevator_length": 1.688794,
+      "elevator_velocity": 0.406515,
+      "elevator_accel": -1.2
     },
     {
-      "time": 1.3049999999999988,
+      "time": 1.305,
       "sample_num": 87,
-      "pivot_angle": 1.4837559901739956,
-      "pivot_velocity": 0.012013192128502763,
-      "pivot_accel": 0.00037571802477006006,
-      "elevator_length": 1.6947567271343944,
-      "elevator_velocity": 0.3885149101023877,
-      "elevator_accel": -1.1999998152116373,
-      "endeff_pos": [
-        0.14732530800093518,
-        1.6883337074034932
-      ]
+      "pivot_angle": 1.483756,
+      "pivot_velocity": 0.012013,
+      "pivot_accel": 0.000376,
+      "elevator_length": 1.694757,
+      "elevator_velocity": 0.388515,
+      "elevator_accel": -1.2
     },
     {
-      "time": 1.3199999999999987,
+      "time": 1.32,
       "sample_num": 88,
-      "pivot_angle": 1.483936230329139,
-      "pivot_velocity": 0.012018830334063013,
-      "pivot_accel": 0.0003764640552836387,
-      "elevator_length": 1.7004494508066827,
-      "elevator_velocity": 0.37051491285650806,
-      "elevator_accel": -1.1999998206630456,
-      "endeff_pos": [
-        0.14751525036385804,
-        1.6940356896575355
-      ]
+      "pivot_angle": 1.483936,
+      "pivot_velocity": 0.012019,
+      "pivot_accel": 0.000376,
+      "elevator_length": 1.700449,
+      "elevator_velocity": 0.370515,
+      "elevator_accel": -1.2
     },
     {
-      "time": 1.3349999999999986,
+      "time": 1.335,
       "sample_num": 89,
-      "pivot_angle": 1.4841165551433968,
-      "pivot_velocity": 0.012024479633188385,
-      "pivot_accel": 0.0003771190990419611,
-      "elevator_length": 1.7058721745196526,
-      "elevator_velocity": 0.352514915528819,
-      "elevator_accel": -1.1999998257981905,
-      "endeff_pos": [
-        0.14767926940152704,
-        1.6994651077177911
-      ]
+      "pivot_angle": 1.484117,
+      "pivot_velocity": 0.012024,
+      "pivot_accel": 0.000377,
+      "elevator_length": 1.705872,
+      "elevator_velocity": 0.352515,
+      "elevator_accel": -1.2
     },
     {
-      "time": 1.3499999999999985,
+      "time": 1.35,
       "sample_num": 90,
-      "pivot_angle": 1.484296964769564,
-      "pivot_velocity": 0.012030138483263916,
-      "pivot_accel": 0.0003776653364730924,
-      "elevator_length": 1.7110248982721314,
-      "elevator_velocity": 0.3345149181238093,
-      "elevator_accel": -1.1999998306431452,
-      "endeff_pos": [
-        0.14781740836858703,
-        1.7046208074270621
-      ]
+      "pivot_angle": 1.484297,
+      "pivot_velocity": 0.01203,
+      "pivot_accel": 0.000378,
+      "elevator_length": 1.711025,
+      "elevator_velocity": 0.334515,
+      "elevator_accel": -1.2
     },
     {
-      "time": 1.3649999999999984,
+      "time": 1.365,
       "sample_num": 91,
-      "pivot_angle": 1.4844774593380168,
-      "pivot_velocity": 0.012035805512483639,
-      "pivot_accel": 0.0003783315774816118,
-      "elevator_length": 1.7159076220630114,
-      "elevator_velocity": 0.3165149206476144,
-      "elevator_accel": -1.1999998352283192,
-      "endeff_pos": [
-        0.14793045810086763,
-        1.7095096110746455
-      ]
+      "pivot_angle": 1.484477,
+      "pivot_velocity": 0.012036,
+      "pivot_accel": 0.000378,
+      "elevator_length": 1.715908,
+      "elevator_velocity": 0.316515,
+      "elevator_accel": -1.2
     },
     {
-      "time": 1.3799999999999983,
+      "time": 1.38,
       "sample_num": 92,
-      "pivot_angle": 1.4846580389884612,
-      "pivot_velocity": 0.012041484345782562,
-      "pivot_accel": 0.0003796815137211464,
-      "elevator_length": 1.7205203458912433,
-      "elevator_velocity": 0.29851492310399536,
-      "elevator_accel": -1.1999998395738805,
-      "endeff_pos": [
-        0.14801855936348002,
-        1.7141315059222837
-      ]
+      "pivot_angle": 1.484658,
+      "pivot_velocity": 0.012041,
+      "pivot_accel": 0.00038,
+      "elevator_length": 1.72052,
+      "elevator_velocity": 0.298515,
+      "elevator_accel": -1.2
     },
     {
-      "time": 1.3949999999999982,
+      "time": 1.395,
       "sample_num": 93,
-      "pivot_angle": 1.4848387039754771,
-      "pivot_velocity": 0.012047185838127826,
-      "pivot_accel": 0.00038139505884195326,
-      "elevator_length": 1.724863069755834,
-      "elevator_velocity": 0.28051492549642654,
-      "elevator_accel": -1.1999998436979833,
-      "endeff_pos": [
-        0.14808185286475622,
-        1.718486479285956
-      ]
+      "pivot_angle": 1.484839,
+      "pivot_velocity": 0.012047,
+      "pivot_accel": 0.000381,
+      "elevator_length": 1.724863,
+      "elevator_velocity": 0.280515,
+      "elevator_accel": -1.2
     },
     {
-      "time": 1.4099999999999981,
+      "time": 1.41,
       "sample_num": 94,
-      "pivot_angle": 1.4850194546737765,
-      "pivot_velocity": 0.012052908213635031,
-      "pivot_accel": 0.0003810750304293915,
-      "elevator_length": 1.7289357936558423,
-      "elevator_velocity": 0.26251492782812264,
-      "elevator_accel": -1.1999998476170095,
-      "endeff_pos": [
-        0.14812047927574412,
-        1.7225745185341501
-      ]
+      "pivot_angle": 1.485019,
+      "pivot_velocity": 0.012053,
+      "pivot_accel": 0.000381,
+      "elevator_length": 1.728936,
+      "elevator_velocity": 0.262515,
+      "elevator_accel": -1.2
     },
     {
-      "time": 1.424999999999998,
+      "time": 1.425,
       "sample_num": 95,
-      "pivot_angle": 1.4852002911595181,
-      "pivot_velocity": 0.012058621297102287,
-      "pivot_accel": 0.00038126882470420866,
-      "elevator_length": 1.7327385175903733,
-      "elevator_velocity": 0.2445149301017299,
-      "elevator_accel": -1.1999998513447057,
-      "endeff_pos": [
-        0.14813443127032197,
-        1.7263939838953422
-      ]
+      "pivot_angle": 1.4852,
+      "pivot_velocity": 0.012059,
+      "pivot_accel": 0.000381,
+      "elevator_length": 1.732739,
+      "elevator_velocity": 0.244515,
+      "elevator_accel": -1.2
     },
     {
-      "time": 1.439999999999998,
+      "time": 1.44,
       "sample_num": 96,
-      "pivot_angle": 1.4853812133975894,
-      "pivot_velocity": 0.012064348192601895,
-      "pivot_accel": 0.00038575259880753687,
-      "elevator_length": 1.73627124155858,
-      "elevator_velocity": 0.22651493231826042,
-      "elevator_accel": -1.199999854889096,
-      "endeff_pos": [
-        0.14812301143054896,
-        1.7299355822057527
-      ]
+      "pivot_angle": 1.485381,
+      "pivot_velocity": 0.012064,
+      "pivot_accel": 0.000386,
+      "elevator_length": 1.736271,
+      "elevator_velocity": 0.226515,
+      "elevator_accel": -1.2
     },
     {
-      "time": 1.4549999999999979,
+      "time": 1.455,
       "sample_num": 97,
-      "pivot_angle": 1.4855622220881701,
-      "pivot_velocity": 0.012070166523137523,
-      "pivot_accel": 0.0003927941888020305,
-      "elevator_length": 1.7395339655596533,
-      "elevator_velocity": 0.20851493448262215,
-      "elevator_accel": -1.1999998582699902,
-      "endeff_pos": [
-        0.1480873623939003,
-        1.7332102074043816
-      ]
+      "pivot_angle": 1.485562,
+      "pivot_velocity": 0.01207,
+      "pivot_accel": 0.000393,
+      "elevator_length": 1.739534,
+      "elevator_velocity": 0.208515,
+      "elevator_accel": -1.2
     },
     {
-      "time": 1.4699999999999978,
+      "time": 1.47,
       "sample_num": 98,
-      "pivot_angle": 1.485743318791362,
-      "pivot_velocity": 0.012076070265164664,
-      "pivot_accel": 0.0003960382341532726,
-      "elevator_length": 1.7425266895928213,
-      "elevator_velocity": 0.19051493659718835,
-      "elevator_accel": -1.1999998614983456,
-      "endeff_pos": [
-        0.14802762344203965,
-        1.7362178471844039
-      ]
+      "pivot_angle": 1.485743,
+      "pivot_velocity": 0.012076,
+      "pivot_accel": 0.000396,
+      "elevator_length": 1.742527,
+      "elevator_velocity": 0.190515,
+      "elevator_accel": -1.2
     },
     {
-      "time": 1.4849999999999977,
+      "time": 1.485,
       "sample_num": 99,
-      "pivot_angle": 1.485924504408919,
-      "pivot_velocity": 0.012082019052482544,
-      "pivot_accel": 0.00039732268306196813,
-      "elevator_length": 1.7452494136573482,
-      "elevator_velocity": 0.1725149386641756,
-      "elevator_accel": -1.1999998645841727,
-      "endeff_pos": [
-        0.1479439349624266,
-        1.7389584891931769
-      ]
+      "pivot_angle": 1.485925,
+      "pivot_velocity": 0.012082,
+      "pivot_accel": 0.000397,
+      "elevator_length": 1.745249,
+      "elevator_velocity": 0.172515,
+      "elevator_accel": -1.2
     },
     {
-      "time": 1.4999999999999976,
+      "time": 1.5,
       "sample_num": 100,
-      "pivot_angle": 1.486105779372571,
-      "pivot_velocity": 0.012087959745374707,
-      "pivot_accel": 0.000383932771992652,
-      "elevator_length": 1.7477021377525304,
-      "elevator_velocity": 0.15451494068565727,
-      "elevator_accel": -1.1999998675366323,
-      "endeff_pos": [
-        0.147836438405794,
-        1.7414321210368118
-      ]
+      "pivot_angle": 1.486106,
+      "pivot_velocity": 0.012088,
+      "pivot_accel": 0.000384,
+      "elevator_length": 1.747702,
+      "elevator_velocity": 0.154515,
+      "elevator_accel": -1.2
     },
     {
-      "time": 1.5149999999999975,
+      "time": 1.515,
       "sample_num": 101,
-      "pivot_angle": 1.4862871416536443,
-      "pivot_velocity": 0.012093585986849557,
-      "pivot_accel": 0.00032006784803514536,
-      "elevator_length": 1.7498848618776957,
-      "elevator_velocity": 0.1365149426635747,
-      "elevator_accel": -1.1999998703641244,
-      "endeff_pos": [
-        0.14770527936732322,
-        1.7436387300200764
-      ]
+      "pivot_angle": 1.486287,
+      "pivot_velocity": 0.012094,
+      "pivot_accel": 0.00032,
+      "elevator_length": 1.749885,
+      "elevator_velocity": 0.136515,
+      "elevator_accel": -1.2
     },
     {
-      "time": 1.5299999999999974,
+      "time": 1.53,
       "sample_num": 102,
-      "pivot_angle": 1.4864685798016546,
-      "pivot_velocity": 0.01209788398960893,
-      "pivot_accel": 0.00014719804265944436,
-      "elevator_length": 1.7517975860322008,
-      "elevator_velocity": 0.11851494459824455,
-      "elevator_accel": -1.1999998730702344,
-      "endeff_pos": [
-        0.14754973791336817,
-        1.7455682069764458
-      ]
+      "pivot_angle": 1.486469,
+      "pivot_velocity": 0.012098,
+      "pivot_accel": 0.000147,
+      "elevator_length": 1.751798,
+      "elevator_velocity": 0.118515,
+      "elevator_accel": -1.2
     },
     {
-      "time": 1.5449999999999973,
+      "time": 1.545,
       "sample_num": 103,
-      "pivot_angle": 1.4866500623220493,
-      "pivot_velocity": 0.012099175145472863,
-      "pivot_accel": -8.243863006580674e-05,
-      "elevator_length": 1.753440310215431,
-      "elevator_velocity": 0.10051494649266575,
-      "elevator_accel": -1.1999998756657901,
-      "endeff_pos": [
-        0.14737069657542504,
-        1.74722818541478
-      ]
+      "pivot_angle": 1.48665,
+      "pivot_velocity": 0.012099,
+      "pivot_accel": -8.2e-05,
+      "elevator_length": 1.75344,
+      "elevator_velocity": 0.100515,
+      "elevator_accel": -1.2
     },
     {
-      "time": 1.5599999999999972,
+      "time": 1.56,
       "sample_num": 104,
-      "pivot_angle": 1.4868315417582314,
-      "pivot_velocity": 0.012098209629051736,
-      "pivot_accel": 0.00037330073429985396,
-      "elevator_length": 1.7548130344267947,
-      "elevator_velocity": 0.0825149483488119,
-      "elevator_accel": -1.1999998781583168,
-      "endeff_pos": [
-        0.1471685905665705,
-        1.748621089685041
-      ]
+      "pivot_angle": 1.486832,
+      "pivot_velocity": 0.012098,
+      "pivot_accel": 0.000373,
+      "elevator_length": 1.754813,
+      "elevator_velocity": 0.082515,
+      "elevator_accel": -1.2
     },
     {
-      "time": 1.574999999999997,
+      "time": 1.575,
       "sample_num": 105,
-      "pivot_angle": 1.4870130681649016,
-      "pivot_velocity": 0.012111889767587128,
-      "pivot_accel": 0.0038651820993679557,
-      "elevator_length": 1.7559157586657244,
-      "elevator_velocity": 0.06451495016818244,
-      "elevator_accel": -1.199999880553778,
-      "endeff_pos": [
-        0.14694344176517296,
-        1.7497469177740559
-      ]
+      "pivot_angle": 1.487013,
+      "pivot_velocity": 0.012112,
+      "pivot_accel": 0.003864,
+      "elevator_length": 1.755916,
+      "elevator_velocity": 0.064515,
+      "elevator_accel": -1.2
     },
     {
-      "time": 1.589999999999997,
+      "time": 1.59,
       "sample_num": 106,
-      "pivot_angle": 1.4871952069866576,
-      "pivot_velocity": 0.012188666592091087,
-      "pivot_accel": 0.005339151579691941,
-      "elevator_length": 1.7567484829316742,
-      "elevator_velocity": 0.04651495195219134,
-      "elevator_accel": -1.1999998828576888,
-      "endeff_pos": [
-        0.14669441973562672,
-        1.750605739046575
-      ]
+      "pivot_angle": 1.487195,
+      "pivot_velocity": 0.012189,
+      "pivot_accel": 0.005333,
+      "elevator_length": 1.756748,
+      "elevator_velocity": 0.046515,
+      "elevator_accel": -1.2
     },
     {
-      "time": 1.6049999999999969,
+      "time": 1.605,
       "sample_num": 107,
-      "pivot_angle": 1.4873784675763566,
-      "pivot_velocity": 0.012144775065040614,
-      "pivot_accel": -0.11726845151313052,
-      "elevator_length": 1.7573112072241208,
-      "elevator_velocity": 0.028514953702173534,
-      "elevator_accel": -1.1999998850751596,
-      "endeff_pos": [
-        0.14642133136245572,
-        1.7511975690224186
-      ]
+      "pivot_angle": 1.487378,
+      "pivot_velocity": 0.012145,
+      "pivot_accel": -0.11728,
+      "elevator_length": 1.757311,
+      "elevator_velocity": 0.028515,
+      "elevator_accel": -1.2
     },
     {
-      "time": 1.6199999999999968,
+      "time": 1.62,
       "sample_num": 108,
-      "pivot_angle": 1.4875411570403845,
-      "pivot_velocity": 0.008310558922384616,
-      "pivot_accel": -0.945377421219183,
-      "elevator_length": 1.7576039315425602,
-      "elevator_velocity": 0.010514955418680827,
-      "elevator_accel": -1.1999998872091964,
-      "endeff_pos": [
-        0.1461621059839272,
-        1.751513173989867
-      ]
+      "pivot_angle": 1.487541,
+      "pivot_velocity": 0.00831,
+      "pivot_accel": -0.945343,
+      "elevator_length": 1.757604,
+      "elevator_velocity": 0.010515,
+      "elevator_accel": -1.2
     },
     {
-      "time": 1.6349999999999967,
+      "time": 1.635,
       "sample_num": 109,
-      "pivot_angle": 1.4875597688054827,
-      "pivot_velocity": -0.006166266139029028,
-      "pivot_accel": 0.757171935920594,
-      "elevator_length": 1.7576266558865303,
-      "elevator_velocity": -0.00748504289005447,
-      "elevator_accel": 0.919107980052295,
-      "endeff_pos": [
-        0.14605672882730222,
-        1.7516015815749393
-      ]
+      "pivot_angle": 1.48756,
+      "pivot_velocity": -0.006166,
+      "pivot_accel": 0.757143,
+      "elevator_length": 1.757627,
+      "elevator_velocity": -0.007485,
+      "elevator_accel": 0.919108
     },
     {
-      "time": 1.6369062759910362,
+      "time": 1.636906,
       "sample_num": 110,
-      "pivot_angle": 1.487546218016742,
-      "pivot_velocity": -0.008050760990513826,
-      "pivot_accel": 0.9885739842199521,
-      "elevator_length": 1.7576102069962893,
-      "elevator_velocity": -0.0097725738644576,
-      "elevator_accel": 1.1999998872963207,
-      "endeff_pos": [
-        0.14604406276336535,
-        1.7516119852298304
-      ]
+      "pivot_angle": 1.487546,
+      "pivot_velocity": -0.00805,
+      "pivot_accel": 0.988536,
+      "elevator_length": 1.75761,
+      "elevator_velocity": -0.009773,
+      "elevator_accel": 1.2
     }
   ],
   "N_total": 110

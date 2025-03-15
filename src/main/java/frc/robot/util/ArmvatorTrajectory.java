@@ -14,7 +14,6 @@ import java.util.function.Consumer;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Timer;
@@ -170,11 +169,7 @@ public record ArmvatorTrajectory(String name, List<ArmvatorSample> samples) {
         sample.get("elevator_length").getAsDouble(),
         sample.get("elevator_velocity").getAsDouble(),
         sample.get("pivot_accel").getAsDouble(),
-        sample.get("elevator_accel").getAsDouble(),
-        new Translation2d(
-          sample.getAsJsonArray("endeff_pos").get(0).getAsDouble(),
-          sample.getAsJsonArray("endeff_pos").get(1).getAsDouble()
-        )
+        sample.get("elevator_accel").getAsDouble()
       ));
     }
 
