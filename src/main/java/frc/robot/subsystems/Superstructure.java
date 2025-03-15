@@ -64,7 +64,7 @@ public class Superstructure {
         var pivotAngle = Math.atan2(targetEndeffPos.getY(), targetEndeffPos.getX());
         traj = new ArmvatorTrajectory(
           pos.name(),
-          List.of(new ArmvatorSample(0, 0, pivotAngle, 0, elevatorLength, 0, 0, 0, targetEndeffPos))
+          List.of(new ArmvatorSample(0, 0, pivotAngle, 0, elevatorLength, 0, 0, 0))
         );
       }
       Logger.recordOutput("Superstructure/goToFrom", currentPos);
