@@ -64,7 +64,9 @@ public class RobotContainer {
     swerve.setDefaultCommand(new Teleop(swerve));
     pivot.setDefaultCommand(new ManualPivot(pivot));
     telescope.setDefaultCommand(telescope.homeIfNeeded().andThen(new ManualTelescope(telescope)));
+    // telescope.setDefaultCommand(telescope.run(() -> {telescope.setVoltage(0);}));
     wrist.setDefaultCommand(new WristNTControl(wrist));
+    // wrist.setDefaultCommand(wrist.run(() -> {wrist.setVoltage(0);}));
 
     sysidAuto.addSysidRoutines("Swerve", swerve.getDriveSysIdRoutine());
     sysidAuto.addSysidRoutines("Swerve Angular", swerve.getAngularSysIdRoutine());
@@ -141,6 +143,7 @@ public class RobotContainer {
   }
 
   public void setAllBrakeCoast(boolean willBrake) {
+    System.out.println("Brake Coast function triggering");
     pivot.setBrakeCoast(willBrake);
     telescope.setBrakeCoast(willBrake);
     swerve.setBrakeCoast(willBrake);

@@ -43,6 +43,9 @@ public class Wrist extends SubsystemBase {
     wristEncoder.setPosition(wristAbsEncoder.getPosition());
     pid.setGoal(0);
     pid.reset(0, 0);
+    // pid.setGoal(getAngle().getRadians());
+    // pid.reset(getAngle().getRadians(), 0);\][
+    
   }
 
   @Override
@@ -50,7 +53,7 @@ public class Wrist extends SubsystemBase {
     if (DriverStation.isDisabled())
       wristEncoder.setPosition(wristAbsEncoder.getPosition());
 
-    ff = WRIST_FF.calculate(pid.getGoal().position, pid.getGoal().velocity);
+    ff = WRIST_FF.calculate(pid.getSetpoint().position + 2.8076, pid.getSetpoint().velocity);
 
     output = pid.calculate(getAngle().getRadians()) + ff;
     if (manualVoltage != null) {
@@ -85,8 +88,8 @@ public class Wrist extends SubsystemBase {
     wristConfig.signals.appliedOutputPeriodMs(10);
     wristConfig.encoder.positionConversionFactor(WRIST_POS_FACTOR);
     wristConfig.encoder.velocityConversionFactor(WRIST_VEL_FACTOR);
-    wristConfig.absoluteEncoder.velocityConversionFactor(WRIST_VEL_FACTOR);
-    wristConfig.absoluteEncoder.positionConversionFactor(WRIST_POS_FACTOR);
+    wristConfig.absoluteEncoder.velocityConversionFactor(WRIST_ABS_VEL_FACTOR);
+    wristConfig.absoluteEncoder.positionConversionFactor(WRIST_ABS_POS_FACTOR);
     wristConfig.absoluteEncoder.zeroCentered(true);
 
     wrist.configure(wristConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
@@ -96,6 +99,11 @@ public class Wrist extends SubsystemBase {
   @AutoLogOutput
   public Rotation2d getAngle() {
     return Rotation2d.fromRadians(wristAbsEncoder.getPosition());
+  }
+
+  @AutoLogOutput
+  public Rotation2d getIntregratedEncoderAngle() {
+    return Rotation2d.fromRadians(wristEncoder.getPosition());
   }
 
   @AutoLogOutput

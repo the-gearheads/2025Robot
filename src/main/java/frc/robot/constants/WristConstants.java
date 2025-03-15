@@ -9,12 +9,14 @@ public class WristConstants {
 
   public static final int WRIST_CURRENT_LIMIT = 60;
  
-  public static final double WRIST_GEAR_RATIO = 1;
-  public static final double WRIST_POS_FACTOR = WRIST_GEAR_RATIO * 2 * Math.PI;
-  public static final double WRIST_VEL_FACTOR = (WRIST_GEAR_RATIO * 2 * Math.PI) / 60;
+  public static final double WRIST_GEAR_RATIO = 225.0/1.0;
+  public static final double WRIST_POS_FACTOR = (1.0/WRIST_GEAR_RATIO) * (2 * Math.PI);
+  public static final double WRIST_VEL_FACTOR = ((1.0/WRIST_GEAR_RATIO) * (2 * Math.PI)) / 60;
+  public static final double WRIST_ABS_POS_FACTOR = 2 * Math.PI;
+  public static final double WRIST_ABS_VEL_FACTOR = (2 * Math.PI) / 60;
   
-  public static final double[] WRIST_PID = {9, 0, 0};
-  public static final ArmFeedforward WRIST_FF = new ArmFeedforward(0, 0, 0, 0);
+  public static final double[] WRIST_PID = {0.75229, 0, 0.17427};
+  public static final ArmFeedforward WRIST_FF = new ArmFeedforward(0.49622, 0.015562, 0.46044, 0.12305);
   public static final Constraints WRIST_CONSTRAINTS = new Constraints(6, 6);
 
   public static final double MIN_WRIST_ANGLE = Units.degreesToRadians(-74);
