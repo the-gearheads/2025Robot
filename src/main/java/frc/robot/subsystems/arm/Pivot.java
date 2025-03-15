@@ -95,11 +95,11 @@ public class Pivot extends SubsystemBase {
     Logger.recordOutput("Pivot/pidVolts", pidOutput);
     double output = pidOutput + ff;
 
-    if(mode != RunMode.PROFILED_PID) {
+    if(mode != RunMode.PROFILED_PID || DriverStation.isDisabled()) {
       profiledPid.reset(getAngleRad());
     } 
 
-    if(mode != RunMode.TRAJECTORY) {
+    if(mode != RunMode.TRAJECTORY || DriverStation.isDisabled()) {
       pid.reset();
     }
 

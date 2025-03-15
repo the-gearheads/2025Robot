@@ -21,6 +21,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -114,11 +115,11 @@ public class Telescope extends SubsystemBase {
     Logger.recordOutput("Telescope/pidVolts", pidOutput);
     double output = ff + pidOutput;
 
-    if(mode != RunMode.PROFILED_PID) {
+    if(mode != RunMode.PROFILED_PID || DriverStation.isDisabled()) {
       profiledPid.reset(getExtension());
     } 
 
-    if(mode != RunMode.TRAJECTORY) {
+    if(mode != RunMode.TRAJECTORY || DriverStation.isDisabled()) {
       pid.reset();
     }
 
