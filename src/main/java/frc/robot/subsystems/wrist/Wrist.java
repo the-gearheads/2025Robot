@@ -44,7 +44,7 @@ public class Wrist extends SubsystemBase {
     pid.setGoal(0);
     pid.reset(0, 0);
     // pid.setGoal(getAngle().getRadians());
-    // pid.reset(getAngle().getRadians(), 0);\][
+    // pid.reset(getAngle().getRadians(), 0);
     
   }
 
@@ -53,9 +53,17 @@ public class Wrist extends SubsystemBase {
     if (DriverStation.isDisabled())
       wristEncoder.setPosition(wristAbsEncoder.getPosition());
 
-    ff = WRIST_FF.calculate(pid.getSetpoint().position + 2.8076, pid.getSetpoint().velocity);
 
-    output = pid.calculate(getIntregratedEncoderAngle().getRadians()) + ff;
+    
+    double ff = WRIST_FF.calculate(pid.getSetpoint().position + WRIST_FF_OFFSET_RAD, pid.getSetpoint().velocity);
+
+    double pidVolts = pid.calculate(getIntregratedEncoderAngle().getRadians());
+    double output = ff + pidVolts;
+
+    Logger.recordOutput("Wrist/ffVolts", ff);
+    Logger.recordOutput("Wrist/pidVolts", pidVolts);
+
+    // output = 0;
     if (manualVoltage != null) {
       Logger.recordOutput("Wrist/manualVoltage", manualVoltage);
       output = manualVoltage;
