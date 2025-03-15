@@ -24,10 +24,9 @@ public class Autos {
       swerve
     );
     chooser = new AutoChooser();
-    chooser.addRoutine("Epic Routine", this::epicRoutine);
-    chooser.addRoutine("Less epic routine", this::lessEpicRoutine);
-    chooser.addRoutine("Alignment thing", this::testRoutine);
     chooser.addRoutine("Auto Routine 01", this::autoRoutine01);
+    chooser.addRoutine("Auto Routine 02", this::autoRoutine02);
+    chooser.addRoutine("Auto Routine 03", this::autoRoutine03);
     SmartDashboard.putData("AutoChooser", chooser);
   }
 
@@ -85,4 +84,28 @@ public class Autos {
     );
     return routine;
   }
+    public AutoRoutine autoRoutine02() {
+      var routine = factory.newRoutine("Auto Routine 02");
+      AutoTrajectory lessEpicTraj = routine.trajectory("Auto Routine Path 02");
+  
+      routine.active().onTrue(
+        Commands.sequence(
+          lessEpicTraj.resetOdometry(),
+          lessEpicTraj.cmd()
+        )
+      );
+    return routine;
+  }
+  public AutoRoutine autoRoutine03() {
+    var routine = factory.newRoutine("Auto Routine 03");
+    AutoTrajectory lessEpicTraj = routine.trajectory("Auto Routine Path 03");
+
+    routine.active().onTrue(
+      Commands.sequence(
+        lessEpicTraj.resetOdometry(),
+        lessEpicTraj.cmd()
+      )
+    );
+  return routine;
+}
 }
