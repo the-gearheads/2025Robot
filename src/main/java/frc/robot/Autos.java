@@ -14,6 +14,10 @@ public class Autos {
   AutoFactory factory;
   AutoChooser chooser;
 
+  String nameCenterReef = "Auto Center->Reef Routine";
+  String nameLeftReefFeederReef = "Auto Left->Reef->Feeder->Reef Routine";
+  String nameRightReefFeederReef = "Auto Right->Reef->Feeder->Reef Routine";
+
   public Autos(Swerve swerve) {
     this.swerve = swerve;
     factory = new AutoFactory(
@@ -24,9 +28,9 @@ public class Autos {
       swerve
     );
     chooser = new AutoChooser();
-    chooser.addRoutine("Auto Routine 01", this::autoRoutine01);
-    chooser.addRoutine("Auto Routine 02", this::autoRoutine02);
-    chooser.addRoutine("Auto Routine 03", this::autoRoutine03);
+    chooser.addRoutine(nameCenterReef, this::centerReef);
+    chooser.addRoutine(nameLeftReefFeederReef, this::leftReefFeederReef);
+    chooser.addRoutine(nameRightReefFeederReef, this::rightReefFeederReef);
     SmartDashboard.putData("AutoChooser", chooser);
   }
 
@@ -34,34 +38,9 @@ public class Autos {
     return chooser.selectedCommand();
   }
 
-  public AutoRoutine testRoutine() {
-    var routine = factory.newRoutine("test path 2");
-
-    AutoTrajectory epicTraj = routine.trajectory("Alignment path");
-    routine.active().onTrue(
-      Commands.sequence(
-        epicTraj.resetOdometry(),
-        epicTraj.cmd()
-      )
-    );
-    return routine;  }
-
-  public AutoRoutine epicRoutine() {
-    var routine = factory.newRoutine("epic");
-
-    AutoTrajectory epicTraj = routine.trajectory("epic path");
-    routine.active().onTrue(
-      Commands.sequence(
-        epicTraj.resetOdometry(),
-        epicTraj.cmd()
-      )
-    );
-    return routine;
-  }
-
-  public AutoRoutine lessEpicRoutine() {
-    var routine = factory.newRoutine("less epic");
-    AutoTrajectory lessEpicTraj = routine.trajectory("less epic path");
+  public AutoRoutine centerReef() {
+    AutoRoutine routine = factory.newRoutine(nameCenterReef);
+    AutoTrajectory lessEpicTraj = routine.trajectory("center_reef");
 
     routine.active().onTrue(
       Commands.sequence(
@@ -72,9 +51,9 @@ public class Autos {
     return routine;
   }
 
-  public AutoRoutine autoRoutine01() {
-    var routine = factory.newRoutine("Auto Routine 01");
-    AutoTrajectory lessEpicTraj = routine.trajectory("Auto Routine Path 01");
+  public AutoRoutine leftReefFeederReef() {
+    AutoRoutine routine = factory.newRoutine(nameLeftReefFeederReef);
+    AutoTrajectory lessEpicTraj = routine.trajectory("left_reef_feeder_reef");
 
     routine.active().onTrue(
       Commands.sequence(
@@ -82,23 +61,19 @@ public class Autos {
         lessEpicTraj.cmd()
       )
     );
+
+    // Add command to place corral on top level of reef
+
+    // Add command to intake when at feeder station
+
+    // Add command to place corral on top level of reef
+
     return routine;
   }
-    public AutoRoutine autoRoutine02() {
-      var routine = factory.newRoutine("Auto Routine 02");
-      AutoTrajectory lessEpicTraj = routine.trajectory("Auto Routine Path 02");
-  
-      routine.active().onTrue(
-        Commands.sequence(
-          lessEpicTraj.resetOdometry(),
-          lessEpicTraj.cmd()
-        )
-      );
-    return routine;
-  }
-  public AutoRoutine autoRoutine03() {
-    var routine = factory.newRoutine("Auto Routine 03");
-    AutoTrajectory lessEpicTraj = routine.trajectory("Auto Routine Path 03");
+
+  public AutoRoutine rightReefFeederReef() {
+    AutoRoutine routine = factory.newRoutine(nameRightReefFeederReef);
+    AutoTrajectory lessEpicTraj = routine.trajectory("right_reef_feeder_reef");
 
     routine.active().onTrue(
       Commands.sequence(
@@ -106,6 +81,14 @@ public class Autos {
         lessEpicTraj.cmd()
       )
     );
-  return routine;
-}
+    
+    // Add command to place corral on top level of reef
+
+    // Add command to intake when at feeder station
+
+    // Add command to place corral on top level of reef
+
+    return routine;
+  }
+
 }
