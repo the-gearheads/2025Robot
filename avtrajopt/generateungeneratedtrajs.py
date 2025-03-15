@@ -23,7 +23,8 @@ places = {
   "L2": {"pose": endeff_pos(0.125064, 51.503), "vel": [0, 0]},  # good untested
   "L3": {"pose": endeff_pos(0.0751, 84.13681249), "vel": [0, 0]},  # gooduntested
   "L4": {"pose": endeff_pos(0.90657, 85.97), "vel": [0, 0]},  # gooduntested
-
+  "AlgaeL3": {"pose": endeff_pos(0.11378, 90), "vel": [0, 0]},
+  "AlgaeL2": {"pose": endeff_pos(0.31199, 48.69), "vel": [0, 0]},
   "HP": {"pose": endeff_pos(0.04839, 38.73), "vel": [0, 0]},  # good
   "GROUND_INTAKE": {"pose": endeff_pos(0.11165, 14.06), "vel": [0, 0]},
   "PROCESSOR": {"pose": endeff_pos(0.0476, 30.45), "vel": [0, 0]},
