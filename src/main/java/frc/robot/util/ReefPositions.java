@@ -12,7 +12,6 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import frc.robot.constants.MiscConstants;
 import frc.robot.subsystems.vision.Vision;
 
 public class ReefPositions {
@@ -28,13 +27,17 @@ public class ReefPositions {
 
   // Distance from center of robot to center of reef
   // Found by taking distance from tag 18 to center and adding offset from reef
-  private static final Distance REEF_APOTHEM = Meters.of(
-          Vision.field.getTagPose(18).get().toPose2d().getTranslation().getDistance(REEF_CENTER_BLUE))
-          .plus(Meters.of(MiscConstants.DISTANCE_TO_REEF));
-
+  // private static final Distance REEF_APOTHEM = Meters.of(
+  //         Vision.field.getTagPose(18).get().toPose2d().getTranslation().getDistance(REEF_CENTER_BLUE))
+  //         .plus(Meters.of(MiscConstants.DISTANCE_TO_REEF));
+  // private static final Distance REEF_APOTHEM = Meters.of(
+  //         Vision.field.getTagPose(18).get().toPose2d().getTranslation().getDistance(REEF_CENTER_BLUE))
+  //         .plus(Meters.of(MiscConstants.DISTANCE_TO_REEF));
+  private static final Distance REEF_APOTHEM = Inches.of(33.75 + 15.75 + 2);
+// 33 .75 + 15.75
   // translation to move from centered on a side to scoring position for the left branch
   private static final Translation2d CENTERED_TO_LEFT_BRANCH = new Translation2d(Meters.of(0),
-          Inches.of(12.94 / 2));
+          Inches.of(6.5));
 
   public static Pose2d getReefPose(int side, int relativePos) {
       // determine whether to use red or blue reef position

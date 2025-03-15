@@ -11,8 +11,8 @@ public enum SuperstructurePosition {
   L3(ArmvatorPosition.L3, Units.degreesToRadians(-36.0)), // new good
   L4(ArmvatorPosition.L4, Units.degreesToRadians(-62.614)), // new good
   NET(ArmvatorPosition.NET, Units.degreesToRadians(40)), // untested
-  GROUND_INTAKE(ArmvatorPosition.GROUND_INTAKE, Units.degreesToRadians(110)), 
-  PROCESSOR(ArmvatorPosition.PROCESSOR, Units.degreesToRadians(-10));
+  GROUND_INTAKE(ArmvatorPosition.GROUND_INTAKE, Units.degreesToRadians(113)), 
+  PROCESSOR(ArmvatorPosition.PROCESSOR, Units.degreesToRadians(115.55));
 
   public final ArmvatorPosition armvatorPosition;
   public final Rotation2d wristAngle;

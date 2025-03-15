@@ -91,29 +91,29 @@ public class RobotContainer {
     // Controllers.driverController.getYBtn().onTrue(new PivotNTControl(pivot));
     // Controllers.driverController.getBBtn().onTrue(new ManualPivot(pivot));
     // teleop controlls
-    // Controllers.driverController.getYBtn().onTrue(
-    //   superStructure.goTo(SuperstructurePosition.L4)
-    // );
-
-    // Controllers.driverController.getBBtn().onTrue(
-    //   superStructure.goTo(SuperstructurePosition.L3)
-    // );
-
-    // Controllers.driverController.getBackButton().onTrue(
-    //   superStructure.goTo(SuperstructurePosition.NET)
-    // );
-
-    // Controllers.driverController.getStartButton().onTrue(
-    //   superStructure.goTo(SuperstructurePosition.GROUND_INTAKE)
-    // );
-
-    Controllers.driverController.getLeftPaddle().onTrue(
-      superStructure.goTo(SuperstructurePosition.NET)
+    Controllers.driverController.getYBtn().onTrue(
+      superStructure.goTo(SuperstructurePosition.L4)
     );
 
-    // Controllers.driverController.getRightPaddle().onTrue(
-    //   superStructure.goTo(SuperstructurePosition.L2)
-    // );
+    Controllers.driverController.getBBtn().onTrue(
+      superStructure.goTo(SuperstructurePosition.L3)
+    );
+
+    Controllers.driverController.getBackButton().onTrue(
+      superStructure.goTo(SuperstructurePosition.L2)
+    );
+
+    Controllers.driverController.getStartButton().onTrue(
+      superStructure.goTo(SuperstructurePosition.L1)
+    );
+
+    Controllers.driverController.getLeftPaddle().onTrue(
+      superStructure.goTo(SuperstructurePosition.HP)
+    );
+
+    Controllers.driverController.getRightPaddle().onTrue(
+      superStructure.goTo(SuperstructurePosition.GROUND_INTAKE)
+    );
     
     Controllers.driverController.getLeftBumper().onTrue(Commands.runOnce(() -> { swerve.setPose(new Pose2d(1, 1, Rotation2d.fromDegrees(0))); }));
     Controllers.driverController.getRightBumper().whileTrue(new AlignToPose(swerve));
@@ -134,9 +134,9 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    return autos.getAutonomousRoutine();
+    // return autos.getAutonomousRoutine();
     // return sysidAuto.get();
-    // return Swerve.wheelRadiusCharacterization(swerve);
+    return Swerve.wheelRadiusCharacterization(swerve);
   }
 
   public double getCurrentDrawSim() {
@@ -144,7 +144,6 @@ public class RobotContainer {
   }
 
   public void setAllBrakeCoast(boolean willBrake) {
-    System.out.println("Brake Coast function triggering");
     pivot.setBrakeCoast(willBrake);
     telescope.setBrakeCoast(willBrake);
     swerve.setBrakeCoast(willBrake);

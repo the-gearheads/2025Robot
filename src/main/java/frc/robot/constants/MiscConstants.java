@@ -7,7 +7,7 @@ public final class MiscConstants {
   public static final double JOYSTICK_DEADBAND = 0.005;
   public static final int BREAK_COAST_BUTTON_PORT = 9;
 
-  public static final double DISTANCE_TO_REEF = 0.55;
+  public static final double DISTANCE_TO_REEF = Units.inchesToMeters(15.75);
   public static final double AUTO_ALIGN_FILTER_ANGLE = Units.degreesToRadians(70);
   public static final double REEF_FACE_LENGTH = Units.inchesToMeters(36.792600);
   public static final double MAX_REEF_LINEUP_DIST = 1.5;

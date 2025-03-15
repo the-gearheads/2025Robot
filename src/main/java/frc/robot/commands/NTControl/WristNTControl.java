@@ -16,7 +16,7 @@ public class WristNTControl extends Command {
 
   @Override
   public void initialize() {
-    SmartDashboard.putNumber(NTPath, Units.radiansToDegrees(wrist.getAngle().getRadians()));
+    SmartDashboard.putNumber(NTPath, Units.radiansToDegrees(wrist.getGoalAngle().getRadians()));
   }
 
   @Override

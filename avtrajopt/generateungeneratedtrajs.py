@@ -25,8 +25,8 @@ places = {
   "L4": {"pose": endeff_pos(0.90657, 85.97), "vel": [0, 0]},  # gooduntested
 
   "HP": {"pose": endeff_pos(0.04839, 38.73), "vel": [0, 0]},  # good
-  "GROUND_INTAKE": {"pose": endeff_pos(0.0527, 15), "vel": [0, 0]},
-  "PROCESSOR": {"pose": [front_x, 0.8], "vel": [0, 0]},
+  "GROUND_INTAKE": {"pose": endeff_pos(0.11165, 14.06), "vel": [0, 0]},
+  "PROCESSOR": {"pose": endeff_pos(0.0476, 30.45), "vel": [0, 0]},
   "NET": {"pose": endeff_pos(1.0275, 90), "vel": [0, 0]},
 }
 
