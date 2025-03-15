@@ -13,7 +13,7 @@ public class Autos {
   Swerve swerve;
   AutoFactory factory;
   AutoChooser chooser;
-  
+
   public Autos(Swerve swerve) {
     this.swerve = swerve;
     factory = new AutoFactory(
@@ -27,6 +27,7 @@ public class Autos {
     chooser.addRoutine("Epic Routine", this::epicRoutine);
     chooser.addRoutine("Less epic routine", this::lessEpicRoutine);
     chooser.addRoutine("Alignment thing", this::testRoutine);
+    chooser.addRoutine("Auto Routine 01", this::autoRoutine01);
     SmartDashboard.putData("AutoChooser", chooser);
   }
 
@@ -62,6 +63,19 @@ public class Autos {
   public AutoRoutine lessEpicRoutine() {
     var routine = factory.newRoutine("less epic");
     AutoTrajectory lessEpicTraj = routine.trajectory("less epic path");
+
+    routine.active().onTrue(
+      Commands.sequence(
+        lessEpicTraj.resetOdometry(),
+        lessEpicTraj.cmd()
+      )
+    );
+    return routine;
+  }
+
+  public AutoRoutine autoRoutine01() {
+    var routine = factory.newRoutine("Auto Routine 01");
+    AutoTrajectory lessEpicTraj = routine.trajectory("Auto Routine Path 01");
 
     routine.active().onTrue(
       Commands.sequence(
