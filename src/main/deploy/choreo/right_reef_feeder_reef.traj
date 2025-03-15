@@ -111,5 +111,6 @@
     {"t":2.93781, "x":3.449, "y":2.78274, "heading":-2.12245, "vx":0.0, "vy":0.0, "omega":0.0, "ax":0.0, "ay":0.0, "alpha":0.0, "fx":[0.0,0.0,0.0,0.0], "fy":[0.0,0.0,0.0,0.0]}],
   "splits":[0,28]
  },
- "events":[]
+ "events":[
+   {"name":"ArmL4", "from":{"target":0, "targetTimestamp":0.0, "offset":{"exp":"0.4 s", "val":0.4}}, "event":null}]
 }

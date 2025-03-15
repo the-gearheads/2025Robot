@@ -1,6 +1,5 @@
 package frc.robot.commands;
 
-import static frc.robot.constants.SwerveConstants.MAX_ROBOT_ROT_SPEED;
 import static frc.robot.constants.SwerveConstants.MAX_ROBOT_TRANS_SPEED;
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;

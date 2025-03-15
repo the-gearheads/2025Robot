@@ -39,7 +39,7 @@ public class RobotContainer {
   private final Wrist wrist;
   private final Superstructure superStructure;
   private final Intake intake;
-  private final Autos autos = new Autos(swerve);
+  private final Autos autos;
   private final SysidAutoPicker sysidAuto = new SysidAutoPicker();
   private final ObjectiveTracker tracker;
   private final MechanismViz viz;
@@ -59,6 +59,7 @@ public class RobotContainer {
     }
     tracker = new ObjectiveTracker(swerve);
     superStructure = new Superstructure(pivot, telescope, wrist);
+    autos = new Autos(swerve, superStructure, intake);
     viz = new MechanismViz(swerve, pivot, telescope, wrist);
     // swerve.setDefaultCommand(new AlignToPose(swerve, tracker::getCoralObjective));
     swerve.setDefaultCommand(new Teleop(swerve));

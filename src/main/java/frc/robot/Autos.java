@@ -7,10 +7,15 @@ import choreo.auto.AutoTrajectory;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import frc.robot.subsystems.Superstructure;
+import frc.robot.subsystems.SuperstructurePosition;
+import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.swerve.Swerve;
 
 public class Autos {
   Swerve swerve;
+  Superstructure superstructure;
+  Intake intake;
   AutoFactory factory;
   AutoChooser chooser;
 
@@ -18,8 +23,10 @@ public class Autos {
   String nameLeftReefFeederReef = "Auto Left->Reef->Feeder->Reef Routine";
   String nameRightReefFeederReef = "Auto Right->Reef->Feeder->Reef Routine";
 
-  public Autos(Swerve swerve) {
+  public Autos(Swerve swerve, Superstructure superstructure, Intake intake) {
     this.swerve = swerve;
+    this.superstructure = superstructure;
+    this.intake = intake;
     factory = new AutoFactory(
       swerve::getPose,
       swerve::setPose,
@@ -90,6 +97,7 @@ public class Autos {
         trajectoryReefToFromFeeder.cmd()
       )
     );
+    trajectoryStartToReef.atTime("ArmL4").onTrue(superstructure.goTo(SuperstructurePosition.L4));
     
     // Add command to place corral on top level of reef
     // NOTE: may need to add an "alignment" in the case it is not perfectly aligned in relation to the april tag
