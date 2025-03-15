@@ -48,6 +48,10 @@ public class Autos {
         lessEpicTraj.cmd()
       )
     );
+
+    // Add command to place corral on top level of reef
+    // NOTE: may need to add an "alignment" in the case it is not perfectly aligned in relation to the april tag
+
     return routine;
   }
 
@@ -63,10 +67,12 @@ public class Autos {
     );
 
     // Add command to place corral on top level of reef
+    // NOTE: may need to add an "alignment" in the case it is not perfectly aligned in relation to the april tag
 
     // Add command to intake when at feeder station
 
     // Add command to place corral on top level of reef
+    // NOTE: may need to add an "alignment" in the case it is not perfectly aligned in relation to the april tag
 
     return routine;
   }
@@ -83,10 +89,12 @@ public class Autos {
     );
     
     // Add command to place corral on top level of reef
+    // NOTE: may need to add an "alignment" in the case it is not perfectly aligned in relation to the april tag
 
     // Add command to intake when at feeder station
 
     // Add command to place corral on top level of reef
+    // NOTE: may need to add an "alignment" in the case it is not perfectly aligned in relation to the april tag
 
     return routine;
   }
