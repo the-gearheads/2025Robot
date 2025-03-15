@@ -7,12 +7,14 @@ import itertools
 front_x = 20 * 0.0254
 back_x = 0
 
+round_ndigits = 6
+
 samples_per_meter_travelled = 200
 
 def endeff_pos(ext_len, theta_deg):
   x = (constants.elevator_min_len + ext_len) * math.cos(math.radians(theta_deg))
   y = (constants.elevator_min_len + ext_len) * math.sin(math.radians(theta_deg))
-  return x, y
+  return round(x, round_ndigits), round(y, round_ndigits)
 
 
 # mostly randomly guessed placeholders
@@ -55,7 +57,7 @@ def generate_ungenerated_traj_file(start: str, end: str):
 def generate_armvatorposition_java():
   positions = ""
   for i, place in enumerate(places):
-    positions += f"  {place}(new Translation2d({places[place]["pose"][0]}, {places[place]["pose"][1]}))"
+    positions += f"  {place}(new Translation2d({round(places[place]["pose"][0], round_ndigits)}, {round(places[place]["pose"][1], round_ndigits)}))"
     if i != len(places) - 1:
       positions += ","
     else:

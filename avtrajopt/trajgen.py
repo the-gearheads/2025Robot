@@ -1,7 +1,7 @@
 import argparse
 import math
 import os
-from jormungandr.optimization import OptimizationProblem, SolverExitCondition
+from jormungandr.optimization import Problem, ExitStatus
 from jormungandr.autodiff import sin, cos, abs
 import json
 import constants
@@ -139,7 +139,7 @@ def main(input_file, output_dir):
   
   N = data.get("N", constants.N_samples_default)
 
-  p = OptimizationProblem()
+  p = Problem()
   pivot = p.decision_variable(2, N + 1) # angle (rad), angular velocity (rad/s)
   elevator = p.decision_variable(2, N + 1) # length (m), velocity (m/s)
   accel = p.decision_variable(2, N + 1) # pivot accel (rad/s^2), elevator accel (m/s^2)
@@ -257,9 +257,9 @@ def main(input_file, output_dir):
     # displacement_pivot_elevator[1] += abs(pivot[0, k-1] - pivot[0, k])
   p.minimize(J)
   print(f"Solving trajectory {data["name"]}")
-  out = p.solve(diagnostics = True)
-  if out.exit_condition != SolverExitCondition.SUCCESS:
-    print(f"Failed to solve trajectory {data["name"]}")
+  exit_status = p.solve(diagnostics = True)
+  if exit_status not in [ExitStatus.SUCCESS, ExitStatus.SOLVED_TO_ACCEPTABLE_TOLERANCE]:
+    print(f"Failed to solve trajectory {data["name"]}. Exit condition: {exit_status}")
     return -1
   # yay
   # now we gotta save it
