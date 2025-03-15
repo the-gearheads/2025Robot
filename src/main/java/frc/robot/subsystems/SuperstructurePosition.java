@@ -5,7 +5,7 @@ import edu.wpi.first.math.util.Units;
 import frc.robot.util.ArmvatorPosition;
 
 public enum SuperstructurePosition {
-  HP(ArmvatorPosition.HP, Units.degreesToRadians(91.76870199)),  // good
+  HP(ArmvatorPosition.HP, Units.degreesToRadians(43)),  // good
   L1(ArmvatorPosition.L1, Units.degreesToRadians(-7 - 30)),
   L2(ArmvatorPosition.L2, Units.degreesToRadians(120)), // good
   L3(ArmvatorPosition.L3, Units.degreesToRadians(-36.0)), // good

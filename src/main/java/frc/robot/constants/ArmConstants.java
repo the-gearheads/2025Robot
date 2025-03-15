@@ -22,7 +22,7 @@ public final class ArmConstants {
   public static final double PIVOT_KV = 8.3892;
   public static final double PIVOT_KA = 0.61006;
 
-  public static final double[] PIVOT_PID = {37.038, 0, 5.655};  // placeholder
+  public static final double[] PIVOT_PID = {35, 0, 0.8};  // placeholder
   public static final Constraints PIVOT_CONSTRAINTS = new Constraints( // placeholders
     Units.degreesToRadians(150.905432596),
     Units.degreesToRadians(2515)
