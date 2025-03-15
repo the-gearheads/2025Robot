@@ -82,7 +82,6 @@ public class Autos {
     AutoTrajectory trajectoryStartToReef = routine.trajectory("right_reef_feeder_reef", 0);
     AutoTrajectory trajectoryReefToFromFeeder = routine.trajectory("right_reef_feeder_reef", 1);
 
-
     routine.active().onTrue(
       Commands.sequence(
         trajectoryStartToReef.resetOdometry(),
