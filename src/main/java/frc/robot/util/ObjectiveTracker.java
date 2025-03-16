@@ -5,6 +5,7 @@ import static java.util.stream.Collectors.toList;
 
 import java.util.List;
 
+import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
@@ -27,7 +28,7 @@ public class ObjectiveTracker {
     predictedRobot = swerve.getPose().exp(
         swerve.getRobotRelativeSpeeds().toTwist2d(lookAheadS));
     // filter poses by angle
-    List<Pose2d> withinAnglePoses = ReefPositions.getReefPoses().stream()
+    List<Pose2d> withinAnglePoses = ReefPositions.getScoringPoses().stream()
         .filter(pose -> Math.abs(
             pose.getRotation().getRadians() - predictedRobot.getRotation().getRadians()) <= AUTO_ALIGN_FILTER_ANGLE)
         .collect(toList());
@@ -39,10 +40,20 @@ public class ObjectiveTracker {
     }
 
     Logger.recordOutput("ObjectiveTracker/PredictedPose", predictedRobot);
-    Logger.recordOutput("ObjectiveTracker/NearestPose", predictedRobot.nearest(ReefPositions.getReefPoses()));
+    Logger.recordOutput("ObjectiveTracker/NearestPose", predictedRobot.nearest(ReefPositions.getScoringPoses()));
     Logger.recordOutput("ObjectiveTracker/SelectedPose", selectedPose);
     return selectedPose;
   }
 
-  // 1/2 m to 20 deg
+  @AutoLogOutput
+  public boolean facingReef() {
+    Pose2d currentPose = swerve.getPose();
+    Pose2d closestReefPose = currentPose.nearest(ReefPositions.getCenterPoses());
+    double angleError = Math.abs(currentPose.getRotation().minus(closestReefPose.getRotation()).getRadians());
+
+    if (angleError < Math.PI / 2.0) {
+      return false;
+    }
+    return true;
+  } 
 }

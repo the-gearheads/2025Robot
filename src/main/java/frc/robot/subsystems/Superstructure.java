@@ -22,14 +22,10 @@ public class Superstructure {
   public static enum RunMode {
     PROFILED_PID, VOLTAGE, TRAJECTORY
   }
-  public static enum ScoringMode {
-    CORAL, ALGAE
-  }
 
   Pivot pivot;
   Telescope telescope;
   Wrist wrist;
-  ScoringMode scoringMode = ScoringMode.ALGAE;
   
   ArmvatorSample lastSample;
   public Superstructure(Pivot pivot, Telescope telescope, Wrist wrist) {
@@ -91,13 +87,5 @@ public class Superstructure {
     @AutoLogOutput
     public ArmvatorPosition getClosestArmvatorPosition() {
       return ArmvatorPosition.getNearest(getEndEffPos());
-    }
-    
-    public ScoringMode getScoringMode() {
-      return scoringMode;
-    }
-  
-    public void setScoringMode(ScoringMode scoringMode) {
-      this.scoringMode = scoringMode;
     }
   }

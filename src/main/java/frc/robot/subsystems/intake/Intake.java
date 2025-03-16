@@ -10,10 +10,10 @@ import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
+import com.reduxrobotics.sensors.canandcolor.Canandcolor;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkMax;
 
-import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -22,7 +22,9 @@ public class Intake extends SubsystemBase {
   SparkMax intake = new SparkMax(INTAKE_ID, MotorType.kBrushless);
   RelativeEncoder intakeEncoder = intake.getEncoder();
   SparkMaxConfig intakeConfig = new SparkMaxConfig();
-  Debouncer stallDebouncer = new Debouncer(0.08);
+  Canandcolor canandcolor = new Canandcolor(CANANDCOLOR_ID);
+
+  GamePiece gamePiece = getGamePiece();
 
   double manualVoltage;
   
@@ -33,7 +35,6 @@ public class Intake extends SubsystemBase {
 
   @Override
   public void periodic() {
-    stallDebouncer.calculate(isCurrentlyStuck());
     Logger.recordOutput("Intake/outputVolts", manualVoltage);
     setMotorVoltage(manualVoltage);
   }
@@ -63,35 +64,44 @@ public class Intake extends SubsystemBase {
     intake.setVoltage(volts);
   }
 
-  @AutoLogOutput
-  public boolean isStalled() {
-    return stallDebouncer.calculate(isCurrentlyStuck());
-  } 
-
-  @AutoLogOutput
-  public double getOutputCurrent() {
-    return intake.getOutputCurrent();
-  }
-
   public Command runIntake() {
-    return run(()->setVoltage(INTAKE_VOLTAGE))
-    .until(()->stallDebouncer.calculate(isCurrentlyStuck()))
-    .andThen(
-      Commands.sequence(
-        run(()->setVoltage(0)).withTimeout(2),
-        run(()->setVoltage(INTAKE_VOLTAGE)).withTimeout(0.1)
-      ).repeatedly()
-    );
+    return this.run(() -> {
+      GamePiece currentGamePiece = getGamePiece();
+      if (currentGamePiece == GamePiece.CORAL) {
+        setVoltage(0);
+      } else if (currentGamePiece == GamePiece.ALGAE) {
+        setVoltage(INTAKE_STALL_VOLTAGE);
+      } else {
+        setVoltage(INTAKE_VOLTAGE);
+      }
+    });
   }
 
+  @AutoLogOutput
+  public double getPhosphorusProximity() {
+    return canandcolor.getProximity();
+  }
 
+  @AutoLogOutput
+  public boolean getPhosphorusAlgaeDIO() {
+    return canandcolor.getDigoutState().getDigoutChannelValue(canandcolor.digout1().channelIndex());
+  }
 
   public Command runOuttake() {
-    return this.runEnd(() -> intake.setVoltage(-INTAKE_VOLTAGE), () -> intake.setVoltage(0));
+    return this.run(() -> intake.setVoltage(-INTAKE_VOLTAGE));
   }
 
   public Command runOuttake(double volts) {
-    return this.runEnd(() -> intake.setVoltage(-volts), () -> intake.setVoltage(0));
+    return this.run(() -> intake.setVoltage(-volts));
+  }
+
+  public Command outtakeCoral() {
+    return this.run(() -> {intake.setVoltage(CORAL_OUTTAKE_VOLTAGE);}).raceWith(
+      Commands.sequence(
+        Commands.waitUntil(() -> getGamePiece() == GamePiece.EMPTY),
+        Commands.waitSeconds(1.5)
+      )
+    );
   }
 
   public Command stop() {
@@ -99,8 +109,13 @@ public class Intake extends SubsystemBase {
   }
 
   @AutoLogOutput
-  public boolean isCurrentlyStuck() {
-    return (Math.abs(getVelocity()) < STALL_VELOCITY_THRESHOLD) && (Math.abs(manualVoltage) > 0.1);
-    // return getOutputCurrent() > 35;
+  public GamePiece getGamePiece() {
+    if (canandcolor.getProximity() < CORAL_PROXIMITY_THRESHOLD) {
+      return GamePiece.CORAL;
+    }
+    if (canandcolor.getProximity() < ALGAE_PROXIMITY_THRESHOLD && getPhosphorusAlgaeDIO()) {
+      return GamePiece.ALGAE;
+    }
+    return GamePiece.EMPTY;
   }
 }

@@ -72,11 +72,19 @@ public class ReefPositions {
     return List.of(out);
   }
 
-  public static List<Pose2d> getReefPoses() {
+  public static List<Pose2d> getScoringPoses() {
     ArrayList<Pose2d> out = new ArrayList<>();
     for (int i = 0; i < 8; i++) { 
       out.add(getReefPose(i, -1));
       out.add(getReefPose(i, 1));
+    }
+    return out;
+  }
+
+  public static List<Pose2d> getCenterPoses() {
+    ArrayList<Pose2d> out = new ArrayList<>();
+    for (int i = 0; i < 8; i++) { 
+      out.add(getReefPose(i, 0));
     }
     return out;
   }

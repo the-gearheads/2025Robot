@@ -17,11 +17,11 @@ import frc.robot.subsystems.Leds;
 import frc.robot.subsystems.MechanismViz;
 import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.SuperstructurePosition;
-import frc.robot.subsystems.Superstructure.ScoringMode;
 import frc.robot.subsystems.arm.Pivot;
 import frc.robot.subsystems.arm.PivotSim;
 import frc.robot.subsystems.arm.Telescope;
 import frc.robot.subsystems.arm.TelescopeSim;
+import frc.robot.subsystems.intake.GamePiece;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeSim;
 import frc.robot.subsystems.swerve.Swerve;
@@ -92,90 +92,58 @@ public class RobotContainer {
     // teleop controlls
 
 
-    Controllers.driverController.getYBtn().onTrue(
-      Commands.deferredProxy(() -> {
-        if (superStructure.getScoringMode() == ScoringMode.CORAL) {
-          return superStructure.goTo(SuperstructurePosition.L4);
-        } else {
-          return superStructure.goTo(SuperstructurePosition.AlgaeL3);
-        }
-      })
-    );
-
-    Controllers.driverController.getBBtn().onTrue(
-      Commands.deferredProxy(() -> {
-        if (superStructure.getScoringMode() == ScoringMode.CORAL) {
-          return superStructure.goTo(SuperstructurePosition.L3);
-        } else {
-          return superStructure.goTo(SuperstructurePosition.AlgaeL3);
-        }
-      })
-    );
-
-    Controllers.driverController.getABtn().onTrue(
-      Commands.deferredProxy(() -> {
-        if (superStructure.getScoringMode() == ScoringMode.CORAL) {
-          return superStructure.goTo(SuperstructurePosition.L1);
-        } else {
-          return superStructure.goTo(SuperstructurePosition.AlgaeL2);
-        }
-      })
-    );
-
-    Controllers.driverController.getXBtn().onTrue(
-      Commands.deferredProxy(() -> {
-        if (superStructure.getScoringMode() == ScoringMode.CORAL) {
-          return superStructure.goTo(SuperstructurePosition.L2);
-        } else {
-          return superStructure.goTo(SuperstructurePosition.AlgaeL2);
-        }
-      })
-    );
-
-    Controllers.driverController.getLeftTriggerBtn().whileTrue(
-      intake.runIntake().andThen(
-        Commands.deferredProxy(() -> {
-          if (superStructure.getScoringMode() == ScoringMode.CORAL) {
-            return intake.stop();
-          } else {
-            return intake.runIntake().repeatedly();
-          }
-        })
+    Controllers.driverController.getLeftTriggerBtn().onTrue(
+      superStructure.goTo(SuperstructurePosition.GROUND_INTAKE)
+      .alongWith(
+        intake.runIntake()
       )
     );
+
     Controllers.driverController.getRightTriggerBtn().onTrue(
-      intake.runOuttake()
-    );
-
-    Controllers.driverController.getBackButton().onTrue(
-      superStructure.goTo(SuperstructurePosition.L2)
-    );
-
-    Controllers.driverController.getStartButton().onTrue(
-      superStructure.goTo(SuperstructurePosition.L1)
-    );
-
-    Controllers.driverController.getLeftPaddle().onTrue(
-      Commands.runOnce(() -> {superStructure.setScoringMode(ScoringMode.ALGAE);})
+      superStructure.goTo(SuperstructurePosition.HP).alongWith(
+        intake.runIntake()  
+      )
     );
 
     Controllers.driverController.getRightPaddle().onTrue(
-      Commands.runOnce(() -> {superStructure.setScoringMode(ScoringMode.CORAL);})
+      Commands.deferredProxy(() -> {
+        if (intake.getGamePiece() == GamePiece.CORAL) {
+          if (tracker.facingReef()) {
+            return superStructure.goTo(SuperstructurePosition.L2);
+          } else {
+            return superStructure.goTo(SuperstructurePosition.L4);
+          }
+        }
+        if (intake.getGamePiece() == GamePiece.ALGAE) {
+          return superStructure.goTo(SuperstructurePosition.NET);
+        }
+        return superStructure.goTo(SuperstructurePosition.AlgaeL3).alongWith(intake.runIntake());
+      })
+    );
+
+    Controllers.driverController.getLeftPaddle().onTrue(
+      Commands.deferredProxy(() -> {
+        if (intake.getGamePiece() == GamePiece.CORAL) {
+          if (tracker.facingReef()) {
+            return superStructure.goTo(SuperstructurePosition.L1);
+          } else {
+            return superStructure.goTo(SuperstructurePosition.L3);
+          }
+        }
+        if (intake.getGamePiece() == GamePiece.ALGAE) {
+          return superStructure.goTo(SuperstructurePosition.PROCESSOR);
+        }
+        return superStructure.goTo(SuperstructurePosition.AlgaeL2).alongWith(intake.runIntake());
+      })
     );
 
     Controllers.driverController.getRightBumper().onTrue(
-      superStructure.goTo(SuperstructurePosition.NET)
+      intake.runOuttake()
     );
 
-    Controllers.driverController.getLeftBumper().onTrue(
-      Commands.deferredProxy(() -> {
-        if (superStructure.getScoringMode() == ScoringMode.CORAL) {
-          return superStructure.goTo(SuperstructurePosition.HP);
-        } else {
-          return superStructure.goTo(SuperstructurePosition.GROUND_INTAKE);
-        }
-      })
-    );
+    // Controllers.driverController.getLeftBumper().onTrue(
+    //   // stow arm
+    // );
     // Controllers.driverController.getLeftBumper().onTrue(Commands.runOnce(() -> { swerve.setPose(new Pose2d(1, 1, Rotation2d.fromDegrees(0))); }));
     // Controllers.driverController.getRightBumper().whileTrue(new AlignToPose(swerve));
     // Controllers.driverController.getPovLeft().whileTrue(Commands.runEnd(() -> {intake.setVoltage(-12);}, ()->{intake.setVoltage(0);}, intake));
