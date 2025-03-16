@@ -11,5 +11,5 @@ public class IntakeConstants {
 
   public static final int INTAKE_VOLTAGE = 12;
   public static final int INTAKE_STALL_VOLTAGE = 1;
-  public static final double STALL_VELOCITY_THRESHOLD = 0.25;
+  public static final double STALL_VELOCITY_THRESHOLD = 0.02;
 }

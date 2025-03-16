@@ -5,21 +5,19 @@
 package frc.robot;
 
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
-import frc.robot.commands.AlignToPose;
-import frc.robot.commands.ManualPivot;
-import frc.robot.commands.ManualTelescope;
 import frc.robot.commands.Teleop;
+import frc.robot.commands.NTControl.PivotNTControl;
+import frc.robot.commands.NTControl.TelescopeNTControl;
 import frc.robot.commands.NTControl.WristNTControl;
 import frc.robot.controllers.Controllers;
 import frc.robot.subsystems.Leds;
 import frc.robot.subsystems.MechanismViz;
 import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.SuperstructurePosition;
+import frc.robot.subsystems.Superstructure.ScoringMode;
 import frc.robot.subsystems.arm.Pivot;
 import frc.robot.subsystems.arm.PivotSim;
 import frc.robot.subsystems.arm.Telescope;
@@ -63,8 +61,9 @@ public class RobotContainer {
     viz = new MechanismViz(swerve, pivot, telescope, wrist);
     // swerve.setDefaultCommand(new AlignToPose(swerve, tracker::getCoralObjective));
     swerve.setDefaultCommand(new Teleop(swerve));
-    pivot.setDefaultCommand(new ManualPivot(pivot));
-    telescope.setDefaultCommand(telescope.homeIfNeeded().andThen(new ManualTelescope(telescope)));
+    // pivot.setDefaultCommand(new ManualPivot(pivot));
+    pivot.setDefaultCommand(new PivotNTControl(pivot));
+    telescope.setDefaultCommand(telescope.homeIfNeeded().andThen(new TelescopeNTControl(telescope)));
     // telescope.setDefaultCommand(telescope.run(() -> {telescope.setVoltage(0);}));
     wrist.setDefaultCommand(new WristNTControl(wrist));
     // wrist.setDefaultCommand(wrist.run(() -> {wrist.setVoltage(0);}));
@@ -91,12 +90,61 @@ public class RobotContainer {
     // Controllers.driverController.getYBtn().onTrue(new PivotNTControl(pivot));
     // Controllers.driverController.getBBtn().onTrue(new ManualPivot(pivot));
     // teleop controlls
+
+
     Controllers.driverController.getYBtn().onTrue(
-      superStructure.goTo(SuperstructurePosition.L4)
+      Commands.deferredProxy(() -> {
+        if (superStructure.getScoringMode() == ScoringMode.CORAL) {
+          return superStructure.goTo(SuperstructurePosition.L4);
+        } else {
+          return superStructure.goTo(SuperstructurePosition.AlgaeL3);
+        }
+      })
     );
 
     Controllers.driverController.getBBtn().onTrue(
-      superStructure.goTo(SuperstructurePosition.L3)
+      Commands.deferredProxy(() -> {
+        if (superStructure.getScoringMode() == ScoringMode.CORAL) {
+          return superStructure.goTo(SuperstructurePosition.L3);
+        } else {
+          return superStructure.goTo(SuperstructurePosition.AlgaeL3);
+        }
+      })
+    );
+
+    Controllers.driverController.getABtn().onTrue(
+      Commands.deferredProxy(() -> {
+        if (superStructure.getScoringMode() == ScoringMode.CORAL) {
+          return superStructure.goTo(SuperstructurePosition.L1);
+        } else {
+          return superStructure.goTo(SuperstructurePosition.AlgaeL2);
+        }
+      })
+    );
+
+    Controllers.driverController.getXBtn().onTrue(
+      Commands.deferredProxy(() -> {
+        if (superStructure.getScoringMode() == ScoringMode.CORAL) {
+          return superStructure.goTo(SuperstructurePosition.L2);
+        } else {
+          return superStructure.goTo(SuperstructurePosition.AlgaeL2);
+        }
+      })
+    );
+
+    Controllers.driverController.getLeftTriggerBtn().whileTrue(
+      intake.runIntake().andThen(
+        Commands.deferredProxy(() -> {
+          if (superStructure.getScoringMode() == ScoringMode.CORAL) {
+            return intake.stop();
+          } else {
+            return intake.runIntake().repeatedly();
+          }
+        })
+      )
+    );
+    Controllers.driverController.getRightTriggerBtn().onTrue(
+      intake.runOuttake()
     );
 
     Controllers.driverController.getBackButton().onTrue(
@@ -108,15 +156,28 @@ public class RobotContainer {
     );
 
     Controllers.driverController.getLeftPaddle().onTrue(
-      superStructure.goTo(SuperstructurePosition.HP)
+      Commands.runOnce(() -> {superStructure.setScoringMode(ScoringMode.ALGAE);})
     );
 
     Controllers.driverController.getRightPaddle().onTrue(
-      superStructure.goTo(SuperstructurePosition.GROUND_INTAKE)
+      Commands.runOnce(() -> {superStructure.setScoringMode(ScoringMode.CORAL);})
     );
-    
-    Controllers.driverController.getLeftBumper().onTrue(Commands.runOnce(() -> { swerve.setPose(new Pose2d(1, 1, Rotation2d.fromDegrees(0))); }));
-    Controllers.driverController.getRightBumper().whileTrue(new AlignToPose(swerve));
+
+    Controllers.driverController.getRightBumper().onTrue(
+      superStructure.goTo(SuperstructurePosition.NET)
+    );
+
+    Controllers.driverController.getLeftBumper().onTrue(
+      Commands.deferredProxy(() -> {
+        if (superStructure.getScoringMode() == ScoringMode.CORAL) {
+          return superStructure.goTo(SuperstructurePosition.HP);
+        } else {
+          return superStructure.goTo(SuperstructurePosition.GROUND_INTAKE);
+        }
+      })
+    );
+    // Controllers.driverController.getLeftBumper().onTrue(Commands.runOnce(() -> { swerve.setPose(new Pose2d(1, 1, Rotation2d.fromDegrees(0))); }));
+    // Controllers.driverController.getRightBumper().whileTrue(new AlignToPose(swerve));
     // Controllers.driverController.getPovLeft().whileTrue(Commands.runEnd(() -> {intake.setVoltage(-12);}, ()->{intake.setVoltage(0);}, intake));
     // Controllers.driverController.getPovRight().whileTrue(Commands.runEnd(() -> {intake.setVoltage(12);}, ()->{intake.setVoltage(0);}, intake));
 
@@ -134,9 +195,9 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    // return autos.getAutonomousRoutine();
+    return autos.getAutonomousRoutine();
     // return sysidAuto.get();
-    return Swerve.wheelRadiusCharacterization(swerve);
+    // return Swerve.wheelRadiusCharacterization(swerve);
   }
 
   public double getCurrentDrawSim() {

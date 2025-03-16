@@ -53,15 +53,13 @@ public class DriverController {
     return Controllers.deadband(controller.getRightTriggerAxis());
   }
 
-  public boolean getXBtn() {
-    if(isNull()) return false;
-    return controller.getXButton();
-  }
+  public Trigger getXBtn() {
+    if(isNull()) return emptyTrigger();
+    return new Trigger(() -> controller.getXButton());  }
 
-  public boolean getABtn() {
-    if(isNull()) return false;
-    return controller.getAButton();
-  }
+  public Trigger getABtn() {
+    if(isNull()) return emptyTrigger();
+    return new Trigger(() -> controller.getAButton());  }
 
   public Trigger getYBtn() {
     if(isNull()) return emptyTrigger();
@@ -121,6 +119,16 @@ public class DriverController {
   public Trigger getStartButton() {
     if(isNull()) return emptyTrigger();
     return new Trigger(() -> controller.getStartButton());
+  }
+
+  public Trigger getLeftTriggerBtn() {
+    if(isNull()) return emptyTrigger();
+    return new Trigger(() -> controller.getLeftTriggerAxis() > 0.05);
+  }
+
+  public Trigger getRightTriggerBtn() {
+    if(isNull()) return emptyTrigger();
+    return new Trigger(() -> controller.getRightTriggerAxis() > 0.05);
   }
 
   public void setRumble(double rumble) {

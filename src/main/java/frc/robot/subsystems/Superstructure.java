@@ -22,11 +22,15 @@ public class Superstructure {
   public static enum RunMode {
     PROFILED_PID, VOLTAGE, TRAJECTORY
   }
+  public static enum ScoringMode {
+    CORAL, ALGAE
+  }
 
   Pivot pivot;
   Telescope telescope;
   Wrist wrist;
-
+  ScoringMode scoringMode = ScoringMode.ALGAE;
+  
   ArmvatorSample lastSample;
   public Superstructure(Pivot pivot, Telescope telescope, Wrist wrist) {
     this.pivot = pivot;
@@ -35,7 +39,7 @@ public class Superstructure {
     ArmvatorTrajectory.loadAll();
     telescope.setPivotAngleRadSupplier(pivot::getAngleRad);
   }
-
+  
   private void followSample(ArmvatorSample sample) {
     pivot.setMode(RunMode.TRAJECTORY);
     telescope.setMode(RunMode.TRAJECTORY);
@@ -47,11 +51,11 @@ public class Superstructure {
   private boolean atPidSetpoint() {
     return pivot.atPidSetpoint() && telescope.atPidSetpoint();
   }
-
+  
   public Command followAvTrajectory(ArmvatorTrajectory traj) {   
     return traj.follow(this::followSample, this::atPidSetpoint, true, true, pivot, telescope);
   }
-
+  
   public Command goTo(SuperstructurePosition pos) {
     return Commands.defer(()-> {
       var currentPos = ArmvatorPosition.getNearest(getEndEffPos());
@@ -65,28 +69,35 @@ public class Superstructure {
         traj = new ArmvatorTrajectory(
           pos.name(),
           List.of(new ArmvatorSample(0, 0, pivotAngle, 0, elevatorLength, 0, 0, 0))
-        );
-      }
-      Logger.recordOutput("Superstructure/goToFrom", currentPos);
-      Logger.recordOutput("Superstructure/goToTo", pos);
-      return followAvTrajectory(traj).deadlineFor(new WristTrajFollower(traj, pos, wrist, this::getLastSample));
-    }, Set.of(pivot, telescope, wrist));
+          );
+        }
+        Logger.recordOutput("Superstructure/goToFrom", currentPos);
+        Logger.recordOutput("Superstructure/goToTo", pos);
+        return followAvTrajectory(traj).deadlineFor(new WristTrajFollower(traj, pos, wrist, this::getLastSample));
+      }, Set.of(pivot, telescope, wrist));
+    }
+    
+    @AutoLogOutput
+    public Translation2d getEndEffPos() {
+      double x = telescope.getTotalLength() * Math.cos(pivot.getAngle().getRadians());
+      double y = telescope.getTotalLength() * Math.sin(pivot.getAngle().getRadians());
+      return new Translation2d(x, y);
+    }
+    
+    public ArmvatorSample getLastSample() {
+      return lastSample;
+    }
+    
+    @AutoLogOutput
+    public ArmvatorPosition getClosestArmvatorPosition() {
+      return ArmvatorPosition.getNearest(getEndEffPos());
+    }
+    
+    public ScoringMode getScoringMode() {
+      return scoringMode;
+    }
+  
+    public void setScoringMode(ScoringMode scoringMode) {
+      this.scoringMode = scoringMode;
+    }
   }
-
-  @AutoLogOutput
-  public Translation2d getEndEffPos() {
-    double x = telescope.getTotalLength() * Math.cos(pivot.getAngle().getRadians());
-    double y = telescope.getTotalLength() * Math.sin(pivot.getAngle().getRadians());
-    return new Translation2d(x, y);
-  }
-
-  public ArmvatorSample getLastSample() {
-    return lastSample;
-  }
-
-  @AutoLogOutput
-  public ArmvatorPosition getClosestArmvatorPosition() {
-    return ArmvatorPosition.getNearest(getEndEffPos());
-  }
-
-}

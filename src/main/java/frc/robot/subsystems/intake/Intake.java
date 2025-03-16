@@ -15,13 +15,14 @@ import com.revrobotics.spark.SparkMax;
 
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Intake extends SubsystemBase {
   SparkMax intake = new SparkMax(INTAKE_ID, MotorType.kBrushless);
   RelativeEncoder intakeEncoder = intake.getEncoder();
   SparkMaxConfig intakeConfig = new SparkMaxConfig();
-  Debouncer stallDebouncer = new Debouncer(0.001);
+  Debouncer stallDebouncer = new Debouncer(0.08);
 
   double manualVoltage;
   
@@ -73,14 +74,17 @@ public class Intake extends SubsystemBase {
   }
 
   public Command runIntake() {
-    return this.run(() -> {
-      if(!stallDebouncer.calculate(isCurrentlyStuck())) {
-        this.setVoltage(INTAKE_VOLTAGE);
-      } else {
-        this.setVoltage(INTAKE_STALL_VOLTAGE);
-      }
-    });
+    return run(()->setVoltage(INTAKE_VOLTAGE))
+    .until(()->stallDebouncer.calculate(isCurrentlyStuck()))
+    .andThen(
+      Commands.sequence(
+        run(()->setVoltage(0)).withTimeout(2),
+        run(()->setVoltage(INTAKE_VOLTAGE)).withTimeout(0.1)
+      ).repeatedly()
+    );
   }
+
+
 
   public Command runOuttake() {
     return this.runEnd(() -> intake.setVoltage(-INTAKE_VOLTAGE), () -> intake.setVoltage(0));
@@ -94,8 +98,9 @@ public class Intake extends SubsystemBase {
     return this.runOnce(() -> intake.setVoltage(0));
   }
 
-  private boolean isCurrentlyStuck() {
-    // return (Math.abs(getVelocity()) < STALL_VELOCITY_THRESHOLD) && (Math.abs(manualVoltage) > 0.1);
-    return getOutputCurrent() > 35;
+  @AutoLogOutput
+  public boolean isCurrentlyStuck() {
+    return (Math.abs(getVelocity()) < STALL_VELOCITY_THRESHOLD) && (Math.abs(manualVoltage) > 0.1);
+    // return getOutputCurrent() > 35;
   }
 }

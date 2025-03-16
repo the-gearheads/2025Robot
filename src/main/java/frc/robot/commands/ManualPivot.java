@@ -35,10 +35,10 @@ public class ManualPivot extends Command {
     pivot.setGoalAngle(targetAngleRad);
     
     double speed = Units.inchesToMeters(0);
-    if (Controllers.driverController.getXBtn()) {
+    if (Controllers.driverController.getXBtn().getAsBoolean()) {
       speed = -1;
     }
-    if (Controllers.driverController.getABtn()) {
+    if (Controllers.driverController.getABtn().getAsBoolean()) {
       speed = 1;
     }
     targetAngleRad += (speed * 0.003);

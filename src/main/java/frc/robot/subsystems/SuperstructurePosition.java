@@ -10,8 +10,10 @@ public enum SuperstructurePosition {
   L2(ArmvatorPosition.L2, Units.degreesToRadians(125.585)), // new good
   L3(ArmvatorPosition.L3, Units.degreesToRadians(-36.0)), // new good
   L4(ArmvatorPosition.L4, Units.degreesToRadians(-62.614)), // new good
+  AlgaeL3(ArmvatorPosition.AlgaeL3, Units.degreesToRadians(-11)),
+  AlgaeL2(ArmvatorPosition.AlgaeL2, Units.degreesToRadians(124.36)),
   NET(ArmvatorPosition.NET, Units.degreesToRadians(40)), // untested
-  GROUND_INTAKE(ArmvatorPosition.GROUND_INTAKE, Units.degreesToRadians(113)), 
+  GROUND_INTAKE(ArmvatorPosition.GROUND_INTAKE, Units.degreesToRadians(110)), 
   PROCESSOR(ArmvatorPosition.PROCESSOR, Units.degreesToRadians(115.55));
 
   public final ArmvatorPosition armvatorPosition;
