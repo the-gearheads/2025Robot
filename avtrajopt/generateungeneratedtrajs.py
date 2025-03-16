@@ -29,7 +29,7 @@ places = {
   "GROUND_INTAKE": {"pose": endeff_pos(0.11165, 15.06), "vel": [0, 0]},
   "PROCESSOR": {"pose": endeff_pos(0.0476, 30.45), "vel": [0, 0]},
   "NET": {"pose": endeff_pos(1.0275, 90), "vel": [0, 0]},
-  "STOW": {"pose": endeff_pos(0.0508, 50)}
+  "STOW": {"pose": endeff_pos(0.0508, 50), "vel": [0, 0]}
 }
 
 
