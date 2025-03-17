@@ -30,7 +30,7 @@ public class Intake extends SubsystemBase {
   
   public Intake() {
     configure();
-    setDefaultCommand(this.run(()->{setVoltage(0);}));
+    setDefaultCommand(holdGamePiece());
   }
 
   @Override
@@ -65,16 +65,7 @@ public class Intake extends SubsystemBase {
   }
 
   public Command runIntake() {
-    return this.run(() -> {
-      GamePiece currentGamePiece = getGamePiece();
-      if (currentGamePiece == GamePiece.CORAL) {
-        setVoltage(0);
-      } else if (currentGamePiece == GamePiece.ALGAE) {
-        setVoltage(INTAKE_STALL_VOLTAGE);
-      } else {
-        setVoltage(INTAKE_VOLTAGE);
-      }
-    });
+    return run(() -> setVoltage(INTAKE_VOLTAGE)).until(this::hasGamePiece);
   }
 
   @AutoLogOutput
@@ -88,15 +79,15 @@ public class Intake extends SubsystemBase {
   }
 
   public Command runOuttake() {
-    return this.run(() -> intake.setVoltage(-INTAKE_VOLTAGE));
+    return run(() -> intake.setVoltage(-INTAKE_VOLTAGE)).until(this::doesntHaveGamePiece);
   }
 
   public Command runOuttake(double volts) {
-    return this.run(() -> intake.setVoltage(-volts));
+    return run(() -> intake.setVoltage(-volts));
   }
 
   public Command outtakeCoral() {
-    return this.run(() -> {intake.setVoltage(CORAL_OUTTAKE_VOLTAGE);}).raceWith(
+    return run(() -> {intake.setVoltage(CORAL_OUTTAKE_VOLTAGE);}).raceWith(
       Commands.sequence(
         Commands.waitUntil(() -> getGamePiece() == GamePiece.EMPTY),
         Commands.waitSeconds(1.5)
@@ -104,8 +95,19 @@ public class Intake extends SubsystemBase {
     );
   }
 
+  public Command holdGamePiece() {
+    return run(() -> {
+      GamePiece currentGamePiece = getGamePiece();
+      if (currentGamePiece == GamePiece.CORAL) {
+        setVoltage(INTAKE_STALL_VOLTAGE);
+        return;
+      }
+      setVoltage(0);
+    });
+  }
+
   public Command stop() {
-    return this.runOnce(() -> intake.setVoltage(0));
+    return runOnce(() -> intake.setVoltage(0));
   }
 
   @AutoLogOutput
@@ -117,5 +119,13 @@ public class Intake extends SubsystemBase {
       return GamePiece.ALGAE;
     }
     return GamePiece.EMPTY;
+  }
+
+  public boolean hasGamePiece() {
+    return getGamePiece() != GamePiece.EMPTY;
+  }
+
+  public boolean doesntHaveGamePiece() {
+    return getGamePiece() == GamePiece.EMPTY;
   }
 }
