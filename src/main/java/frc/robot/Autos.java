@@ -64,24 +64,32 @@ public class Autos {
 
   public AutoRoutine leftReefFeederReef() {
     AutoRoutine routine = factory.newRoutine(nameLeftReefFeederReef);
-    AutoTrajectory trajectoryStartToReef = routine.trajectory("left_reef_feeder_reef", 0);
-    AutoTrajectory trajectoryReefToFromFeeder = routine.trajectory("left_reef_feeder_reef", 1);
+    AutoTrajectory trajectoryStartToReefK = routine.trajectory("left_reef_feeder_reef", 0);
+    AutoTrajectory trajectoryReefKToFeeder = routine.trajectory("left_reef_feeder_reef", 1);
+    AutoTrajectory trajectoryFeederToReefL = routine.trajectory("left_reef_feeder_reef", 2);
 
     routine.active().onTrue(
       Commands.sequence(
-        trajectoryStartToReef.resetOdometry(),
-        trajectoryStartToReef.cmd(),
-        trajectoryReefToFromFeeder.cmd()
+        trajectoryStartToReefK.resetOdometry(),
+        trajectoryStartToReefK.cmd(),
+        trajectoryReefKToFeeder.cmd(),
+        trajectoryFeederToReefL.cmd()
       )
     );
 
     // Add command to place corral on top level of reef
+    trajectoryStartToReefK.atTime("Start").onTrue(superstructure.goTo(SuperstructurePosition.L4));
     // NOTE: may need to add an "alignment" in the case it is not perfectly aligned in relation to the april tag
+    trajectoryStartToReefK.atTime("K-L4").onTrue(intake.outtakeCoral());
 
-    // Add command to intake when at feeder station
+    // Resetting the arm to HP position and running the intake at feeder station
+    trajectoryReefKToFeeder.atTime("K-L4").onTrue(superstructure.goTo(SuperstructurePosition.HP));
+    trajectoryReefKToFeeder.atTime("Feeder").onTrue(intake.runIntake());
 
     // Add command to place corral on top level of reef
+    trajectoryFeederToReefL.atTime("Feeder").onTrue(superstructure.goTo(SuperstructurePosition.L4));
     // NOTE: may need to add an "alignment" in the case it is not perfectly aligned in relation to the april tag
+    trajectoryFeederToReefL.atTime("L-L4").onTrue(intake.outtakeCoral());
 
     return routine;
   }
