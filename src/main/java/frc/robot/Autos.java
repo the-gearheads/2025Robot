@@ -64,12 +64,14 @@ public class Autos {
 
   public AutoRoutine leftReefFeederReef() {
     AutoRoutine routine = factory.newRoutine(nameLeftReefFeederReef);
-    AutoTrajectory trajectory = routine.trajectory("left_reef_feeder_reef");
+    AutoTrajectory trajectoryStartToReef = routine.trajectory("left_reef_feeder_reef", 0);
+    AutoTrajectory trajectoryReefToFromFeeder = routine.trajectory("left_reef_feeder_reef", 1);
 
     routine.active().onTrue(
       Commands.sequence(
-        trajectory.resetOdometry(),
-        trajectory.cmd()
+        trajectoryStartToReef.resetOdometry(),
+        trajectoryStartToReef.cmd()
+        trajectoryReefToFromFeeder.cmd()
       )
     );
 
