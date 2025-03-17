@@ -44,7 +44,7 @@ public class Vision extends SubsystemBase {
 
   
     for (int i = 0; i<CAMERA_NAMES.length; i++) {
-      cameras[i] = new Camera(field, CAMERA_NAMES[i], CAMERA_TRANSFORMS[i], CAMERA_INTRINSICS[i], ()->swerve.getPose().getRotation().getRadians(), ()->swerve.getGyroRotation().getRadians());
+      cameras[i] = new Camera(field, CAMERA_NAMES[i], CAMERA_TRANSFORMS[i], CAMERA_INTRINSICS[i], ()->swerve.getPose().getRotation().getRadians(), ()->swerve.getGyroRotation().getRadians(), CAMERA_STRATEGIES[i]);
       sim.addCamera(cameras[i]);
     }
 

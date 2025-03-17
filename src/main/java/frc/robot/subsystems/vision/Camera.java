@@ -60,7 +60,7 @@ public class Camera {
 
   LoggedNetworkNumber headingScaleFactor = new LoggedNetworkNumber("Vision/HeadingScaleFactor", CONSTRAINED_PNP_HEADING_SCALE_FACTOR);
 
-  public Camera(AprilTagFieldLayout field, String name, Transform3d transform, CameraIntrinsics intrinsics, DoubleSupplier fusedHeadingSupplier, DoubleSupplier gyroAngleSupplier) {
+  public Camera(AprilTagFieldLayout field, String name, Transform3d transform, CameraIntrinsics intrinsics, DoubleSupplier fusedHeadingSupplier, DoubleSupplier gyroAngleSupplier, PoseStrategy strategy) {
     this.name = name;
     this.transform = transform;
     this.intrinsics = intrinsics;
@@ -69,9 +69,6 @@ public class Camera {
     OpenCVHelp.forceLoadOpenCV();
 
     camera = new PhotonCamera(name);
-
-    // var strategy = USE_CONSTRAINED_PNP ? PoseStrategy.CONSTRAINED_SOLVEPNP : PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR;
-    var strategy = PoseStrategy.PNP_DISTANCE_TRIG_SOLVE;
     var fallbackStrategy = PoseStrategy.CLOSEST_TO_CAMERA_HEIGHT;
     estimator = new PhotonPoseEstimator(this.field, strategy, transform);
     estimator.setMultiTagFallbackStrategy(fallbackStrategy);
@@ -122,7 +119,7 @@ public class Camera {
     List<PhotonPipelineResult> pipelineResults = getPipelineResults();
     Optional<EstimatedRobotPose> poseResult;
     for (PhotonPipelineResult result : pipelineResults) {
-      if(USE_CONSTRAINED_PNP) {
+      if(estimator.getPrimaryStrategy() == PoseStrategy.PNP_DISTANCE_TRIG_SOLVE || estimator.getPrimaryStrategy() == PoseStrategy.CONSTRAINED_SOLVEPNP) {
         boolean headingFree = DriverStation.isDisabled();
         var constrainedPnpParams = new PhotonPoseEstimator.ConstrainedSolvepnpParams(headingFree, headingScaleFactor.get());
         Rotation2d gyroAngle = Rotation2d.fromRadians(gyroAngleSupplier.getAsDouble());

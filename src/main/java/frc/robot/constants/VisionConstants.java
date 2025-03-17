@@ -1,5 +1,7 @@
 package frc.robot.constants;
 
+import org.photonvision.PhotonPoseEstimator.PoseStrategy;
+
 import edu.wpi.first.math.geometry.Rectangle2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
@@ -9,11 +11,11 @@ import edu.wpi.first.math.util.Units;
 import frc.robot.subsystems.vision.CameraIntrinsics;
 
 public class VisionConstants {
-  public static final boolean USE_CONSTRAINED_PNP = false;
   // sane values somewhere between 1e-7 and 10000. low == trust initial guess heading less.
   public static final double CONSTRAINED_PNP_HEADING_SCALE_FACTOR = 1;
   ;
-  public static final String[] CAMERA_NAMES = { "FRONT_LEFT_2025 AA",  "BACK_LEFT_2025 AA", "BACK_RIGHT"};
+  public static final String[] CAMERA_NAMES = { "FRONT_LEFT_2025",  "BACK_LEFT_2025", "BACK_RIGHT"};
+  public static final PoseStrategy[] CAMERA_STRATEGIES = {PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, PoseStrategy.PNP_DISTANCE_TRIG_SOLVE};
   public static final Transform3d[] CAMERA_TRANSFORMS = {
       new Transform3d(  // FRONT_LEFT_2025
           new Translation3d(0.36322, 0.1778, 0.16891),
