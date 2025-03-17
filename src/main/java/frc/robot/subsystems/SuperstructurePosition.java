@@ -14,7 +14,8 @@ public enum SuperstructurePosition {
   AlgaeL2(ArmvatorPosition.AlgaeL2, Units.degreesToRadians(124.36)),
   NET(ArmvatorPosition.NET, Units.degreesToRadians(40)), // untested
   GROUND_INTAKE(ArmvatorPosition.GROUND_INTAKE, Units.degreesToRadians(110)), 
-  PROCESSOR(ArmvatorPosition.PROCESSOR, Units.degreesToRadians(115.55));
+  PROCESSOR(ArmvatorPosition.PROCESSOR, Units.degreesToRadians(115.55)),
+  STOW(ArmvatorPosition.STOW, Units.degreesToRadians(-30));
 
   public final ArmvatorPosition armvatorPosition;
   public final Rotation2d wristAngle;

@@ -167,7 +167,7 @@ public class AlignToPose extends Command {
 
   public Pose2d getCoralObjective(Rotation2d controllerVectorAngle) {
     Pair<Pose2d, Double> bestReefPose = new Pair<Pose2d,Double>(null, 1000.0);
-    ArrayList<Pose2d> reefPoses = new ArrayList<>(ReefPositions.getReefPoses());
+    ArrayList<Pose2d> reefPoses = new ArrayList<>(ReefPositions.getScoringPoses());
     double bestVectorError = Double.MAX_VALUE;  // only for logging
     double bestWeight = Double.MAX_VALUE;  // only for logging
     // Logger.recordOutput("AlignToPose/reefPoses", Pose2d.struct, reefPoses.stream().toArray(Pose2d[]::new));

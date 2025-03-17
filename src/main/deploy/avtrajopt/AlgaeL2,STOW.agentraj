@@ -1,0 +1,671 @@
+{
+  "name": "AlgaeL2,STOW",
+  "total_time": 0.937743,
+  "waypoints": [
+    {
+      "pose": [
+        0.80958,
+        0.921202
+      ],
+      "vel": [
+        0,
+        0
+      ],
+      "at_sample": 0
+    },
+    {
+      "pose": [
+        0.620419,
+        0.739386
+      ],
+      "vel": [
+        0,
+        0
+      ],
+      "at_sample": 1
+    }
+  ],
+  "samples": [
+    {
+      "time": 0,
+      "sample_num": 0,
+      "pivot_angle": 0.849801,
+      "elevator_length": 1.22639,
+      "pivot_velocity": -0.0,
+      "elevator_velocity": -0.0,
+      "pivot_accel": 1.123209,
+      "elevator_accel": -1.2
+    },
+    {
+      "time": 0.015,
+      "sample_num": 1,
+      "pivot_angle": 0.849922,
+      "pivot_velocity": 0.015345,
+      "pivot_accel": 0.745728,
+      "elevator_length": 1.226255,
+      "elevator_velocity": -0.018,
+      "elevator_accel": -1.2
+    },
+    {
+      "time": 0.03,
+      "sample_num": 2,
+      "pivot_angle": 0.850223,
+      "pivot_velocity": 0.023279,
+      "pivot_accel": 0.191948,
+      "elevator_length": 1.22585,
+      "elevator_velocity": -0.036,
+      "elevator_accel": -1.2
+    },
+    {
+      "time": 0.045,
+      "sample_num": 3,
+      "pivot_angle": 0.850589,
+      "pivot_velocity": 0.025016,
+      "pivot_accel": 0.03037,
+      "elevator_length": 1.225175,
+      "elevator_velocity": -0.054,
+      "elevator_accel": -1.2
+    },
+    {
+      "time": 0.06,
+      "sample_num": 4,
+      "pivot_angle": 0.850967,
+      "pivot_velocity": 0.025287,
+      "pivot_accel": 0.0044,
+      "elevator_length": 1.22423,
+      "elevator_velocity": -0.072,
+      "elevator_accel": -1.2
+    },
+    {
+      "time": 0.075,
+      "sample_num": 5,
+      "pivot_angle": 0.851347,
+      "pivot_velocity": 0.025325,
+      "pivot_accel": 0.000459,
+      "elevator_length": 1.223015,
+      "elevator_velocity": -0.09,
+      "elevator_accel": -1.2
+    },
+    {
+      "time": 0.09,
+      "sample_num": 6,
+      "pivot_angle": 0.851727,
+      "pivot_velocity": 0.025327,
+      "pivot_accel": -0.000136,
+      "elevator_length": 1.22153,
+      "elevator_velocity": -0.108,
+      "elevator_accel": -1.2
+    },
+    {
+      "time": 0.105,
+      "sample_num": 7,
+      "pivot_angle": 0.852107,
+      "pivot_velocity": 0.025325,
+      "pivot_accel": -0.000228,
+      "elevator_length": 1.219775,
+      "elevator_velocity": -0.126,
+      "elevator_accel": -1.2
+    },
+    {
+      "time": 0.12,
+      "sample_num": 8,
+      "pivot_angle": 0.852487,
+      "pivot_velocity": 0.025321,
+      "pivot_accel": -0.000241,
+      "elevator_length": 1.21775,
+      "elevator_velocity": -0.144,
+      "elevator_accel": -1.2
+    },
+    {
+      "time": 0.135,
+      "sample_num": 9,
+      "pivot_angle": 0.852866,
+      "pivot_velocity": 0.025318,
+      "pivot_accel": -0.00024,
+      "elevator_length": 1.215455,
+      "elevator_velocity": -0.162,
+      "elevator_accel": -1.2
+    },
+    {
+      "time": 0.15,
+      "sample_num": 10,
+      "pivot_angle": 0.853246,
+      "pivot_velocity": 0.025314,
+      "pivot_accel": -0.000238,
+      "elevator_length": 1.21289,
+      "elevator_velocity": -0.18,
+      "elevator_accel": -1.199999
+    },
+    {
+      "time": 0.165,
+      "sample_num": 11,
+      "pivot_angle": 0.853626,
+      "pivot_velocity": 0.02531,
+      "pivot_accel": -0.000235,
+      "elevator_length": 1.210055,
+      "elevator_velocity": -0.198,
+      "elevator_accel": -1.199999
+    },
+    {
+      "time": 0.18,
+      "sample_num": 12,
+      "pivot_angle": 0.854005,
+      "pivot_velocity": 0.025307,
+      "pivot_accel": -0.000231,
+      "elevator_length": 1.20695,
+      "elevator_velocity": -0.216,
+      "elevator_accel": -1.199999
+    },
+    {
+      "time": 0.195,
+      "sample_num": 13,
+      "pivot_angle": 0.854385,
+      "pivot_velocity": 0.025303,
+      "pivot_accel": -0.000228,
+      "elevator_length": 1.203575,
+      "elevator_velocity": -0.234,
+      "elevator_accel": -1.199999
+    },
+    {
+      "time": 0.21,
+      "sample_num": 14,
+      "pivot_angle": 0.854765,
+      "pivot_velocity": 0.0253,
+      "pivot_accel": -0.000224,
+      "elevator_length": 1.19993,
+      "elevator_velocity": -0.252,
+      "elevator_accel": -1.199999
+    },
+    {
+      "time": 0.225,
+      "sample_num": 15,
+      "pivot_angle": 0.855144,
+      "pivot_velocity": 0.025297,
+      "pivot_accel": -0.000221,
+      "elevator_length": 1.196015,
+      "elevator_velocity": -0.27,
+      "elevator_accel": -1.199999
+    },
+    {
+      "time": 0.24,
+      "sample_num": 16,
+      "pivot_angle": 0.855523,
+      "pivot_velocity": 0.025293,
+      "pivot_accel": -0.000217,
+      "elevator_length": 1.19183,
+      "elevator_velocity": -0.288,
+      "elevator_accel": -1.199999
+    },
+    {
+      "time": 0.255,
+      "sample_num": 17,
+      "pivot_angle": 0.855903,
+      "pivot_velocity": 0.02529,
+      "pivot_accel": -0.000213,
+      "elevator_length": 1.187375,
+      "elevator_velocity": -0.306,
+      "elevator_accel": -1.199999
+    },
+    {
+      "time": 0.27,
+      "sample_num": 18,
+      "pivot_angle": 0.856282,
+      "pivot_velocity": 0.025287,
+      "pivot_accel": -0.000209,
+      "elevator_length": 1.18265,
+      "elevator_velocity": -0.324,
+      "elevator_accel": -1.199999
+    },
+    {
+      "time": 0.285,
+      "sample_num": 19,
+      "pivot_angle": 0.856661,
+      "pivot_velocity": 0.025284,
+      "pivot_accel": -0.000204,
+      "elevator_length": 1.177655,
+      "elevator_velocity": -0.342,
+      "elevator_accel": -1.199999
+    },
+    {
+      "time": 0.3,
+      "sample_num": 20,
+      "pivot_angle": 0.857041,
+      "pivot_velocity": 0.025281,
+      "pivot_accel": -0.0002,
+      "elevator_length": 1.17239,
+      "elevator_velocity": -0.36,
+      "elevator_accel": -1.199999
+    },
+    {
+      "time": 0.315,
+      "sample_num": 21,
+      "pivot_angle": 0.85742,
+      "pivot_velocity": 0.025278,
+      "pivot_accel": -0.000196,
+      "elevator_length": 1.166855,
+      "elevator_velocity": -0.378,
+      "elevator_accel": -1.199999
+    },
+    {
+      "time": 0.33,
+      "sample_num": 22,
+      "pivot_angle": 0.857799,
+      "pivot_velocity": 0.025275,
+      "pivot_accel": -0.000192,
+      "elevator_length": 1.16105,
+      "elevator_velocity": -0.396,
+      "elevator_accel": -1.199999
+    },
+    {
+      "time": 0.345,
+      "sample_num": 23,
+      "pivot_angle": 0.858178,
+      "pivot_velocity": 0.025272,
+      "pivot_accel": -0.000187,
+      "elevator_length": 1.154975,
+      "elevator_velocity": -0.414,
+      "elevator_accel": -1.199999
+    },
+    {
+      "time": 0.36,
+      "sample_num": 24,
+      "pivot_angle": 0.858557,
+      "pivot_velocity": 0.025269,
+      "pivot_accel": -0.000183,
+      "elevator_length": 1.14863,
+      "elevator_velocity": -0.432,
+      "elevator_accel": -1.199998
+    },
+    {
+      "time": 0.375,
+      "sample_num": 25,
+      "pivot_angle": 0.858936,
+      "pivot_velocity": 0.025267,
+      "pivot_accel": -0.000178,
+      "elevator_length": 1.142015,
+      "elevator_velocity": -0.45,
+      "elevator_accel": -1.199998
+    },
+    {
+      "time": 0.39,
+      "sample_num": 26,
+      "pivot_angle": 0.859315,
+      "pivot_velocity": 0.025264,
+      "pivot_accel": -0.000174,
+      "elevator_length": 1.13513,
+      "elevator_velocity": -0.468,
+      "elevator_accel": -1.199998
+    },
+    {
+      "time": 0.405,
+      "sample_num": 27,
+      "pivot_angle": 0.859694,
+      "pivot_velocity": 0.025261,
+      "pivot_accel": -0.000169,
+      "elevator_length": 1.127975,
+      "elevator_velocity": -0.486,
+      "elevator_accel": -1.199997
+    },
+    {
+      "time": 0.42,
+      "sample_num": 28,
+      "pivot_angle": 0.860073,
+      "pivot_velocity": 0.025259,
+      "pivot_accel": -0.000165,
+      "elevator_length": 1.12055,
+      "elevator_velocity": -0.504,
+      "elevator_accel": -1.199996
+    },
+    {
+      "time": 0.435,
+      "sample_num": 29,
+      "pivot_angle": 0.860452,
+      "pivot_velocity": 0.025256,
+      "pivot_accel": -0.00016,
+      "elevator_length": 1.112855,
+      "elevator_velocity": -0.522,
+      "elevator_accel": -1.199995
+    },
+    {
+      "time": 0.45,
+      "sample_num": 30,
+      "pivot_angle": 0.860831,
+      "pivot_velocity": 0.025254,
+      "pivot_accel": -0.000156,
+      "elevator_length": 1.10489,
+      "elevator_velocity": -0.539999,
+      "elevator_accel": -1.199988
+    },
+    {
+      "time": 0.465,
+      "sample_num": 31,
+      "pivot_angle": 0.86121,
+      "pivot_velocity": 0.025252,
+      "pivot_accel": -0.000152,
+      "elevator_length": 1.096655,
+      "elevator_velocity": -0.557999,
+      "elevator_accel": 0.40837
+    },
+    {
+      "time": 0.48,
+      "sample_num": 32,
+      "pivot_angle": 0.861588,
+      "pivot_velocity": 0.025249,
+      "pivot_accel": -0.000148,
+      "elevator_length": 1.088368,
+      "elevator_velocity": -0.543693,
+      "elevator_accel": 1.19999
+    },
+    {
+      "time": 0.495,
+      "sample_num": 33,
+      "pivot_angle": 0.861967,
+      "pivot_velocity": 0.025247,
+      "pivot_accel": -0.000144,
+      "elevator_length": 1.080347,
+      "elevator_velocity": -0.525693,
+      "elevator_accel": 1.199995
+    },
+    {
+      "time": 0.51,
+      "sample_num": 34,
+      "pivot_angle": 0.862346,
+      "pivot_velocity": 0.025245,
+      "pivot_accel": -0.00014,
+      "elevator_length": 1.072597,
+      "elevator_velocity": -0.507693,
+      "elevator_accel": 1.199997
+    },
+    {
+      "time": 0.525,
+      "sample_num": 35,
+      "pivot_angle": 0.862724,
+      "pivot_velocity": 0.025243,
+      "pivot_accel": -0.000136,
+      "elevator_length": 1.065117,
+      "elevator_velocity": -0.489693,
+      "elevator_accel": 1.199997
+    },
+    {
+      "time": 0.54,
+      "sample_num": 36,
+      "pivot_angle": 0.863103,
+      "pivot_velocity": 0.025241,
+      "pivot_accel": -0.000133,
+      "elevator_length": 1.057906,
+      "elevator_velocity": -0.471693,
+      "elevator_accel": 1.199998
+    },
+    {
+      "time": 0.555,
+      "sample_num": 37,
+      "pivot_angle": 0.863482,
+      "pivot_velocity": 0.025239,
+      "pivot_accel": -0.00013,
+      "elevator_length": 1.050966,
+      "elevator_velocity": -0.453693,
+      "elevator_accel": 1.199998
+    },
+    {
+      "time": 0.57,
+      "sample_num": 38,
+      "pivot_angle": 0.86386,
+      "pivot_velocity": 0.025237,
+      "pivot_accel": -0.000127,
+      "elevator_length": 1.044295,
+      "elevator_velocity": -0.435693,
+      "elevator_accel": 1.199998
+    },
+    {
+      "time": 0.585,
+      "sample_num": 39,
+      "pivot_angle": 0.864239,
+      "pivot_velocity": 0.025235,
+      "pivot_accel": -0.000124,
+      "elevator_length": 1.037895,
+      "elevator_velocity": -0.417693,
+      "elevator_accel": 1.199999
+    },
+    {
+      "time": 0.6,
+      "sample_num": 40,
+      "pivot_angle": 0.864617,
+      "pivot_velocity": 0.025233,
+      "pivot_accel": -0.000122,
+      "elevator_length": 1.031765,
+      "elevator_velocity": -0.399693,
+      "elevator_accel": 1.199999
+    },
+    {
+      "time": 0.615,
+      "sample_num": 41,
+      "pivot_angle": 0.864996,
+      "pivot_velocity": 0.025232,
+      "pivot_accel": -0.00012,
+      "elevator_length": 1.025904,
+      "elevator_velocity": -0.381693,
+      "elevator_accel": 1.199999
+    },
+    {
+      "time": 0.63,
+      "sample_num": 42,
+      "pivot_angle": 0.865374,
+      "pivot_velocity": 0.02523,
+      "pivot_accel": -0.000117,
+      "elevator_length": 1.020314,
+      "elevator_velocity": -0.363693,
+      "elevator_accel": 1.199999
+    },
+    {
+      "time": 0.645,
+      "sample_num": 43,
+      "pivot_angle": 0.865753,
+      "pivot_velocity": 0.025228,
+      "pivot_accel": -0.000115,
+      "elevator_length": 1.014993,
+      "elevator_velocity": -0.345693,
+      "elevator_accel": 1.199999
+    },
+    {
+      "time": 0.66,
+      "sample_num": 44,
+      "pivot_angle": 0.866131,
+      "pivot_velocity": 0.025226,
+      "pivot_accel": -0.000113,
+      "elevator_length": 1.009943,
+      "elevator_velocity": -0.327693,
+      "elevator_accel": 1.199999
+    },
+    {
+      "time": 0.675,
+      "sample_num": 45,
+      "pivot_angle": 0.866509,
+      "pivot_velocity": 0.025225,
+      "pivot_accel": -0.000111,
+      "elevator_length": 1.005163,
+      "elevator_velocity": -0.309693,
+      "elevator_accel": 1.199999
+    },
+    {
+      "time": 0.69,
+      "sample_num": 46,
+      "pivot_angle": 0.866888,
+      "pivot_velocity": 0.025223,
+      "pivot_accel": -0.00011,
+      "elevator_length": 1.000652,
+      "elevator_velocity": -0.291693,
+      "elevator_accel": 1.199999
+    },
+    {
+      "time": 0.705,
+      "sample_num": 47,
+      "pivot_angle": 0.867266,
+      "pivot_velocity": 0.025221,
+      "pivot_accel": -0.000108,
+      "elevator_length": 0.996412,
+      "elevator_velocity": -0.273693,
+      "elevator_accel": 1.199999
+    },
+    {
+      "time": 0.72,
+      "sample_num": 48,
+      "pivot_angle": 0.867644,
+      "pivot_velocity": 0.02522,
+      "pivot_accel": -0.000107,
+      "elevator_length": 0.992441,
+      "elevator_velocity": -0.255693,
+      "elevator_accel": 1.199999
+    },
+    {
+      "time": 0.735,
+      "sample_num": 49,
+      "pivot_angle": 0.868023,
+      "pivot_velocity": 0.025218,
+      "pivot_accel": -0.000105,
+      "elevator_length": 0.988741,
+      "elevator_velocity": -0.237693,
+      "elevator_accel": 1.199999
+    },
+    {
+      "time": 0.75,
+      "sample_num": 50,
+      "pivot_angle": 0.868401,
+      "pivot_velocity": 0.025217,
+      "pivot_accel": -0.000104,
+      "elevator_length": 0.985311,
+      "elevator_velocity": -0.219693,
+      "elevator_accel": 1.199999
+    },
+    {
+      "time": 0.765,
+      "sample_num": 51,
+      "pivot_angle": 0.868779,
+      "pivot_velocity": 0.025215,
+      "pivot_accel": -0.000103,
+      "elevator_length": 0.98215,
+      "elevator_velocity": -0.201693,
+      "elevator_accel": 1.199999
+    },
+    {
+      "time": 0.78,
+      "sample_num": 52,
+      "pivot_angle": 0.869157,
+      "pivot_velocity": 0.025213,
+      "pivot_accel": -0.000102,
+      "elevator_length": 0.97926,
+      "elevator_velocity": -0.183693,
+      "elevator_accel": 1.199999
+    },
+    {
+      "time": 0.795,
+      "sample_num": 53,
+      "pivot_angle": 0.869536,
+      "pivot_velocity": 0.025212,
+      "pivot_accel": -0.000101,
+      "elevator_length": 0.976639,
+      "elevator_velocity": -0.165693,
+      "elevator_accel": 1.2
+    },
+    {
+      "time": 0.81,
+      "sample_num": 54,
+      "pivot_angle": 0.869914,
+      "pivot_velocity": 0.02521,
+      "pivot_accel": -0.000103,
+      "elevator_length": 0.974289,
+      "elevator_velocity": -0.147693,
+      "elevator_accel": 1.2
+    },
+    {
+      "time": 0.825,
+      "sample_num": 55,
+      "pivot_angle": 0.870292,
+      "pivot_velocity": 0.025209,
+      "pivot_accel": -0.000119,
+      "elevator_length": 0.972209,
+      "elevator_velocity": -0.129693,
+      "elevator_accel": 1.2
+    },
+    {
+      "time": 0.84,
+      "sample_num": 56,
+      "pivot_angle": 0.87067,
+      "pivot_velocity": 0.025207,
+      "pivot_accel": -0.000229,
+      "elevator_length": 0.970398,
+      "elevator_velocity": -0.111693,
+      "elevator_accel": 1.2
+    },
+    {
+      "time": 0.855,
+      "sample_num": 57,
+      "pivot_angle": 0.871048,
+      "pivot_velocity": 0.025201,
+      "pivot_accel": -0.00097,
+      "elevator_length": 0.968858,
+      "elevator_velocity": -0.093693,
+      "elevator_accel": 1.2
+    },
+    {
+      "time": 0.87,
+      "sample_num": 58,
+      "pivot_angle": 0.871426,
+      "pivot_velocity": 0.025171,
+      "pivot_accel": -0.005783,
+      "elevator_length": 0.967587,
+      "elevator_velocity": -0.075693,
+      "elevator_accel": 1.2
+    },
+    {
+      "time": 0.885,
+      "sample_num": 59,
+      "pivot_angle": 0.871803,
+      "pivot_velocity": 0.024987,
+      "pivot_accel": -0.03656,
+      "elevator_length": 0.966587,
+      "elevator_velocity": -0.057693,
+      "elevator_accel": 1.2
+    },
+    {
+      "time": 0.9,
+      "sample_num": 60,
+      "pivot_angle": 0.872171,
+      "pivot_velocity": 0.02384,
+      "pivot_accel": -0.223092,
+      "elevator_length": 0.965857,
+      "elevator_velocity": -0.039693,
+      "elevator_accel": 1.2
+    },
+    {
+      "time": 0.915,
+      "sample_num": 61,
+      "pivot_angle": 0.872493,
+      "pivot_velocity": 0.017715,
+      "pivot_accel": -0.803152,
+      "elevator_length": 0.965396,
+      "elevator_velocity": -0.021693,
+      "elevator_accel": 1.2
+    },
+    {
+      "time": 0.93,
+      "sample_num": 62,
+      "pivot_angle": 0.872659,
+      "pivot_velocity": 0.003452,
+      "pivot_accel": -0.739861,
+      "elevator_length": 0.965206,
+      "elevator_velocity": -0.003693,
+      "elevator_accel": 0.791606
+    },
+    {
+      "time": 0.937743,
+      "sample_num": 63,
+      "pivot_angle": 0.872652,
+      "pivot_velocity": -0.005233,
+      "pivot_accel": 1.121559,
+      "elevator_length": 0.965213,
+      "elevator_velocity": 0.005598,
+      "elevator_accel": -1.2
+    }
+  ],
+  "N_total": 63
+}

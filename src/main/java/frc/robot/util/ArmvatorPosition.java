@@ -13,7 +13,8 @@ public enum ArmvatorPosition {
   HP(new Translation2d(0.751075, 0.602371)),
   GROUND_INTAKE(new Translation2d(0.99081, 0.266599)),
   PROCESSOR(new Translation2d(0.829313, 0.487528)),
-  NET(new Translation2d(0.0, 1.9419));
+  NET(new Translation2d(0.0, 1.9419)),
+  STOW(new Translation2d(0.620419, 0.739386));
 
   public final Translation2d endeffPos;
 
