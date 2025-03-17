@@ -70,7 +70,7 @@ public class Autos {
     routine.active().onTrue(
       Commands.sequence(
         trajectoryStartToReef.resetOdometry(),
-        trajectoryStartToReef.cmd()
+        trajectoryStartToReef.cmd(),
         trajectoryReefToFromFeeder.cmd()
       )
     );
