@@ -2,7 +2,7 @@ package frc.robot.constants;
 
 public class IntakeConstants {
   public static final int INTAKE_ID = 35;
-  public static final int CANANDCOLOR_ID = 0;
+  public static final int CANANDCOLOR_ID = 2;
 
   public static final double CORAL_PROXIMITY_THRESHOLD = 0.15;
   public static final double ALGAE_PROXIMITY_THRESHOLD = 0.35;
