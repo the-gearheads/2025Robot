@@ -2,14 +2,15 @@ package frc.robot.subsystems.arm;
 
 import static frc.robot.constants.ArmConstants.*;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.ElevatorSim;
 
 public class TelescopeSim extends Telescope {
   DCMotor elevatorMotor = DCMotor.getNeoVortex(2);
   ElevatorSim teleSim = new ElevatorSim(LinearSystemId.identifyPositionSystem(ELEVATOR_KV, ELEVATOR_KA), elevatorMotor, MIN_RELATIVE_HEIGHT, MAX_RELATIVE_HEIGHT, false, MIN_RELATIVE_HEIGHT );
-  double output = 0;
 
   public TelescopeSim() {
     super();
@@ -30,8 +31,8 @@ public class TelescopeSim extends Telescope {
 
   @Override
   protected void setMotorVoltage(double volts) {
+    volts = MathUtil.clamp(volts, -RobotController.getBatteryVoltage(), RobotController.getBatteryVoltage());
     teleSim.setInputVoltage(volts);
-    output = volts;
   }
 
   @Override

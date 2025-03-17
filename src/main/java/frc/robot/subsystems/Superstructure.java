@@ -10,6 +10,7 @@ import org.littletonrobotics.junction.Logger;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import frc.robot.commands.WristTrajFollower;
 import frc.robot.subsystems.arm.Pivot;
 import frc.robot.subsystems.arm.Telescope;
@@ -69,8 +70,11 @@ public class Superstructure {
         }
         Logger.recordOutput("Superstructure/goToFrom", currentPos);
         Logger.recordOutput("Superstructure/goToTo", pos);
-        return followAvTrajectory(traj).deadlineFor(new WristTrajFollower(traj, pos, wrist, this::getLastSample));
-      }, Set.of(pivot, telescope, wrist));
+        return new ParallelDeadlineGroup(
+          followAvTrajectory(traj),
+          new WristTrajFollower(traj, pos, wrist, this::getLastSample)
+        );
+      }, Set.of(pivot, telescope, wrist)).andThen(Commands.print("test"));
     }
     
     @AutoLogOutput

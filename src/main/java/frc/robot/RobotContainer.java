@@ -40,7 +40,9 @@ public class RobotContainer {
   private final Autos autos;
   private final SysidAutoPicker sysidAuto = new SysidAutoPicker();
   private final ObjectiveTracker tracker;
+  @SuppressWarnings("unused")
   private final MechanismViz viz;
+  @SuppressWarnings("unused")
   private final Leds leds = new Leds();
 
   public RobotContainer() {
@@ -92,18 +94,11 @@ public class RobotContainer {
     // teleop controlls
 
 
-    Controllers.driverController.getLeftTriggerBtn().onTrue(
-      superStructure.goTo(SuperstructurePosition.GROUND_INTAKE)
-      .alongWith(
-        intake.runIntake()
-      )
-    );
+    Controllers.driverController.getLeftTriggerBtn().whileTrue(intake.runIntake());
+    Controllers.driverController.getLeftTriggerBtn().onTrue(superStructure.goTo(SuperstructurePosition.GROUND_INTAKE));
 
-    Controllers.driverController.getRightTriggerBtn().onTrue(
-      superStructure.goTo(SuperstructurePosition.HP).alongWith(
-        intake.runIntake()  
-      )
-    );
+    Controllers.driverController.getRightTriggerBtn().whileTrue(intake.runIntake());
+    Controllers.driverController.getRightTriggerBtn().onTrue(superStructure.goTo(SuperstructurePosition.HP));
 
     Controllers.driverController.getRightPaddle().onTrue(
       Commands.deferredProxy(() -> {

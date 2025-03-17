@@ -111,9 +111,7 @@ public record ArmvatorTrajectory(String name, List<ArmvatorSample> samples) {
       // On end
       end -> {
         // I think it might be possible to skip the final sample in the case of loop overruns? That'd be bad.
-        if(end) {
-          consumer.accept(getFinalSample());
-        }
+        consumer.accept(getFinalSample());
         timer.stop();
         timer.reset();
       },

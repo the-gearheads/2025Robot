@@ -34,7 +34,6 @@ public final class ArmConstants {
   public static final double MIN_SYSID_ANGLE = Units.degreesToRadians(30);
 
   public static final double PIVOT_ANGLE_TOLERANCE = Units.degreesToRadians(1);
-  public static final double PIVOT_MOI_EST = 0.7895417850; // from cad kg * m^2
 
   // -- elevator contants --
   public static final int ELEVATOR_MOTOR_ID = 11;

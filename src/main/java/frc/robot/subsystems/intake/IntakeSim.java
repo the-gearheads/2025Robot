@@ -4,8 +4,10 @@ import static frc.robot.constants.IntakeConstants.INTAKE_GEAR_RATIO;
 
 import org.littletonrobotics.junction.AutoLogOutput;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 
 public class IntakeSim extends Intake {
@@ -23,6 +25,7 @@ public class IntakeSim extends Intake {
 
   @Override
   public void setMotorVoltage(double volts) {
+    volts = MathUtil.clamp(volts, -RobotController.getBatteryVoltage(), RobotController.getBatteryVoltage());
     intakeSim.setInputVoltage(volts);
   }
 }
