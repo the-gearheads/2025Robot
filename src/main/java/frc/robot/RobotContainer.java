@@ -8,7 +8,7 @@ package frc.robot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
-import frc.robot.commands.AlignToPose;
+import frc.robot.commands.Teleop;
 import frc.robot.commands.NTControl.PivotNTControl;
 import frc.robot.commands.NTControl.TelescopeNTControl;
 import frc.robot.commands.NTControl.WristNTControl;
@@ -60,7 +60,7 @@ public class RobotContainer {
     superStructure = new Superstructure(pivot, telescope, wrist);
     autos = new Autos(swerve, superStructure, intake);
     viz = new MechanismViz(swerve, pivot, telescope, wrist);
-    swerve.setDefaultCommand(new AlignToPose(swerve));
+    swerve.setDefaultCommand(new Teleop(swerve));
     // swerve.setDefaultCommand(new Teleop(swerve));
     // pivot.setDefaultCommand(new ManualPivot(pivot));
     pivot.setDefaultCommand(new PivotNTControl(pivot));

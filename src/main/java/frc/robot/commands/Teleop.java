@@ -9,6 +9,7 @@ import frc.robot.subsystems.swerve.Swerve;
 
 public class Teleop extends Command {
     Swerve swerve;
+    AlignToPose autoAlign = new AlignToPose();
     
     public Teleop(Swerve swerve) {
         addRequirements(swerve);
@@ -34,8 +35,9 @@ public class Teleop extends Command {
         y *= MAX_ROBOT_TRANS_SPEED;
         rot *= MAX_ROBOT_TRANS_SPEED;
 
-        var speeds = new ChassisSpeeds(x, y, rot);
+        ChassisSpeeds driverSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(new ChassisSpeeds(x, y, rot), swerve.getPose().getRotation());
+        ChassisSpeeds autoSpeeds = autoAlign.getAutoAlignSpeeds(x, y, swerve.getPose());
 
-        swerve.driveAllianceRelative(speeds);
+        swerve.drive(driverSpeeds.plus(autoSpeeds));
     }
 }
