@@ -36,12 +36,12 @@ public class Autos {
     );
 
 
-    factory.bind("intake", intake.runIntake().asProxy());
-    factory.bind("L1", superstructure.goTo(SuperstructurePosition.L1).asProxy());
-    factory.bind("L2", superstructure.goTo(SuperstructurePosition.L2).asProxy());
-    factory.bind("L3", superstructure.goTo(SuperstructurePosition.L3).asProxy());
-    factory.bind("L4", superstructure.goTo(SuperstructurePosition.L4).asProxy());
-    factory.bind("HP", superstructure.goTo(SuperstructurePosition.HP).asProxy());
+    factory.bind("intake", intake.runOnce(()->{}));
+    factory.bind("L1", superstructure.goTo(SuperstructurePosition.L1));
+    factory.bind("L2", superstructure.goTo(SuperstructurePosition.L2));
+    factory.bind("L3", superstructure.goTo(SuperstructurePosition.L3));
+    factory.bind("L4", superstructure.goTo(SuperstructurePosition.L4));
+    factory.bind("HP", superstructure.goTo(SuperstructurePosition.HP));
 
     chooser = new AutoChooser();
     chooser.addRoutine(nameCenterReef, this::centerReef);
@@ -52,6 +52,11 @@ public class Autos {
 
   public Command getAutonomousRoutine() {
     return chooser.selectedCommand();
+  }
+
+   /* Outtake Coral, proxied such that we don't have self-cancelling autons */
+  private Command outtakeCoral() {
+    return intake.outtakeCoral().asProxy();
   }
 
   public AutoRoutine centerReef() {
@@ -124,11 +129,11 @@ we need to ensure we're already rotated correctly before lining against stuff li
       )
     );
 
-    startToReef.recentlyDone().onTrue(
+    startToReef.done().onTrue(
       Commands.sequence(
         superstructure.waitUntilAtSetpoint(),
         // possibly an auto align
-        intake.outtakeCoral().withTimeout(2), // mostly for now as we do not have coral sim yet
+        outtakeCoral().withTimeout(2), // mostly for now as we do not have coral sim yet
         Commands.print("CCCCC"),
         reefToHP.cmd(),
         Commands.print("DDDDD")
@@ -136,22 +141,22 @@ we need to ensure we're already rotated correctly before lining against stuff li
     );
 
     // we -could- hypothetically- wait until we have a game piece, but we could also just rely on pure HP skill
-    reefToHP.recentlyDone().onTrue(Commands.sequence(
+    reefToHP.done().onTrue(Commands.sequence(
       Commands.print("bbbbbb"),
-      // superstructure.waitUntilAtSetpoint(),
-      Commands.print("Aaaaaa")
-      // HPToReef.cmd()
+      superstructure.waitUntilAtSetpoint(),
+      Commands.print("Aaaaaa"),
+      HPToReef.cmd()
     ));
 
-    // HPToReef.done().onTrue(
-    //   Commands.sequence(
-    //     Commands.print("before wait until at setpoint"),
-    //     superstructure.waitUntilAtSetpoint(),
-    //     Commands.print("after wait until at setpoint"),
-    //     // possibly an auto align
-    //     intake.outtakeCoral().withTimeout(2)
-    //   )
-    // );
+    HPToReef.done().onTrue(
+      Commands.sequence(
+        Commands.print("before wait until at setpoint"),
+        superstructure.waitUntilAtSetpoint(),
+        Commands.print("after wait until at setpoint"),
+        // possibly an auto align
+        outtakeCoral().withTimeout(2)
+      )
+    );
     
     // NOTE: may need to add an alignment in the case it is not perfectly aligned in relation to the april tag
 
