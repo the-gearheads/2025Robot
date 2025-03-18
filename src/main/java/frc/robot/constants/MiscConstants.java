@@ -14,6 +14,9 @@ public final class MiscConstants {
   public static final double VECTOR_ERROR_SCALAR = 10;
   public static final double MAX_AUTO_VELOCITY = 2; // m/s;
 
+  public static final double AUTO_ALIGN_ANGLE_THRESHOLD = Units.degreesToRadians(50);
+  public static final double AUTO_ALIGN_DIST_THRESHOLD = 2;
+
   // robot constants, unused; for reference
   public static final double ROBOT_MOI = 3.070789055; // kg * m^2   - for rinzlers drive base
   public static final double ROBOT_MASS = 31.5; // kg
