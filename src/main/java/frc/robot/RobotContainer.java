@@ -24,6 +24,7 @@ import frc.robot.subsystems.arm.TelescopeSim;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeSim;
 import frc.robot.subsystems.swerve.Swerve;
+import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.wrist.Wrist;
 import frc.robot.subsystems.wrist.WristSim;
 import frc.robot.util.ObjectiveTracker;
@@ -39,6 +40,7 @@ public class RobotContainer {
   private final Autos autos;
   private final SysidAutoPicker sysidAuto = new SysidAutoPicker();
   private final ObjectiveTracker tracker;
+  private final Vision vision = new Vision(swerve);
   @SuppressWarnings("unused")
   private final MechanismViz viz;
   @SuppressWarnings("unused")
@@ -60,7 +62,7 @@ public class RobotContainer {
     superStructure = new Superstructure(pivot, telescope, wrist);
     autos = new Autos(swerve, superStructure, intake);
     viz = new MechanismViz(swerve, pivot, telescope, wrist);
-    swerve.setDefaultCommand(new Teleop(swerve));
+    swerve.setDefaultCommand(new Teleop(swerve, vision));
     // swerve.setDefaultCommand(new Teleop(swerve));
     // pivot.setDefaultCommand(new ManualPivot(pivot));
     pivot.setDefaultCommand(new PivotNTControl(pivot));

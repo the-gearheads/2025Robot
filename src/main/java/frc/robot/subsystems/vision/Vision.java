@@ -83,23 +83,9 @@ public class Vision extends SubsystemBase {
     cameras[cameraIndex].setPoseStrategy(strategy);
   }
 
-  public void disableCamera(int cameraIndex) {
-    cameras[cameraIndex].disable();
-  }
-
-  public void enableCamera(int cameraIndex) {
-    cameras[cameraIndex].enable();
-  }
-
-  public void disableVision() {
-    for (Camera camera : cameras) {
-      camera.disable();
-    }
-  }
-
-  public void enableVision() {
-    for (Camera camera : cameras) {
-      camera.disable();
+  public void defaultPoseStrategies() {
+    for (int i=0; i<cameras.length; i++) {
+      cameras[i].setPoseStrategy(INITAL_CAMERA_STRATEGIES[i]);
     }
   }
 }

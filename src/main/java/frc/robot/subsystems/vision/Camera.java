@@ -51,7 +51,7 @@ public class Camera {
 
   // kinda ugly ik ik
   private Pose2d lastRobotPose;
-  private boolean isDisabled = false;
+  private boolean isDisabled;
 
   private final AprilTagFieldLayout field;
 
@@ -115,9 +115,6 @@ public class Camera {
   }
 
   public boolean feedPoseEstimator(SwerveDrivePoseEstimator poseEstimator, Rotation2d gyroOffset) {
-    Logger.recordOutput(path + "/isDisabled", isDisabled);
-    if (isDisabled)
-      return false;
     lastRobotPose = poseEstimator.getEstimatedPosition();
     boolean visionWasMeasured = false;
     List<PhotonPipelineResult> pipelineResults = getPipelineResults();
@@ -157,6 +154,11 @@ public class Camera {
 
       // if (numTargets <= 1)
       //   thetaStdDev = Double.POSITIVE_INFINITY;
+      if (estimator.getPrimaryStrategy() == PoseStrategy.PNP_DISTANCE_TRIG_SOLVE) {
+        System.out.println("Ignoring standard devs");
+        xyStdDev = 0;
+        thetaStdDev = 0;
+      }
 
       Logger.recordOutput(path + "/XyStdDev", xyStdDev);
       Logger.recordOutput(path + "/ThetaStdDev", thetaStdDev);
@@ -164,7 +166,8 @@ public class Camera {
       Logger.recordOutput(path + "/AvgTagArea", avgTagArea);
       Logger.recordOutput(path + "/EstPose", pose.estimatedPose);
 
-      var stddevs = MatBuilder.fill(Nat.N3(), Nat.N1(), xyStdDev, xyStdDev, thetaStdDev);
+      // var stddevs = MatBuilder.fill(Nat.N3(), Nat.N1(), xyStdDev, xyStdDev, thetaStdDev);
+      var stddevs = MatBuilder.fill(Nat.N3(), Nat.N1(), 0, 0, 0);
 
       poseEstimator.addVisionMeasurement(pose.estimatedPose.toPose2d(), result.getTimestampSeconds(), stddevs);
       visionWasMeasured = true;
@@ -204,13 +207,5 @@ public class Camera {
 
   public void setPoseStrategy(PoseStrategy strategy) {
     estimator.setPrimaryStrategy(strategy);
-  }
-
-  public void disable() {
-    isDisabled = true;
-  }
-
-  public void enable() {
-    isDisabled = false;
   }
 }
