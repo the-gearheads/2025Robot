@@ -126,7 +126,6 @@ public class Telescope extends SubsystemBase {
     SmartDashboard.putData("Telescope/pidController", pid);
     Logger.recordOutput("Telescope/attemptedOutput", output);
     Logger.recordOutput("Telescope/manualVoltage", manualVoltage);
-    Logger.recordOutput("Telescope/sample", sample);
     Logger.recordOutput("Telescope/isHomed", isHomed);
 
     // stops robot from runnign into itself

@@ -34,10 +34,13 @@ public class Superstructure {
     this.telescope = telescope;
     this.wrist = wrist;
     ArmvatorTrajectory.loadAll();
+    // Log for the first time to avoid performance penalty
+    Logger.recordOutput("Superstructure/Sample", new ArmvatorSample(0, 0, 0, 0, 0, 0, 0, 0));
     telescope.setPivotAngleRadSupplier(pivot::getAngleRad);
   }
   
   private void followSample(ArmvatorSample sample) {
+    Logger.recordOutput("Superstructure/Sample", sample);
     pivot.setMode(RunMode.TRAJECTORY);
     telescope.setMode(RunMode.TRAJECTORY);
     pivot.setSample(sample); 

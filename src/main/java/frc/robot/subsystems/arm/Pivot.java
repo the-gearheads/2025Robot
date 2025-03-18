@@ -105,7 +105,6 @@ public class Pivot extends SubsystemBase {
 
     SmartDashboard.putData("Pivot/pidController", pid);
     Logger.recordOutput("Pivot/manualVoltage", manualVoltage);
-    Logger.recordOutput("Pivot/Sample", sample);
     Logger.recordOutput("Pivot/attemptedOutput", output);
     // stops robot from runnign into itself
     if (output > 0 && getAbsAngle().getRadians() > MAX_ANGLE) {
