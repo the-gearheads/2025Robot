@@ -83,7 +83,7 @@ public class Autos {
 
     // Resetting the arm to HP position and running the intake at feeder station
     trajectoryReefKToFeeder.atTime("K-L4").onTrue(superstructure.goTo(SuperstructurePosition.HP));
-    trajectoryReefKToFeeder.atTime("Feeder").onTrue(intake.runIntake());
+    trajectoryReefKToFeeder.atTime("Reef-Feeder").onTrue(intake.runIntake());
     trajectoryReefKToFeeder.done().onTrue(trajectoryFeederToReefL.cmd());
 
     // Add command to place corral on top level of reef
