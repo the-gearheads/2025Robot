@@ -8,6 +8,7 @@ import java.io.IOException;
 
 import org.littletonrobotics.junction.Logger;
 import org.photonvision.PhotonCamera;
+import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
@@ -75,6 +76,30 @@ public class Vision extends SubsystemBase {
     sim.periodic(swerve.getPoseWheelsOnly());
     for (Camera camera : cameras) {
       camera.logCamTransform(swerve.getPose());
+    }
+  }
+
+  public void setPoseStrategy(int cameraIndex, PoseStrategy strategy) {
+    cameras[cameraIndex].setPoseStrategy(strategy);
+  }
+
+  public void disableCamera(int cameraIndex) {
+    cameras[cameraIndex].disable();
+  }
+
+  public void enableCamera(int cameraIndex) {
+    cameras[cameraIndex].enable();
+  }
+
+  public void disableVision() {
+    for (Camera camera : cameras) {
+      camera.disable();
+    }
+  }
+
+  public void enableVision() {
+    for (Camera camera : cameras) {
+      camera.disable();
     }
   }
 }

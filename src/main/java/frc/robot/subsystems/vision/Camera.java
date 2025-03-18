@@ -51,6 +51,7 @@ public class Camera {
 
   // kinda ugly ik ik
   private Pose2d lastRobotPose;
+  private boolean isDisabled = false;
 
   private final AprilTagFieldLayout field;
 
@@ -114,6 +115,9 @@ public class Camera {
   }
 
   public boolean feedPoseEstimator(SwerveDrivePoseEstimator poseEstimator, Rotation2d gyroOffset) {
+    Logger.recordOutput(path + "/isDisabled", isDisabled);
+    if (isDisabled)
+      return false;
     lastRobotPose = poseEstimator.getEstimatedPosition();
     boolean visionWasMeasured = false;
     List<PhotonPipelineResult> pipelineResults = getPipelineResults();
@@ -196,5 +200,17 @@ public class Camera {
     properties.setLatencyStdDevMs(7);
 
     return properties;
+  }
+
+  public void setPoseStrategy(PoseStrategy strategy) {
+    estimator.setPrimaryStrategy(strategy);
+  }
+
+  public void disable() {
+    isDisabled = true;
+  }
+
+  public void enable() {
+    isDisabled = false;
   }
 }

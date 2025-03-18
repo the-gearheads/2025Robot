@@ -138,11 +138,10 @@ public class AlignToPose extends Command {
     double xDriver = Controllers.driverController.getTranslateXAxis() * MAX_ROBOT_TRANS_SPEED;
     double yDriver = Controllers.driverController.getTranslateYAxis() * MAX_ROBOT_TRANS_SPEED;
     double rotDriver = Controllers.driverController.getRotateAxis() * MAX_ROBOT_ROT_SPEED;
-
-    swerve.drive(
-        ChassisSpeeds.fromFieldRelativeSpeeds(autoTranslation.getX() + xDriver * (1 - totalScalingFactor),
-            autoTranslation.getY() + yDriver * (1 - totalScalingFactor),
-            rotScaledVel + rotDriver * (1 - totalScalingFactor), currentPose.getRotation()));
+    ChassisSpeeds autoSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(autoTranslation.getX(), autoTranslation.getY(), rotScaledVel, currentPose.getRotation());
+    ChassisSpeeds driverSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(xDriver, yDriver, rotDriver, currentPose.getRotation());
+    swerve.driveAllianceRelative(driverSpeeds.plus(autoSpeeds));
+        
 
   }
 
@@ -157,8 +156,6 @@ public class AlignToPose extends Command {
         1.0);
     double shiftYT = MathUtil.clamp(-MathUtil.clamp(offset.getX(), -MAX_REEF_LINEUP_DIST, 0) / REEF_FACE_LENGTH, 0.0,
         1.0);
-    Logger.recordOutput("AlignToPose/offsetX", offset.getX());
-    Logger.recordOutput("AlignToPose/offsetY", offset.getY());
     return goal.transformBy(
         new Transform2d(
             shiftXT * 1.5,
@@ -168,8 +165,6 @@ public class AlignToPose extends Command {
   public Pose2d getCoralObjective(Rotation2d controllerVectorAngle) {
     Pair<Pose2d, Double> bestReefPose = new Pair<Pose2d,Double>(null, 1000.0);
     ArrayList<Pose2d> reefPoses = new ArrayList<>(ReefPositions.getScoringPoses());
-    double bestVectorError = Double.MAX_VALUE;  // only for logging
-    double bestWeight = Double.MAX_VALUE;  // only for logging
     // Logger.recordOutput("AlignToPose/reefPoses", Pose2d.struct, reefPoses.stream().toArray(Pose2d[]::new));
     for (int i = 0; i < reefPoses.size(); i++) {
       Pose2d reefPose = reefPoses.get(i);
@@ -179,13 +174,9 @@ public class AlignToPose extends Command {
 
       double weight = dist + (vectorError * VECTOR_ERROR_SCALAR);
       if (weight < bestReefPose.getSecond()) {
-        bestWeight = weight;
-        bestVectorError = vectorError;
         bestReefPose = new Pair<Pose2d, Double>(reefPose, weight);
       }
     }
-    Logger.recordOutput("AlignToPose/CoralObjective/bestVectorError", bestVectorError);
-    Logger.recordOutput("AlignToPose/CoralObjective/bestWeight", bestWeight);
     return bestReefPose.getFirst();
   }
 }

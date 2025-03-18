@@ -15,7 +15,7 @@ public class VisionConstants {
   public static final double CONSTRAINED_PNP_HEADING_SCALE_FACTOR = 1;
   ;
   public static final String[] CAMERA_NAMES = { "FRONT_LEFT_2025",  "BACK_LEFT_2025", "BACK_RIGHT"};
-  public static final PoseStrategy[] CAMERA_STRATEGIES = {PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, PoseStrategy.PNP_DISTANCE_TRIG_SOLVE};
+  public static final PoseStrategy[] INITAL_CAMERA_STRATEGIES = {PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR};
   public static final Transform3d[] CAMERA_TRANSFORMS = {
       new Transform3d(  // FRONT_LEFT_2025
           new Translation3d(0.36322, 0.1778, 0.16891),
