@@ -2,6 +2,7 @@ package frc.robot.commands;
 
 import static frc.robot.constants.SwerveConstants.MAX_ROBOT_TRANS_SPEED;
 
+import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.controllers.Controllers;
@@ -36,9 +37,9 @@ public class Teleop extends Command {
         y *= MAX_ROBOT_TRANS_SPEED;
         rot *= MAX_ROBOT_TRANS_SPEED;
 
-        ChassisSpeeds driverSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(new ChassisSpeeds(x, y, rot), swerve.getPose().getRotation());
-        ChassisSpeeds autoSpeeds = autoAlign.getAutoAlignSpeeds(x, y, swerve.getPose());
+        Pair<ChassisSpeeds, Double> autoAlignSpeeds = autoAlign.getAutoAlignSpeeds(x, y, swerve.getPose());
+        ChassisSpeeds driverSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(new ChassisSpeeds(x * (1 - autoAlignSpeeds.getSecond()), y * (1 - autoAlignSpeeds.getSecond()), rot * (1 - autoAlignSpeeds.getSecond())), swerve.getPose().getRotation());
 
-        swerve.drive(driverSpeeds.plus(autoSpeeds));
+        swerve.drive(driverSpeeds.plus(autoAlignSpeeds.getFirst()));
     }
 }

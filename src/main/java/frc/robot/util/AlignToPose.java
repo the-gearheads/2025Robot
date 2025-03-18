@@ -19,7 +19,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import frc.robot.util.ReefPositions;
 
 public class AlignToPose {
   ProfiledPIDController driveController = new ProfiledPIDController(XY_PATH_FOLLOWING_PID[0], XY_PATH_FOLLOWING_PID[1],
@@ -48,7 +47,7 @@ public class AlignToPose {
    * distance to target pose
    * (also the same controller vector?)
    */
-  public ChassisSpeeds getAutoAlignSpeeds(double controllerX, double controllerY, Pose2d robotPose) {
+  public Pair<ChassisSpeeds, Double> getAutoAlignSpeeds(double controllerX, double controllerY, Pose2d robotPose) {
     Translation2d controllerTranslation = new Translation2d(controllerX, controllerY);
     Rotation2d controllerAngle = controllerTranslation.getAngle();
 
@@ -93,7 +92,7 @@ public class AlignToPose {
     Logger.recordOutput("AlignToPose/rotScaledVel", rotScaledVel);
 
     ChassisSpeeds autoSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(autoTranslation.getX(), autoTranslation.getY(), rotScaledVel, robotPose.getRotation());
-    return autoSpeeds;
+    return Pair.of(autoSpeeds, totalScalingFactor);
   }
 
   private static Pose2d getDriveTarget(Pose2d robot, Pose2d goal) {
