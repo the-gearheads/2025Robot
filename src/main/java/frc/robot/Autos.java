@@ -134,25 +134,19 @@ we need to ensure we're already rotated correctly before lining against stuff li
         superstructure.waitUntilAtSetpoint(),
         // possibly an auto align
         outtakeCoral().withTimeout(2), // mostly for now as we do not have coral sim yet
-        Commands.print("CCCCC"),
-        reefToHP.cmd(),
-        Commands.print("DDDDD")
+        reefToHP.cmd()
       )
     );
 
     // we -could- hypothetically- wait until we have a game piece, but we could also just rely on pure HP skill
     reefToHP.done().onTrue(Commands.sequence(
-      Commands.print("bbbbbb"),
       superstructure.waitUntilAtSetpoint(),
-      Commands.print("Aaaaaa"),
       HPToReef.cmd()
     ));
 
     HPToReef.done().onTrue(
       Commands.sequence(
-        Commands.print("before wait until at setpoint"),
         superstructure.waitUntilAtSetpoint(),
-        Commands.print("after wait until at setpoint"),
         // possibly an auto align
         outtakeCoral().withTimeout(2)
       )

@@ -74,7 +74,7 @@ public class Superstructure {
           followAvTrajectory(traj),
           new WristTrajFollower(traj, pos, wrist, this::getLastSample)
         );
-      }, Set.of(pivot, telescope, wrist)).andThen(Commands.print("test"));
+      }, Set.of(pivot, telescope, wrist));
     }
     
     @AutoLogOutput
