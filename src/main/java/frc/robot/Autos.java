@@ -1,9 +1,14 @@
 package frc.robot;
 
+import org.littletonrobotics.junction.Logger;
+
 import choreo.auto.AutoChooser;
 import choreo.auto.AutoFactory;
 import choreo.auto.AutoRoutine;
 import choreo.auto.AutoTrajectory;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -27,12 +32,23 @@ public class Autos {
     this.swerve = swerve;
     this.superstructure = superstructure;
     this.intake = intake;
+    Logger.recordOutput("Swerve/Traj/Trajectory", new Pose2d[0]);
     factory = new AutoFactory(
       swerve::getPose,
       swerve::setPose,
       swerve::followTrajectory,
       true,
-      swerve
+      swerve,
+      (traj, isStarting)->{
+        if(isStarting) {
+          if(DriverStation.getAlliance().get() == Alliance.Red) {
+            traj = traj.flipped();
+          }
+          Logger.recordOutput("Swerve/Traj/Trajectory", traj.getPoses());
+        } else {
+          Logger.recordOutput("Swerve/Traj/Trajectory", new Pose2d[0]);
+        }
+      }
     );
 
 
