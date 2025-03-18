@@ -74,8 +74,8 @@ public class Autos {
   public AutoRoutine leftReefFeederReef() {
     AutoRoutine routine = factory.newRoutine(nameLeftReefFeederReef);
     AutoTrajectory trajectoryStartToReefK = routine.trajectory("left_reef_feeder_reef", 0);
-    AutoTrajectory trajectoryReefKToFeeder = routine.trajectory("left_reef_feeder_reef", 1);
-    AutoTrajectory trajectoryFeederToReefL = routine.trajectory("left_reef_feeder_reef", 2);
+    // AutoTrajectory trajectoryReefKToFeeder = routine.trajectory("left_reef_feeder_reef", 1);
+    // AutoTrajectory trajectoryFeederToReefL = routine.trajectory("left_reef_feeder_reef", 2);
 
     routine.active().onTrue(
       Commands.sequence(
@@ -85,20 +85,21 @@ public class Autos {
     );
 
     // Add command to place corral on top level of reef
-    trajectoryStartToReefK.atTime("Start").onTrue(superstructure.goTo(SuperstructurePosition.L4));
+    trajectoryStartToReefK.active().onTrue(superstructure.goTo(SuperstructurePosition.L4));
+    // trajectoryStartToReefK.atTime("Start").onTrue(superstructure.goTo(SuperstructurePosition.L4));
     // NOTE: may need to add an "alignment" in the case it is not perfectly aligned in relation to the april tag
     trajectoryStartToReefK.atTime("K-L4").onTrue(intake.outtakeCoral());
-    trajectoryStartToReefK.done().onTrue(trajectoryReefKToFeeder.cmd());
+    // trajectoryStartToReefK.done().onTrue(trajectoryReefKToFeeder.cmd());
 
     // Resetting the arm to HP position and running the intake at feeder station
-    trajectoryReefKToFeeder.atTime("K-L4").onTrue(superstructure.goTo(SuperstructurePosition.HP));
-    trajectoryReefKToFeeder.atTime("Reef-Feeder").onTrue(intake.runIntake());
-    trajectoryReefKToFeeder.done().onTrue(trajectoryFeederToReefL.cmd());
+    // trajectoryReefKToFeeder.atTime("K-L4").onTrue(superstructure.goTo(SuperstructurePosition.HP));
+    // trajectoryReefKToFeeder.atTime("Reef-Feeder").onTrue(intake.runIntake());
+    // trajectoryReefKToFeeder.done().onTrue(trajectoryFeederToReefL.cmd());
 
     // Add command to place corral on top level of reef
-    trajectoryFeederToReefL.atTime("Feeder").onTrue(superstructure.goTo(SuperstructurePosition.L4));
-    // NOTE: may need to add an "alignment" in the case it is not perfectly aligned in relation to the april tag
-    trajectoryFeederToReefL.atTime("L-L4").onTrue(intake.outtakeCoral());
+    // trajectoryFeederToReefL.atTime("Feeder").onTrue(superstructure.goTo(SuperstructurePosition.L4));
+    // // NOTE: may need to add an "alignment" in the case it is not perfectly aligned in relation to the april tag
+    // trajectoryFeederToReefL.atTime("L-L4").onTrue(intake.outtakeCoral());
 
 
     /*
