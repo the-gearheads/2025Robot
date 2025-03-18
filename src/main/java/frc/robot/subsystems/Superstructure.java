@@ -92,4 +92,8 @@ public class Superstructure {
     public ArmvatorPosition getClosestArmvatorPosition() {
       return ArmvatorPosition.getNearest(getEndEffPos());
     }
+
+    public Command waitUntilAtSetpoint() {
+      return Commands.waitUntil(this::atPidSetpoint);
+    }
   }

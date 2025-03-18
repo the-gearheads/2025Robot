@@ -22,9 +22,9 @@ import com.reduxrobotics.canand.CanandEventLoop;
 import edu.wpi.first.hal.AllianceStationID;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
-import edu.wpi.first.wpilibj.simulation.BatterySim;
 import edu.wpi.first.wpilibj.simulation.DriverStationSim;
 import edu.wpi.first.wpilibj.simulation.RoboRioSim;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -218,13 +218,15 @@ public class Robot extends LoggedRobot {
   @Override
   public void simulationInit() {
     DriverStationSim.setAllianceStationId(AllianceStationID.Blue1); // default is red grrr
+    DriverStation.silenceJoystickConnectionWarning(true);
   }
 
   /** This function is called periodically whilst in simulation. */
   @Override
   public void simulationPeriodic() {
     RoboRioSim.setVInVoltage(
-        BatterySim.calculateDefaultBatteryLoadedVoltage(robotContainer.getCurrentDrawSim())
+        // BatterySim.calculateDefaultBatteryLoadedVoltage(robotContainer.getCurrentDrawSim())
+        12
     );
   }
 }

@@ -98,7 +98,7 @@ public class Intake extends SubsystemBase {
   public Command holdGamePiece() {
     return run(() -> {
       GamePiece currentGamePiece = getGamePiece();
-      if (currentGamePiece != GamePiece.EMPTY) {
+      if (currentGamePiece == GamePiece.CORAL) {
         setVoltage(INTAKE_STALL_VOLTAGE);
         return;
       }
@@ -114,8 +114,7 @@ public class Intake extends SubsystemBase {
   public GamePiece getGamePiece() {
     if (canandcolor.getProximity() < CORAL_PROXIMITY_THRESHOLD) {
       return GamePiece.CORAL;
-    }
-    if (canandcolor.getProximity() < ALGAE_PROXIMITY_THRESHOLD && getPhosphorusAlgaeDIO()) {
+    } else if (canandcolor.getProximity() < ALGAE_PROXIMITY_THRESHOLD && getPhosphorusAlgaeDIO()) {
       return GamePiece.ALGAE;
     }
     return GamePiece.EMPTY;

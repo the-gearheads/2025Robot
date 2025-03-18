@@ -5,6 +5,8 @@
 package frc.robot.subsystems.vision;
 
 import java.io.IOException;
+
+import org.littletonrobotics.junction.Logger;
 import org.photonvision.PhotonCamera;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
@@ -44,7 +46,7 @@ public class Vision extends SubsystemBase {
 
   
     for (int i = 0; i<CAMERA_NAMES.length; i++) {
-      cameras[i] = new Camera(field, CAMERA_NAMES[i], CAMERA_TRANSFORMS[i], CAMERA_INTRINSICS[i], ()->swerve.getPose().getRotation().getRadians(), ()->swerve.getGyroRotation().getRadians(), CAMERA_STRATEGIES[i]);
+      cameras[i] = new Camera(field, CAMERA_NAMES[i], CAMERA_TRANSFORMS[i], CAMERA_INTRINSICS[i], ()->swerve.getPose().getRotation().getRadians(), ()->swerve.getPoseWheelsOnly().getRotation().getRadians(), CAMERA_STRATEGIES[i]);
       sim.addCamera(cameras[i]);
     }
 
@@ -58,8 +60,9 @@ public class Vision extends SubsystemBase {
   public boolean feedPoseEstimator(SwerveDrivePoseEstimator poseEstimator) {
     boolean posed = false;
     if(DriverStation.isDisabled()) {
-      gyroOffset = swerve.getPose().getRotation().minus(swerve.getGyroRotation());
+      gyroOffset = swerve.getPose().getRotation().minus(swerve.getPoseWheelsOnly().getRotation());
     }
+    Logger.recordOutput("Vision/GyroOffset", gyroOffset);
     for (Camera camera : cameras) {
       posed |= camera.feedPoseEstimator(poseEstimator, gyroOffset);
     }
