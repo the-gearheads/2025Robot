@@ -1,4 +1,4 @@
-package frc.robot.commands;
+package frc.robot.util;
 
 import static frc.robot.constants.MiscConstants.*;
 import static frc.robot.constants.SwerveConstants.ALIGNMENT_DRIVE_CONSTRAINTS;
