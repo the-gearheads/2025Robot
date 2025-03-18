@@ -71,9 +71,7 @@ public class Autos {
     routine.active().onTrue(
       Commands.sequence(
         trajectoryStartToReefK.resetOdometry(),
-        trajectoryStartToReefK.cmd(),
-        trajectoryReefKToFeeder.cmd(),
-        trajectoryFeederToReefL.cmd()
+        trajectoryStartToReefK.cmd()
       )
     );
 
@@ -81,15 +79,25 @@ public class Autos {
     trajectoryStartToReefK.atTime("Start").onTrue(superstructure.goTo(SuperstructurePosition.L4));
     // NOTE: may need to add an "alignment" in the case it is not perfectly aligned in relation to the april tag
     trajectoryStartToReefK.atTime("K-L4").onTrue(intake.outtakeCoral());
+    trajectoryStartToReefK.done().onTrue(trajectoryReefKToFeeder.cmd());
 
     // Resetting the arm to HP position and running the intake at feeder station
     trajectoryReefKToFeeder.atTime("K-L4").onTrue(superstructure.goTo(SuperstructurePosition.HP));
     trajectoryReefKToFeeder.atTime("Feeder").onTrue(intake.runIntake());
+    trajectoryReefKToFeeder.done().onTrue(trajectoryFeederToReefL.cmd());
 
     // Add command to place corral on top level of reef
     trajectoryFeederToReefL.atTime("Feeder").onTrue(superstructure.goTo(SuperstructurePosition.L4));
     // NOTE: may need to add an "alignment" in the case it is not perfectly aligned in relation to the april tag
     trajectoryFeederToReefL.atTime("L-L4").onTrue(intake.outtakeCoral());
+
+
+    /*
+     * 
+     * we might want to start intake, then approach the feeder station, and stop intaking some time after driving away perhaps
+we want to start to move the armvator into position before we approach the reef, but after we leave the HP station
+we need to ensure we're already rotated correctly before lining against stuff like the reef. place like a pose waypoint with the correct rotation some ways out so the robot can get rotationally aligned early
+     */
 
     return routine;
   }
