@@ -140,7 +140,7 @@ public class AlignToPose extends Command {
     double rotDriver = Controllers.driverController.getRotateAxis() * MAX_ROBOT_ROT_SPEED;
     ChassisSpeeds autoSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(autoTranslation.getX(), autoTranslation.getY(), rotScaledVel, currentPose.getRotation());
     ChassisSpeeds driverSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(xDriver, yDriver, rotDriver, currentPose.getRotation());
-    swerve.driveAllianceRelative(driverSpeeds.plus(autoSpeeds));
+    swerve.drive(driverSpeeds.plus(autoSpeeds));
         
 
   }
