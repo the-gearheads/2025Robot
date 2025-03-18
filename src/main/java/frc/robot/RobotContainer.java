@@ -21,7 +21,6 @@ import frc.robot.subsystems.arm.Pivot;
 import frc.robot.subsystems.arm.PivotSim;
 import frc.robot.subsystems.arm.Telescope;
 import frc.robot.subsystems.arm.TelescopeSim;
-import frc.robot.subsystems.intake.GamePiece;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeSim;
 import frc.robot.subsystems.swerve.Swerve;
@@ -102,33 +101,37 @@ public class RobotContainer {
 
     Controllers.driverController.getRightPaddle().onTrue(
       Commands.deferredProxy(() -> {
-        if (intake.getGamePiece() == GamePiece.CORAL) {
+      switch(intake.getGamePiece()) {
+        case CORAL:
           if (tracker.facingReef()) {
             return superStructure.goTo(SuperstructurePosition.L2);
           } else {
             return superStructure.goTo(SuperstructurePosition.L4);
           }
-        }
-        if (intake.getGamePiece() == GamePiece.ALGAE) {
+        case ALGAE:
           return superStructure.goTo(SuperstructurePosition.NET);
-        }
-        return superStructure.goTo(SuperstructurePosition.AlgaeL3).alongWith(intake.runIntake());
+        case EMPTY:
+        default:
+          return superStructure.goTo(SuperstructurePosition.AlgaeL3).alongWith(intake.runIntake());
+      }
       })
     );
 
     Controllers.driverController.getLeftPaddle().onTrue(
       Commands.deferredProxy(() -> {
-        if (intake.getGamePiece() == GamePiece.CORAL) {
+      switch(intake.getGamePiece()) {
+        case CORAL:
           if (tracker.facingReef()) {
             return superStructure.goTo(SuperstructurePosition.L1);
           } else {
             return superStructure.goTo(SuperstructurePosition.L3);
           }
-        }
-        if (intake.getGamePiece() == GamePiece.ALGAE) {
+        case ALGAE:
           return superStructure.goTo(SuperstructurePosition.PROCESSOR);
-        }
-        return superStructure.goTo(SuperstructurePosition.AlgaeL2).alongWith(intake.runIntake());
+        case EMPTY:
+        default:
+          return superStructure.goTo(SuperstructurePosition.AlgaeL2).alongWith(intake.runIntake());
+      }
       })
     );
 

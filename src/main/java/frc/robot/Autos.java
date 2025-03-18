@@ -34,6 +34,15 @@ public class Autos {
       true,
       swerve
     );
+
+
+    factory.bind("intake", intake.runIntake().asProxy());
+    factory.bind("L1", superstructure.goTo(SuperstructurePosition.L1).asProxy());
+    factory.bind("L2", superstructure.goTo(SuperstructurePosition.L2).asProxy());
+    factory.bind("L3", superstructure.goTo(SuperstructurePosition.L3).asProxy());
+    factory.bind("L4", superstructure.goTo(SuperstructurePosition.L4).asProxy());
+    factory.bind("HP", superstructure.goTo(SuperstructurePosition.HP).asProxy());
+
     chooser = new AutoChooser();
     chooser.addRoutine(nameCenterReef, this::centerReef);
     chooser.addRoutine(nameLeftReefFeederReef, this::leftReefFeederReef);
@@ -104,27 +113,47 @@ we need to ensure we're already rotated correctly before lining against stuff li
 
   public AutoRoutine rightReefFeederReef() {
     AutoRoutine routine = factory.newRoutine(nameRightReefFeederReef);
-    AutoTrajectory trajectoryStartToReef = routine.trajectory("right_reef_feeder_reef", 0);
-    AutoTrajectory trajectoryReefToFromFeeder = routine.trajectory("right_reef_feeder_reef", 1);
+    AutoTrajectory startToReef = routine.trajectory("right_reef_feeder_reef", 0);
+    AutoTrajectory reefToHP = routine.trajectory("right_reef_feeder_reef", 1);
+    AutoTrajectory HPToReef = routine.trajectory("right_reef_feeder_reef", 2);
 
     routine.active().onTrue(
       Commands.sequence(
-        trajectoryStartToReef.resetOdometry(),
-        trajectoryStartToReef.cmd(),
-        // put auto align command here
-        trajectoryReefToFromFeeder.cmd()
+        startToReef.resetOdometry(),
+        startToReef.cmd()
       )
     );
-    trajectoryStartToReef.atTime("ArmL4").onTrue(superstructure.goTo(SuperstructurePosition.L4));
+
+    startToReef.recentlyDone().onTrue(
+      Commands.sequence(
+        superstructure.waitUntilAtSetpoint(),
+        // possibly an auto align
+        intake.outtakeCoral().withTimeout(2), // mostly for now as we do not have coral sim yet
+        Commands.print("CCCCC"),
+        reefToHP.cmd(),
+        Commands.print("DDDDD")
+      )
+    );
+
+    // we -could- hypothetically- wait until we have a game piece, but we could also just rely on pure HP skill
+    reefToHP.recentlyDone().onTrue(Commands.sequence(
+      Commands.print("bbbbbb"),
+      // superstructure.waitUntilAtSetpoint(),
+      Commands.print("Aaaaaa")
+      // HPToReef.cmd()
+    ));
+
+    // HPToReef.done().onTrue(
+    //   Commands.sequence(
+    //     Commands.print("before wait until at setpoint"),
+    //     superstructure.waitUntilAtSetpoint(),
+    //     Commands.print("after wait until at setpoint"),
+    //     // possibly an auto align
+    //     intake.outtakeCoral().withTimeout(2)
+    //   )
+    // );
     
-    // Add command to place corral on top level of reef
-    // NOTE: may need to add an "alignment" in the case it is not perfectly aligned in relation to the april tag
-
-    // Add command to intake when at feeder station
-    // add a wait??
-
-    // Add command to place corral on top level of reef
-    // NOTE: may need to add an "alignment" in the case it is not perfectly aligned in relation to the april tag
+    // NOTE: may need to add an alignment in the case it is not perfectly aligned in relation to the april tag
 
     return routine;
   }

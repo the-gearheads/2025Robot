@@ -228,8 +228,18 @@ public class Pivot extends SubsystemBase {
     profiledPid.reset(angle.getRadians(), 0);
   }
 
+  @AutoLogOutput
   public boolean atPidSetpoint() {
-    return mode == RunMode.TRAJECTORY && pid.atSetpoint();
+    switch(mode) {
+      case PROFILED_PID:
+        return profiledPid.atGoal();
+      case TRAJECTORY:
+        return pid.atSetpoint();
+      case VOLTAGE:
+        return true;
+      default:
+        return false; // what
+    }
   }
 
   public boolean atPoint(double angle) {
