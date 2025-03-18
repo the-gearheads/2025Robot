@@ -232,10 +232,8 @@ public class Swerve extends SubsystemBase {
     for (SwerveModule module : modules) {
       module.periodic();
     }
-    if (Robot.isSimulation()) {
-      wheelOdometry.update(getGyroRotation(), getModulePositions());
-      Logger.recordOutput("Swerve/PoseWheelsOnly", getPoseWheelsOnly());
-    }
+    wheelOdometry.update(getGyroRotation(), getModulePositions());
+    Logger.recordOutput("Swerve/PoseWheelsOnly", getPoseWheelsOnly());
     vision.feedPoseEstimator(multitagPoseEstimator);
     multitagPoseEstimator.update(getGyroRotation(), getModulePositions());
     field.setRobotPose(getPose());

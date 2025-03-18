@@ -55,11 +55,11 @@ public class Teleop extends Command {
         if(currentCoralTarget.getTranslation().getDistance(swerve.getPose().getTranslation()) < AUTO_ALIGN_DIST_THRESHOLD && Math.abs(currentCoralTarget.getRotation().minus(swerve.getPose().getRotation()).getRadians()) < AUTO_ALIGN_ANGLE_THRESHOLD) {
             Logger.recordOutput("AlignToPose/TeleopAligning", true);
             vision.setPoseStrategy(1, PoseStrategy.PNP_DISTANCE_TRIG_SOLVE);
-            // vision.setPoseStrategy(BACK_RIGHT, PoseStrategy.PNP_DISTANCE_TRIG_SOLVE);
+            // vision.setPoseStrategy(2, PoseStrategy.PNP_DISTANCE_TRIG_SOLVE);
             Pair<ChassisSpeeds, Double> autoAlignSpeeds = autoAlign.getAutoAlignSpeeds(x, y, swerve.getPose());
             ChassisSpeeds driverSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(new ChassisSpeeds(x * (1 - autoAlignSpeeds.getSecond()), y * (1 - autoAlignSpeeds.getSecond()), rot * (1 - autoAlignSpeeds.getSecond())), swerve.getPose().getRotation());
-            // finalSpeeds = driverSpeeds.plus(autoAlignSpeeds.getFirst());
-            finalSpeeds = driverSpeeds;
+            finalSpeeds = driverSpeeds.plus(autoAlignSpeeds.getFirst());
+            // finalSpeeds = driverSpeeds;
         } else {
             Logger.recordOutput("AlignToPose/TeleopAligning", false);
             vision.defaultPoseStrategies();
