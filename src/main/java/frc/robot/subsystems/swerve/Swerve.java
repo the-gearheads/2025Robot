@@ -50,7 +50,7 @@ public class Swerve extends SubsystemBase {
   SwerveDrivePoseEstimator multitagPoseEstimator;
   SwerveDriveOdometry wheelOdometry;
   Field2d field = new Field2d();
-  Vision vision;
+  public Vision vision;
   ObjectiveTracker tracker = new ObjectiveTracker(this);
 
   Gyro gyro;

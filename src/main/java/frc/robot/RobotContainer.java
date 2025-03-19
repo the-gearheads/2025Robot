@@ -62,7 +62,7 @@ public class RobotContainer {
     superStructure = new Superstructure(pivot, telescope, wrist);
     autos = new Autos(swerve, superStructure, intake);
     viz = new MechanismViz(swerve, pivot, telescope, wrist);
-    swerve.setDefaultCommand(new Teleop(swerve, vision));
+    swerve.setDefaultCommand(new Teleop(swerve));
     // swerve.setDefaultCommand(new Teleop(swerve));
     // pivot.setDefaultCommand(new ManualPivot(pivot));
     pivot.setDefaultCommand(new PivotNTControl(pivot));

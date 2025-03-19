@@ -22,10 +22,10 @@ public class Teleop extends Command {
     AlignToPose autoAlign = new AlignToPose();
     Vision vision;
     
-    public Teleop(Swerve swerve, Vision vision) {
+    public Teleop(Swerve swerve) {
         addRequirements(swerve);
         this.swerve = swerve;
-        this.vision = vision;
+        this.vision = swerve.vision;
     }
 
     @Override

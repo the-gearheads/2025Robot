@@ -8,6 +8,7 @@ import static frc.robot.constants.VisionConstants.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedNetworkNumber;
 import org.photonvision.EstimatedRobotPose;
@@ -51,7 +52,7 @@ public class Camera {
 
   // kinda ugly ik ik
   private Pose2d lastRobotPose;
-  private boolean isDisabled;
+  private boolean disabled;
 
   private final AprilTagFieldLayout field;
 
@@ -207,4 +208,17 @@ public class Camera {
   public void setPoseStrategy(PoseStrategy strategy) {
     estimator.setPrimaryStrategy(strategy);
   }
+
+  public void disable() {
+    disabled = true;
+  }
+
+  public void enable() {
+    disabled = false;
+  }
+
+  @AutoLogOutput
+  public boolean isDisabled() {
+    return disabled;
+  } 
 }
