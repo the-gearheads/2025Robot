@@ -49,12 +49,9 @@ public class AlignToPose {
    */
   public Pair<ChassisSpeeds, Double> getAutoAlignSpeeds(double controllerX, double controllerY, Pose2d robotPose) {
     Translation2d controllerTranslation = new Translation2d(controllerX, controllerY);
-    Rotation2d controllerAngle;
-    if (controllerTranslation.getNorm() > 0)
-      controllerAngle = controllerTranslation.getAngle();
-
+    
     // poses
-    Pose2d currentTarget = getCoralObjective(robotPose, controllerAngle);
+    Pose2d currentTarget = getCoralObjective(robotPose, controllerX, controllerY);
     Logger.recordOutput("AlignToPose/currentTarget", currentTarget);
 
     double controllerMagnitude = MathUtil.clamp((Math.abs(controllerX) + Math.abs(controllerY)) / 2, 0, 0.33);
@@ -114,7 +111,11 @@ public class AlignToPose {
             Math.copySign(shiftYT * MAX_REEF_LINEUP_DIST * 1, offset.getY()), new Rotation2d()));
   }
 
-  public Pose2d getCoralObjective(Pose2d robotPose, Rotation2d controllerVectorAngle) {
+  public Pose2d getCoralObjective(Pose2d robotPose, double controllerX, double controllerY) {
+    Rotation2d controllerAngle;
+    if (controllerTranslation.getNorm() > 0.02)
+      controllerAngle = controllerTranslation.getAngle();
+
     Pair<Pose2d, Double> bestReefPose = new Pair<Pose2d,Double>(null, 1000.0);
     ArrayList<Pose2d> reefPoses = new ArrayList<>(ReefPositions.getScoringPoses());
     // Logger.recordOutput("AlignToPose/reefPoses", Pose2d.struct, reefPoses.stream().toArray(Pose2d[]::new));
