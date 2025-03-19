@@ -20,18 +20,21 @@ import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.swerve.Swerve;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.util.AlignToPose;
+import frc.robot.util.ObjectiveTracker;
 
 public class Teleop extends Command {
     Swerve swerve;
     AlignToPose autoAlign = new AlignToPose();
     Vision vision;
     Intake intake;
-    
-    public Teleop(Swerve swerve, Intake intake) {
+    ObjectiveTracker tracker;
+
+    public Teleop(Swerve swerve, Intake intake, ObjectiveTracker tracker) {
         addRequirements(swerve);
         this.swerve = swerve;
         this.vision = swerve.vision;
         this.intake = intake;
+        this.tracker = tracker;
     }
 
     @Override
@@ -62,7 +65,11 @@ public class Teleop extends Command {
         // decide whether to do autoalign
         Pose2d currentCoralTarget = autoAlign.getCoralObjective(swerve.getPose(), x, y);
         
-        if(currentCoralTarget.getTranslation().getDistance(swerve.getPose().getTranslation()) < AUTO_ALIGN_DIST_THRESHOLD && Math.abs(currentCoralTarget.getRotation().minus(swerve.getPose().getRotation()).getRadians()) < AUTO_ALIGN_ANGLE_THRESHOLD && intake.getGamePiece() == GamePiece.CORAL) {
+        if (currentCoralTarget.getTranslation()
+                .getDistance(swerve.getPose().getTranslation()) < AUTO_ALIGN_DIST_THRESHOLD
+                && Math.abs(currentCoralTarget.getRotation().minus(swerve.getPose().getRotation()).getRadians()) < AUTO_ALIGN_ANGLE_THRESHOLD
+                && intake.getGamePiece() == GamePiece.CORAL
+                && !tracker.facingReef()) {
             Logger.recordOutput("AlignToPose/TeleopAligning", true);
             vision.setPoseStrategy(1, PoseStrategy.PNP_DISTANCE_TRIG_SOLVE);
             vision.setPoseStrategy(2, PoseStrategy.PNP_DISTANCE_TRIG_SOLVE);

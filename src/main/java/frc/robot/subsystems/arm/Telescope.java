@@ -58,7 +58,7 @@ public class Telescope extends SubsystemBase {
     configure();
     profiledPid.setTolerance(ELEVATOR_LENGTH_TOLERANCE);
     profiledPid.reset(getExtension(), getVelocity());
-    pid.setTolerance(ELEVATOR_LENGTH_TOLERANCE);
+    pid.setTolerance(ELEVATOR_LENGTH_TRAJ_START_TOLERANCE);
   }
 
   public void setPivotAngleRadSupplier(DoubleSupplier pivotAngleRadSupplier) {

@@ -17,7 +17,8 @@ public class PivotNTControl extends Command {
 
   @Override
   public void initialize() {
-    SmartDashboard.putNumber(NTPath, Units.radiansToDegrees(pivot.getAngleRad()));
+    SmartDashboard.putNumber(NTPath, Units.radiansToDegrees(pivot.getAngle().getRadians()));
+    pivot.resetProfiledPidTo(pivot.getAngle());
     pivot.setMode(RunMode.PROFILED_PID);
   }
 
