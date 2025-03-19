@@ -49,7 +49,9 @@ public class AlignToPose {
    */
   public Pair<ChassisSpeeds, Double> getAutoAlignSpeeds(double controllerX, double controllerY, Pose2d robotPose) {
     Translation2d controllerTranslation = new Translation2d(controllerX, controllerY);
-    Rotation2d controllerAngle = controllerTranslation.getAngle();
+    Rotation2d controllerAngle;
+    if (controllerTranslation.getNorm() > 0)
+      controllerAngle = controllerTranslation.getAngle();
 
     // poses
     Pose2d currentTarget = getCoralObjective(robotPose, controllerAngle);
@@ -119,9 +121,11 @@ public class AlignToPose {
     for (int i = 0; i < reefPoses.size(); i++) {
       Pose2d reefPose = reefPoses.get(i);
       double dist = reefPose.getTranslation().getDistance(robotPose.getTranslation());
-      
-      double vectorError = Math.abs(controllerVectorAngle.minus(reefPose.getTranslation().getAngle()).getRotations());
 
+      double vectorError = 0;
+      if (controllerVectorAngle != null)
+        vectorError = Math.abs(controllerVectorAngle.minus(reefPose.getTranslation().getAngle()).getRotations());
+      
       double weight = dist + (vectorError * VECTOR_ERROR_SCALAR);
       if (weight < bestReefPose.getSecond()) {
         bestReefPose = new Pair<Pose2d, Double>(reefPose, weight);
