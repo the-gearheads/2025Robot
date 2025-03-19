@@ -21,6 +21,7 @@ import frc.robot.subsystems.swerve.Swerve;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.util.AlignToPose;
 import frc.robot.util.ObjectiveTracker;
+import frc.robot.util.ReefPositions;
 
 public class Teleop extends Command {
     Swerve swerve;
@@ -71,9 +72,12 @@ public class Teleop extends Command {
                 && Math.abs(currentCoralTarget.getRotation().minus(swerve.getPose().getRotation()).getRadians()) < AUTO_ALIGN_ANGLE_THRESHOLD
                 && intake.getGamePiece() == GamePiece.CORAL
                 && !tracker.facingReef()) {
+            int nearestTagId = ReefPositions.getClosestReefTagId(currentCoralTarget);
             Logger.recordOutput("AlignToPose/TeleopAligning", true);
             vision.setPoseStrategy(1, PoseStrategy.PNP_DISTANCE_TRIG_SOLVE);
             vision.setPoseStrategy(2, PoseStrategy.PNP_DISTANCE_TRIG_SOLVE);
+            vision.filterTagById(1, nearestTagId);
+            vision.filterTagById(2, nearestTagId);
             vision.disableCamera(0);
             Pair<ChassisSpeeds, Double> autoAlignSpeeds = autoAlign.getAutoAlignSpeeds(x, y, swerve.getPose());
             ChassisSpeeds driverSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(new ChassisSpeeds(x * (1 - autoAlignSpeeds.getSecond()), y * (1 - autoAlignSpeeds.getSecond()), rot * (1 - autoAlignSpeeds.getSecond())), fieldAdjustedRobotRot);
@@ -81,6 +85,8 @@ public class Teleop extends Command {
             // finalSpeeds = driverSpeeds;
         } else {
             Logger.recordOutput("AlignToPose/TeleopAligning", false);
+            vision.disableIdFiltering(1);
+            vision.disableIdFiltering(2);
             vision.defaultPoseStrategies();
             vision.enableCamera(0);
             ChassisSpeeds driverSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(new ChassisSpeeds(xSpeed, ySpeed, rotSpeed), fieldAdjustedRobotRot);

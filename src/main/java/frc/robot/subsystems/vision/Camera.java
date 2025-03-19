@@ -56,6 +56,7 @@ public class Camera {
 
   private final AprilTagFieldLayout field;
 
+  private int tagFilteringTag = -1;
   DoubleSupplier fusedHeadingSupplier;
   DoubleSupplier gyroAngleSupplier;
   Rotation2d gyroOffset = new Rotation2d();
@@ -109,6 +110,14 @@ public class Camera {
     return Optional.of(estPose);
   }
 
+  public void filterByTagId(int targetID)  {
+    tagFilteringTag = targetID;
+  }
+
+  public void disableTagIdFiltering() {
+    tagFilteringTag = -1;
+  }
+
   public void logCamTransform(Pose2d robotPose) {
     Pose3d camPose = new Pose3d(robotPose);
     camPose = camPose.transformBy(transform);
@@ -128,6 +137,10 @@ public class Camera {
         Rotation2d gyroAngle = Rotation2d.fromRadians(gyroAngleSupplier.getAsDouble());
         estimator.addHeadingData(Timer.getFPGATimestamp(), gyroAngle.plus(gyroOffset));
         Logger.recordOutput("Vision/GyroAnglePlusOffset", gyroAngle.plus(gyroOffset));
+        if (estimator.getPrimaryStrategy() == PoseStrategy.PNP_DISTANCE_TRIG_SOLVE && tagFilteringTag != -1) {
+          if (result.getBestTarget().getFiducialId() != tagFilteringTag)
+            continue;
+        }
         poseResult = estimator.update(result, camera.getCameraMatrix(), camera.getDistCoeffs(), Optional.of(constrainedPnpParams));
       }
       else {
@@ -157,8 +170,8 @@ public class Camera {
       // if (numTargets <= 1)
       //   thetaStdDev = Double.POSITIVE_INFINITY;
       if (estimator.getPrimaryStrategy() == PoseStrategy.PNP_DISTANCE_TRIG_SOLVE) {
-        xyStdDev = 0.2;
-        thetaStdDev = 0.05;
+        xyStdDev /= 15;
+        thetaStdDev /= 15;
       }
 
       Logger.recordOutput(path + "/XyStdDev", xyStdDev);

@@ -16,13 +16,12 @@ public final class SwerveConstants {
     public static final int BORON_ID = 1;
     
     public static final Translation2d[] WHEEL_POSITIONS = {
-      new Translation2d(0.3556, 0.31115), // TODO: placeholders, note that +x is forward and +y is left
+      new Translation2d(0.3556, 0.31115),
       new Translation2d(0.3556, -0.31115),
       new Translation2d(-0.3556, 0.31115),
       new Translation2d(-0.3556, -0.31115)
     };
 
-    // ----------------- TODO: everything here is a placeholder 
     public static final double WHEEL_BASE = WHEEL_POSITIONS[0].getX() - WHEEL_POSITIONS[2].getX();
     public static final double TRACK_WIDTH = WHEEL_POSITIONS[0].getY() - WHEEL_POSITIONS[1].getY();
     public static final double DRIVE_BASE_RADIUS = Math.hypot(TRACK_WIDTH / 2.0, WHEEL_BASE / 2.0);

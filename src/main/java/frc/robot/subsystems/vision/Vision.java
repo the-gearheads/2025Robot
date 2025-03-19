@@ -95,4 +95,12 @@ public class Vision extends SubsystemBase {
   public void enableCamera(int cameraIndex) {
     cameras[cameraIndex].enable();
   }
+
+  public void filterTagById(int cameraIndex, int tagID) {
+    cameras[cameraIndex].filterByTagId(tagID);
+  }
+
+  public void disableIdFiltering(int cameraIndex) {
+    cameras[cameraIndex].disableTagIdFiltering();
+  }
 }

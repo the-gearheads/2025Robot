@@ -45,7 +45,7 @@ public class SwerveModule {
     Logger.recordOutput(modulePath + "/DesiredSwerveStatePreOpt", state);
 
     state.optimize(steer.getAngle());
-    state.cosineScale(steer.getAngle()); // TODO: try this
+    state.cosineScale(steer.getAngle());
 
     Logger.recordOutput(modulePath + "/DesiredSwerveStatePostOpt", state);
 

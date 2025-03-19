@@ -48,9 +48,6 @@ public class AlignToPose {
    * (also the same controller vector?)
    */
   public Pair<ChassisSpeeds, Double> getAutoAlignSpeeds(double controllerX, double controllerY, Pose2d robotPose) {
-    Translation2d controllerTranslation = new Translation2d(controllerX, controllerY);
-    
-    // poses
     Pose2d currentTarget = getCoralObjective(robotPose, controllerX, controllerY);
     Logger.recordOutput("AlignToPose/currentTarget", currentTarget);
 

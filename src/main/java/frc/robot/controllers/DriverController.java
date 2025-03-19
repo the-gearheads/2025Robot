@@ -23,7 +23,6 @@ public class DriverController {
     return controller == null;
   }
 
-  @SuppressWarnings("unused")
   private Trigger emptyTrigger() {
     return new Trigger(() -> false);
   }
