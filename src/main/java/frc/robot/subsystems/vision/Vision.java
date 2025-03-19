@@ -26,6 +26,7 @@ public class Vision extends SubsystemBase {
   private VisionSim sim = new VisionSim();
   private Swerve swerve;
   private Rotation2d gyroOffset;
+  private boolean frontCamDisabled;
 
   private Camera[] cameras = new Camera[CAMERA_NAMES.length];
 
@@ -88,4 +89,5 @@ public class Vision extends SubsystemBase {
       cameras[i].setPoseStrategy(INITAL_CAMERA_STRATEGIES[i]);
     }
   }
+
 }

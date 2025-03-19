@@ -45,9 +45,9 @@ public class Camera {
   private final double MAX_PITCHROLL = Units.degreesToRadians(5);
   private final double MAX_Z = Units.inchesToMeters(7);
 
-  private final double xyStdDevCoefficient = 0.08;
-  private final double thetaStdDevCoefficient = 0.16;
-  private final double coefficientFactor = 400.0;
+  private final double xyStdDevCoefficient = 6;
+  private final double thetaStdDevCoefficient = 12;
+  private final double coefficientFactor = 6;
 
   // kinda ugly ik ik
   private Pose2d lastRobotPose;
@@ -149,15 +149,14 @@ public class Camera {
       }
       avgTagArea /= numTargets;
 
-      double xyStdDev = xyStdDevCoefficient * Math.pow(avgTagArea, 2.0) / numTargets * coefficientFactor;
-      double thetaStdDev = thetaStdDevCoefficient * Math.pow(avgTagArea, 2.0) / numTargets * coefficientFactor;
+      double xyStdDev = xyStdDevCoefficient * Math.pow(1.0 - (avgTagArea / ((double)intrinsics.resX * (double)intrinsics.resY)), 1) / ((double)numTargets * coefficientFactor);
+      double thetaStdDev = thetaStdDevCoefficient * Math.pow(1.0 - (avgTagArea / ((double)intrinsics.resX * (double)intrinsics.resY)), 1) / ((double)numTargets * coefficientFactor); // TOOD: fix
 
       // if (numTargets <= 1)
       //   thetaStdDev = Double.POSITIVE_INFINITY;
       if (estimator.getPrimaryStrategy() == PoseStrategy.PNP_DISTANCE_TRIG_SOLVE) {
-        System.out.println("Ignoring standard devs");
-        xyStdDev = 0;
-        thetaStdDev = 0;
+        xyStdDev = 0.2;
+        thetaStdDev = 0.05;
       }
 
       Logger.recordOutput(path + "/XyStdDev", xyStdDev);
