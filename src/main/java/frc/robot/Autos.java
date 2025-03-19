@@ -52,7 +52,7 @@ public class Autos {
     );
 
 
-    factory.bind("intake", intake.runOnce(()->{}));
+    factory.bind("intake", intake.runIntake().withTimeout(1));
     factory.bind("L1", superstructure.goTo(SuperstructurePosition.L1));
     factory.bind("L2", superstructure.goTo(SuperstructurePosition.L2));
     factory.bind("L3", superstructure.goTo(SuperstructurePosition.L3));

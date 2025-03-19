@@ -32,6 +32,9 @@ public class VisionSim {
   public void addCamera(Camera cam) {
     if(Robot.isReal()) return;
     var camera = new PhotonCameraSim(cam.camera, cam.getSimProperties());
+    camera.enableRawStream(false);
+    camera.enableProcessedStream(false);
+    camera.enableDrawWireframe(true);
     cameras.add(camera);
     sim.addCamera(camera, cam.transform);
   }

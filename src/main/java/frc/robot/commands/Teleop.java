@@ -10,7 +10,6 @@ import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.controllers.Controllers;
@@ -50,7 +49,8 @@ public class Teleop extends Command {
 
         ChassisSpeeds finalSpeeds;
         // decide whether to do autoalign
-        Rotation2d controllerAngle = new Translation2d(x, y).getAngle();
+        // Rotation2d controllerAngle = new Translation2d(x, y).getAngle();
+        Rotation2d controllerAngle = Rotation2d.fromRadians(Math.atan2(y, x));
         Pose2d currentCoralTarget = autoAlign.getCoralObjective(swerve.getPose(), controllerAngle);
         if(currentCoralTarget.getTranslation().getDistance(swerve.getPose().getTranslation()) < AUTO_ALIGN_DIST_THRESHOLD && Math.abs(currentCoralTarget.getRotation().minus(swerve.getPose().getRotation()).getRadians()) < AUTO_ALIGN_ANGLE_THRESHOLD) {
             Logger.recordOutput("AlignToPose/TeleopAligning", true);
