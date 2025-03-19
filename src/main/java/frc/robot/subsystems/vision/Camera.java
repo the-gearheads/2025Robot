@@ -45,9 +45,9 @@ public class Camera {
   private final double MAX_PITCHROLL = Units.degreesToRadians(5);
   private final double MAX_Z = Units.inchesToMeters(7);
 
-  private final double xyStdDevCoefficient = 6;
-  private final double thetaStdDevCoefficient = 12;
-  private final double coefficientFactor = 6;
+  private final double xyStdDevCoefficient = 0.08;
+  private final double thetaStdDevCoefficient = 0.16;
+  private final double coefficientFactor = 1.0;
 
   // kinda ugly ik ik
   private Pose2d lastRobotPose;
@@ -143,14 +143,14 @@ public class Camera {
         continue;
 
       int numTargets = pose.targetsUsed.size();
-      double avgTagArea = 0;
+      double avgTagDist = 0;
       for (var target : result.targets) {
-        avgTagArea += target.area;
+        avgTagDist += target.bestCameraToTarget.getTranslation().getNorm();
       }
-      avgTagArea /= numTargets;
+      avgTagDist /= numTargets;
 
-      double xyStdDev = xyStdDevCoefficient * Math.pow(1.0 - (avgTagArea / ((double)intrinsics.resX * (double)intrinsics.resY)), 1) / ((double)numTargets * coefficientFactor);
-      double thetaStdDev = thetaStdDevCoefficient * Math.pow(1.0 - (avgTagArea / ((double)intrinsics.resX * (double)intrinsics.resY)), 1) / ((double)numTargets * coefficientFactor); // TOOD: fix
+      double xyStdDev = xyStdDevCoefficient * Math.pow(avgTagDist, 2) / (numTargets * coefficientFactor);
+      double thetaStdDev = thetaStdDevCoefficient * Math.pow(avgTagDist, 2) / (numTargets * coefficientFactor);
 
       // if (numTargets <= 1)
       //   thetaStdDev = Double.POSITIVE_INFINITY;
@@ -162,7 +162,7 @@ public class Camera {
       Logger.recordOutput(path + "/XyStdDev", xyStdDev);
       Logger.recordOutput(path + "/ThetaStdDev", thetaStdDev);
       Logger.recordOutput(path + "/NumTargets", numTargets);
-      Logger.recordOutput(path + "/AvgTagArea", avgTagArea);
+      Logger.recordOutput(path + "/AvgTagDist", avgTagDist);
       Logger.recordOutput(path + "/EstPose", pose.estimatedPose);
 
       // var stddevs = MatBuilder.fill(Nat.N3(), Nat.N1(), xyStdDev, xyStdDev, thetaStdDev);
@@ -176,7 +176,7 @@ public class Camera {
       Logger.recordOutput(path + "/XyStdDev", -1d);
       Logger.recordOutput(path + "/ThetaStdDev", -1d);
       Logger.recordOutput(path + "/NumTargets", 0);
-      Logger.recordOutput(path + "/AvgTagArea", -1d);
+      Logger.recordOutput(path + "/AvgTagDist", -1d);
       Logger.recordOutput(path + "/EstPose", new Pose3d(new Translation3d(-100, -100, -100), new Rotation3d()));
       Logger.recordOutput(path + "/EstPoseUnfiltered", new Pose3d(new Translation3d(-100, -100, -100), new Rotation3d()));
       Logger.recordOutput(path + "/TagPoses", new Pose3d[0]);
