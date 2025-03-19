@@ -41,7 +41,6 @@ public class RobotContainer {
   private final Autos autos;
   private final SysidAutoPicker sysidAuto = new SysidAutoPicker();
   private final ObjectiveTracker tracker;
-  private final Vision vision = new Vision(swerve);
   @SuppressWarnings("unused")
   private final MechanismViz viz;
   @SuppressWarnings("unused")
