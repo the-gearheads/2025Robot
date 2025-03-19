@@ -53,7 +53,7 @@ public class Autos {
     );
 
 
-    factory.bind("intake", intake.runIntake().withTimeout(1));
+    factory.bind("intake", intake.runIntake());
     factory.bind("L1", superstructure.goTo(SuperstructurePosition.L1));
     factory.bind("L2", superstructure.goTo(SuperstructurePosition.L2));
     factory.bind("L3", superstructure.goTo(SuperstructurePosition.L3));
@@ -93,6 +93,15 @@ public class Autos {
       Commands.sequence(
         trajectory.resetOdometry(),
         trajectory.cmd()
+      )
+    );
+
+    trajectory.done().onTrue(
+      Commands.sequence(
+        stop(),
+        superstructure.waitUntilAtSetpoint(),
+        // possibly an auto align
+        outtakeCoral().withTimeout(2)
       )
     );
 
@@ -164,7 +173,7 @@ public class Autos {
         superstructure.waitUntilAtSetpoint(),
         // possibly an auto align
         outtakeCoral().withTimeout(2), // mostly for now as we do not have coral sim yet,
-        superstructureGoTo(SuperstructurePosition.HP),
+        superstructureGoTo(SuperstructurePosition.HP), 
         reefToHP.cmd()
       )
     );
