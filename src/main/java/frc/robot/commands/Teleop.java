@@ -50,19 +50,18 @@ public class Teleop extends Command {
         double y = Controllers.driverController.getTranslateYAxis();
         double rot = Controllers.driverController.getRotateAxis();
 
-        x = Math.signum(x) * Math.pow(x, 2);
-        y = Math.signum(y) * Math.pow(y, 2);
-        rot = Math.signum(rot) * Math.pow(rot, 2);
+        double xSpeed = Math.signum(x) * Math.pow(x, 2);
+        double ySpeed = Math.signum(y) * Math.pow(y, 2);
+        double rotSpeed = Math.signum(rot) * Math.pow(rot, 2);
 
-        x *= MAX_ROBOT_TRANS_SPEED;
-        y *= MAX_ROBOT_TRANS_SPEED;
-        rot *= MAX_ROBOT_TRANS_SPEED;
+        xSpeed *= MAX_ROBOT_TRANS_SPEED;
+        ySpeed *= MAX_ROBOT_TRANS_SPEED;
+        rotSpeed *= MAX_ROBOT_TRANS_SPEED;
 
         ChassisSpeeds finalSpeeds;
         // decide whether to do autoalign
-        // Rotation2d controllerAngle = new Translation2d(x, y).getAngle();
-        Rotation2d controllerAngle = Rotation2d.fromRadians(Math.atan2(y, x));
-        Pose2d currentCoralTarget = autoAlign.getCoralObjective(swerve.getPose(), controllerAngle);
+        Pose2d currentCoralTarget = autoAlign.getCoralObjective(swerve.getPose(), x, y);
+        
         if(currentCoralTarget.getTranslation().getDistance(swerve.getPose().getTranslation()) < AUTO_ALIGN_DIST_THRESHOLD && Math.abs(currentCoralTarget.getRotation().minus(swerve.getPose().getRotation()).getRadians()) < AUTO_ALIGN_ANGLE_THRESHOLD && intake.getGamePiece() == GamePiece.CORAL) {
             Logger.recordOutput("AlignToPose/TeleopAligning", true);
             vision.setPoseStrategy(1, PoseStrategy.PNP_DISTANCE_TRIG_SOLVE);
