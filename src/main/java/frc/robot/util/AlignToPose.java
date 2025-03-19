@@ -112,6 +112,7 @@ public class AlignToPose {
   }
 
   public Pose2d getCoralObjective(Pose2d robotPose, double controllerX, double controllerY) {
+    Translation2d controllerTranslation = new Translation2d(controllerX, controllerY);
     Rotation2d controllerVectorAngle;
     if (controllerTranslation.getNorm() > 0.02)
       controllerVectorAngle = controllerTranslation.getAngle();
