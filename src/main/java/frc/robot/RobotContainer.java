@@ -5,6 +5,7 @@
 package frc.robot;
 
 
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -62,7 +63,7 @@ public class RobotContainer {
     superStructure = new Superstructure(pivot, telescope, wrist);
     autos = new Autos(swerve, superStructure, intake);
     viz = new MechanismViz(swerve, pivot, telescope, wrist);
-    swerve.setDefaultCommand(new Teleop(swerve));
+    swerve.setDefaultCommand(new Teleop(swerve, intake));
     // swerve.setDefaultCommand(new Teleop(swerve));
     // pivot.setDefaultCommand(new ManualPivot(pivot));
     pivot.setDefaultCommand(new PivotNTControl(pivot));
@@ -138,8 +139,17 @@ public class RobotContainer {
     );
 
     Controllers.driverController.getRightBumper().onTrue(
-      intake.runOuttake()
-    );
+      Commands.deferredProxy(() -> {
+        switch(intake.getGamePiece()) {
+          case CORAL:
+            return intake.outtakeCoral();
+          case ALGAE:
+            return intake.runOuttake(12);
+          default:
+            return intake.runOuttake(12);
+        }
+        })
+      );
 
     Controllers.driverController.getLeftBumper().onTrue(
       superStructure.goTo(SuperstructurePosition.STOW)
@@ -150,8 +160,11 @@ public class RobotContainer {
     // Controllers.driverController.getPovRight().whileTrue(Commands.runEnd(() -> {intake.setVoltage(12);}, ()->{intake.setVoltage(0);}, intake));
 
     Controllers.driverController.getPovLeft().whileTrue(intake.runIntake());
-    Controllers.driverController.getPovRight().whileTrue(intake.runOuttake());
+    Controllers.driverController.getPovRight().whileTrue(intake.runOuttake(12));
     Controllers.driverController.getPovUp().whileTrue(intake.runOuttake(6));
+
+    // Controllers.driverController.getABtn().whileTrue(pivot.run(() -> {pivot.setMode(RunMode.VOLTAGE); pivot.setVoltage(-5);}).alongWith(wrist.run(() -> {wrist.setGoal(Rotation2d.fromDegrees(70));})));
+    // Controllers.driverController.getXBtn().whileTrue(pivot.run(() -> {pivot.setMode(RunMode.VOLTAGE); pivot.setVoltage(5);}).alongWith(wrist.run(() -> {wrist.setGoal(Rotation2d.fromDegrees(70));})));
     
     // Controllers.driverController.getLeftBumper().whileTrue(new AlignToPose(swerve, tracker::getCoralObjective));
   }

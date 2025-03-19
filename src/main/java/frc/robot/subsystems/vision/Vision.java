@@ -6,7 +6,6 @@ package frc.robot.subsystems.vision;
 
 import java.io.IOException;
 
-import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
@@ -27,7 +26,6 @@ public class Vision extends SubsystemBase {
   private VisionSim sim = new VisionSim();
   private Swerve swerve;
   private Rotation2d gyroOffset;
-  private static boolean disabled;
 
   private Camera[] cameras = new Camera[CAMERA_NAMES.length];
 
@@ -91,4 +89,10 @@ public class Vision extends SubsystemBase {
     }
   }
 
+  public void disableCamera(int cameraIndex) {
+    cameras[cameraIndex].disable();
+  }
+  public void enableCamera(int cameraIndex) {
+    cameras[cameraIndex].enable();
+  }
 }

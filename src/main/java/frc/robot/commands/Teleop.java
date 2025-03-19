@@ -11,8 +11,12 @@ import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.controllers.Controllers;
+import frc.robot.subsystems.intake.GamePiece;
+import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.swerve.Swerve;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.util.AlignToPose;
@@ -21,11 +25,13 @@ public class Teleop extends Command {
     Swerve swerve;
     AlignToPose autoAlign = new AlignToPose();
     Vision vision;
+    Intake intake;
     
-    public Teleop(Swerve swerve) {
+    public Teleop(Swerve swerve, Intake intake) {
         addRequirements(swerve);
         this.swerve = swerve;
         this.vision = swerve.vision;
+        this.intake = intake;
     }
 
     @Override
@@ -35,6 +41,11 @@ public class Teleop extends Command {
 
     @Override
     public void execute() {
+        var fieldAdjustedRobotRot = swerve.getPose().getRotation();
+        if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red) {
+            fieldAdjustedRobotRot = fieldAdjustedRobotRot.rotateBy(Rotation2d.fromDegrees(180));
+        }
+
         double x = Controllers.driverController.getTranslateXAxis();
         double y = Controllers.driverController.getTranslateYAxis();
         double rot = Controllers.driverController.getRotateAxis();
@@ -52,18 +63,20 @@ public class Teleop extends Command {
         // Rotation2d controllerAngle = new Translation2d(x, y).getAngle();
         Rotation2d controllerAngle = Rotation2d.fromRadians(Math.atan2(y, x));
         Pose2d currentCoralTarget = autoAlign.getCoralObjective(swerve.getPose(), controllerAngle);
-        if(currentCoralTarget.getTranslation().getDistance(swerve.getPose().getTranslation()) < AUTO_ALIGN_DIST_THRESHOLD && Math.abs(currentCoralTarget.getRotation().minus(swerve.getPose().getRotation()).getRadians()) < AUTO_ALIGN_ANGLE_THRESHOLD) {
+        if(currentCoralTarget.getTranslation().getDistance(swerve.getPose().getTranslation()) < AUTO_ALIGN_DIST_THRESHOLD && Math.abs(currentCoralTarget.getRotation().minus(swerve.getPose().getRotation()).getRadians()) < AUTO_ALIGN_ANGLE_THRESHOLD && intake.getGamePiece() == GamePiece.CORAL) {
             Logger.recordOutput("AlignToPose/TeleopAligning", true);
             vision.setPoseStrategy(1, PoseStrategy.PNP_DISTANCE_TRIG_SOLVE);
             vision.setPoseStrategy(2, PoseStrategy.PNP_DISTANCE_TRIG_SOLVE);
+            vision.disableCamera(0);
             Pair<ChassisSpeeds, Double> autoAlignSpeeds = autoAlign.getAutoAlignSpeeds(x, y, swerve.getPose());
-            ChassisSpeeds driverSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(new ChassisSpeeds(x * (1 - autoAlignSpeeds.getSecond()), y * (1 - autoAlignSpeeds.getSecond()), rot * (1 - autoAlignSpeeds.getSecond())), swerve.getPose().getRotation());
+            ChassisSpeeds driverSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(new ChassisSpeeds(x * (1 - autoAlignSpeeds.getSecond()), y * (1 - autoAlignSpeeds.getSecond()), rot * (1 - autoAlignSpeeds.getSecond())), fieldAdjustedRobotRot);
             finalSpeeds = driverSpeeds.plus(autoAlignSpeeds.getFirst());
             // finalSpeeds = driverSpeeds;
         } else {
             Logger.recordOutput("AlignToPose/TeleopAligning", false);
             vision.defaultPoseStrategies();
-            ChassisSpeeds driverSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(new ChassisSpeeds(x, y, rot), swerve.getPose().getRotation());
+            vision.enableCamera(0);
+            ChassisSpeeds driverSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(new ChassisSpeeds(x, y, rot), fieldAdjustedRobotRot);
             finalSpeeds = driverSpeeds;
         }
 

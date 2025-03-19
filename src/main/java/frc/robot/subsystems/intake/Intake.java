@@ -65,7 +65,7 @@ public class Intake extends SubsystemBase {
   }
 
   public Command runIntake() {
-    return run(() -> setVoltage(INTAKE_VOLTAGE)).until(this::hasGamePiece);
+    return run(() -> setVoltage(INTAKE_VOLTAGE)).until(this::hasGamePiece).andThen(Commands.waitSeconds(1));
   }
 
   @AutoLogOutput
@@ -112,11 +112,11 @@ public class Intake extends SubsystemBase {
 
   @AutoLogOutput
   public GamePiece getGamePiece() {
-    if (canandcolor.getProximity() < CORAL_PROXIMITY_THRESHOLD) {
-      return GamePiece.CORAL;
-    } else if (canandcolor.getProximity() < ALGAE_PROXIMITY_THRESHOLD && getPhosphorusAlgaeDIO()) {
-      return GamePiece.ALGAE;
-    }
+  if (canandcolor.getProximity() < ALGAE_PROXIMITY_THRESHOLD && getPhosphorusAlgaeDIO()) {
+    return GamePiece.ALGAE;
+  } else if (canandcolor.getProximity() < CORAL_PROXIMITY_THRESHOLD) {
+    return GamePiece.CORAL;
+  }
     return GamePiece.EMPTY;
   }
 
