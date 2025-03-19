@@ -96,13 +96,13 @@ public class RobotContainer {
     // teleop controlls
 
 
-    Controllers.driverController.getLeftTriggerBtn().whileTrue(intake.runIntake());
-    Controllers.driverController.getLeftTriggerBtn().onTrue(superStructure.goTo(SuperstructurePosition.GROUND_INTAKE));
+    // Controllers.driverController.getLeftTriggerBtn().whileTrue(intake.runIntake());
+    // Controllers.driverController.getLeftTriggerBtn().onTrue(superStructure.goTo(SuperstructurePosition.GROUND_INTAKE));
 
     Controllers.driverController.getRightTriggerBtn().whileTrue(intake.runIntake());
     Controllers.driverController.getRightTriggerBtn().onTrue(superStructure.goTo(SuperstructurePosition.HP));
 
-    Controllers.driverController.getRightPaddle().onTrue(
+    Controllers.driverController.getLeftTriggerBtn().onTrue(
       Commands.deferredProxy(() -> {
       switch(intake.getGamePiece()) {
         case CORAL:

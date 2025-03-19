@@ -21,6 +21,7 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 
@@ -152,12 +153,12 @@ public class Wrist extends SubsystemBase {
     wrist.setVoltage(volts);
   }
 
-  public boolean atPoint(double angle) {
+  public boolean atPoint(Rotation2d angle) {
     return atPoint(angle, WRIST_ANGLE_TOLERANCE);
   }
 
-  public boolean atPoint(double angle, double tolerance) {
-    return MathUtil.isNear(getAngle().getRadians(), angle, tolerance);
+  public boolean atPoint(Rotation2d angle, double tolerance) {
+    return MathUtil.isNear(getAngle().getRadians(), angle.getRadians(), tolerance);
   }
 
   public boolean forwardSysidLimit() {
@@ -183,5 +184,11 @@ public class Wrist extends SubsystemBase {
     
     wrist.setCANTimeout(0);
     Logger.recordOutput("Wrist/isBraken", willBrake);
+  }
+
+  public Command goTo(Rotation2d angle, double tolerance) {
+    return this.run(() -> {
+      setGoal(angle);
+    }).until(() -> {return this.atPoint(angle, tolerance);});
   }
 }

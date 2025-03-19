@@ -1,5 +1,6 @@
 package frc.robot.constants;
 
+
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
@@ -26,6 +27,7 @@ public class WristConstants {
   public static final double MAX_SYSID_ANGLE = Units.degreesToRadians(105);
 
   public static final double WRIST_ANGLE_TOLERANCE = Units.degreesToRadians(1);
+  public static final double WRIST_ESCAPE_ANGLE_TOLERANCE = Units.degreesToRadians(3); // before running superstrcuture positions
 
   // all for sim
   public static final double WRIST_MOI_EST = 2; // kg * m^2, VERY rough estimate from cad;

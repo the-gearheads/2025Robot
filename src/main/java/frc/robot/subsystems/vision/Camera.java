@@ -116,7 +116,7 @@ public class Camera {
   }
 
   public boolean feedPoseEstimator(SwerveDrivePoseEstimator poseEstimator, Rotation2d gyroOffset) {
-    Logger.recordOutput(path + "PoseStrategy", estimator.getPrimaryStrategy());
+    Logger.recordOutput(path + "/PoseStrategy", estimator.getPrimaryStrategy());
     lastRobotPose = poseEstimator.getEstimatedPosition();
     boolean visionWasMeasured = false;
     List<PhotonPipelineResult> pipelineResults = getPipelineResults();

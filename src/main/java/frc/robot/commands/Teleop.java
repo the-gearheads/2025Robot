@@ -75,7 +75,7 @@ public class Teleop extends Command {
             Logger.recordOutput("AlignToPose/TeleopAligning", false);
             vision.defaultPoseStrategies();
             vision.enableCamera(0);
-            ChassisSpeeds driverSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(new ChassisSpeeds(x, y, rot), fieldAdjustedRobotRot);
+            ChassisSpeeds driverSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(new ChassisSpeeds(xSpeed, ySpeed, rotSpeed), fieldAdjustedRobotRot);
             finalSpeeds = driverSpeeds;
         }
 

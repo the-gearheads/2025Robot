@@ -1,13 +1,19 @@
 package frc.robot.subsystems;
 
 
+import static frc.robot.constants.WristConstants.MAX_WRIST_ANGLE;
+import static frc.robot.constants.WristConstants.WRIST_ESCAPE_ANGLE_TOLERANCE;
+
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
@@ -28,6 +34,8 @@ public class Superstructure {
   Telescope telescope;
   Wrist wrist;
   
+  HashMap<ArmvatorPosition, Double[]> wristSafeExitAngles = new HashMap<>();
+
   ArmvatorSample lastSample;
   public Superstructure(Pivot pivot, Telescope telescope, Wrist wrist) {
     this.pivot = pivot;
@@ -36,6 +44,7 @@ public class Superstructure {
     ArmvatorTrajectory.loadAll();
     // Log for the first time to avoid performance penalty
     Logger.recordOutput("Superstructure/Sample", new ArmvatorSample(0, 0, 0, 0, 0, 0, 0, 0));
+    initalizeWristExitAngles();
     telescope.setPivotAngleRadSupplier(pivot::getAngleRad);
   }
   
@@ -73,10 +82,22 @@ public class Superstructure {
         }
         Logger.recordOutput("Superstructure/goToFrom", currentPos);
         Logger.recordOutput("Superstructure/goToTo", pos);
-        return new ParallelDeadlineGroup(
+        
+        // check if wrist needs to move:
+        Command wristMoveCommand = Commands.none();
+        if (wristSafeExitAngles.containsKey(currentPos)) {
+          Double[] safeAngles = wristSafeExitAngles.get(currentPos);
+          if (wrist.getAngle().getRadians() < safeAngles[0]) {
+            wristMoveCommand = wrist.goTo(Rotation2d.fromRadians(safeAngles[0]), WRIST_ESCAPE_ANGLE_TOLERANCE);
+          } else if (wrist.getAngle().getRadians() > safeAngles[1]) {
+            wristMoveCommand = wrist.goTo(Rotation2d.fromRadians(safeAngles[1]), WRIST_ESCAPE_ANGLE_TOLERANCE);
+          }
+        }
+
+        return wristMoveCommand.andThen(new ParallelDeadlineGroup(
           followAvTrajectory(traj),
           new WristTrajFollower(traj, pos, wrist, this::getLastSample)
-        );
+        ));
       }, Set.of(pivot, telescope, wrist));
     }
     
@@ -98,5 +119,10 @@ public class Superstructure {
 
     public Command waitUntilAtSetpoint() {
       return Commands.waitUntil(this::atPidSetpoint);
+    }
+
+    
+    public void initalizeWristExitAngles() {
+      wristSafeExitAngles.put(ArmvatorPosition.L4, new Double[]{Units.degreesToRadians(5), MAX_WRIST_ANGLE});
     }
   }
