@@ -75,6 +75,11 @@ public class Autos {
     return intake.outtakeCoral().asProxy();
   }
 
+  /* Go to a superstructure position, proxied such that we don't have self-cancelling autons */
+  private Command superstructureGoTo(SuperstructurePosition pos) {
+    return superstructure.goTo(pos).asProxy();
+  }
+
   public AutoRoutine centerReef() {
     AutoRoutine routine = factory.newRoutine(nameCenterReef);
     AutoTrajectory trajectory = routine.trajectory("center_reef");
@@ -93,42 +98,42 @@ public class Autos {
   }
 
   public AutoRoutine leftReefFeederReef() {
-    AutoRoutine routine = factory.newRoutine(nameLeftReefFeederReef);
-    AutoTrajectory trajectoryStartToReefK = routine.trajectory("left_reef_feeder_reef", 0);
-    AutoTrajectory trajectoryReefKToFeeder = routine.trajectory("left_reef_feeder_reef", 1);
-    AutoTrajectory trajectoryFeederToReefL = routine.trajectory("left_reef_feeder_reef", 2);
+    AutoRoutine routine = factory.newRoutine(nameRightReefFeederReef);
+    AutoTrajectory startToReef = routine.trajectory("left_reef_feeder_reef", 0);
+    AutoTrajectory reefToHP = routine.trajectory("left_reef_feeder_reef", 1);
+    AutoTrajectory HPToReef = routine.trajectory("left_reef_feeder_reef", 2);
 
     routine.active().onTrue(
       Commands.sequence(
-        trajectoryStartToReefK.resetOdometry(),
-        trajectoryStartToReefK.cmd()
+        startToReef.resetOdometry(),
+        startToReef.cmd()
       )
     );
 
-    // Add command to place corral on top level of reef
-    trajectoryStartToReefK.atTime("Start").onTrue(superstructure.goTo(SuperstructurePosition.L4));
-    // NOTE: may need to add an "alignment" in the case it is not perfectly aligned in relation to the april tag
-    trajectoryStartToReefK.atTime("K-L4").onTrue(intake.outtakeCoral());
-    trajectoryStartToReefK.done().onTrue(trajectoryReefKToFeeder.cmd());
+    startToReef.done().onTrue(
+      Commands.sequence(
+        superstructure.waitUntilAtSetpoint(),
+        // possibly an auto align
+        outtakeCoral().withTimeout(2), // mostly for now as we do not have coral sim yet,
+        superstructureGoTo(SuperstructurePosition.STOW),
+        reefToHP.cmd()
+      )
+    );
 
-    // Resetting the arm to HP position and running the intake at feeder station
-    trajectoryReefKToFeeder.atTime("K-L4").onTrue(superstructure.goTo(SuperstructurePosition.HP));
-    trajectoryReefKToFeeder.atTime("Feeder").onTrue(intake.runIntake());
-    trajectoryReefKToFeeder.done().onTrue(trajectoryFeederToReefL.cmd());
+    // we -could- hypothetically- wait until we have a game piece, but we could also just rely on pure HP skill
+    reefToHP.done().onTrue(Commands.sequence(
+      superstructure.waitUntilAtSetpoint(),
+      HPToReef.cmd()
+    ));
 
-    // Add command to place corral on top level of reef
-    trajectoryFeederToReefL.atTime("Feeder").onTrue(superstructure.goTo(SuperstructurePosition.L4));
-    // NOTE: may need to add an "alignment" in the case it is not perfectly aligned in relation to the april tag
-    trajectoryFeederToReefL.atTime("L-L4").onTrue(intake.outtakeCoral());
-
-
-    /*
-     * 
-     * we might want to start intake, then approach the feeder station, and stop intaking some time after driving away perhaps
-we want to start to move the armvator into position before we approach the reef, but after we leave the HP station
-we need to ensure we're already rotated correctly before lining against stuff like the reef. place like a pose waypoint with the correct rotation some ways out so the robot can get rotationally aligned early
-     */
-
+    HPToReef.done().onTrue(
+      Commands.sequence(
+        superstructure.waitUntilAtSetpoint(),
+        // possibly an auto align
+        outtakeCoral().withTimeout(2)
+      )
+    );
+    
     return routine;
   }
 
@@ -149,7 +154,8 @@ we need to ensure we're already rotated correctly before lining against stuff li
       Commands.sequence(
         superstructure.waitUntilAtSetpoint(),
         // possibly an auto align
-        outtakeCoral().withTimeout(2), // mostly for now as we do not have coral sim yet
+        outtakeCoral().withTimeout(2), // mostly for now as we do not have coral sim yet,
+        superstructureGoTo(SuperstructurePosition.STOW),
         reefToHP.cmd()
       )
     );
@@ -168,8 +174,6 @@ we need to ensure we're already rotated correctly before lining against stuff li
       )
     );
     
-    // NOTE: may need to add an alignment in the case it is not perfectly aligned in relation to the april tag
-
     return routine;
   }
 
