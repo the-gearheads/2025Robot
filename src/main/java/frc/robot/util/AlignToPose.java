@@ -112,9 +112,9 @@ public class AlignToPose {
   }
 
   public Pose2d getCoralObjective(Pose2d robotPose, double controllerX, double controllerY) {
-    Rotation2d controllerAngle;
+    Rotation2d controllerVectorAngle;
     if (controllerTranslation.getNorm() > 0.02)
-      controllerAngle = controllerTranslation.getAngle();
+      controllerVectorAngle = controllerTranslation.getAngle();
 
     Pair<Pose2d, Double> bestReefPose = new Pair<Pose2d,Double>(null, 1000.0);
     ArrayList<Pose2d> reefPoses = new ArrayList<>(ReefPositions.getScoringPoses());
