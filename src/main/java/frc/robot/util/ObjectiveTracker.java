@@ -5,7 +5,6 @@ import static java.util.stream.Collectors.toList;
 
 import java.util.List;
 
-import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
@@ -45,7 +44,6 @@ public class ObjectiveTracker {
     return selectedPose;
   }
 
-  @AutoLogOutput
   public boolean facingReef() {
     Pose2d currentPose = swerve.getPose();
     Pose2d closestReefPose = currentPose.nearest(ReefPositions.getCenterPoses());

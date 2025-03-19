@@ -4,11 +4,9 @@ import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.measure.Distance;
@@ -20,7 +18,7 @@ public class ReefPositions {
 
   private static final int[] REEF_TAG_IDS = {6, 7, 8, 9, 10, 11, 17, 18, 19, 20, 21, 22};
   private static final List<Pose2d> REEF_TAG_POSES = java.util.Arrays.stream(REEF_TAG_IDS)
-      .mapToObj(id -> Vision.field.getTags().get(id).pose.toPose2d())
+      .mapToObj(id -> Vision.field.getTags().get(id-1).pose.toPose2d()) // Vision.field.getTags() - tag id 1 is index 0
       .collect(java.util.stream.Collectors.toList());
   
   // Pose at midpoint between tags 18 and 21 (which are opposite on blue reef)

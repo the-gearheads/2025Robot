@@ -28,6 +28,7 @@ public class Vision extends SubsystemBase {
   private Rotation2d gyroOffset;
 
   private Camera[] cameras = new Camera[CAMERA_NAMES.length];
+  private int cameraPriority = -1;
 
   public Vision(Swerve swerve) {
     this.swerve = swerve;
@@ -64,10 +65,21 @@ public class Vision extends SubsystemBase {
       gyroOffset = swerve.getPose().getRotation().minus(swerve.getPoseWheelsOnly().getRotation());
     }
     Logger.recordOutput("Vision/GyroOffset", gyroOffset);
-    for (Camera camera : cameras) {
-      posed |= camera.feedPoseEstimator(poseEstimator, gyroOffset);
+    if (cameraPriority != -1) {
+      posed = cameras[cameraPriority].feedPoseEstimator(poseEstimator, gyroOffset);
+      if (!posed) {
+        for (int i=0; i<cameras.length; i++) {
+          if(i != cameraPriority)
+            posed |= cameras[i].feedPoseEstimator(poseEstimator, gyroOffset);
+        }
+      }
+    } else {
+      for (Camera camera : cameras) {
+        posed |= camera.feedPoseEstimator(poseEstimator, gyroOffset);
+      }
     }
     
+
     return posed;
   }
 
@@ -102,5 +114,13 @@ public class Vision extends SubsystemBase {
 
   public void disableIdFiltering(int cameraIndex) {
     cameras[cameraIndex].disableTagIdFiltering();
+  }
+
+  public void setCameraPreference(int cameraIndex) {
+    cameraPriority = cameraIndex;
+  }
+
+  public void disableCameraPreference() {
+    cameraPriority = -1;
   }
 }
