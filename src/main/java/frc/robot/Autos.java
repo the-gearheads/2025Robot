@@ -7,6 +7,7 @@ import choreo.auto.AutoFactory;
 import choreo.auto.AutoRoutine;
 import choreo.auto.AutoTrajectory;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -80,6 +81,10 @@ public class Autos {
     return superstructure.goTo(pos).asProxy();
   }
 
+  private Command stop() {
+    return Commands.runOnce(() -> swerve.drive(new ChassisSpeeds()));
+  }
+
   public AutoRoutine centerReef() {
     AutoRoutine routine = factory.newRoutine(nameCenterReef);
     AutoTrajectory trajectory = routine.trajectory("center_reef");
@@ -112,22 +117,25 @@ public class Autos {
 
     startToReef.done().onTrue(
       Commands.sequence(
+        stop(),
         superstructure.waitUntilAtSetpoint(),
         // possibly an auto align
         outtakeCoral().withTimeout(2), // mostly for now as we do not have coral sim yet,
-        superstructureGoTo(SuperstructurePosition.STOW),
+        superstructureGoTo(SuperstructurePosition.HP),
         reefToHP.cmd()
       )
     );
 
     // we -could- hypothetically- wait until we have a game piece, but we could also just rely on pure HP skill
     reefToHP.done().onTrue(Commands.sequence(
+      stop(),
       superstructure.waitUntilAtSetpoint(),
       HPToReef.cmd()
     ));
 
     HPToReef.done().onTrue(
       Commands.sequence(
+        stop(),
         superstructure.waitUntilAtSetpoint(),
         // possibly an auto align
         outtakeCoral().withTimeout(2)
@@ -152,22 +160,25 @@ public class Autos {
 
     startToReef.done().onTrue(
       Commands.sequence(
+        stop(),
         superstructure.waitUntilAtSetpoint(),
         // possibly an auto align
         outtakeCoral().withTimeout(2), // mostly for now as we do not have coral sim yet,
-        superstructureGoTo(SuperstructurePosition.STOW),
+        superstructureGoTo(SuperstructurePosition.HP),
         reefToHP.cmd()
       )
     );
 
     // we -could- hypothetically- wait until we have a game piece, but we could also just rely on pure HP skill
     reefToHP.done().onTrue(Commands.sequence(
+      stop(),
       superstructure.waitUntilAtSetpoint(),
       HPToReef.cmd()
     ));
 
     HPToReef.done().onTrue(
       Commands.sequence(
+        stop(),
         superstructure.waitUntilAtSetpoint(),
         // possibly an auto align
         outtakeCoral().withTimeout(2)

@@ -37,33 +37,34 @@ public class Teleop extends Command {
         this.tracker = tracker;
     }
 
-    @Override
-    public void initialize() {
+  @Override
+  public void initialize() {
 
+  }
+
+  @Override
+  public void execute() {
+    if(DriverStation.isAutonomous()) swerve.drive(new ChassisSpeeds()); // shouldn't be needed but eh
+    var fieldAdjustedRobotRot = swerve.getPose().getRotation();
+    if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red) {
+      fieldAdjustedRobotRot = fieldAdjustedRobotRot.rotateBy(Rotation2d.fromDegrees(180));
     }
 
-    @Override
-    public void execute() {
-        var fieldAdjustedRobotRot = swerve.getPose().getRotation();
-        if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red) {
-            fieldAdjustedRobotRot = fieldAdjustedRobotRot.rotateBy(Rotation2d.fromDegrees(180));
-        }
+    double x = Controllers.driverController.getTranslateXAxis();
+    double y = Controllers.driverController.getTranslateYAxis();
+    double rot = Controllers.driverController.getRotateAxis();
 
-        double x = Controllers.driverController.getTranslateXAxis();
-        double y = Controllers.driverController.getTranslateYAxis();
-        double rot = Controllers.driverController.getRotateAxis();
+    double xSpeed = Math.signum(x) * Math.pow(x, 2);
+    double ySpeed = Math.signum(y) * Math.pow(y, 2);
+    double rotSpeed = Math.signum(rot) * Math.pow(rot, 2);
 
-        double xSpeed = Math.signum(x) * Math.pow(x, 2);
-        double ySpeed = Math.signum(y) * Math.pow(y, 2);
-        double rotSpeed = Math.signum(rot) * Math.pow(rot, 2);
+    xSpeed *= MAX_ROBOT_TRANS_SPEED;
+    ySpeed *= MAX_ROBOT_TRANS_SPEED;
+    rotSpeed *= MAX_ROBOT_TRANS_SPEED;
 
-        xSpeed *= MAX_ROBOT_TRANS_SPEED;
-        ySpeed *= MAX_ROBOT_TRANS_SPEED;
-        rotSpeed *= MAX_ROBOT_TRANS_SPEED;
-
-        ChassisSpeeds finalSpeeds;
-        // decide whether to do autoalign
-        Pose2d currentCoralTarget = autoAlign.getCoralObjective(swerve.getPose(), x, y);
+    ChassisSpeeds finalSpeeds;
+    // decide whether to do autoalign
+    Pose2d currentCoralTarget = autoAlign.getCoralObjective(swerve.getPose(), x, y);
         
         if (currentCoralTarget.getTranslation()
                 .getDistance(swerve.getPose().getTranslation()) < AUTO_ALIGN_DIST_THRESHOLD
@@ -86,6 +87,6 @@ public class Teleop extends Command {
             finalSpeeds = driverSpeeds;
         }
 
-        swerve.drive(finalSpeeds);
-    }
+    swerve.drive(finalSpeeds);
+  }
 }
