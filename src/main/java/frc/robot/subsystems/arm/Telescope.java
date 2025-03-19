@@ -18,10 +18,10 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -30,6 +30,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.subsystems.Superstructure.RunMode;
 import frc.robot.util.ArmvatorSample;
 import frc.robot.util.vendor.ElevatorFeedforwardSettable;
+import frc.robot.util.vendor.PIDControllerCustomPeriod;
 
 public class Telescope extends SubsystemBase {
   private SparkFlex elevator = new SparkFlex(ELEVATOR_MOTOR_ID, MotorType.kBrushless);
@@ -43,7 +44,7 @@ public class Telescope extends SubsystemBase {
 
   private ProfiledPIDController profiledPid = new ProfiledPIDController(ELEVATOR_PID[0], ELEVATOR_PID[1], ELEVATOR_PID[2],
       ELEVATOR_CONSTRAINTS);
-  private PIDController pid = new PIDController(ELEVATOR_PID[0], ELEVATOR_PID[1], ELEVATOR_PID[2]);
+  private PIDControllerCustomPeriod pid = new PIDControllerCustomPeriod(ELEVATOR_PID[0], ELEVATOR_PID[1], ELEVATOR_PID[2]);
 
   private RunMode defaultMode = RunMode.PROFILED_PID;
   private RunMode mode = defaultMode;
@@ -51,6 +52,8 @@ public class Telescope extends SubsystemBase {
 
   private double manualVoltage;
   private boolean isHomed = false;
+
+  private double lastTimestamp = Timer.getFPGATimestamp();
 
   protected DoubleSupplier pivotAngleRadSupplier = () -> {return Math.PI / 2;};
 
@@ -95,6 +98,8 @@ public class Telescope extends SubsystemBase {
   public void periodic() {
     // Impact of gravity changes with elevator angle
     elevatorFeedforward.setKg(ELEVATOR_KG * Math.sin(pivotAngleRadSupplier.getAsDouble()));
+    pid.setPeriod(Math.max(0.02, Timer.getFPGATimestamp() - lastTimestamp));
+    lastTimestamp = Timer.getFPGATimestamp();
     double ff = 0, pidOutput = 0;
     switch (mode) {
       case PROFILED_PID:

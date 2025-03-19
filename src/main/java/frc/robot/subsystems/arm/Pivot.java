@@ -17,18 +17,19 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.subsystems.Superstructure.RunMode;
 import frc.robot.util.ArmvatorSample;
 import frc.robot.util.vendor.ArmfeedforwardSettable;
+import frc.robot.util.vendor.PIDControllerCustomPeriod;
 
 public class Pivot extends SubsystemBase {
   /*
@@ -45,13 +46,15 @@ public class Pivot extends SubsystemBase {
       PIVOT_CONSTRAINTS,
       0.02);
   private ArmfeedforwardSettable pivotFeedforward = new ArmfeedforwardSettable(PIVOT_KS, PIVOT_KG, PIVOT_KV, PIVOT_KA);
-  private PIDController pid = new PIDController(PIVOT_PID[0], PIVOT_PID[1], PIVOT_PID[2]);
+  private PIDControllerCustomPeriod pid = new PIDControllerCustomPeriod(PIVOT_PID[0], PIVOT_PID[1], PIVOT_PID[2]);
 
   private RunMode defaultMode = RunMode.PROFILED_PID;
   private RunMode mode = defaultMode;
 
   private ArmvatorSample sample;
   private Double manualVoltage = 0.0;
+
+  private double lastTimestamp = Timer.getFPGATimestamp();
 
   public Pivot() {
     configure();
@@ -69,6 +72,9 @@ public class Pivot extends SubsystemBase {
     }
 
     double pidOutput = 0, ff = 0;
+
+    pid.setPeriod(Math.max(0.02, Timer.getFPGATimestamp() - lastTimestamp));
+    lastTimestamp = Timer.getFPGATimestamp();
 
     switch (mode) {
       case PROFILED_PID:

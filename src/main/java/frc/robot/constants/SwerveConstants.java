@@ -21,7 +21,7 @@ public final class SwerveConstants {
       new Translation2d(-0.3556, 0.31115),
       new Translation2d(-0.3556, -0.31115)
     };
-
+  
     public static final double WHEEL_BASE = WHEEL_POSITIONS[0].getX() - WHEEL_POSITIONS[2].getX();
     public static final double TRACK_WIDTH = WHEEL_POSITIONS[0].getY() - WHEEL_POSITIONS[1].getY();
     public static final double DRIVE_BASE_RADIUS = Math.hypot(TRACK_WIDTH / 2.0, WHEEL_BASE / 2.0);
