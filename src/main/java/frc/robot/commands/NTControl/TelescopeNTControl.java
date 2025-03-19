@@ -17,6 +17,7 @@ public class TelescopeNTControl extends Command {
   @Override
   public void initialize() {
     SmartDashboard.putNumber(NTPath, telescope.getExtension());
+    telescope.resetProfiledPidTo(telescope.getExtension());
     telescope.setMode(RunMode.PROFILED_PID);
   }
 
