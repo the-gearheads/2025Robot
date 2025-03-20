@@ -8,7 +8,6 @@ package frc.robot;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -155,16 +154,19 @@ public class RobotContainer {
     // Controllers.driverController.getRightBumper().whileTrue(new AlignToPose(swerve));
     // Controllers.driverController.getPovLeft().whileTrue(Commands.runEnd(() -> {intake.setVoltage(-12);}, ()->{intake.setVoltage(0);}, intake));
     // Controllers.driverController.getPovRight().whileTrue(Commands.runEnd(() -> {intake.setVoltage(12);}, ()->{intake.setVoltage(0);}, intake));
-    Controllers.driverController.getPovDown().onTrue(new InstantCommand(()-> {swerve.setPose(new Pose2d(7.12387752532959 , 7.599511623382568, Rotation2d.kZero));}));
     Controllers.driverController.getPovLeft().whileTrue(intake.runIntake());
     Controllers.driverController.getPovRight().whileTrue(intake.runOuttake(12));
     Controllers.driverController.getPovUp().whileTrue(intake.runOuttake(6));
-    Controllers.driverController.getStartButton().onTrue(Commands.runOnce(()->{swerve.vision.disable();}));
-    Controllers.driverController.getBackButton().onTrue(Commands.runOnce(()->{swerve.vision.enable();}));
 
-    Controllers.driverController.getABtn().whileTrue(pivot.run(() -> {pivot.setMode(RunMode.VOLTAGE); pivot.setVoltage(-5);}).alongWith(wrist.run(() -> {wrist.setGoal(Rotation2d.fromDegrees(70));})));
-    Controllers.driverController.getXBtn().whileTrue(pivot.run(() -> {pivot.setMode(RunMode.VOLTAGE); pivot.setVoltage(5);}).alongWith(wrist.run(() -> {wrist.setGoal(Rotation2d.fromDegrees(70));})));
+
+    Controllers.operatorController.getBtn11().onTrue(Commands.runOnce(()->{swerve.vision.disable();}));
+    Controllers.operatorController.getBtn12().onTrue(Commands.runOnce(()->{swerve.vision.enable();}));
+
+    Controllers.operatorController.getBtn21().whileTrue(pivot.run(() -> {pivot.setMode(RunMode.VOLTAGE); pivot.setVoltage(-5);}).alongWith(wrist.run(() -> {wrist.setGoal(Rotation2d.fromDegrees(70));})));
+    Controllers.operatorController.getBtn22().whileTrue(pivot.run(() -> {pivot.setMode(RunMode.VOLTAGE); pivot.setVoltage(5);}).alongWith(wrist.run(() -> {wrist.setGoal(Rotation2d.fromDegrees(70));})));
     
+    Controllers.operatorController.getBtn42().onTrue(new InstantCommand(()-> {swerve.setPose(new Pose2d(7.12387752532959 , 7.599511623382568, Rotation2d.kZero));}));
+
     // Controllers.driverController.getLeftBumper().whileTrue(new AlignToPose(swerve, tracker::getCoralObjective));
   }
 
@@ -176,9 +178,9 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
     // return Commands.runOnce(()->{swerve.vision.disable();}).andThen(autos.getAutonomousRoutine());
-    // return sysidAuto.get();
+    return sysidAuto.get();
     // return Swerve.wheelRadiusCharacterization(swerve);
-    return Commands.runOnce(()->{swerve.vision.disable();}).andThen(new InstantCommand(()-> {swerve.setPose(new Pose2d(7.12387752532959 , 7.599511623382568, Rotation2d.kZero));})).andThen(swerve.run(() -> {swerve.drive(new ChassisSpeeds(0.5, 0, 0));}).withTimeout(7));
+    // return Commands.runOnce(()->{swerve.vision.disable();}).andThen(new InstantCommand(()-> {swerve.setPose(new Pose2d(7.12387752532959 , 7.599511623382568, Rotation2d.kZero));})).andThen(swerve.run(() -> {swerve.drive(new ChassisSpeeds(0.5, 0, 0));}).withTimeout(7));
   }
 
   public double getCurrentDrawSim() {

@@ -8,7 +8,6 @@ import static frc.robot.constants.VisionConstants.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedNetworkNumber;
 import org.photonvision.EstimatedRobotPose;
@@ -125,6 +124,7 @@ public class Camera {
   }
 
   public boolean feedPoseEstimator(SwerveDrivePoseEstimator poseEstimator, Rotation2d gyroOffset) {
+    Logger.recordOutput(path + "/isDisabled", isDisabled());
     if(disabled) {
       return false;
     }
@@ -236,7 +236,6 @@ public class Camera {
     disabled = false;
   }
 
-  @AutoLogOutput
   public boolean isDisabled() {
     return disabled;
   } 

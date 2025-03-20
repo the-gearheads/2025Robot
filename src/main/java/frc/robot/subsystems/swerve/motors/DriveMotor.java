@@ -51,7 +51,9 @@ public class DriveMotor {
 
   public void setSpeed(double speed) {
     driveSetpoint = speed;
-    pid.setReference(speed, ControlType.kVelocity, ClosedLoopSlot.kSlot0, DRIVE_FEEDFORWARD.calculate(speed));
+    double ffVolts = DRIVE_FEEDFORWARD.calculate(speed);
+    Logger.recordOutput(modulePath + "/ffVolts", ffVolts);
+    pid.setReference(speed, ControlType.kVelocity, ClosedLoopSlot.kSlot0, ffVolts);
   }
 
   public double getVoltage() {

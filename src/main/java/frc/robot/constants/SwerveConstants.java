@@ -26,7 +26,7 @@ public final class SwerveConstants {
     public static final double TRACK_WIDTH = WHEEL_POSITIONS[0].getY() - WHEEL_POSITIONS[1].getY();
     public static final double DRIVE_BASE_RADIUS = Math.hypot(TRACK_WIDTH / 2.0, WHEEL_BASE / 2.0);
 
-    public static final double[] WHEEL_OFFSETS = {90, 0, 0, 90};
+    public static final double[] WHEEL_OFFSETS = {270, 180, 180, 90};
     public static final boolean[] IS_INVERTED = {true, false, true, false};
 
     public static final double WHEEL_RADIUS = 1.464262 / 100.0 * 2.54;  // derived from wheel radius characterizaiton
@@ -52,8 +52,8 @@ public final class SwerveConstants {
     public static final double STEER_VEL_FACTOR = (2 * Math.PI) / 60.0; // rpm -> rad/sec
 
     public static final double[] STEER_PIDF = {1, 0, 0, 0}; // apparently just a P value of 1 worked for us??? i wanna test that a bit more throughly
-    public static final double[] DRIVE_PID = {70, 0, 0};
-    public static final SimpleMotorFeedforward DRIVE_FEEDFORWARD = new SimpleMotorFeedforward(0.034031, 2.4993, 0.49238);
+    public static final double[] DRIVE_PID = {3.5, 0, 0};
+    public static final SimpleMotorFeedforward DRIVE_FEEDFORWARD = new SimpleMotorFeedforward(0.186587, 2.47975, 0.29612);
 
     public static final int DRIVE_CURRENT_LIMIT = 60;
     public static final int STEER_CURRENT_LIMIT = 20;
