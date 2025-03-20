@@ -17,6 +17,7 @@ import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.SuperstructurePosition;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.swerve.Swerve;
+import frc.robot.util.AlignToPose;
 
 public class Autos {
   Swerve swerve;
@@ -129,6 +130,7 @@ public class Autos {
         stop(),
         superstructure.waitUntilAtSetpoint(),
         // possibly an auto align
+        AlignToPose.getAutoAlignCommand(swerve).withTimeout(1),
         outtakeCoral().withTimeout(2), // mostly for now as we do not have coral sim yet,
         superstructureGoTo(SuperstructurePosition.HP),
         reefToHP.cmd()
@@ -146,6 +148,7 @@ public class Autos {
       Commands.sequence(
         stop(),
         superstructure.waitUntilAtSetpoint(),
+        AlignToPose.getAutoAlignCommand(swerve).withTimeout(1),
         // possibly an auto align
         outtakeCoral().withTimeout(2)
       )

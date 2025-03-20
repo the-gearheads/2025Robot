@@ -3,8 +3,6 @@ package frc.robot.util;
 import static frc.robot.constants.MiscConstants.*;
 import static frc.robot.constants.SwerveConstants.ALIGNMENT_DRIVE_CONSTRAINTS;
 import static frc.robot.constants.SwerveConstants.ALIGNMENT_ROT_CONSTRAINTS;
-import static frc.robot.constants.SwerveConstants.XY_PATH_FOLLOWING_PID;
-import static frc.robot.constants.SwerveConstants.ROT_PATH_FOLLOWING_PID;
 
 import java.util.ArrayList;
 
@@ -19,17 +17,17 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.subsystems.swerve.Swerve;
 
 public class AlignToPose {
-  ProfiledPIDController driveController = new ProfiledPIDController(XY_PATH_FOLLOWING_PID[0], XY_PATH_FOLLOWING_PID[1],
-      XY_PATH_FOLLOWING_PID[2], ALIGNMENT_DRIVE_CONSTRAINTS);
-  ProfiledPIDController rotController = new ProfiledPIDController(ROT_PATH_FOLLOWING_PID[0], ROT_PATH_FOLLOWING_PID[1],
-      ROT_PATH_FOLLOWING_PID[2], ALIGNMENT_ROT_CONSTRAINTS);
+  static ProfiledPIDController driveController = new ProfiledPIDController(3.2, 0, 0, ALIGNMENT_DRIVE_CONSTRAINTS);
+  static ProfiledPIDController rotController = new ProfiledPIDController(1.6, 0, 0, ALIGNMENT_ROT_CONSTRAINTS);
 
   LinearFilter controllerXFilter = LinearFilter.highPass(0.1, 0.02);
   LinearFilter controllerYFilter = LinearFilter.highPass(0.1, 0.02);
 
-  public AlignToPose() {
+  static {
     rotController.enableContinuousInput(-Math.PI, Math.PI);
   }
 
@@ -47,7 +45,7 @@ public class AlignToPose {
    * distance to target pose
    * (also the same controller vector?)
    */
-  public Pair<ChassisSpeeds, Double> getAutoAlignSpeeds(double controllerX, double controllerY, Pose2d robotPose) {
+  public static Pair<ChassisSpeeds, Double> getAutoAlignSpeeds(double controllerX, double controllerY, Pose2d robotPose) {
     Pose2d currentTarget = getCoralObjective(robotPose, controllerX, controllerY);
     Logger.recordOutput("AlignToPose/currentTarget", currentTarget);
 
@@ -108,7 +106,7 @@ public class AlignToPose {
             Math.copySign(shiftYT * MAX_REEF_LINEUP_DIST * 1, offset.getY()), new Rotation2d()));
   }
 
-  public Pose2d getCoralObjective(Pose2d robotPose, double controllerX, double controllerY) {
+  public static Pose2d getCoralObjective(Pose2d robotPose, double controllerX, double controllerY) {
     Translation2d controllerTranslation = new Translation2d(controllerX, controllerY);
     Rotation2d controllerVectorAngle = null;
     if (controllerTranslation.getNorm() > 0.02)
@@ -131,5 +129,12 @@ public class AlignToPose {
       }
     }
     return bestReefPose.getFirst();
+  }
+
+  public static Command getAutoAlignCommand(Swerve swerve) {
+    return swerve.run(() -> {
+      var speeds = getAutoAlignSpeeds(0.0, 0.0, swerve.getPose()).getFirst();
+      swerve.drive(speeds);
+    });
   }
 }

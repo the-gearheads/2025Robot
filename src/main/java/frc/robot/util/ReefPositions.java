@@ -17,9 +17,7 @@ import frc.robot.subsystems.vision.Vision;
 public class ReefPositions {
 
   private static final int[] REEF_TAG_IDS = {6, 7, 8, 9, 10, 11, 17, 18, 19, 20, 21, 22};
-  private static final List<Pose2d> REEF_TAG_POSES = java.util.Arrays.stream(REEF_TAG_IDS)
-      .mapToObj(id -> Vision.field.getTags().get(id-1).pose.toPose2d()) // Vision.field.getTags() - tag id 1 is index 0
-      .collect(java.util.stream.Collectors.toList());
+  private static final List<Pose2d> REEF_TAG_POSES = initalizeReefTagPoses(REEF_TAG_IDS);
   
   // Pose at midpoint between tags 18 and 21 (which are opposite on blue reef)
   private static final Translation2d REEF_CENTER_BLUE = Vision.field.getTagPose(18).get().toPose2d().getTranslation()
@@ -104,5 +102,13 @@ public class ReefPositions {
 
   public static int getClosestReefTagId(Pose2d pose) {
     return REEF_TAG_IDS[REEF_TAG_POSES.indexOf(pose.nearest(REEF_TAG_POSES))];
+  }
+
+  private static List<Pose2d> initalizeReefTagPoses(int[] reefTagIds) {
+    ArrayList<Pose2d> out = new ArrayList<>();
+    for (int id : reefTagIds) {
+      out.add(Vision.field.getTagPose(id).get().toPose2d());
+    }
+    return out;
   }
 }

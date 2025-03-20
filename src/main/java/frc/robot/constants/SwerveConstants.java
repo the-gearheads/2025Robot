@@ -67,8 +67,8 @@ public final class SwerveConstants {
 
     public static final double HEADING_CONTROLLER_TOLERANCE = 0.005;  // rad
 
-    public static double[] XY_PATH_FOLLOWING_PID = {3.6, 0, 0.0};
-    public static double[] ROT_PATH_FOLLOWING_PID = {1.6, 0, 0};
+    public static double[] XY_PATH_FOLLOWING_PID = {0.2, 0, 0.0};
+    public static double[] ROT_PATH_FOLLOWING_PID = {0.45, 0, 0};
     public static Constraints ALIGNMENT_DRIVE_CONSTRAINTS = new Constraints(5, 2);
     public static Constraints ALIGNMENT_ROT_CONSTRAINTS = new Constraints(6, 2);
 

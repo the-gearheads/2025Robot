@@ -74,7 +74,7 @@ public class Teleop extends Command {
                 && !tracker.facingReef()) {
             int nearestTagId = ReefPositions.getClosestReefTagId(currentCoralTarget);
             Logger.recordOutput("AlignToPose/TeleopAligning", true);
-            vision.setCameraPreference(2); // back right bc lower fov = probably better
+            vision.setCameraPreference(1); // back right bc lower fov = probably better
             vision.setPoseStrategy(1, PoseStrategy.PNP_DISTANCE_TRIG_SOLVE);
             vision.setPoseStrategy(2, PoseStrategy.PNP_DISTANCE_TRIG_SOLVE);
             vision.filterTagById(1, nearestTagId);

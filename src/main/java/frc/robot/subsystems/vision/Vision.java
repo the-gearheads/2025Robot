@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems.vision;
 
+import java.io.File;
 import java.io.IOException;
 
 import org.littletonrobotics.junction.AutoLogOutput;
@@ -12,10 +13,10 @@ import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
-import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Robot;
 import frc.robot.subsystems.swerve.Swerve;
@@ -40,9 +41,9 @@ public class Vision extends SubsystemBase {
 
     String layoutPath = "";
     try {
-      field = AprilTagFieldLayout.loadFromResource(AprilTagFields.k2025ReefscapeWelded.m_resourceFile);
-      // layoutPath = new File(Filesystem.getDeployDirectory(), "wpicalFieldMap.json").getAbsolutePath();
-      // field = new AprilTagFieldLayout(layoutPath);
+      // field = AprilTagFieldLayout.loadFromResource(AprilTagFields.k2025ReefscapeWelded.m_resourceFile);
+      layoutPath = new File(Filesystem.getDeployDirectory(), "REEFSCAPE FIELD MAP WITHOUT BARGE TAGS.json").getAbsolutePath();
+      field = new AprilTagFieldLayout(layoutPath);
     } catch (IOException e) {
       System.out.println("ERROR Opening apriltag field layout file");
       System.out.println(layoutPath);
