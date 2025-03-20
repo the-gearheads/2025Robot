@@ -225,8 +225,26 @@ public class Telescope extends SubsystemBase {
   public boolean atPidSetpoint() {
     switch(mode) {
       case PROFILED_PID:
+        profiledPid.setTolerance(ELEVATOR_LENGTH_TOLERANCE);
         return profiledPid.atGoal();
       case TRAJECTORY:
+        pid.setTolerance(ELEVATOR_LENGTH_TOLERANCE);
+        return pid.atSetpoint();
+      case VOLTAGE:
+        return true;
+      default:
+        return false; // what
+    }
+  }
+
+  @AutoLogOutput
+  public boolean atTrajStartSetpoint() {
+    switch(mode) {
+      case PROFILED_PID:
+        profiledPid.setTolerance(ELEVATOR_LENGTH_TRAJ_START_TOLERANCE);
+        return profiledPid.atGoal();
+      case TRAJECTORY:
+        pid.setTolerance(ELEVATOR_LENGTH_TRAJ_START_TOLERANCE);
         return pid.atSetpoint();
       case VOLTAGE:
         return true;

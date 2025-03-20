@@ -237,8 +237,26 @@ public class Pivot extends SubsystemBase {
   public boolean atPidSetpoint() {
     switch(mode) {
       case PROFILED_PID:
+      profiledPid.setTolerance(PIVOT_ANGLE_TOLERANCE);
         return profiledPid.atGoal();
       case TRAJECTORY:
+        pid.setTolerance(PIVOT_ANGLE_TOLERANCE);
+        return pid.atSetpoint();
+      case VOLTAGE:
+        return true;
+      default:
+        return false; // what
+    }
+  }
+
+  @AutoLogOutput
+  public boolean atTrajStartSetpoint() {
+    switch(mode) {
+      case PROFILED_PID:
+        profiledPid.setTolerance(PIVOT_ANGLE_TRAJ_STRT_TOLERANCE);
+        return profiledPid.atGoal();
+      case TRAJECTORY:
+        pid.setTolerance(PIVOT_ANGLE_TRAJ_STRT_TOLERANCE);
         return pid.atSetpoint();
       case VOLTAGE:
         return true;

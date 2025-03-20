@@ -58,12 +58,17 @@ public class Superstructure {
   }
   
   @AutoLogOutput
-  private boolean atPidSetpoint() {
+  private boolean atPidEndSetpoint() {
     return pivot.atPidSetpoint() && telescope.atPidSetpoint();
+  }
+
+  @AutoLogOutput
+  private boolean atPidStartSetpoint() {
+    return pivot.atTrajStartSetpoint() && telescope.atPidSetpoint();
   }
   
   public Command followAvTrajectory(ArmvatorTrajectory traj) {   
-    return traj.follow(this::followSample, this::atPidSetpoint, true, true, pivot, telescope);
+    return traj.follow(this::followSample, this::atPidStartSetpoint, this::atPidEndSetpoint, true, true, pivot, telescope);
   }
   
   public Command goTo(SuperstructurePosition pos) {
@@ -120,11 +125,10 @@ public class Superstructure {
 
     public Command waitUntilAtSetpoint() {
       return Commands.waitUntil(()->{
-        return this.atPidSetpoint() && pivot.getMode() == RunMode.PROFILED_PID;
+        return this.atPidEndSetpoint() && pivot.getMode() == RunMode.PROFILED_PID;
       });
     }
 
-    
     public void initalizeWristExitAngles() {
       wristSafeExitAngles.put(ArmvatorPosition.L4, new Double[]{Units.degreesToRadians(5), MAX_WRIST_ANGLE});
     }

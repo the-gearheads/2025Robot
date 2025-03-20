@@ -91,12 +91,16 @@ public record ArmvatorTrajectory(String name, List<ArmvatorSample> samples) {
     return before.interpolate(after, t);
   }
   
-  // Follows an armvator trajectory, sampling periodically. Consumer is expected to actually do the following.
   public Command follow(Consumer<ArmvatorSample> consumer, BooleanSupplier atSetpoint, boolean waitUntilAtStart, boolean waitUntilAtEnd, Subsystem... requirements) {
+    return follow(consumer, atSetpoint, atSetpoint, waitUntilAtStart, waitUntilAtEnd, requirements);
+  }
+
+  // Follows an armvator trajectory, sampling periodically. Consumer is expected to actually do the following.
+  public Command follow(Consumer<ArmvatorSample> consumer, BooleanSupplier atStartSetpoint, BooleanSupplier atEndSetpoint, boolean waitUntilAtStart, boolean waitUntilAtEnd, Subsystem... requirements) {
     Timer timer = new Timer();
 
-    var gotoStartComamnd = Commands.run(() -> {consumer.accept(sampleAt(0));}, requirements).until(atSetpoint).withName("ArmTrajFollowerGotoStart " + name).withTimeout(2);
-    var waitUntilEndCommand = Commands.run(() -> {consumer.accept(sampleAt(getDuration()));}, requirements).until(atSetpoint).withName("ArmTrajFollowerWaitUntilEnd " + name).withTimeout(2);
+    var gotoStartComamnd = Commands.run(() -> {consumer.accept(sampleAt(0));}, requirements).until(atStartSetpoint).withName("ArmTrajFollowerGotoStart " + name).withTimeout(2);
+    var waitUntilEndCommand = Commands.run(() -> {consumer.accept(sampleAt(getDuration()));}, requirements).until(atEndSetpoint).withName("ArmTrajFollowerWaitUntilEnd " + name).withTimeout(2);
     var trajCommand = new FunctionalCommand(
       // On init
       () -> {
