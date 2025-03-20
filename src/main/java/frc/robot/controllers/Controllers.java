@@ -11,13 +11,13 @@ public class Controllers {
 
   private static final int MAX_DRIVER_STATION_PORTS = DriverStation.kJoystickPorts; 
   private static final String[] OPERATOR_CONTROLLER_NAMES = {
-    "T.16000M",
+    "Raspberry", // uhhhhhh idk, complete guess
     "Keyboard 1"
   };
   private static String[] lastControllerNames = new String[MAX_DRIVER_STATION_PORTS];
 
   public static DriverController driverController;
-  public static OperatorController operatorController;
+  public static Macropad operatorController;
 
   /** Returns true if the connected controllers have changed since last called. */
   public static boolean didControllersChange() {
@@ -41,7 +41,7 @@ public class Controllers {
     String joyName;
 
     driverController = new DriverController(-1);
-    operatorController = new OperatorController() {};
+    operatorController = new Macropad(-1);
 
     for (int port = 0; port < MAX_DRIVER_STATION_PORTS; port++) {
       if (DriverStation.isJoystickConnected(port)) {
@@ -49,7 +49,7 @@ public class Controllers {
 
         if (!foundOperatorController && isOperatorControllerName(joyName)) {
           foundOperatorController = true;
-          operatorController = new Thrustmaster(port);
+          operatorController = new Macropad(port);
         }
         // No filtering for now, just use the first
         else if (!foundDriveController) {
