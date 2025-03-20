@@ -34,7 +34,7 @@ public final class ArmConstants {
   public static final double MIN_SYSID_ANGLE = Units.degreesToRadians(30);
 
   public static final double PIVOT_ANGLE_TOLERANCE = Units.degreesToRadians(1);
-  public static final double PIVOT_ANGLE_TRAJ_STRT_TOLERANCE = Units.degreesToRadians(1.5);
+  public static final double PIVOT_ANGLE_TRAJ_STRT_TOLERANCE = Units.degreesToRadians(1);
 
   // -- elevator contants --
   public static final int ELEVATOR_MOTOR_ID = 11;
@@ -57,7 +57,7 @@ public final class ArmConstants {
   public static final double MAX_SYSID_HEIGHT = MAX_RELATIVE_HEIGHT - Units.inchesToMeters(4);
 
   public static final double ELEVATOR_LENGTH_TOLERANCE = Units.inchesToMeters(0.8);
-  public static final double ELEVATOR_LENGTH_TRAJ_START_TOLERANCE = Units.inchesToMeters(1.2);
+  public static final double ELEVATOR_LENGTH_TRAJ_START_TOLERANCE = Units.inchesToMeters(0.8);
 
   public static final int ELEVATOR_CURRENT_LIMIT = 80;
   public static final double HOMING_VOLTAGE = -2;

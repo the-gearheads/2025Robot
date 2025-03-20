@@ -57,6 +57,7 @@ public class Superstructure {
     lastSample = sample;
   }
   
+  @AutoLogOutput
   private boolean atPidSetpoint() {
     return pivot.atPidSetpoint() && telescope.atPidSetpoint();
   }
@@ -118,7 +119,9 @@ public class Superstructure {
     }
 
     public Command waitUntilAtSetpoint() {
-      return Commands.waitUntil(this::atPidSetpoint);
+      return Commands.waitUntil(()->{
+        return this.atPidSetpoint() && pivot.getMode() == RunMode.PROFILED_PID;
+      });
     }
 
     

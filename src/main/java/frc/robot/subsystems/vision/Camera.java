@@ -125,6 +125,9 @@ public class Camera {
   }
 
   public boolean feedPoseEstimator(SwerveDrivePoseEstimator poseEstimator, Rotation2d gyroOffset) {
+    if(disabled) {
+      return false;
+    }
     Logger.recordOutput(path + "/PoseStrategy", estimator.getPrimaryStrategy());
     lastRobotPose = poseEstimator.getEstimatedPosition();
     boolean visionWasMeasured = false;
@@ -138,8 +141,10 @@ public class Camera {
         estimator.addHeadingData(Timer.getFPGATimestamp(), gyroAngle.plus(gyroOffset));
         Logger.recordOutput("Vision/GyroAnglePlusOffset", gyroAngle.plus(gyroOffset));
         if (estimator.getPrimaryStrategy() == PoseStrategy.PNP_DISTANCE_TRIG_SOLVE && tagFilteringTag != -1) {
-          if (result.getBestTarget().getFiducialId() != tagFilteringTag)
-            continue;
+          if (result.hasTargets()) {
+            if (result.getBestTarget().getFiducialId() != tagFilteringTag)
+              continue;
+          }
         }
         poseResult = estimator.update(result, camera.getCameraMatrix(), camera.getDistCoeffs(), Optional.of(constrainedPnpParams));
       }

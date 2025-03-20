@@ -211,7 +211,7 @@ public class Pivot extends SubsystemBase {
   public void setMode(RunMode mode) {
     this.mode = mode;
   }
-  
+
   @AutoLogOutput
   public RunMode getMode() {
     return mode;

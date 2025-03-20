@@ -5,7 +5,7 @@ public class IntakeConstants {
   public static final int CANANDCOLOR_ID = 2;
 
   public static final double CORAL_PROXIMITY_THRESHOLD = 0.22;
-  public static final double ALGAE_PROXIMITY_THRESHOLD = 0.2;
+  public static final double ALGAE_PROXIMITY_THRESHOLD = 0.32;
   
   // unused -- 
   public static final double ALGAE_HUE_THRESHOLD = 0.35;
