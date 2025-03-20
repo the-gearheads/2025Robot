@@ -52,7 +52,7 @@ public final class SwerveConstants {
     public static final double STEER_VEL_FACTOR = (2 * Math.PI) / 60.0; // rpm -> rad/sec
 
     public static final double[] STEER_PIDF = {1, 0, 0, 0}; // apparently just a P value of 1 worked for us??? i wanna test that a bit more throughly
-    public static final double[] DRIVE_PID = {3.5, 0, 0};
+    public static final double[] DRIVE_PID = {3.8, 0, 0};
     public static final SimpleMotorFeedforward DRIVE_FEEDFORWARD = new SimpleMotorFeedforward(0.186587, 2.47975, 0.29612);
 
     public static final int DRIVE_CURRENT_LIMIT = 60;

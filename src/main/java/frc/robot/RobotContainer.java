@@ -8,6 +8,7 @@ package frc.robot;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -178,9 +179,9 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
     // return Commands.runOnce(()->{swerve.vision.disable();}).andThen(autos.getAutonomousRoutine());
-    return sysidAuto.get();
+    // return sysidAuto.get();
     // return Swerve.wheelRadiusCharacterization(swerve);
-    // return Commands.runOnce(()->{swerve.vision.disable();}).andThen(new InstantCommand(()-> {swerve.setPose(new Pose2d(7.12387752532959 , 7.599511623382568, Rotation2d.kZero));})).andThen(swerve.run(() -> {swerve.drive(new ChassisSpeeds(0.5, 0, 0));}).withTimeout(7));
+    return Commands.runOnce(()->{swerve.vision.disable();}).andThen(new InstantCommand(()-> {swerve.setPose(new Pose2d(7.12387752532959 , 7.599511623382568, Rotation2d.kZero));})).andThen(swerve.run(() -> {swerve.drive(new ChassisSpeeds(0.5, 0, 0));}).withTimeout(7));
   }
 
   public double getCurrentDrawSim() {
