@@ -7,6 +7,7 @@ import static frc.robot.constants.SwerveConstants.ALIGNMENT_ROT_CONSTRAINTS;
 import java.util.ArrayList;
 
 import org.littletonrobotics.junction.Logger;
+import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Pair;
@@ -19,6 +20,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.swerve.Swerve;
+import frc.robot.subsystems.vision.Vision;
 
 public class AlignToPose {
   static ProfiledPIDController driveController = new ProfiledPIDController(3.2, 0, 0, ALIGNMENT_DRIVE_CONSTRAINTS);
@@ -131,10 +133,23 @@ public class AlignToPose {
     return bestReefPose.getFirst();
   }
 
-  public static Command getAutoAlignCommand(Swerve swerve) {
+  public static Command getAutoAlignCommand(Swerve swerve, Vision vision) {
     return swerve.run(() -> {
       var speeds = getAutoAlignSpeeds(0.0, 0.0, swerve.getPose()).getFirst();
       swerve.drive(speeds);
+    }).beforeStarting(()->{
+      int nearestTagId = ReefPositions.getClosestReefTagId(swerve.getPose());
+        vision.setCameraPreference(2); // back right bc lower fov = probably better
+        vision.setPoseStrategy(1, PoseStrategy.PNP_DISTANCE_TRIG_SOLVE);
+        vision.setPoseStrategy(2, PoseStrategy.PNP_DISTANCE_TRIG_SOLVE);
+        vision.filterTagById(1, nearestTagId);
+        vision.filterTagById(2, nearestTagId);
+        vision.disableCamera(0);
+    }).finallyDo(()->{
+      vision.disableIdFiltering(1);
+      vision.disableIdFiltering(2);
+      vision.defaultPoseStrategies();
+      vision.enableCamera(0);
     });
   }
 }

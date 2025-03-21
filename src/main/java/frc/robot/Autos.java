@@ -130,7 +130,8 @@ public class Autos {
         stop(),
         superstructure.waitUntilAtSetpoint(),
         // possibly an auto align
-        AlignToPose.getAutoAlignCommand(swerve).withTimeout(1),
+        AlignToPose.getAutoAlignCommand(swerve, swerve.vision).withTimeout(1),
+        stop(),
         outtakeCoral().withTimeout(2), // mostly for now as we do not have coral sim yet,
         superstructureGoTo(SuperstructurePosition.HP),
         reefToHP.cmd()
@@ -148,8 +149,8 @@ public class Autos {
       Commands.sequence(
         stop(),
         superstructure.waitUntilAtSetpoint(),
-        AlignToPose.getAutoAlignCommand(swerve).withTimeout(1),
-        // possibly an auto align
+        AlignToPose.getAutoAlignCommand(swerve, swerve.vision).withTimeout(1),
+        stop(),
         outtakeCoral().withTimeout(2)
       )
     );
@@ -174,7 +175,8 @@ public class Autos {
       Commands.sequence(
         stop(),
         superstructure.waitUntilAtSetpoint(),
-        // possibly an auto align
+        AlignToPose.getAutoAlignCommand(swerve, swerve.vision).withTimeout(1),
+        stop(),
         outtakeCoral().withTimeout(2), // mostly for now as we do not have coral sim yet,
         superstructureGoTo(SuperstructurePosition.HP), 
         reefToHP.cmd()
@@ -192,7 +194,8 @@ public class Autos {
       Commands.sequence(
         stop(),
         superstructure.waitUntilAtSetpoint(),
-        // possibly an auto align
+        AlignToPose.getAutoAlignCommand(swerve, swerve.vision).withTimeout(1),
+        stop(),
         outtakeCoral().withTimeout(2)
       )
     );
