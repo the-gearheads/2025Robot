@@ -67,33 +67,37 @@ public class Teleop extends Command {
     // decide whether to do autoalign
     Pose2d currentCoralTarget = autoAlign.getCoralObjective(swerve.getPose(), x, y);
         
-        if (currentCoralTarget.getTranslation()
-                .getDistance(swerve.getPose().getTranslation()) < AUTO_ALIGN_DIST_THRESHOLD
-                && Math.abs(currentCoralTarget.getRotation().minus(swerve.getPose().getRotation()).getRadians()) < AUTO_ALIGN_ANGLE_THRESHOLD
-                && intake.getGamePiece() == GamePiece.CORAL
-                && !tracker.facingReef()) {
-            int nearestTagId = ReefPositions.getClosestReefTagId(currentCoralTarget);
-            Logger.recordOutput("AlignToPose/TeleopAligning", true);
-            vision.setCameraPreference(1); // back right bc lower fov = probably better
-            vision.setPoseStrategy(1, PoseStrategy.PNP_DISTANCE_TRIG_SOLVE);
-            vision.setPoseStrategy(2, PoseStrategy.PNP_DISTANCE_TRIG_SOLVE);
-            vision.filterTagById(1, nearestTagId);
-            vision.filterTagById(2, nearestTagId);
-            vision.disableCamera(0);
-            Pair<ChassisSpeeds, Double> autoAlignSpeeds = autoAlign.getAutoAlignSpeeds(x, y, swerve.getPose());
-            ChassisSpeeds driverSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(new ChassisSpeeds(x * (1 - autoAlignSpeeds.getSecond()), y * (1 - autoAlignSpeeds.getSecond()), rot * (1 - autoAlignSpeeds.getSecond())), fieldAdjustedRobotRot);
-            finalSpeeds = driverSpeeds.plus(autoAlignSpeeds.getFirst());
-            // finalSpeeds = driverSpeeds;
-        } else {
-            Logger.recordOutput("AlignToPose/TeleopAligning", false);
-            vision.disableIdFiltering(1);
-            vision.disableIdFiltering(2);
-            vision.defaultPoseStrategies();
-            vision.enableCamera(0);
-            ChassisSpeeds driverSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(new ChassisSpeeds(xSpeed, ySpeed, rotSpeed), fieldAdjustedRobotRot);
-            finalSpeeds = driverSpeeds;
-        }
+    if (currentCoralTarget.getTranslation()
+            .getDistance(swerve.getPose().getTranslation()) < AUTO_ALIGN_DIST_THRESHOLD
+            && Math.abs(currentCoralTarget.getRotation().minus(swerve.getPose().getRotation()).getRadians()) < AUTO_ALIGN_ANGLE_THRESHOLD
+            && intake.getGamePiece() == GamePiece.CORAL
+            && !tracker.facingReef()) {
+        int nearestTagId = ReefPositions.getClosestReefTagId(currentCoralTarget);
+        Logger.recordOutput("AlignToPose/TeleopAligning", true);
+        vision.setCameraPreference(1); // back right bc lower fov = probably better
+        vision.setPoseStrategy(1, PoseStrategy.PNP_DISTANCE_TRIG_SOLVE);
+        vision.setPoseStrategy(2, PoseStrategy.PNP_DISTANCE_TRIG_SOLVE);
+        vision.filterTagById(1, nearestTagId);
+        vision.filterTagById(2, nearestTagId);
+        vision.disableCamera(0);
+        Pair<ChassisSpeeds, Double> autoAlignSpeeds = autoAlign.getAutoAlignSpeeds(x, y, swerve.getPose());
+        ChassisSpeeds driverSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(new ChassisSpeeds(calculateChassisAxisSpeed(x, autoAlignSpeeds), calculateChassisAxisSpeed(y, autoAlignSpeeds), calculateChassisAxisSpeed(rot, autoAlignSpeeds)), fieldAdjustedRobotRot);
+        finalSpeeds = driverSpeeds.plus(autoAlignSpeeds.getFirst());
+        // finalSpeeds = driverSpeeds;
+    } else {
+        Logger.recordOutput("AlignToPose/TeleopAligning", false);
+        vision.disableIdFiltering(1);
+        vision.disableIdFiltering(2);
+        vision.defaultPoseStrategies();
+        vision.enableCamera(0);
+        finalSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(new ChassisSpeeds(xSpeed, ySpeed, rotSpeed), fieldAdjustedRobotRot);
+        // finalSpeeds = driverSpeeds;
+    }
 
     swerve.drive(finalSpeeds);
+  }
+
+  private double calculateChassisAxisSpeed(double axis, Pair<ChassisSpeeds, Double> autoAlignSpeeds) {
+    return axis * (1 - autoAlignSpeeds.getSecond());
   }
 }
