@@ -44,7 +44,10 @@ public class Teleop extends Command {
 
   @Override
   public void execute() {
-    if(DriverStation.isAutonomous()) swerve.drive(new ChassisSpeeds()); // shouldn't be needed but eh
+    if(DriverStation.isAutonomous()) {
+      swerve.drive(new ChassisSpeeds()); // shouldn't be needed but eh
+      return;
+    }
     var fieldAdjustedRobotRot = swerve.getPose().getRotation();
     if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red) {
       fieldAdjustedRobotRot = fieldAdjustedRobotRot.rotateBy(Rotation2d.fromDegrees(180));

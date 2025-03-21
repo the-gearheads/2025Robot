@@ -104,9 +104,9 @@ public class Autos {
 
     routine.active().onTrue(
       Commands.sequence(
+        trajectory.resetOdometry(),
         Commands.runOnce(()->swerve.vision.disable()),
         superstructureGoTo(SuperstructurePosition.L4),
-        trajectory.resetOdometry(),
         trajectory.cmd()
       )
     );
