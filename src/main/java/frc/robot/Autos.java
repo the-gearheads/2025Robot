@@ -104,6 +104,7 @@ public class Autos {
 
     routine.active().onTrue(
       Commands.sequence(
+        Commands.runOnce(()->swerve.vision.disable()),
         trajectory.resetOdometry(),
         trajectory.cmd()
       )
@@ -114,7 +115,8 @@ public class Autos {
         stop(),
         superstructureGoTo(SuperstructurePosition.L4),
         // possibly an auto align
-        outtakeCoral().withTimeout(2)
+        outtakeCoral().withTimeout(2),
+        Commands.runOnce(()->swerve.vision.enable())
       )
     );
 
