@@ -8,7 +8,7 @@ import edu.wpi.first.math.util.Units;
 public class WristConstants {
   public static final int WRIST_PIVOT_ID = 36;
 
-  public static final int WRIST_CURRENT_LIMIT = 60;
+  public static final int WRIST_CURRENT_LIMIT = 30;
  
   public static final double WRIST_GEAR_RATIO = 225.0/1.0;
   public static final double WRIST_POS_FACTOR = (1.0/WRIST_GEAR_RATIO) * (2 * Math.PI);
