@@ -73,36 +73,49 @@ public class Teleop extends Command {
     Pose2d currentCoralTarget = AlignToPose.getCoralObjective(swervePose, x, y);
         
     if (currentCoralTarget.getTranslation()
-            .getDistance(swervePose.getTranslation()) < AUTO_ALIGN_DIST_THRESHOLD
-            && Math.abs(currentCoralTarget.getRotation().minus(swervePoseRotation).getRadians()) < AUTO_ALIGN_ANGLE_THRESHOLD
-            && intake.getGamePiece() == GamePiece.CORAL
-            && !tracker.facingReef()) {
-        int nearestTagId = ReefPositions.getClosestReefTagId(currentCoralTarget);
-        Logger.recordOutput("AlignToPose/TeleopAligning", true);
-        vision.setCameraPreference(1); // back right bc lower fov = probably better
-        setVisionPoseStrategy(1);
-        setVisionPoseStrategy(2);
-        filterVisionTagById(1, nearestTagId);
-        filterVisionTagById(2, nearestTagId);
-        vision.disableCamera(0);
-        Pair<ChassisSpeeds, Double> autoAlignSpeeds = AlignToPose.getAutoAlignSpeeds(x, y, swervePose);
-        ChassisSpeeds driverSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(new ChassisSpeeds(calculateChassisAxisSpeed(x, autoAlignSpeeds), calculateChassisAxisSpeed(y, autoAlignSpeeds), calculateChassisAxisSpeed(rot, autoAlignSpeeds)), fieldAdjustedRobotRot);
-        finalSpeeds = driverSpeeds.plus(autoAlignSpeeds.getFirst());
-        // finalSpeeds = driverSpeeds;
+          .getDistance(swervePose.getTranslation()) < AUTO_ALIGN_DIST_THRESHOLD
+        && Math.abs(currentCoralTarget.getRotation().minus(swervePoseRotation).getRadians()) < AUTO_ALIGN_ANGLE_THRESHOLD
+        && intake.getGamePiece() == GamePiece.CORAL
+        && !tracker.facingReef()) {
+      Logger.recordOutput("AlignToPose/TeleopAligning", true);
+      vision.setCameraPreference(1); // back right bc lower fov = probably better
+      setVisionPoseStrategy(1);
+      setVisionPoseStrategy(2);
+      filterVisionTagById(1, currentCoralTarget);
+      filterVisionTagById(2, currentCoralTarget);
+      vision.disableCamera(0);
+      finalSpeeds = getDriverSpeeds(fieldAdjustedRobotRot, x, y, rot, swervePose, currentCoralTarget);
+      // finalSpeeds = driverSpeeds;
     } else {
-        Logger.recordOutput("AlignToPose/TeleopAligning", false);
-        vision.disableIdFiltering(1);
-        vision.disableIdFiltering(2);
-        vision.defaultPoseStrategies();
-        vision.enableCamera(0);
-        finalSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(new ChassisSpeeds(xSpeed, ySpeed, rotSpeed), fieldAdjustedRobotRot);
+      Logger.recordOutput("AlignToPose/TeleopAligning", false);
+      vision.disableIdFiltering(1);
+      vision.disableIdFiltering(2);
+      vision.defaultPoseStrategies();
+      vision.enableCamera(0);
+      finalSpeeds = getDriverSpeeds(fieldAdjustedRobotRot, xSpeed, ySpeed, rotSpeed);
         // finalSpeeds = driverSpeeds;
     }
 
     swerve.drive(finalSpeeds);
   }
 
-  private void filterVisionTagById(int cameraIndex, int nearestTagId) {
+  private ChassisSpeeds getDriverSpeeds(Rotation2d fieldAdjustedRobotRot, double x, double y, double rot) {
+    return calculateChassisDriveSpeed(fieldAdjustedRobotRot, x, y, rot);
+  }
+
+  private ChassisSpeeds calculateChassisDriveSpeed(Rotation2d fieldAdjustedRobotRot, double x, double y, double rot) {
+    return ChassisSpeeds.fromFieldRelativeSpeeds(new ChassisSpeeds(x, y, rot), fieldAdjustedRobotRot);
+  }
+
+  private ChassisSpeeds getDriverSpeeds(Rotation2d fieldAdjustedRobotRot, double x, double y, double rot,
+      Pose2d swervePose, Pose2d currentCoralTarget) {
+    Pair<ChassisSpeeds, Double> autoAlignSpeeds = AlignToPose.getAutoAlignSpeeds(x, y, swervePose);
+    ChassisSpeeds driverSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(new ChassisSpeeds(calculateChassisAxisSpeed(x, autoAlignSpeeds), calculateChassisAxisSpeed(y, autoAlignSpeeds), calculateChassisAxisSpeed(rot, autoAlignSpeeds)), fieldAdjustedRobotRot);
+    return driverSpeeds.plus(autoAlignSpeeds.getFirst());
+  }
+
+  private void filterVisionTagById(int cameraIndex, Pose2d currentCoralTarget) {
+    int nearestTagId = ReefPositions.getClosestReefTagId(currentCoralTarget);
     vision.filterTagById(cameraIndex, nearestTagId);
   }
 
