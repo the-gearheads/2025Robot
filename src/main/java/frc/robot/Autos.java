@@ -112,7 +112,7 @@ public class Autos {
     trajectory.done().onTrue(
       Commands.sequence(
         stop(),
-        superstructure.waitUntilAtSetpoint(),
+        superstructureGoTo(SuperstructurePosition.L4),
         // possibly an auto align
         outtakeCoral().withTimeout(2)
       )
