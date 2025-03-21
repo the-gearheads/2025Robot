@@ -25,7 +25,7 @@ import frc.robot.util.ReefPositions;
 
 public class Teleop extends Command {
     Swerve swerve;
-    AlignToPose autoAlign = new AlignToPose();
+    // AlignToPose autoAlign = new AlignToPose();
     Vision vision;
     Intake intake;
     ObjectiveTracker tracker;
@@ -45,8 +45,14 @@ public class Teleop extends Command {
 
   @Override
   public void execute() {
-    if(DriverStation.isAutonomous()) swerve.drive(new ChassisSpeeds()); // shouldn't be needed but eh
-    var fieldAdjustedRobotRot = swerve.getPose().getRotation();
+    Pose2d swervePose = swerve.getPose();
+    Rotation2d swervePoseRotation = swervePose.getRotation();
+    Rotation2d fieldAdjustedRobotRot = swervePoseRotation;
+    ChassisSpeeds finalSpeeds;
+
+    if (DriverStation.isAutonomous()) 
+      swerve.drive(new ChassisSpeeds()); // shouldn't be needed but eh
+
     if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red) {
       fieldAdjustedRobotRot = fieldAdjustedRobotRot.rotateBy(Rotation2d.fromDegrees(180));
     }
@@ -63,24 +69,23 @@ public class Teleop extends Command {
     ySpeed *= MAX_ROBOT_TRANS_SPEED;
     rotSpeed *= MAX_ROBOT_TRANS_SPEED;
 
-    ChassisSpeeds finalSpeeds;
     // decide whether to do autoalign
-    Pose2d currentCoralTarget = autoAlign.getCoralObjective(swerve.getPose(), x, y);
+    Pose2d currentCoralTarget = AlignToPose.getCoralObjective(swervePose, x, y);
         
     if (currentCoralTarget.getTranslation()
-            .getDistance(swerve.getPose().getTranslation()) < AUTO_ALIGN_DIST_THRESHOLD
-            && Math.abs(currentCoralTarget.getRotation().minus(swerve.getPose().getRotation()).getRadians()) < AUTO_ALIGN_ANGLE_THRESHOLD
+            .getDistance(swervePose.getTranslation()) < AUTO_ALIGN_DIST_THRESHOLD
+            && Math.abs(currentCoralTarget.getRotation().minus(swervePoseRotation).getRadians()) < AUTO_ALIGN_ANGLE_THRESHOLD
             && intake.getGamePiece() == GamePiece.CORAL
             && !tracker.facingReef()) {
         int nearestTagId = ReefPositions.getClosestReefTagId(currentCoralTarget);
         Logger.recordOutput("AlignToPose/TeleopAligning", true);
         vision.setCameraPreference(1); // back right bc lower fov = probably better
-        vision.setPoseStrategy(1, PoseStrategy.PNP_DISTANCE_TRIG_SOLVE);
-        vision.setPoseStrategy(2, PoseStrategy.PNP_DISTANCE_TRIG_SOLVE);
-        vision.filterTagById(1, nearestTagId);
-        vision.filterTagById(2, nearestTagId);
+        setVisionPoseStrategy(1);
+        setVisionPoseStrategy(2);
+        filterVisionTagById(1, nearestTagId);
+        filterVisionTagById(2, nearestTagId);
         vision.disableCamera(0);
-        Pair<ChassisSpeeds, Double> autoAlignSpeeds = autoAlign.getAutoAlignSpeeds(x, y, swerve.getPose());
+        Pair<ChassisSpeeds, Double> autoAlignSpeeds = AlignToPose.getAutoAlignSpeeds(x, y, swervePose);
         ChassisSpeeds driverSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(new ChassisSpeeds(calculateChassisAxisSpeed(x, autoAlignSpeeds), calculateChassisAxisSpeed(y, autoAlignSpeeds), calculateChassisAxisSpeed(rot, autoAlignSpeeds)), fieldAdjustedRobotRot);
         finalSpeeds = driverSpeeds.plus(autoAlignSpeeds.getFirst());
         // finalSpeeds = driverSpeeds;
@@ -95,6 +100,14 @@ public class Teleop extends Command {
     }
 
     swerve.drive(finalSpeeds);
+  }
+
+  private void filterVisionTagById(int cameraIndex, int nearestTagId) {
+    vision.filterTagById(cameraIndex, nearestTagId);
+  }
+
+  private void setVisionPoseStrategy(int cameraIndex) {
+    vision.setPoseStrategy(cameraIndex, PoseStrategy.PNP_DISTANCE_TRIG_SOLVE);
   }
 
   private double calculateChassisAxisSpeed(double axis, Pair<ChassisSpeeds, Double> autoAlignSpeeds) {
