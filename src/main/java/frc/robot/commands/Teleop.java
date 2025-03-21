@@ -25,7 +25,6 @@ import frc.robot.util.ReefPositions;
 
 public class Teleop extends Command {
     Swerve swerve;
-    AlignToPose autoAlign = new AlignToPose();
     Vision vision;
     Intake intake;
     ObjectiveTracker tracker;
@@ -65,7 +64,7 @@ public class Teleop extends Command {
 
     ChassisSpeeds finalSpeeds;
     // decide whether to do autoalign
-    Pose2d currentCoralTarget = autoAlign.getCoralObjective(swerve.getPose(), x, y);
+    Pose2d currentCoralTarget = AlignToPose.getCoralObjective(swerve.getPose(), x, y);
         
         if (currentCoralTarget.getTranslation()
                 .getDistance(swerve.getPose().getTranslation()) < AUTO_ALIGN_DIST_THRESHOLD
@@ -80,7 +79,7 @@ public class Teleop extends Command {
             vision.filterTagById(1, nearestTagId);
             vision.filterTagById(2, nearestTagId);
             vision.disableCamera(0);
-            Pair<ChassisSpeeds, Double> autoAlignSpeeds = autoAlign.getAutoAlignSpeeds(x, y, swerve.getPose());
+            Pair<ChassisSpeeds, Double> autoAlignSpeeds = AlignToPose.getAutoAlignSpeeds(x, y, swerve.getPose());
             ChassisSpeeds driverSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(new ChassisSpeeds(x * (1 - autoAlignSpeeds.getSecond()), y * (1 - autoAlignSpeeds.getSecond()), rot * (1 - autoAlignSpeeds.getSecond())), fieldAdjustedRobotRot);
             finalSpeeds = driverSpeeds.plus(autoAlignSpeeds.getFirst());
             // finalSpeeds = driverSpeeds;
