@@ -78,17 +78,17 @@ public class Teleop extends Command {
         && intake.getGamePiece() == GamePiece.CORAL
         && !tracker.facingReef()) {
       Logger.recordOutput("AlignToPose/TeleopAligning", true);
-      setVisionTeleopAligning(ReefPositions.getClosestReefTagId(currentCoralTarget));
+      setVisionTeleopAlignment(ReefPositions.getClosestReefTagId(currentCoralTarget));
       finalSpeeds = getDriverSpeeds(fieldAdjustedRobotRot, x, y, rot, swervePose);
     } else {
       Logger.recordOutput("AlignToPose/TeleopAligning", false);
-      setVisionTeleopNotAligning();
+      setVisionTeleopAlignment();
       finalSpeeds = getDriverSpeeds(fieldAdjustedRobotRot, xSpeed, ySpeed, rotSpeed);
     }
     swerve.drive(finalSpeeds);
   }
 
-  private void setVisionTeleopAligning(int nearestTagId) {
+  private void setVisionTeleopAlignment(int nearestTagId) {
     vision.setCameraPreference(1); // back right bc lower fov = probably better
     visionSetPoseStrategy(1);
     visionSetPoseStrategy(2);
@@ -97,7 +97,7 @@ public class Teleop extends Command {
     vision.disableCamera(0);
   }
 
-  private void setVisionTeleopNotAligning() {
+  private void setVisionTeleopAlignment() {
     vision.disableIdFiltering(1);
     vision.disableIdFiltering(2);
     vision.defaultPoseStrategies();
