@@ -78,48 +78,49 @@ public class Teleop extends Command {
         && intake.getGamePiece() == GamePiece.CORAL
         && !tracker.facingReef()) {
       Logger.recordOutput("AlignToPose/TeleopAligning", true);
-      vision.setCameraPreference(1); // back right bc lower fov = probably better
-      setVisionPoseStrategy(1);
-      setVisionPoseStrategy(2);
-      filterVisionTagById(1, currentCoralTarget);
-      filterVisionTagById(2, currentCoralTarget);
-      vision.disableCamera(0);
-      finalSpeeds = getDriverSpeeds(fieldAdjustedRobotRot, x, y, rot, swervePose, currentCoralTarget);
-      // finalSpeeds = driverSpeeds;
+      setVisionTeleopAligning(ReefPositions.getClosestReefTagId(currentCoralTarget));
+      finalSpeeds = getDriverSpeeds(fieldAdjustedRobotRot, x, y, rot, swervePose);
     } else {
       Logger.recordOutput("AlignToPose/TeleopAligning", false);
-      vision.disableIdFiltering(1);
-      vision.disableIdFiltering(2);
-      vision.defaultPoseStrategies();
-      vision.enableCamera(0);
+      setVisionTeleopNotAligning();
       finalSpeeds = getDriverSpeeds(fieldAdjustedRobotRot, xSpeed, ySpeed, rotSpeed);
-        // finalSpeeds = driverSpeeds;
     }
-
     swerve.drive(finalSpeeds);
+  }
+
+  private void setVisionTeleopAligning(int nearestTagId) {
+    vision.setCameraPreference(1); // back right bc lower fov = probably better
+    visionSetPoseStrategy(1);
+    visionSetPoseStrategy(2);
+    vision.filterTagById(1, nearestTagId);
+    vision.filterTagById(2, nearestTagId);
+    vision.disableCamera(0);
+  }
+
+  private void setVisionTeleopNotAligning() {
+    vision.disableIdFiltering(1);
+    vision.disableIdFiltering(2);
+    vision.defaultPoseStrategies();
+    vision.enableCamera(0);
   }
 
   private ChassisSpeeds getDriverSpeeds(Rotation2d fieldAdjustedRobotRot, double x, double y, double rot) {
     return calculateChassisDriveSpeed(fieldAdjustedRobotRot, x, y, rot);
   }
 
+  private ChassisSpeeds getDriverSpeeds(Rotation2d fieldAdjustedRobotRot, double x, double y, double rot, Pose2d swervePose) {
+    Pair<ChassisSpeeds, Double> autoAlignSpeeds = AlignToPose.getAutoAlignSpeeds(x, y, swervePose);
+    double xSpeed = calculateChassisAxisSpeed(x, autoAlignSpeeds);
+    double ySpeed = calculateChassisAxisSpeed(y, autoAlignSpeeds);
+    double rotSpeed = calculateChassisAxisSpeed(rot, autoAlignSpeeds);
+    return calculateChassisDriveSpeed(fieldAdjustedRobotRot, xSpeed, ySpeed, rotSpeed).plus(autoAlignSpeeds.getFirst());
+  }
+
   private ChassisSpeeds calculateChassisDriveSpeed(Rotation2d fieldAdjustedRobotRot, double x, double y, double rot) {
     return ChassisSpeeds.fromFieldRelativeSpeeds(new ChassisSpeeds(x, y, rot), fieldAdjustedRobotRot);
   }
 
-  private ChassisSpeeds getDriverSpeeds(Rotation2d fieldAdjustedRobotRot, double x, double y, double rot,
-      Pose2d swervePose, Pose2d currentCoralTarget) {
-    Pair<ChassisSpeeds, Double> autoAlignSpeeds = AlignToPose.getAutoAlignSpeeds(x, y, swervePose);
-    ChassisSpeeds driverSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(new ChassisSpeeds(calculateChassisAxisSpeed(x, autoAlignSpeeds), calculateChassisAxisSpeed(y, autoAlignSpeeds), calculateChassisAxisSpeed(rot, autoAlignSpeeds)), fieldAdjustedRobotRot);
-    return driverSpeeds.plus(autoAlignSpeeds.getFirst());
-  }
-
-  private void filterVisionTagById(int cameraIndex, Pose2d currentCoralTarget) {
-    int nearestTagId = ReefPositions.getClosestReefTagId(currentCoralTarget);
-    vision.filterTagById(cameraIndex, nearestTagId);
-  }
-
-  private void setVisionPoseStrategy(int cameraIndex) {
+  private void visionSetPoseStrategy(int cameraIndex) {
     vision.setPoseStrategy(cameraIndex, PoseStrategy.PNP_DISTANCE_TRIG_SOLVE);
   }
 
