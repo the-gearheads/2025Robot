@@ -53,7 +53,7 @@ public class Teleop extends Command {
     if (DriverStation.isAutonomous()) 
       swerve.drive(new ChassisSpeeds()); // shouldn't be needed but eh
 
-    if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red) {
+    if (isRedAlliance()) {
       fieldAdjustedRobotRot = fieldAdjustedRobotRot.rotateBy(Rotation2d.fromDegrees(180));
     }
 
@@ -79,7 +79,7 @@ public class Teleop extends Command {
         && !tracker.facingReef()) {
       Logger.recordOutput("AlignToPose/TeleopAligning", true);
       setVisionTeleopAlignment(ReefPositions.getClosestReefTagId(currentCoralTarget));
-      finalSpeeds = getDriverSpeeds(fieldAdjustedRobotRot, x, y, rot, swervePose);
+      finalSpeeds = getDriverSpeedsGivenAxis(fieldAdjustedRobotRot, x, y, rot, swervePose);
     } else {
       Logger.recordOutput("AlignToPose/TeleopAligning", false);
       setVisionTeleopAlignment();
@@ -88,10 +88,14 @@ public class Teleop extends Command {
     swerve.drive(finalSpeeds);
   }
 
+  private boolean isRedAlliance() {
+    return DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red;
+  }
+
   private void setVisionTeleopAlignment(int nearestTagId) {
     vision.setCameraPreference(1); // back right bc lower fov = probably better
-    visionSetPoseStrategy(1);
-    visionSetPoseStrategy(2);
+    vision.setPoseStrategy(1, PoseStrategy.PNP_DISTANCE_TRIG_SOLVE);
+    vision.setPoseStrategy(2, PoseStrategy.PNP_DISTANCE_TRIG_SOLVE);
     vision.filterTagById(1, nearestTagId);
     vision.filterTagById(2, nearestTagId);
     vision.disableCamera(0);
@@ -104,24 +108,16 @@ public class Teleop extends Command {
     vision.enableCamera(0);
   }
 
-  private ChassisSpeeds getDriverSpeeds(Rotation2d fieldAdjustedRobotRot, double x, double y, double rot) {
-    return calculateChassisDriveSpeed(fieldAdjustedRobotRot, x, y, rot);
-  }
-
-  private ChassisSpeeds getDriverSpeeds(Rotation2d fieldAdjustedRobotRot, double x, double y, double rot, Pose2d swervePose) {
+  private ChassisSpeeds getDriverSpeedsGivenAxis(Rotation2d fieldAdjustedRobotRot, double x, double y, double rot, Pose2d swervePose) {
     Pair<ChassisSpeeds, Double> autoAlignSpeeds = AlignToPose.getAutoAlignSpeeds(x, y, swervePose);
     double xSpeed = calculateChassisAxisSpeed(x, autoAlignSpeeds);
     double ySpeed = calculateChassisAxisSpeed(y, autoAlignSpeeds);
     double rotSpeed = calculateChassisAxisSpeed(rot, autoAlignSpeeds);
-    return calculateChassisDriveSpeed(fieldAdjustedRobotRot, xSpeed, ySpeed, rotSpeed).plus(autoAlignSpeeds.getFirst());
+    return getDriverSpeeds(fieldAdjustedRobotRot, xSpeed, ySpeed, rotSpeed).plus(autoAlignSpeeds.getFirst());
   }
 
-  private ChassisSpeeds calculateChassisDriveSpeed(Rotation2d fieldAdjustedRobotRot, double x, double y, double rot) {
+  private ChassisSpeeds getDriverSpeeds(Rotation2d fieldAdjustedRobotRot, double x, double y, double rot) {
     return ChassisSpeeds.fromFieldRelativeSpeeds(new ChassisSpeeds(x, y, rot), fieldAdjustedRobotRot);
-  }
-
-  private void visionSetPoseStrategy(int cameraIndex) {
-    vision.setPoseStrategy(cameraIndex, PoseStrategy.PNP_DISTANCE_TRIG_SOLVE);
   }
 
   private double calculateChassisAxisSpeed(double axis, Pair<ChassisSpeeds, Double> autoAlignSpeeds) {
