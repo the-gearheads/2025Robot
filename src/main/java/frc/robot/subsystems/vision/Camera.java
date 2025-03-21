@@ -14,6 +14,7 @@ import org.littletonrobotics.junction.networktables.LoggedNetworkNumber;
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
+import org.photonvision.PhotonPoseEstimator.ConstrainedSolvepnpParams;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import org.photonvision.estimation.OpenCVHelp;
 import org.photonvision.simulation.SimCameraProperties;
@@ -34,6 +35,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 
 public class Camera {
+  private static final int LATENCY_STDDEV_MS = 7;
   public final String name;
   public final String path;
   public final Transform3d transform;
@@ -50,6 +52,8 @@ public class Camera {
   private final double COEFFICIENT_FACTOR = 0.7;
   private static final double CALIB_ERROR_AVG = 0.02;
   private static final double CALIB_ERROR_STDDEV = 0.05;
+  private static final double FPS = 30;
+  private static final double AVG_LATENCY_MS = 35;
 
   // kinda ugly ik ik
   private Pose2d lastRobotPose;
@@ -247,11 +251,17 @@ public class Camera {
   }
 
   private Optional<EstimatedRobotPose> updateEstimatorForSolvePnp(PhotonPipelineResult result) {
-    boolean headingFree = DriverStation.isDisabled();
-    var constrainedPnpParams = new PhotonPoseEstimator.ConstrainedSolvepnpParams(headingFree, headingScaleFactor.get());
+    ConstrainedSolvepnpParams constrainedPnpParams = new PhotonPoseEstimator.ConstrainedSolvepnpParams(
+      DriverStation.isDisabled(),
+      headingScaleFactor.get()
+    );
     Rotation2d gyroAngle = Rotation2d.fromRadians(gyroAngleSupplier.getAsDouble());
-    estimator.addHeadingData(Timer.getFPGATimestamp(), gyroAngle.plus(gyroOffset));
-    Logger.recordOutput("Vision/GyroAnglePlusOffset", gyroAngle.plus(gyroOffset));
+    Rotation2d GyroAnglePlusOffset = gyroAngle.plus(gyroOffset);
+    
+    Logger.recordOutput("Vision/GyroAnglePlusOffset", GyroAnglePlusOffset);
+    
+    estimator.addHeadingData(Timer.getFPGATimestamp(), GyroAnglePlusOffset);
+    
     return estimator.update(result, camera.getCameraMatrix(), camera.getDistCoeffs(),
         Optional.of(constrainedPnpParams));
   }
@@ -274,10 +284,10 @@ public class Camera {
     properties.setCalibError(CALIB_ERROR_AVG, CALIB_ERROR_STDDEV);
     // Set the camera image capture framerate (Note: this is limited by robot loop
     // rate).
-    properties.setFPS(30);
+    properties.setFPS(FPS);
     // The average and standard deviation in milliseconds of image data latency.
-    properties.setAvgLatencyMs(35);
-    properties.setLatencyStdDevMs(7);
+    properties.setAvgLatencyMs(AVG_LATENCY_MS);
+    properties.setLatencyStdDevMs(LATENCY_STDDEV_MS);
 
     return properties;
   }
