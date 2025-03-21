@@ -1,6 +1,7 @@
 package frc.robot;
 
 import org.littletonrobotics.junction.Logger;
+import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 
 import choreo.auto.AutoChooser;
 import choreo.auto.AutoFactory;
@@ -18,6 +19,7 @@ import frc.robot.subsystems.SuperstructurePosition;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.swerve.Swerve;
 import frc.robot.util.AlignToPose;
+import frc.robot.util.ReefPositions;
 
 public class Autos {
   Swerve swerve;
@@ -60,6 +62,16 @@ public class Autos {
     factory.bind("L3", superstructure.goTo(SuperstructurePosition.L3));
     factory.bind("L4", superstructure.goTo(SuperstructurePosition.L4));
     factory.bind("HP", superstructure.goTo(SuperstructurePosition.HP));
+    factory.bind("VisionReefAlignMode", Commands.runOnce(()->{
+      var vision = swerve.vision;
+      int nearestTagId = ReefPositions.getClosestReefTagId(swerve.getPose());
+      vision.setCameraPreference(2); // back right bc lower fov = probably better
+      vision.setPoseStrategy(1, PoseStrategy.PNP_DISTANCE_TRIG_SOLVE);
+      vision.setPoseStrategy(2, PoseStrategy.PNP_DISTANCE_TRIG_SOLVE);
+      vision.filterTagById(1, nearestTagId);
+      vision.filterTagById(2, nearestTagId);
+      vision.disableCamera(0);
+    }));
 
     chooser = new AutoChooser();
     chooser.addRoutine(nameCenterReef, this::centerReef);

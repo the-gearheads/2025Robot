@@ -137,14 +137,6 @@ public class AlignToPose {
     return swerve.run(() -> {
       var speeds = getAutoAlignSpeeds(0.0, 0.0, swerve.getPose()).getFirst();
       swerve.drive(speeds);
-    }).beforeStarting(()->{
-      int nearestTagId = ReefPositions.getClosestReefTagId(swerve.getPose());
-        vision.setCameraPreference(2); // back right bc lower fov = probably better
-        vision.setPoseStrategy(1, PoseStrategy.PNP_DISTANCE_TRIG_SOLVE);
-        vision.setPoseStrategy(2, PoseStrategy.PNP_DISTANCE_TRIG_SOLVE);
-        vision.filterTagById(1, nearestTagId);
-        vision.filterTagById(2, nearestTagId);
-        vision.disableCamera(0);
     }).finallyDo(()->{
       vision.disableIdFiltering(1);
       vision.disableIdFiltering(2);
