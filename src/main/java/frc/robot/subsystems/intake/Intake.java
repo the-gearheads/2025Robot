@@ -101,6 +101,9 @@ public class Intake extends SubsystemBase {
       if (currentGamePiece == GamePiece.CORAL) {
         setVoltage(INTAKE_STALL_VOLTAGE);
         return;
+      } else if (currentGamePiece == GamePiece.EMPTY) {
+        setVoltage(8);
+        return;
       }
       setVoltage(0);
     });

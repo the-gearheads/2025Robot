@@ -17,10 +17,10 @@ public class IntakeConstants {
   public static final double INTAKE_POS_FACTOR = 1.0 / INTAKE_GEAR_RATIO;
   public static final double INTAKE_VEL_FACTOR = (1.0 / INTAKE_GEAR_RATIO) / 60;
 
-  public static final int INTAKE_CURRENT_LIMIT = 40;
+  public static final int INTAKE_CURRENT_LIMIT = 60;
 
-  public static final double INTAKE_VOLTAGE = 6.0;
-  public static final double INTAKE_STALL_VOLTAGE = 1.0;
-  public static final double CORAL_OUTTAKE_VOLTAGE = -6.0;
+  public static final double INTAKE_VOLTAGE = 12.0;
+  public static final double INTAKE_STALL_VOLTAGE = 8.0;
+  public static final double CORAL_OUTTAKE_VOLTAGE = -12.0;
 
 }
