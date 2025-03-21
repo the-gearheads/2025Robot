@@ -12,14 +12,14 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.reduxrobotics.sensors.canandcolor.Canandcolor;
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkFlex;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Intake extends SubsystemBase {
-  SparkMax intake = new SparkMax(INTAKE_ID, MotorType.kBrushless);
+  SparkFlex intake = new SparkFlex(INTAKE_ID, MotorType.kBrushless);
   RelativeEncoder intakeEncoder = intake.getEncoder();
   SparkMaxConfig intakeConfig = new SparkMaxConfig();
   Canandcolor canandcolor = new Canandcolor(CANANDCOLOR_ID);

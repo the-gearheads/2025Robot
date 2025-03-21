@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 
 public class IntakeSim extends Intake {
-  FlywheelSim intakeSim = new FlywheelSim(LinearSystemId.createFlywheelSystem(DCMotor.getNeo550(1), 1, INTAKE_GEAR_RATIO), DCMotor.getNeo550(1), INTAKE_GEAR_RATIO);
+  FlywheelSim intakeSim = new FlywheelSim(LinearSystemId.createFlywheelSystem(DCMotor.getNeoVortex(1), 1, INTAKE_GEAR_RATIO), DCMotor.getNeoVortex(1), INTAKE_GEAR_RATIO);
 
   @AutoLogOutput
   public double getVelocity() {
