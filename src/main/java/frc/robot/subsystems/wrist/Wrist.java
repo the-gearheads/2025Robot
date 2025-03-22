@@ -49,12 +49,21 @@ public class Wrist extends SubsystemBase {
     
   }
 
+  @AutoLogOutput
+  int enabledSyncCount = 0;
+
   @Override
   public void periodic() {
     if (DriverStation.isDisabled()) {
       syncIntegratedEncoder();
       pid.setGoal(getAngle().getRadians()); // TODO: controversial?
     }
+
+    if (DriverStation.isEnabled() && Math.abs(getAngle().minus(getIntregratedEncoderAngle()).getDegrees()) > 5) {
+      syncIntegratedEncoder();
+      enabledSyncCount++;
+    }
+
     double ff = WRIST_FF.calculate(pid.getSetpoint().position + WRIST_FF_OFFSET_RAD, pid.getSetpoint().velocity);
 
     double pidVolts = pid.calculate(getIntregratedEncoderAngle().getRadians());
