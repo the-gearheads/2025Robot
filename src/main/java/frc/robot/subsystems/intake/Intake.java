@@ -24,7 +24,8 @@ public class Intake extends SubsystemBase {
   SparkMaxConfig intakeConfig = new SparkMaxConfig();
   Canandcolor canandcolor = new Canandcolor(CANANDCOLOR_ID);
 
-  GamePiece gamePiece = getGamePiece();
+  @AutoLogOutput
+  GamePiece forcedGamePiece = null;
 
   double manualVoltage;
   
@@ -36,6 +37,9 @@ public class Intake extends SubsystemBase {
   @Override
   public void periodic() {
     Logger.recordOutput("Intake/outputVolts", manualVoltage);
+    Logger.recordOutput("Intake/Color/Hue", canandcolor.getHSVHue());
+    Logger.recordOutput("Intake/Color/Saturation", canandcolor.getHSVSaturation());
+    Logger.recordOutput("Intake/Color/Value", canandcolor.getHSVValue());
     setMotorVoltage(manualVoltage);
   }
 
@@ -111,13 +115,29 @@ public class Intake extends SubsystemBase {
   }
 
   @AutoLogOutput
-  public GamePiece getGamePiece() {
+  public GamePiece getGamePiecePhosphorus() {
   if (canandcolor.getProximity() < ALGAE_PROXIMITY_THRESHOLD && getPhosphorusAlgaeDIO()) {
     return GamePiece.ALGAE;
   } else if (canandcolor.getProximity() < CORAL_PROXIMITY_THRESHOLD) {
     return GamePiece.CORAL;
   }
     return GamePiece.EMPTY;
+  }
+
+  @AutoLogOutput
+  public GamePiece getGamePiece() {
+    if (forcedGamePiece != null) {
+      return forcedGamePiece;
+    }
+    return getGamePiecePhosphorus();
+  }
+
+  public Command forceGamePiece(GamePiece piece) {
+    return Commands.run(()->{
+      forcedGamePiece = piece;
+    }).finallyDo(()->{
+      forcedGamePiece = null;
+    });
   }
 
   public boolean hasGamePiece() {

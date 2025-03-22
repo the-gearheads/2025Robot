@@ -25,6 +25,7 @@ import frc.robot.subsystems.arm.Pivot;
 import frc.robot.subsystems.arm.PivotSim;
 import frc.robot.subsystems.arm.Telescope;
 import frc.robot.subsystems.arm.TelescopeSim;
+import frc.robot.subsystems.intake.GamePiece;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeSim;
 import frc.robot.subsystems.swerve.Swerve;
@@ -160,6 +161,10 @@ public class RobotContainer {
 
     Controllers.operatorController.getBtn11().onTrue(Commands.runOnce(()->{swerve.vision.disable();}));
     Controllers.operatorController.getBtn12().onTrue(Commands.runOnce(()->{swerve.vision.enable();}));
+
+    Controllers.operatorController.getBtn21().whileTrue(intake.forceGamePiece(GamePiece.ALGAE));
+    Controllers.operatorController.getBtn22().whileTrue(intake.forceGamePiece(GamePiece.CORAL));
+    Controllers.operatorController.getBtn23().whileTrue(intake.forceGamePiece(GamePiece.EMPTY));
 
     Controllers.driverController.getABtn().whileTrue(pivot.run(() -> {pivot.setMode(RunMode.VOLTAGE); pivot.setVoltage(-5);}).alongWith(wrist.run(() -> {wrist.setGoal(Rotation2d.fromDegrees(70));})));
     Controllers.driverController.getXBtn().whileTrue(pivot.run(() -> {pivot.setMode(RunMode.VOLTAGE); pivot.setVoltage(5);}).alongWith(wrist.run(() -> {wrist.setGoal(Rotation2d.fromDegrees(70));})));
