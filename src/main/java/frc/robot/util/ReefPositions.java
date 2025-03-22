@@ -104,6 +104,10 @@ public class ReefPositions {
     return REEF_TAG_IDS[REEF_TAG_POSES.indexOf(pose.nearest(REEF_TAG_POSES))];
   }
 
+  public static Pose2d getClosestReefTagPose(Pose2d pose) {
+    return pose.nearest(REEF_TAG_POSES);
+  }
+
   private static List<Pose2d> initalizeReefTagPoses(int[] reefTagIds) {
     ArrayList<Pose2d> out = new ArrayList<>();
     for (int id : reefTagIds) {

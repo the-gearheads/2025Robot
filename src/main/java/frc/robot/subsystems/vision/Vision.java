@@ -14,6 +14,7 @@ import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
@@ -51,7 +52,7 @@ public class Vision extends SubsystemBase {
 
   
     for (int i = 0; i<CAMERA_NAMES.length; i++) {
-      cameras[i] = new Camera(field, CAMERA_NAMES[i], CAMERA_TRANSFORMS[i], CAMERA_INTRINSICS[i], ()->swerve.getPose().getRotation().getRadians(), ()->swerve.getPoseWheelsOnly().getRotation().getRadians(), INITAL_CAMERA_STRATEGIES[i]);
+      cameras[i] = new Camera(field, CAMERA_NAMES[i], CAMERA_TRANSFORMS[i], CAMERA_INTRINSICS[i], ()->swerve.getPose().getRotation().getRadians(), ()->swerve.getPoseWheelsOnly().getRotation().getRadians(), swerve::getPose, INITAL_CAMERA_STRATEGIES[i]);
       sim.addCamera(cameras[i]);
     }
 

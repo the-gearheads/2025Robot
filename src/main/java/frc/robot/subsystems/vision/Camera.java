@@ -2,7 +2,9 @@ package frc.robot.subsystems.vision;
 
 import java.util.Optional;
 import java.util.function.DoubleSupplier;
+import java.util.function.Supplier;
 
+import static frc.robot.constants.MiscConstants.AUTO_ALIGN_DIST_THRESHOLD;
 import static frc.robot.constants.VisionConstants.*;
 
 import java.util.ArrayList;
@@ -31,6 +33,7 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
+import frc.robot.util.ReefPositions;
 
 public class Camera {
 
@@ -56,17 +59,19 @@ public class Camera {
   private final AprilTagFieldLayout field;
 
   private int tagFilteringTag = -1;
+  Supplier<Pose2d> robotPoseSupplier;
   DoubleSupplier fusedHeadingSupplier;
   DoubleSupplier gyroAngleSupplier;
   Rotation2d gyroOffset = new Rotation2d();
 
   LoggedNetworkNumber headingScaleFactor = new LoggedNetworkNumber("Vision/HeadingScaleFactor", CONSTRAINED_PNP_HEADING_SCALE_FACTOR);
 
-  public Camera(AprilTagFieldLayout field, String name, Transform3d transform, CameraIntrinsics intrinsics, DoubleSupplier fusedHeadingSupplier, DoubleSupplier gyroAngleSupplier, PoseStrategy strategy) {
+  public Camera(AprilTagFieldLayout field, String name, Transform3d transform, CameraIntrinsics intrinsics, DoubleSupplier fusedHeadingSupplier, DoubleSupplier gyroAngleSupplier, Supplier<Pose2d> robotPoseSupplier, PoseStrategy strategy) {
     this.name = name;
     this.transform = transform;
     this.intrinsics = intrinsics;
     this.field = field;
+    this.robotPoseSupplier = robotPoseSupplier;
     path = "Vision/" + name.replace("_", "");
     OpenCVHelp.forceLoadOpenCV();
 
@@ -158,7 +163,7 @@ public class Camera {
 
       // Logger.recordOutput(path + "/Result", result);
       Logger.recordOutput(path + "/EstPoseUnfiltered", pose.estimatedPose);
-      var filteredPose = filterPose(pose);
+      Optional<Pose3d> filteredPose = filterPose(pose);
       if (filteredPose.isEmpty())
         continue;
 
@@ -177,6 +182,11 @@ public class Camera {
       if (estimator.getPrimaryStrategy() == PoseStrategy.PNP_DISTANCE_TRIG_SOLVE) {
         xyStdDev /= 15;
         thetaStdDev /= 15;
+
+        double distanceToReefTag = filteredPose.get().toPose2d().getTranslation().getDistance(ReefPositions.getClosestReefTagPose(robotPoseSupplier.get()).getTranslation());
+        Logger.recordOutput(path + "/ReefTagDist", distanceToReefTag);
+        if (distanceToReefTag > AUTO_ALIGN_DIST_THRESHOLD + Units.inchesToMeters(5))
+          continue;
       }
 
       Logger.recordOutput(path + "/XyStdDev", xyStdDev);
