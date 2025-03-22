@@ -25,11 +25,13 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.simulation.DriverStationSim;
 import edu.wpi.first.wpilibj.simulation.RoboRioSim;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.constants.MiscConstants;
+import frc.robot.controllers.Controllers;
 import frc.robot.util.TriConsumer;
 
 /**
@@ -47,6 +49,12 @@ public class Robot extends LoggedRobot {
   private Debouncer brakeCoastButtonDebouncer = new Debouncer(0.05);
   private boolean lastBrakeCoastButton = false;
   private boolean isBraken = true;
+
+  /* Globals :( */
+  public static double matchTime = -1;
+  private static double matchTimeStart = 0;
+
+  private boolean rumbled = true;
 
 
   /**
@@ -164,6 +172,7 @@ public class Robot extends LoggedRobot {
   @Override
   public void autonomousInit() {
     autonomousCommand = robotContainer.getAutonomousCommand();
+    matchTime = -1;
 
     // schedule the autonomous command (example)
     if (autonomousCommand != null) {
@@ -196,11 +205,20 @@ public class Robot extends LoggedRobot {
       lastBrakeCoastButton = true;
       robotContainer.setAllBrakeCoast(true);
     }
+    matchTimeStart = Timer.getFPGATimestamp();
+    rumbled = false;
   }
 
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
+    matchTime = 135 - (Timer.getFPGATimestamp() - matchTimeStart);
+    matchTime = matchTime < 0 ? 0 : matchTime;
+    Logger.recordOutput("TeleopMatchTime", matchTime);
+    if (matchTime < 30.2 && matchTime > 30 && !rumbled) {
+      Controllers.driverController.getRumbleCommand(1.0, 0.2, 3).schedule();
+      rumbled = true;
+    }
   }
 
   @Override
