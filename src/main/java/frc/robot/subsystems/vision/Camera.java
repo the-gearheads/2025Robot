@@ -185,7 +185,7 @@ public class Camera {
 
         double distanceToReefTag = filteredPose.get().toPose2d().getTranslation().getDistance(ReefPositions.getClosestReefTagPose(robotPoseSupplier.get()).getTranslation());
         Logger.recordOutput(path + "/ReefTagDist", distanceToReefTag);
-        if (distanceToReefTag > AUTO_ALIGN_DIST_THRESHOLD + Units.inchesToMeters(5))
+        if (distanceToReefTag > AUTO_ALIGN_DIST_THRESHOLD + 0.75)
           continue;
       }
 
