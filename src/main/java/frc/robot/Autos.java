@@ -65,7 +65,7 @@ public class Autos {
     factory.bind("VisionReefAlignMode", Commands.runOnce(()->{
       var vision = swerve.vision;
       int nearestTagId = ReefPositions.getClosestReefTagId(swerve.getPose());
-      vision.setCameraPreference(2); // back right bc lower fov = probably better
+      vision.setCameraPreference(1); // back right bc lower fov = probably better
       vision.setPoseStrategy(1, PoseStrategy.PNP_DISTANCE_TRIG_SOLVE);
       vision.setPoseStrategy(2, PoseStrategy.PNP_DISTANCE_TRIG_SOLVE);
       vision.filterTagById(1, nearestTagId);
