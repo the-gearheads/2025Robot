@@ -16,6 +16,7 @@ import frc.robot.commands.Teleop;
 import frc.robot.commands.NTControl.PivotNTControl;
 import frc.robot.commands.NTControl.TelescopeNTControl;
 import frc.robot.commands.NTControl.WristNTControl;
+import frc.robot.constants.ArmConstants;
 import frc.robot.controllers.Controllers;
 import frc.robot.subsystems.Leds;
 import frc.robot.subsystems.Superstructure;
@@ -166,8 +167,22 @@ public class RobotContainer {
     Controllers.operatorController.getBtn22().whileTrue(intake.forceGamePiece(GamePiece.CORAL));
     Controllers.operatorController.getBtn23().whileTrue(intake.forceGamePiece(GamePiece.EMPTY));
 
-    Controllers.driverController.getABtn().whileTrue(pivot.run(() -> {pivot.setMode(RunMode.VOLTAGE); pivot.setVoltage(-5);}).alongWith(wrist.run(() -> {wrist.setGoal(Rotation2d.fromDegrees(70));})));
-    Controllers.driverController.getXBtn().whileTrue(pivot.run(() -> {pivot.setMode(RunMode.VOLTAGE); pivot.setVoltage(5);}).alongWith(wrist.run(() -> {wrist.setGoal(Rotation2d.fromDegrees(70));})));
+    Controllers.driverController.getABtn().whileTrue(
+      pivot.run(() -> {pivot.setMode(RunMode.VOLTAGE); pivot.setVoltage(-5);})
+        .alongWith(wrist.run(() -> {wrist.setGoal(Rotation2d.fromDegrees(70));}))
+        .alongWith(telescope.run(()->{
+          telescope.setMode(RunMode.PROFILED_PID);
+          telescope.setGoalPosition(ArmConstants.MIN_RELATIVE_HEIGHT);
+        }))
+    );
+    Controllers.driverController.getXBtn().whileTrue(
+      pivot.run(() -> {pivot.setMode(RunMode.VOLTAGE); pivot.setVoltage(5);})
+        .alongWith(wrist.run(() -> {wrist.setGoal(Rotation2d.fromDegrees(70));}))
+        .alongWith(telescope.run(()->{
+          telescope.setMode(RunMode.PROFILED_PID);
+          telescope.setGoalPosition(ArmConstants.MIN_RELATIVE_HEIGHT);
+        }))
+    );
     
     Controllers.operatorController.getBtn42().onTrue(new InstantCommand(()-> {swerve.setPose(new Pose2d(7.12387752532959 , 7.599511623382568, Rotation2d.kZero));}));
 
