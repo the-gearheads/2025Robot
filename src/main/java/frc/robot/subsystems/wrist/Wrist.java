@@ -52,7 +52,7 @@ public class Wrist extends SubsystemBase {
   @Override
   public void periodic() {
     if (DriverStation.isDisabled()) {
-      wristEncoder.setPosition(wristAbsEncoder.getPosition());
+      syncIntegratedEncoder();
       pid.setGoal(getAngle().getRadians()); // TODO: controversial?
     }
     double ff = WRIST_FF.calculate(pid.getSetpoint().position + WRIST_FF_OFFSET_RAD, pid.getSetpoint().velocity);
@@ -122,6 +122,10 @@ public class Wrist extends SubsystemBase {
   @AutoLogOutput
   public double getVelocity() {
     return wristAbsEncoder.getVelocity();
+  }
+
+  public void syncIntegratedEncoder() {
+    wristEncoder.setPosition(wristAbsEncoder.getPosition());
   }
 
   public void setGoal(Rotation2d angle) {

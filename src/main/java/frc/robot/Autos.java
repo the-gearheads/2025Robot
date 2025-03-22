@@ -143,7 +143,6 @@ public class Autos {
       Commands.sequence(
         stop(),
         superstructure.waitUntilAtSetpoint(),
-        // possibly an auto align
         AlignToPose.getAutoAlignCommand(swerve, swerve.vision).withTimeout(1),
         stop(),
         outtakeCoral().withTimeout(2), // mostly for now as we do not have coral sim yet,

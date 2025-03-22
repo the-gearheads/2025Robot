@@ -39,7 +39,9 @@ public class Teleop extends Command {
 
   @Override
   public void initialize() {
-    vision.enable();
+    if(DriverStation.isTeleop()) {
+      vision.enable();
+    }
   }
 
   @Override
