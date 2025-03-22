@@ -24,7 +24,7 @@ public class IntakeSim extends Intake {
   }
 
   @Override
-  public void setMotorVoltage(double volts) {
+  public void setVoltage(double volts) {
     volts = MathUtil.clamp(volts, -RobotController.getBatteryVoltage(), RobotController.getBatteryVoltage());
     intakeSim.setInputVoltage(volts);
   }

@@ -26,8 +26,6 @@ public class Intake extends SubsystemBase {
 
   @AutoLogOutput
   GamePiece forcedGamePiece = null;
-
-  double manualVoltage;
   
   public Intake() {
     configure();
@@ -36,11 +34,9 @@ public class Intake extends SubsystemBase {
 
   @Override
   public void periodic() {
-    Logger.recordOutput("Intake/outputVolts", manualVoltage);
     Logger.recordOutput("Intake/Color/Hue", canandcolor.getHSVHue());
     Logger.recordOutput("Intake/Color/Saturation", canandcolor.getHSVSaturation());
     Logger.recordOutput("Intake/Color/Value", canandcolor.getHSVValue());
-    setMotorVoltage(manualVoltage);
   }
 
   @AutoLogOutput
@@ -60,11 +56,8 @@ public class Intake extends SubsystemBase {
     intake.setCANTimeout(0);
   }
 
-  public void setVoltage(double volts) {
-    manualVoltage = volts;
-  }
-
-  protected void setMotorVoltage(double volts) {
+  protected void setVoltage(double volts) {
+    Logger.recordOutput("Intake/Volts", volts);
     intake.setVoltage(volts);
   }
 
@@ -82,16 +75,12 @@ public class Intake extends SubsystemBase {
     return canandcolor.getDigoutState().getDigoutChannelValue(canandcolor.digout1().channelIndex());
   }
 
-  public Command runOuttake() {
-    return run(() -> intake.setVoltage(-INTAKE_VOLTAGE)).until(this::doesntHaveGamePiece);
-  }
-
   public Command runOuttake(double volts) {
-    return run(() -> intake.setVoltage(-volts));
+    return run(() -> setVoltage(-volts));
   }
 
   public Command outtakeCoral() {
-    return run(() -> {intake.setVoltage(CORAL_OUTTAKE_VOLTAGE);}).raceWith(
+    return run(() -> {setVoltage(CORAL_OUTTAKE_VOLTAGE);}).raceWith(
       Commands.sequence(
         Commands.waitUntil(() -> getGamePiece() == GamePiece.EMPTY),
         Commands.waitSeconds(1.5)
@@ -111,7 +100,7 @@ public class Intake extends SubsystemBase {
   }
 
   public Command stop() {
-    return runOnce(() -> intake.setVoltage(0));
+    return runOnce(() -> setVoltage(0));
   }
 
   @AutoLogOutput
