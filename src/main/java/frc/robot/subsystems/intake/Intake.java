@@ -102,7 +102,7 @@ public class Intake extends SubsystemBase {
   public Command holdGamePiece() {
     return run(() -> {
       GamePiece currentGamePiece = getGamePiece();
-      if (currentGamePiece == GamePiece.CORAL) {
+      if (currentGamePiece == GamePiece.ALGAE) {
         setVoltage(INTAKE_STALL_VOLTAGE);
         return;
       }
