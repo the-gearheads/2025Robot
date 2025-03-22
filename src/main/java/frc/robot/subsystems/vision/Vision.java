@@ -116,7 +116,7 @@ public class Vision extends SubsystemBase {
 
   public void enable() {
     for (int i=0; i<cameras.length; i++) {
-      cameras[i].disable();
+      cameras[i].enable();
     }
   }
 

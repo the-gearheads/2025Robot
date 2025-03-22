@@ -39,7 +39,7 @@ public class Teleop extends Command {
 
   @Override
   public void initialize() {
-
+    vision.enable();
   }
 
   @Override
