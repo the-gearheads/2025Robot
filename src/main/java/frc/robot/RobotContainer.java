@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import frc.robot.commands.Teleop;
 import frc.robot.commands.NTControl.PivotNTControl;
 import frc.robot.commands.NTControl.TelescopeNTControl;
@@ -174,7 +175,7 @@ public class RobotContainer {
         .alongWith(telescope.run(()->{
           telescope.setMode(RunMode.PROFILED_PID);
           telescope.setGoalPosition(ArmConstants.MIN_RELATIVE_HEIGHT);
-        }))
+        })).withInterruptBehavior(InterruptionBehavior.kCancelIncoming)
     );
     Controllers.driverController.getXBtn().whileTrue(
       pivot.run(() -> {pivot.setMode(RunMode.VOLTAGE); pivot.setVoltage(5);})
@@ -182,7 +183,7 @@ public class RobotContainer {
         .alongWith(telescope.run(()->{
           telescope.setMode(RunMode.PROFILED_PID);
           telescope.setGoalPosition(ArmConstants.MIN_RELATIVE_HEIGHT);
-        }))
+        })).withInterruptBehavior(InterruptionBehavior.kCancelIncoming)
     );
     
     Controllers.operatorController.getBtn42().onTrue(new InstantCommand(()-> {swerve.setPose(new Pose2d(7.12387752532959 , 7.599511623382568, Rotation2d.kZero));}));
