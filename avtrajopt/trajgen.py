@@ -243,6 +243,9 @@ def main(input_file, output_dir):
     p.subject_to(accel_k[1] >= -constants.elevator_max_accel)
     p.subject_to(accel_k[1] <= constants.elevator_max_accel)
   
+  p.subject_to(accel[0, N] == 0)
+  p.subject_to(accel[1, N] == 0)
+  
   # Now we gotta minimize time
   total_time = sum(dt[0, k] for k in range(N + 1))
   p.subject_to(total_time <= constants.T_max)
