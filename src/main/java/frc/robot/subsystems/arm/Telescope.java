@@ -218,7 +218,8 @@ public class Telescope extends SubsystemBase {
   }
 
   protected void setMotorVoltage(double voltage) {
-    elevator.setVoltage(voltage);
+    // elevator.setVoltage(voltage);
+    elevator.setVoltage(0);
   }
 
   @AutoLogOutput
