@@ -29,6 +29,7 @@ public class Autos {
   AutoChooser chooser;
 
   String nameCenterReef = "Auto Center->Reef Routine";
+  String nameCenterReefAlgae = "Center->Reef->BARGE";
   String nameLeftReefFeederReef = "Auto Left->Reef->Feeder->Reef Routine";
   String nameRightReefFeederReef = "Auto Right->Reef->Feeder->Reef Routine";
 
@@ -57,11 +58,13 @@ public class Autos {
 
 
     factory.bind("intake", intake.runIntake());
-    factory.bind("L1", superstructure.goTo(SuperstructurePosition.L1));
-    factory.bind("L2", superstructure.goTo(SuperstructurePosition.L2));
-    factory.bind("L3", superstructure.goTo(SuperstructurePosition.L3));
-    factory.bind("L4", superstructure.goTo(SuperstructurePosition.L4));
-    factory.bind("HP", superstructure.goTo(SuperstructurePosition.HP));
+    factory.bind("L1", superstructureGoTo(SuperstructurePosition.L1));
+    factory.bind("L2", superstructureGoTo(SuperstructurePosition.L2));
+    factory.bind("L3", superstructureGoTo(SuperstructurePosition.L3));
+    factory.bind("L4", superstructureGoTo(SuperstructurePosition.L4));
+    factory.bind("HP", superstructureGoTo(SuperstructurePosition.HP));
+    factory.bind("AlgaeL2", superstructureGoTo(SuperstructurePosition.AlgaeL2));
+    factory.bind("NET", superstructureGoTo(SuperstructurePosition.NET));
     factory.bind("VisionReefAlignMode", Commands.runOnce(()->{
       var vision = swerve.vision;
       int nearestTagId = ReefPositions.getClosestReefTagId(swerve.getPose());
@@ -75,6 +78,7 @@ public class Autos {
 
     chooser = new AutoChooser();
     chooser.addRoutine(nameCenterReef, this::centerReef);
+    chooser.addRoutine(nameCenterReefAlgae, this::centerReefAlgae);
     chooser.addRoutine(nameLeftReefFeederReef, this::leftReefFeederReef);
     chooser.addRoutine(nameRightReefFeederReef, this::rightReefFeederReef);
     SmartDashboard.putData("AutoChooser", chooser);
@@ -122,6 +126,68 @@ public class Autos {
 
     // Add command to place corral on top level of reef
     // NOTE: may need to add an "alignment" in the case it is not perfectly aligned in relation to the april tag
+
+    return routine;
+  }
+
+  public AutoRoutine centerReefAlgae() {
+    AutoRoutine routine = factory.newRoutine(nameCenterReef);
+    AutoTrajectory startToL4 = routine.trajectory("center_reef_algae", 0);
+    AutoTrajectory L4ToPreAlgae = routine.trajectory("center_reef_algae", 1);
+    AutoTrajectory L4ToAlgae = routine.trajectory("center_reef_algae", 2);
+    AutoTrajectory AlgaeToBarge = routine.trajectory("center_reef_algae", 3);
+    AutoTrajectory BargeToSafe = routine.trajectory("center_reef_algae", 4);
+
+
+    routine.active().onTrue(
+      Commands.sequence(
+        Commands.runOnce(()->swerve.vision.disable()),
+        startToL4.resetOdometry(),
+        startToL4.cmd()
+      )
+    );
+
+    startToL4.done().onTrue(
+      Commands.sequence(
+        stop(),
+        Commands.print("test"),
+        superstructure.waitUntilAtSetpoint(),
+        outtakeCoral().withTimeout(2),
+        L4ToPreAlgae.cmd()
+      )
+    );
+
+    L4ToPreAlgae.done().onTrue(
+      Commands.sequence(
+        stop(),
+        superstructure.waitUntilAtSetpoint(),
+        L4ToAlgae.cmd()
+      )
+    );
+
+    L4ToAlgae.done().onTrue(
+      Commands.sequence(
+        stop(),
+        AlgaeToBarge.cmd()
+      )
+    );
+
+    AlgaeToBarge.done().onTrue(
+      Commands.sequence(
+        stop(),
+        superstructure.waitUntilAtSetpoint(),
+        outtakeCoral().withTimeout(2.2),
+        BargeToSafe.cmd()
+      )
+    );
+
+    BargeToSafe.done().onTrue(
+      Commands.sequence(
+        stop(),
+        Commands.runOnce(()->swerve.vision.enable()),
+        superstructureGoTo(SuperstructurePosition.STOW)
+      )
+    );
 
     return routine;
   }

@@ -19,6 +19,7 @@ import frc.robot.commands.NTControl.WristNTControl;
 import frc.robot.constants.ArmConstants;
 import frc.robot.controllers.Controllers;
 import frc.robot.subsystems.Leds;
+import frc.robot.subsystems.MechanismViz;
 import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.Superstructure.RunMode;
 import frc.robot.subsystems.SuperstructurePosition;
@@ -45,8 +46,8 @@ public class RobotContainer {
   private final Autos autos;
   private final SysidAutoPicker sysidAuto = new SysidAutoPicker();
   private final ObjectiveTracker tracker;
-  // @SuppressWarnings("unused")
-  // private final MechanismViz viz;
+  @SuppressWarnings("unused")
+  private final MechanismViz viz;
   @SuppressWarnings("unused")
 
   private final Leds leds = new Leds();
@@ -66,7 +67,7 @@ public class RobotContainer {
     tracker = new ObjectiveTracker(swerve);
     superStructure = new Superstructure(pivot, telescope, wrist);
     autos = new Autos(swerve, superStructure, intake);
-    // viz = new MechanismViz(swerve, pivot, telescope, wrist);
+    viz = new MechanismViz(swerve, pivot, telescope, wrist);
     swerve.setDefaultCommand(new Teleop(swerve, intake, tracker));
     // swerve.setDefaultCommand(new Teleop(swerve));
     // pivot.setDefaultCommand(new ManualPivot(pivot));

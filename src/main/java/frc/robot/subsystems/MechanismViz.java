@@ -9,6 +9,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Robot;
 import frc.robot.subsystems.arm.Pivot;
 import frc.robot.subsystems.arm.Telescope;
 import frc.robot.subsystems.swerve.Swerve;
@@ -34,6 +35,7 @@ public class MechanismViz extends SubsystemBase {
   Telescope telescope;
   Wrist wrist;
   public MechanismViz(Swerve swerve, Pivot pivot, Telescope telescope, Wrist wrist) {
+    if(Robot.isReal()) return;
     this.pivot = pivot;
     this.telescope = telescope;
     this.wrist = wrist;
@@ -82,6 +84,8 @@ public class MechanismViz extends SubsystemBase {
 
   @Override
   public void periodic() {
+    if(Robot.isReal()) return;
+
     Transform3d[] componentPoses = getComponentPosesFor(telescope.getExtension(), pivot.getAngle(), wrist.getAngle());
     Transform3d[] setpointPoses = getComponentPosesFor(telescope.getTargetLength(), pivot.getTargetAngle(), wrist.getTargetAngle());
     Logger.recordOutput("MechanismViz/ComponentPoses", componentPoses);
