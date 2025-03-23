@@ -267,7 +267,7 @@ public class Telescope extends SubsystemBase {
 
   public Command setModeTemporarilyTo(RunMode newMode) {
     // intentionally does not require this subsystem
-    RunMode originalMode = null;
+    RunMode originalMode = mode;
     return Commands.startEnd(() -> {
       setMode(newMode);
     }, () -> {
