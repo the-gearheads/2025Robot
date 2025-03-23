@@ -14,8 +14,8 @@ endeff_x_min = -1e-6
 endeff_x_max = 40 * IN_TO_M
 endeff_y_min = 0
 
-elevator_max_accel = 1.2 # m/s^2
-pivot_max_accel = 1.3 # rad/s^2
+elevator_max_accel = 2 # m/s^2
+pivot_max_accel = 1.8 # rad/s^2
 
 def pivot_accel_scaling(elevator_length):
   from jormungandr.autodiff import pow
