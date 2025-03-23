@@ -56,13 +56,13 @@ public class Intake extends SubsystemBase {
     intake.setCANTimeout(0);
   }
 
-  protected void setVoltage(double volts) {
+  public void setVoltage(double volts) {
     Logger.recordOutput("Intake/Volts", volts);
     intake.setVoltage(volts);
   }
 
   public Command runIntake() {
-    return run(() -> setVoltage(INTAKE_VOLTAGE)).until(this::hasGamePiece).andThen(Commands.waitSeconds(1));
+    return run(() -> setVoltage(INTAKE_VOLTAGE)).until(this::hasGamePiece).andThen(Commands.waitSeconds(0.7));
   }
 
   @AutoLogOutput
@@ -79,13 +79,17 @@ public class Intake extends SubsystemBase {
     return run(() -> setVoltage(-volts));
   }
 
-  public Command outtakeCoral() {
+  public Command outtakeCoral(double waitTime) {
     return run(() -> {setVoltage(CORAL_OUTTAKE_VOLTAGE);}).raceWith(
       Commands.sequence(
         Commands.waitUntil(() -> getGamePiece() == GamePiece.EMPTY),
-        Commands.waitSeconds(1.5)
+        Commands.waitSeconds(waitTime)
       )
     );
+  }
+
+  public Command outtakeCoral() {
+    return outtakeCoral(1.5);
   }
 
   public Command holdGamePiece() {

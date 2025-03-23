@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import frc.robot.constants.IntakeConstants;
 import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.SuperstructurePosition;
 import frc.robot.subsystems.intake.Intake;
@@ -58,6 +59,7 @@ public class Autos {
 
 
     factory.bind("intake", intake.runIntake());
+    factory.bind("intakeAlgae", intake.run(() -> intake.setVoltage(IntakeConstants.INTAKE_VOLTAGE)).until(intake::hasGamePiece));
     factory.bind("L1", superstructureGoTo(SuperstructurePosition.L1));
     factory.bind("L2", superstructureGoTo(SuperstructurePosition.L2));
     factory.bind("L3", superstructureGoTo(SuperstructurePosition.L3));
@@ -152,7 +154,7 @@ public class Autos {
         stop(),
         Commands.print("test"),
         superstructure.waitUntilAtSetpoint(),
-        outtakeCoral().withTimeout(2),
+        intake.outtakeCoral(0.5).asProxy().withTimeout(2),
         L4ToPreAlgae.cmd()
       )
     );
