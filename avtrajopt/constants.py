@@ -17,6 +17,9 @@ endeff_y_min = 0
 elevator_max_accel = 2 # m/s^2
 pivot_max_accel = 1.8 # rad/s^2
 
+elevator_max_vel = 1.3
+pivot_max_vel = 1.3
+
 def pivot_accel_scaling(elevator_length):
   from jormungandr.autodiff import pow
   if type(elevator_length) == float:

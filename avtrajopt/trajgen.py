@@ -201,6 +201,10 @@ def main(input_file, output_dir):
       p.subject_to(pivot[0, k] < constants.pivot_max)
     p.subject_to(elevator[0, k] >= constants.elevator_min_len)
     p.subject_to(elevator[0, k] <= constants.elevator_max_len)
+    p.subject_to(elevator[1, k] <= constants.elevator_max_vel)
+    p.subject_to(elevator[1, k] >= -constants.elevator_max_vel)
+    p.subject_to(pivot[1, k] <= constants.pivot_max_vel)
+    p.subject_to(pivot[1, k] >= -constants.pivot_max_vel)
 
     pos = get_end_eff_pos(elevator[0, k], pivot[0, k])
     p.subject_to(pos[0] >= constants.endeff_x_min)
