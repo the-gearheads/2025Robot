@@ -34,6 +34,7 @@ import frc.robot.subsystems.intake.IntakeSim;
 import frc.robot.subsystems.swerve.Swerve;
 import frc.robot.subsystems.wrist.Wrist;
 import frc.robot.subsystems.wrist.WristSim;
+import frc.robot.util.ArmvatorPosition;
 import frc.robot.util.ObjectiveTracker;
 
 public class RobotContainer {
@@ -143,7 +144,11 @@ public class RobotContainer {
           case CORAL:
             return intake.outtakeCoral();
           case ALGAE:
-            return intake.runOuttake(12);
+            return wrist.runOnce(() -> {
+              if(superStructure.getClosestArmvatorPosition() == ArmvatorPosition.NET) {
+                wrist.setGoal(SuperstructurePosition.NET.wristAngle.minus(Rotation2d.fromDegrees(10))); // 40 -> 30deg
+              }
+            }).alongWith(intake.runOuttake(12));
           default:
             return intake.runOuttake(12);
         }
