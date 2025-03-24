@@ -112,7 +112,7 @@ public class Autos {
       Commands.sequence(
         trajectory.resetOdometry(),
         Commands.runOnce(()->swerve.vision.disable()),
-        superstructureGoTo(SuperstructurePosition.L3),
+        superstructureGoTo(SuperstructurePosition.L4),
         trajectory.cmd()
       )
     );
