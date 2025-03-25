@@ -4,7 +4,7 @@ N_samples_default = 200
 T_max = 10 # seconds
 dt_initial_guess = 0.005 # 50ms. bit big but works
 IN_TO_M = 0.0254
-elevator_min_len = 36 * IN_TO_M + 1 * IN_TO_M
+elevator_min_len = 36 * IN_TO_M ## + 1 * IN_TO_M
 elevator_max_len = 80 * IN_TO_M
 
 pivot_min = math.radians(13.5)
