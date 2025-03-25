@@ -139,4 +139,8 @@ public class Vision extends SubsystemBase {
   public void disableCameraPreference() {
     cameraPriority = -1;
   }
+
+  public void setGyroOffset(Rotation2d offset) {
+    gyroOffset = offset;
+  } 
 }

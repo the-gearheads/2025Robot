@@ -7,6 +7,7 @@ import static frc.robot.constants.SwerveConstants.ALIGNMENT_ROT_CONSTRAINTS;
 import java.util.ArrayList;
 
 import org.littletonrobotics.junction.Logger;
+import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Pair;
@@ -142,5 +143,22 @@ public class AlignToPose {
       vision.defaultPoseStrategies();
       vision.enableCamera(0);
     });
+  }
+
+  public static void enableReefVision(Vision vision, Rotation2d gyroOffset, int nearestTagId) {
+    vision.setGyroOffset(gyroOffset);
+    vision.setCameraPreference(1);
+    vision.setPoseStrategy(1, PoseStrategy.PNP_DISTANCE_TRIG_SOLVE);
+    vision.setPoseStrategy(2, PoseStrategy.PNP_DISTANCE_TRIG_SOLVE);
+    vision.filterTagById(1, nearestTagId);
+    vision.filterTagById(2, nearestTagId);
+    vision.disableCamera(0);
+  }
+
+  public static void disableReefVision(Vision vision) {
+    vision.disableIdFiltering(1);
+    vision.disableIdFiltering(2);
+    vision.defaultPoseStrategies();
+    vision.enableCamera(0);
   }
 }

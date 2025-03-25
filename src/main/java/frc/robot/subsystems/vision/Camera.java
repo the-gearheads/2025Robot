@@ -161,7 +161,6 @@ public class Camera {
 
       EstimatedRobotPose pose = poseResult.get();
 
-      // Logger.recordOutput(path + "/Result", result);
       Logger.recordOutput(path + "/EstPoseUnfiltered", pose.estimatedPose);
       Optional<Pose3d> filteredPose = filterPose(pose);
       if (filteredPose.isEmpty())

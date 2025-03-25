@@ -8,6 +8,7 @@ import choreo.auto.AutoFactory;
 import choreo.auto.AutoRoutine;
 import choreo.auto.AutoTrajectory;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -70,12 +71,8 @@ public class Autos {
     factory.bind("VisionReefAlignMode", Commands.runOnce(()->{
       var vision = swerve.vision;
       int nearestTagId = ReefPositions.getClosestReefTagId(swerve.getPose());
-      vision.setCameraPreference(1); // back right bc lower fov = probably better
-      vision.setPoseStrategy(1, PoseStrategy.PNP_DISTANCE_TRIG_SOLVE);
-      vision.setPoseStrategy(2, PoseStrategy.PNP_DISTANCE_TRIG_SOLVE);
-      vision.filterTagById(1, nearestTagId);
-      vision.filterTagById(2, nearestTagId);
-      vision.disableCamera(0);
+      Rotation2d gyroOffset = swerve.getPose().getRotation().minus(swerve.getPoseWheelsOnly().getRotation());
+      AlignToPose.enableReefVision(vision, gyroOffset, nearestTagId);
     }));
 
     chooser = new AutoChooser();
