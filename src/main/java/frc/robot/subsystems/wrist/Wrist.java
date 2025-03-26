@@ -18,6 +18,7 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -32,6 +33,8 @@ public class Wrist extends SubsystemBase {
   private RelativeEncoder wristEncoder = wrist.getEncoder();
   private AbsoluteEncoder wristAbsEncoder = wrist.getAbsoluteEncoder();
 
+  private Debouncer stallDebouncer = new Debouncer(0.5);
+  private boolean isCurrentlyStalled = false;
   protected ProfiledPIDController pid = new ProfiledPIDController(WRIST_PID[0], WRIST_PID[1], WRIST_PID[2],
       WRIST_CONSTRAINTS);
 
@@ -54,6 +57,9 @@ public class Wrist extends SubsystemBase {
 
   @Override
   public void periodic() {
+    isCurrentlyStalled = stallDebouncer.calculate(isCurrentlyStuck());
+    Logger.recordOutput("Wrist/isStuck", isCurrentlyStuck());
+    Logger.recordOutput("Wrist/isStalled", isCurrentlyStalled);
     if (DriverStation.isDisabled()) {
       syncIntegratedEncoder();
       pid.setGoal(getAngle().getRadians()); // TODO: controversial?
@@ -89,6 +95,11 @@ public class Wrist extends SubsystemBase {
 
     if (pid.getGoal().position < MIN_WRIST_ANGLE || pid.getGoal().position > MAX_WRIST_ANGLE) {
       pid.setGoal(MathUtil.clamp(pid.getGoal().position, MIN_WRIST_ANGLE, MAX_WRIST_ANGLE));
+    }
+
+    if (isCurrentlyStalled) {
+      output = 0;
+      System.out.println("AAAAHH THE WRIST IS STALLED");
     }
 
     Logger.recordOutput("Wrist/output", output);
@@ -209,5 +220,9 @@ public class Wrist extends SubsystemBase {
     return this.run(() -> {
       setGoal(angle);
     }).until(() -> {return this.atPoint(angle, tolerance);});
+  }
+
+  private boolean isCurrentlyStuck() {
+    return (Math.abs(getVelocity()) < WRIST_STALL_VELOCITY_THRESHOLD) && manualVoltage > 1;
   }
 }

@@ -39,6 +39,7 @@ public class MechanismViz extends SubsystemBase {
     this.pivot = pivot;
     this.telescope = telescope;
     this.wrist = wrist;
+
   }
 
   public Transform3d[] getComponentPosesFor(double telescopeLength, Rotation2d pivotAngle, Rotation2d wristAngle) {
