@@ -225,6 +225,6 @@ public class Wrist extends SubsystemBase {
   }
 
   private boolean isCurrentlyStuck() {
-    return (Math.abs(getVelocity()) < WRIST_STALL_VELOCITY_THRESHOLD) && wrist.getAppliedOutput() > 0.02;
+    return (Math.abs(getVelocity()) < WRIST_STALL_VELOCITY_THRESHOLD) && wrist.getAppliedOutput() > 0.05;
   }
 }
