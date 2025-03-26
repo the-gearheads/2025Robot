@@ -109,6 +109,7 @@ public class Wrist extends SubsystemBase {
       System.out.println("AAAAHH THE WRIST IS STALLED");
     }
 
+    // output = 0;
     Logger.recordOutput("Wrist/output", output);
     setMotorVoltage(output);
   }
@@ -117,6 +118,7 @@ public class Wrist extends SubsystemBase {
     wrist.setCANTimeout(250);
     wristConfig.smartCurrentLimit(WRIST_CURRENT_LIMIT);
     wristConfig.voltageCompensation(12);
+    // wristConfig.idleMode(IdleMode.kCoast);
     wristConfig.idleMode(IdleMode.kBrake);
     wristConfig.inverted(true);
 
