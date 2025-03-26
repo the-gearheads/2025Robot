@@ -19,6 +19,7 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.filter.Debouncer;
+import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -43,6 +44,7 @@ public class Wrist extends SubsystemBase {
   Double manualVoltage;
 
   public Wrist() {
+    stallDebouncer.setDebounceType(DebounceType.kBoth);
     configure();
     wristEncoder.setPosition(wristAbsEncoder.getPosition());
     pid.setGoal(getAngle().getRadians());
@@ -223,6 +225,6 @@ public class Wrist extends SubsystemBase {
   }
 
   private boolean isCurrentlyStuck() {
-    return (Math.abs(getVelocity()) < WRIST_STALL_VELOCITY_THRESHOLD) && manualVoltage > 1;
+    return (Math.abs(getVelocity()) < WRIST_STALL_VELOCITY_THRESHOLD) && wrist.getAppliedOutput() > 0.02;
   }
 }
