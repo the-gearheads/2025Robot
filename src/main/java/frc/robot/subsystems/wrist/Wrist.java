@@ -23,6 +23,7 @@ import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -44,6 +45,7 @@ public class Wrist extends SubsystemBase {
   Double manualVoltage;
 
   public Wrist() {
+    SmartDashboard.putData("Wrist/pid", pid);
     stallDebouncer.setDebounceType(DebounceType.kBoth);
     configure();
     wristEncoder.setPosition(wristAbsEncoder.getPosition());
@@ -59,6 +61,7 @@ public class Wrist extends SubsystemBase {
 
   @Override
   public void periodic() {
+
     isCurrentlyStalled = stallDebouncer.calculate(isCurrentlyStuck());
     Logger.recordOutput("Wrist/isStuck", isCurrentlyStuck());
     Logger.recordOutput("Wrist/isStalled", isCurrentlyStalled);
@@ -83,6 +86,8 @@ public class Wrist extends SubsystemBase {
     // output = 0;
     if (manualVoltage != null) {
       Logger.recordOutput("Wrist/manualVoltage", manualVoltage);
+      pid.reset(getAngle().getRadians(), getVelocity());
+      pid.setGoal(getAngle().getRadians());
       output = manualVoltage;
       manualVoltage = null;
     }
@@ -225,6 +230,7 @@ public class Wrist extends SubsystemBase {
   }
 
   private boolean isCurrentlyStuck() {
-    return (Math.abs(getVelocity()) < WRIST_STALL_VELOCITY_THRESHOLD) && wrist.getAppliedOutput() > 0.05;
+    // return (Math.abs(getVelocity()) < WRIST_STALL_VELOCITY_THRESHOLD) && wrist.getAppliedOutput() > 0.05;
+    return false;
   }
 }

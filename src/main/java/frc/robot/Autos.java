@@ -29,11 +29,6 @@ public class Autos {
   AutoFactory factory;
   AutoChooser chooser;
 
-  String nameCenterReef = "Auto Center->Reef Routine";
-  String nameCenterReefAlgae = "Center->Reef->BARGE";
-  String nameLeftReefFeederReef = "Auto Left->Reef->Feeder->Reef Routine";
-  String nameRightReefFeederReef = "Auto Right->Reef->Feeder->Reef Routine";
-
   public Autos(Swerve swerve, Superstructure superstructure, Intake intake) {
     this.swerve = swerve;
     this.superstructure = superstructure;
@@ -75,10 +70,9 @@ public class Autos {
     }));
 
     chooser = new AutoChooser();
-    chooser.addRoutine(nameCenterReef, this::centerReef);
-    chooser.addRoutine(nameCenterReefAlgae, this::centerReefAlgae);
-    chooser.addRoutine(nameLeftReefFeederReef, this::leftReefFeederReef);
-    chooser.addRoutine(nameRightReefFeederReef, this::rightReefFeederReef);
+    chooser.addRoutine("Left 2 Coral", ()->{return twoCoral("LEFT_2C4");});
+    chooser.addRoutine("Right 2 Coral", ()->{return twoCoral("RIGHT_2C4");});
+    chooser.addRoutine("Center 1 Coral", ()->{return center1Coral();});
     SmartDashboard.putData("AutoChooser", chooser);
   }
 
@@ -100,9 +94,9 @@ public class Autos {
     return Commands.runOnce(() -> swerve.drive(new ChassisSpeeds()));
   }
 
-  public AutoRoutine centerReef() {
-    AutoRoutine routine = factory.newRoutine(nameCenterReef);
-    AutoTrajectory trajectory = routine.trajectory("center_reef");
+  public AutoRoutine center1Coral() {
+    AutoRoutine routine = factory.newRoutine("CENTER_1C4");
+    AutoTrajectory trajectory = routine.trajectory("CENTER_1C4");
 
     routine.active().onTrue(
       Commands.sequence(
@@ -129,7 +123,7 @@ public class Autos {
   }
 
   public AutoRoutine centerReefAlgae() {
-    AutoRoutine routine = factory.newRoutine(nameCenterReef);
+    AutoRoutine routine = factory.newRoutine("center_reef_algae");
     AutoTrajectory startToL4 = routine.trajectory("center_reef_algae", 0);
     AutoTrajectory L4ToPreAlgae = routine.trajectory("center_reef_algae", 1);
     AutoTrajectory L4ToAlgae = routine.trajectory("center_reef_algae", 2);
@@ -192,11 +186,11 @@ public class Autos {
     return routine;
   }
 
-  public AutoRoutine leftReefFeederReef() {
-    AutoRoutine routine = factory.newRoutine(nameRightReefFeederReef);
-    AutoTrajectory startToReef = routine.trajectory("left_reef_feeder_reef", 0);
-    AutoTrajectory reefToHP = routine.trajectory("left_reef_feeder_reef", 1);
-    AutoTrajectory HPToReef = routine.trajectory("left_reef_feeder_reef", 2);
+  public AutoRoutine twoCoral(String routineName) {
+    AutoRoutine routine = factory.newRoutine(routineName);
+    AutoTrajectory startToReef = routine.trajectory(routineName, 0);
+    AutoTrajectory reefToHP = routine.trajectory(routineName, 1);
+    AutoTrajectory HPToReef = routine.trajectory(routineName, 2);
 
     routine.active().onTrue(
       Commands.sequence(
@@ -210,9 +204,7 @@ public class Autos {
         stop(),
         AlignToPose.getAutoAlignCommand(swerve, swerve.vision).withTimeout(1.5),
         superstructure.waitUntilAtSetpoint(),
-        Commands.print("at setpoint"),
         stop(),
-        Commands.print("stopped"),
         outtakeCoral().withTimeout(2), // mostly for now as we do not have coral sim yet,
         reefToHP.cmd()
       )
@@ -222,6 +214,7 @@ public class Autos {
     reefToHP.done().onTrue(Commands.sequence(
       stop(),
       superstructure.waitUntilAtSetpoint(),
+      Commands.waitSeconds(1),
       HPToReef.cmd()
     ));
 
@@ -230,7 +223,6 @@ public class Autos {
         stop(),
         AlignToPose.getAutoAlignCommand(swerve, swerve.vision).withTimeout(1.5),
         superstructure.waitUntilAtSetpoint(),
-        Commands.print("so aligned rn"),
         stop(),
         outtakeCoral().withTimeout(2)
       )
@@ -238,50 +230,4 @@ public class Autos {
     
     return routine;
   }
-
-  public AutoRoutine rightReefFeederReef() {
-    AutoRoutine routine = factory.newRoutine(nameRightReefFeederReef);
-    AutoTrajectory startToReef = routine.trajectory("right_reef_feeder_reef", 0);
-    AutoTrajectory reefToHP = routine.trajectory("right_reef_feeder_reef", 1);
-    AutoTrajectory HPToReef = routine.trajectory("right_reef_feeder_reef", 2);
-
-    routine.active().onTrue(
-      Commands.sequence(
-        startToReef.resetOdometry(),
-        startToReef.cmd()
-      )
-    );
-
-    startToReef.done().onTrue(
-      Commands.sequence(
-        stop(),
-        superstructure.waitUntilAtSetpoint(),
-        AlignToPose.getAutoAlignCommand(swerve, swerve.vision).withTimeout(1),
-        stop(),
-        outtakeCoral().withTimeout(2), // mostly for now as we do not have coral sim yet,
-        superstructureGoTo(SuperstructurePosition.HP), 
-        reefToHP.cmd()
-      )
-    );
-
-    // we -could- hypothetically- wait until we have a game piece, but we could also just rely on pure HP skill
-    reefToHP.done().onTrue(Commands.sequence(
-      stop(),
-      superstructure.waitUntilAtSetpoint(),
-      HPToReef.cmd()
-    ));
-
-    HPToReef.done().onTrue(
-      Commands.sequence(
-        stop(),
-        superstructure.waitUntilAtSetpoint(),
-        AlignToPose.getAutoAlignCommand(swerve, swerve.vision).withTimeout(1),
-        stop(),
-        outtakeCoral().withTimeout(2)
-      )
-    );
-    
-    return routine;
-  }
-
 }

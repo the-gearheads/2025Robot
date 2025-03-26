@@ -210,8 +210,8 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
     // return Commands.runOnce(()->{swerve.vision.disable();}).andThen(autos.getAutonomousRoutine());
-    return autos.getAutonomousRoutine();
-    // return sysidAuto.get();
+    // return autos.getAutonomousRoutine();
+    return sysidAuto.get();
     // return Swerve.wheelRadiusCharacterization(swerve);
     // return Commands.runOnce(()->{swerve.vision.disable();}).andThen(new InstantCommand(()-> {swerve.setPose(new Pose2d(7.12387752532959 , 7.599511623382568, Rotation2d.kZero));})).andThen(swerve.run(() -> {swerve.drive(new ChassisSpeeds(0.5, 0, 0));}).withTimeout(7));
   }

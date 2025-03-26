@@ -10,14 +10,14 @@ public class WristConstants {
 
   public static final int WRIST_CURRENT_LIMIT = 30;
  
-  public static final double WRIST_GEAR_RATIO = 180.0/1.0;
+  public static final double WRIST_GEAR_RATIO = (80.0/1.0) * (2.25/1.0);
   public static final double WRIST_POS_FACTOR = (1.0/WRIST_GEAR_RATIO) * (2 * Math.PI);
   public static final double WRIST_VEL_FACTOR = ((1.0/WRIST_GEAR_RATIO) * (2 * Math.PI)) / 60;
   public static final double WRIST_ABS_POS_FACTOR = 2 * Math.PI;
   public static final double WRIST_ABS_VEL_FACTOR = (2 * Math.PI) / 60;
   
-  public static final double[] WRIST_PID = {6.3, 0, 0.3};
-  public static final ArmFeedforward WRIST_FF = new ArmFeedforward(0.28349, 0.191, 2.0501, 0.32273);
+  public static final double[] WRIST_PID = {6, 0, 0.5};
+  public static final ArmFeedforward WRIST_FF = new ArmFeedforward(0.125, 0.291, 1.2, 0.2);
   public static final double WRIST_FF_OFFSET_RAD = 1.4655;
   public static final Constraints WRIST_CONSTRAINTS = new Constraints(4, 3);
 
@@ -33,6 +33,6 @@ public class WristConstants {
   public static final double WRIST_MOI_EST = 2; // kg * m^2, VERY rough estimate from cad;
   public static final double WRIST_LENGTH = Units.inchesToMeters(17.0541);
 
-  public static final double WRIST_STALL_VELOCITY_THRESHOLD = Units.degreesToRadians(0.4);
+  public static final double WRIST_STALL_VELOCITY_THRESHOLD = Units.degreesToRadians(0.1);
   
 }
