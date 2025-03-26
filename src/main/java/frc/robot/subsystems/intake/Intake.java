@@ -2,6 +2,8 @@ package frc.robot.subsystems.intake;
 
 import static frc.robot.constants.IntakeConstants.*;
 
+import java.util.Set;
+
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
@@ -62,7 +64,13 @@ public class Intake extends SubsystemBase {
   }
 
   public Command runIntake() {
-    return run(() -> setVoltage(INTAKE_VOLTAGE)).until(this::hasGamePiece).andThen(Commands.waitSeconds(0.7));
+    return run(() -> setVoltage(INTAKE_VOLTAGE)).until(this::hasGamePiece).andThen(Commands.waitSeconds(0.1)).andThen(Commands.defer(() -> {
+      if(getGamePiece() == GamePiece.ALGAE) {
+        return Commands.waitSeconds(0.05);
+      } else {
+        return Commands.waitSeconds(0.5);
+      }
+    }, Set.of(this)));
   }
 
   @AutoLogOutput

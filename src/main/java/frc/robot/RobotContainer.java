@@ -146,9 +146,13 @@ public class RobotContainer {
           case ALGAE:
             return wrist.runOnce(() -> {
               if(superStructure.getClosestArmvatorPosition() == ArmvatorPosition.NET) {
-                wrist.setGoal(SuperstructurePosition.NET.wristAngle.minus(Rotation2d.fromDegrees(10))); // 40 -> 30deg
+                wrist.setGoal(SuperstructurePosition.NET.wristAngle.minus(Rotation2d.fromDegrees(25))); // 40 -> 30deg
               }
-            }).alongWith(intake.runOuttake(12));
+            }).alongWith(pivot.run(()->{
+              pivot.setMode(RunMode.PROFILED_PID);
+              pivot.setGoalAngle(Rotation2d.fromDegrees(85));
+            }))
+            .alongWith(intake.runOuttake(12));
           default:
             return intake.runOuttake(12);
         }

@@ -26,7 +26,7 @@ public class WristConstants {
   public static final double MIN_SYSID_ANGLE = Units.degreesToRadians(-69);
   public static final double MAX_SYSID_ANGLE = Units.degreesToRadians(105);
 
-  public static final double WRIST_ANGLE_TOLERANCE = Units.degreesToRadians(1);
+  public static final double WRIST_ANGLE_TOLERANCE = Units.degreesToRadians(2.352);
   public static final double WRIST_ESCAPE_ANGLE_TOLERANCE = Units.degreesToRadians(3); // before running superstrcuture positions
 
   // all for sim

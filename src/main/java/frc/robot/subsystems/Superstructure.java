@@ -36,7 +36,8 @@ public class Superstructure {
   
   HashMap<ArmvatorPosition, Double[]> wristSafeExitAngles = new HashMap<>();
 
-  ArmvatorSample lastSample;
+  ArmvatorSample lastSample = new ArmvatorSample(0, 0, 0, 0, 0, 0, 0, 0);
+  ArmvatorTrajectory lastTraj = new ArmvatorTrajectory("Aaa", List.of());
   public Superstructure(Pivot pivot, Telescope telescope, Wrist wrist) {
     this.pivot = pivot;
     this.telescope = telescope;
@@ -59,7 +60,12 @@ public class Superstructure {
   
   @AutoLogOutput
   private boolean atPidEndSetpoint() {
-    return pivot.atPidSetpoint() && telescope.atPidSetpoint();
+    boolean atSetpoint = pivot.atPidSetpoint() && telescope.atPidSetpoint() && wrist.atPidSetpoint();
+    if(pivot.getMode() == RunMode.TRAJECTORY) {
+      boolean atEnd = getLastSample().t() >= lastTraj.getDuration();
+      return atSetpoint && atEnd;
+    }
+    return atSetpoint;
   }
 
   @AutoLogOutput
@@ -85,7 +91,7 @@ public class Superstructure {
           pos.name(),
           List.of(new ArmvatorSample(0, 0, pivotAngle, 0, elevatorLength, 0, 0, 0))
           );
-        }
+      }
         Logger.recordOutput("Superstructure/goToFrom", currentPos);
         Logger.recordOutput("Superstructure/goToTo", pos);
         
@@ -100,6 +106,7 @@ public class Superstructure {
           }
         }
 
+        lastTraj = traj;
         return wristMoveCommand.andThen(new ParallelDeadlineGroup(
           followAvTrajectory(traj),
           new WristTrajFollower(traj, pos, wrist, this::getLastSample)

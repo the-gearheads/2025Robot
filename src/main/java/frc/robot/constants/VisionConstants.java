@@ -16,6 +16,9 @@ public class VisionConstants {
   ;
   public static final String[] CAMERA_NAMES = { "FRONT_LEFT_2025",  "BACK_LEFT_2025", "BACK_RIGHT"};
 
+  public static double MAX_TAG_DIST = 2.7;
+  public static double MAX_TAG_AMBIGUITY = 0.3;
+
   public static final PoseStrategy[] INITAL_CAMERA_STRATEGIES = {PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR};
   public static final Transform3d[] CAMERA_TRANSFORMS = {
       new Transform3d(  // FRONT_LEFT_2025

@@ -174,6 +174,12 @@ public class Wrist extends SubsystemBase {
     return MathUtil.isNear(getAngle().getRadians(), angle.getRadians(), tolerance);
   }
 
+  @AutoLogOutput
+  public boolean atPidSetpoint() {
+    pid.setTolerance(WRIST_ANGLE_TOLERANCE);
+    return pid.atSetpoint();
+  }
+
   public boolean forwardSysidLimit() {
     return getAngle().getRadians() > MAX_SYSID_ANGLE;
   }

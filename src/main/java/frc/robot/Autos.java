@@ -1,7 +1,6 @@
 package frc.robot;
 
 import org.littletonrobotics.junction.Logger;
-import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 
 import choreo.auto.AutoChooser;
 import choreo.auto.AutoFactory;
@@ -150,8 +149,10 @@ public class Autos {
       Commands.sequence(
         stop(),
         Commands.print("test"),
-        superstructure.waitUntilAtSetpoint(),
-        intake.outtakeCoral(0.5).asProxy().withTimeout(2),
+        superstructure.waitUntilAtSetpoint().withTimeout(3),
+        Commands.print("tes2"),
+        outtakeCoral().withTimeout(2),
+        Commands.print("test3"),
         L4ToPreAlgae.cmd()
       )
     );
@@ -207,11 +208,12 @@ public class Autos {
     startToReef.done().onTrue(
       Commands.sequence(
         stop(),
+        AlignToPose.getAutoAlignCommand(swerve, swerve.vision).withTimeout(1.5),
         superstructure.waitUntilAtSetpoint(),
-        AlignToPose.getAutoAlignCommand(swerve, swerve.vision).withTimeout(1),
+        Commands.print("at setpoint"),
         stop(),
+        Commands.print("stopped"),
         outtakeCoral().withTimeout(2), // mostly for now as we do not have coral sim yet,
-        superstructureGoTo(SuperstructurePosition.HP),
         reefToHP.cmd()
       )
     );
@@ -226,8 +228,9 @@ public class Autos {
     HPToReef.done().onTrue(
       Commands.sequence(
         stop(),
+        AlignToPose.getAutoAlignCommand(swerve, swerve.vision).withTimeout(1.5),
         superstructure.waitUntilAtSetpoint(),
-        AlignToPose.getAutoAlignCommand(swerve, swerve.vision).withTimeout(1),
+        Commands.print("so aligned rn"),
         stop(),
         outtakeCoral().withTimeout(2)
       )
