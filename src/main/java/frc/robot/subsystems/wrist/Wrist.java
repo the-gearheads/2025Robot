@@ -61,7 +61,6 @@ public class Wrist extends SubsystemBase {
 
   @Override
   public void periodic() {
-
     isCurrentlyStalled = stallDebouncer.calculate(isCurrentlyStuck());
     Logger.recordOutput("Wrist/isStuck", isCurrentlyStuck());
     Logger.recordOutput("Wrist/isStalled", isCurrentlyStalled);
@@ -153,8 +152,17 @@ public class Wrist extends SubsystemBase {
     return wristAbsEncoder.getVelocity();
   }
 
+  @AutoLogOutput
+  double syncFailedZeroCount = 0;
+
   public void syncIntegratedEncoder() {
-    wristEncoder.setPosition(wristAbsEncoder.getPosition());
+    double absPos = wristAbsEncoder.getPosition();
+    if (MathUtil.isNear(0, absPos, 1e-4)) {
+      // (╥_╥) can errors
+      syncFailedZeroCount++;
+      return;
+    }
+    wristEncoder.setPosition(absPos);
   }
 
   public void setGoal(Rotation2d angle) {
