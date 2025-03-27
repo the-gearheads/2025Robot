@@ -80,39 +80,31 @@ public class Superstructure {
   public Command goTo(SuperstructurePosition pos) {
     return Commands.defer(()-> {
       var currentPos = ArmvatorPosition.getNearest(getEndEffPos());
-      ArmvatorTrajectory traj;
-      if (currentPos != pos.armvatorPosition) {
-        traj = ArmvatorTrajectory.load(currentPos, pos.armvatorPosition);
-      } else {
-        var targetEndeffPos = currentPos.endeffPos;
-        var elevatorLength = targetEndeffPos.getNorm();
-        var pivotAngle = Math.atan2(targetEndeffPos.getY(), targetEndeffPos.getX());
-        traj = new ArmvatorTrajectory(
-          pos.name(),
-          List.of(new ArmvatorSample(0, 0, pivotAngle, 0, elevatorLength, 0, 0, 0))
-          );
-      }
-        Logger.recordOutput("Superstructure/goToFrom", currentPos);
-        Logger.recordOutput("Superstructure/goToTo", pos);
-        
-        // check if wrist needs to move:
-        Command wristMoveCommand = Commands.none();
-        if (wristSafeExitAngles.containsKey(currentPos)) {
-          Double[] safeAngles = wristSafeExitAngles.get(currentPos);
-          if (wrist.getAngle().getRadians() < safeAngles[0]) {
-            wristMoveCommand = wrist.goTo(Rotation2d.fromRadians(safeAngles[0]), WRIST_ESCAPE_ANGLE_TOLERANCE);
-          } else if (wrist.getAngle().getRadians() > safeAngles[1]) {
-            wristMoveCommand = wrist.goTo(Rotation2d.fromRadians(safeAngles[1]), WRIST_ESCAPE_ANGLE_TOLERANCE);
-          }
-        }
+      var targetEndeffPos = currentPos.endeffPos;
+      var elevatorLength = targetEndeffPos.getNorm();
+      var pivotAngle = Math.atan2(targetEndeffPos.getY(), targetEndeffPos.getX());
 
-        lastTraj = traj;
-        return wristMoveCommand.andThen(new ParallelDeadlineGroup(
-          followAvTrajectory(traj),
-          new WristTrajFollower(traj, pos, wrist, this::getLastSample)
-        ));
-      }, Set.of(pivot, telescope, wrist));
-    }
+      Logger.recordOutput("Superstructure/goToFrom", currentPos);
+      Logger.recordOutput("Superstructure/goToTo", pos);
+        
+      // check if wrist needs to move:
+      Command wristMoveCommand = Commands.none();
+      if (wristSafeExitAngles.containsKey(currentPos)) {
+        Double[] safeAngles = wristSafeExitAngles.get(currentPos);
+        if (wrist.getAngle().getRadians() < safeAngles[0]) {
+          wristMoveCommand = wrist.goTo(Rotation2d.fromRadians(safeAngles[0]), WRIST_ESCAPE_ANGLE_TOLERANCE);
+        } else if (wrist.getAngle().getRadians() > safeAngles[1]) {
+          wristMoveCommand = wrist.goTo(Rotation2d.fromRadians(safeAngles[1]), WRIST_ESCAPE_ANGLE_TOLERANCE);
+        }
+      }
+
+      return wristMoveCommand.andThen(Commands.sequence(
+        pivot.runOnce(()->{pivot.setMode(RunMode.PROFILED_PID); pivot.setGoalAngle(pivotAngle);}),
+        telescope.runOnce(()->{telescope.setMode(RunMode.PROFILED_PID); telescope.setGoalPosition(elevatorLength);}),
+        wrist.runOnce(()->{wrist.setGoal(pos.wristAngle);})
+      ));
+    }, Set.of(pivot, telescope, wrist));
+  }
     
     @AutoLogOutput
     public Translation2d getEndEffPos() {
