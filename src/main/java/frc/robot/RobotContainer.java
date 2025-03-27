@@ -197,7 +197,7 @@ public class RobotContainer {
     
     Controllers.operatorController.getBtn42().onTrue(new InstantCommand(()-> {swerve.setPose(new Pose2d(7.12387752532959 , 7.599511623382568, Rotation2d.kZero));}));
 
-    Controllers.operatorController.getBtn31().onTrue(Commands.runOnce(wrist::syncIntegratedEncoder));
+    Controllers.operatorController.getBtn31().onTrue(Commands.runOnce(wrist::syncIntegratedEncoder).andThen(Commands.runOnce(pivot::syncIntegratedEncoder)));
 
     // Controllers.driverController.getLeftBumper().whileTrue(new AlignToPose(swerve, tracker::getCoralObjective));
   }

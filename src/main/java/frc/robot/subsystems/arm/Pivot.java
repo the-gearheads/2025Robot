@@ -68,7 +68,7 @@ public class Pivot extends SubsystemBase {
   public void periodic() {
 
     if(DriverStation.isDisabled()) {
-      pivotRelEnc.setPosition(getAbsAngle().getRadians());
+      syncIntegratedEncoder();
     }
 
     double pidOutput = 0, ff = 0;
@@ -134,6 +134,10 @@ public class Pivot extends SubsystemBase {
 
     Logger.recordOutput("Pivot/output", output);
     setMotorVoltage(output);
+  }
+
+  public void syncIntegratedEncoder() {
+    pivotRelEnc.setPosition(getAbsAngle().getRadians());
   }
 
   public void configure() {
