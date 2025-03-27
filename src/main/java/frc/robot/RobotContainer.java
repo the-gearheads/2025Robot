@@ -225,5 +225,6 @@ public class RobotContainer {
     telescope.setBrakeCoast(willBrake);
     swerve.setBrakeCoast(willBrake);
     wrist.setBrakeCoast(willBrake);
+    intake.setBrakeCoast(willBrake);
   }
 }

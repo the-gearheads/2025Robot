@@ -148,4 +148,14 @@ public class Intake extends SubsystemBase {
   public boolean doesntHaveGamePiece() {
     return getGamePiece() == GamePiece.EMPTY;
   }
+
+  
+  public void setBrakeCoast(boolean willBrake) {
+    intake.setCANTimeout(250);
+    intakeConfig.idleMode(willBrake ? IdleMode.kBrake : IdleMode.kCoast);
+    intake.configureAsync(intakeConfig, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
+    
+    intake.setCANTimeout(0);
+    Logger.recordOutput("Wrist/isBraken", willBrake);
+  }
 }
