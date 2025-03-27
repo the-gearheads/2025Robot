@@ -85,6 +85,10 @@ public class Autos {
     return intake.outtakeCoral().asProxy();
   }
 
+  private Command waitForCoral() {
+    return Commands.waitUntil(intake::hasGamePiece).asProxy();
+  }
+
   /* Go to a superstructure position, proxied such that we don't have self-cancelling autons */
   private Command superstructureGoTo(SuperstructurePosition pos) {
     return superstructure.goTo(pos).asProxy();
@@ -214,7 +218,7 @@ public class Autos {
     reefToHP.done().onTrue(Commands.sequence(
       stop(),
       superstructure.waitUntilAtSetpoint(),
-      Commands.waitSeconds(1),
+      waitForCoral().withTimeout(3),
       HPToReef.cmd()
     ));
 
