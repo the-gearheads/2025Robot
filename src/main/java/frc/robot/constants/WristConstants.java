@@ -17,7 +17,7 @@ public class WristConstants {
   public static final double WRIST_ABS_POS_FACTOR = 2 * Math.PI;
   public static final double WRIST_ABS_VEL_FACTOR = (2 * Math.PI) / 60;
   
-  public static final double[] WRIST_PID = {6, 0, 0.2};
+  public static final double[] WRIST_PID = {8, 0, 0.2};
   public static final ArmFeedforward WRIST_FF = new ArmFeedforward(0.125, 0.291, 1.2, 0.2);
   public static final double WRIST_FF_OFFSET_RAD = 1.4655;
   public static final Constraints WRIST_CONSTRAINTS = new Constraints(4, 3);
