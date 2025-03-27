@@ -10,7 +10,7 @@ public class WristConstants {
 
   public static final int WRIST_CURRENT_LIMIT = 30;
  
-  public static final double WRIST_GEAR_RATIO = (69.0/1.0) * (2.25/1.0);
+  public static final double WRIST_GEAR_RATIO = (69.0/1.0) * (2.25/1.0); // ?????????
   // public static final double WRIST_GEAR_RATIO = 129.2;
   public static final double WRIST_POS_FACTOR = (1.0/WRIST_GEAR_RATIO) * (2 * Math.PI);
   public static final double WRIST_VEL_FACTOR = ((1.0/WRIST_GEAR_RATIO) * (2 * Math.PI)) / 60;

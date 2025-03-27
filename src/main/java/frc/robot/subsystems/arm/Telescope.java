@@ -135,24 +135,29 @@ public class Telescope extends SubsystemBase {
     Logger.recordOutput("Telescope/manualVoltage", manualVoltage);
     Logger.recordOutput("Telescope/isHomed", isHomed);
 
+    Logger.recordOutput("Telescope/NoOutputReason", "");
+
     // stops robot from runnign into itself
     if (output > 0 && (!isHomed || getExtension() > MAX_RELATIVE_HEIGHT)) {
       output = 0;
+      Logger.recordOutput("Telescope/NoOutputReason", "Not homed or too far up, +attempted");
     }
 
     if (isHomed == true && (output < 0 && getExtension() < MIN_RELATIVE_HEIGHT)) {
       output = 0;
+      Logger.recordOutput("Telescope/NoOutputReason", "homed, too far down -attempted");
     }
 
     if (!isHomed) output = MathUtil.clamp(output, -2, 2);
 
     if (mode == RunMode.PROFILED_PID) {
       if (profiledPid.getSetpoint().position < MIN_RELATIVE_HEIGHT || profiledPid.getSetpoint().position > MAX_RELATIVE_HEIGHT) {
-        output = 0;
+        Logger.recordOutput("Telescope/prof pid setpoint too high", "profiled pid setpoint too high");
         // Might as well just get as close as we can
-        if (profiledPid.getGoal().position < MIN_RELATIVE_HEIGHT || profiledPid.getGoal().position > MAX_RELATIVE_HEIGHT) {
-          profiledPid.setGoal(MathUtil.clamp(profiledPid.getGoal().position, MIN_RELATIVE_HEIGHT, MAX_RELATIVE_HEIGHT));
-        }
+        // dont even work lmao
+        // if (profiledPid.getGoal().position < MIN_RELATIVE_HEIGHT || profiledPid.getGoal().position > MAX_RELATIVE_HEIGHT) {
+        //   profiledPid.setGoal(MathUtil.clamp(profiledPid.getGoal().position, MIN_RELATIVE_HEIGHT, MAX_RELATIVE_HEIGHT));
+        // }
       }
     }
 

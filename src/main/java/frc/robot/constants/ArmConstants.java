@@ -10,7 +10,7 @@ public final class ArmConstants {
   public static final int PIVOT_MOTOR_FOLLOWER_ID = 10;
   public static final int PIVOT_ABS_ENCODER_ID = 2;
 
-  public static final double PIVOT_GEAR_RATIO = 500.0/1.0;
+  public static final double PIVOT_GEAR_RATIO = 485.0/1.0; // empirically determined ????
   public static final double PIVOT_POS_FACTOR = (1.0 / PIVOT_GEAR_RATIO) * 2 * Math.PI;
   public static final double PIVOT_VEL_FACTOR = ((1.0 / PIVOT_GEAR_RATIO) * 2 * Math.PI) / 60;  // Rad per Sec
   public static final double PIVOT_ABS_ENCODER_OFFSET = (Math.PI / 2);

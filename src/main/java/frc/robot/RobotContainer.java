@@ -146,7 +146,7 @@ public class RobotContainer {
           case ALGAE:
             return wrist.runOnce(() -> {
               if(superStructure.getClosestArmvatorPosition() == ArmvatorPosition.NET) {
-                wrist.setGoal(SuperstructurePosition.NET.wristAngle.minus(Rotation2d.fromDegrees(25))); // 40 -> 30deg
+                wrist.setGoal(SuperstructurePosition.NET.wristAngle.minus(Rotation2d.fromDegrees(50)));
               }
             }).alongWith(pivot.run(()->{
               pivot.setMode(RunMode.PROFILED_PID);
