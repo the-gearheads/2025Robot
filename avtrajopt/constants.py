@@ -14,7 +14,7 @@ endeff_x_min = -1e-6
 endeff_x_max = 40 * IN_TO_M
 endeff_y_min = 0
 
-elevator_max_accel = 3.1 # m/s^2
+elevator_max_accel = 1.3 # m/s^2
 pivot_max_accel = 3 # rad/s^2
 
 elevator_max_vel = 1.3
