@@ -108,7 +108,9 @@ public class Telescope extends SubsystemBase {
         break;
       case TRAJECTORY:
         ff = elevatorFeedforward.calculate(sample.elevatorVel(), sample.elevatorAccel());
-        pidOutput = pid.calculate(getExtension(), sample.elevatorLen()-MIN_ABSOLUTE_HEIGHT);
+        double setpoint = sample.elevatorLen()-MIN_ABSOLUTE_HEIGHT;
+        setpoint = MathUtil.clamp(setpoint, MIN_RELATIVE_HEIGHT, MAX_RELATIVE_HEIGHT);
+        pidOutput = pid.calculate(getExtension(), setpoint);
         break;
       case VOLTAGE:
         pidOutput = manualVoltage;
