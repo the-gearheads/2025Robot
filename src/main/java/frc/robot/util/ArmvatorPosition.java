@@ -34,4 +34,24 @@ public enum ArmvatorPosition {
     }
     return best;
   }
+
+  public static ArmvatorPosition getNearestStateSpace (Translation2d endeffPos) {
+    var currentElev = endeffPos.getNorm();
+    var currentPivot = Math.atan2(endeffPos.getY(), endeffPos.getX());
+    Translation2d elevPivotStateSpace = new Translation2d(currentElev, currentPivot);
+
+    ArmvatorPosition best = null;
+    double bestDist = Double.POSITIVE_INFINITY;
+    for (ArmvatorPosition pos : ArmvatorPosition.values()) {
+      var elevatorLength = pos.endeffPos.getNorm();
+      var pivotAngle = Math.atan2(pos.endeffPos.getY(), pos.endeffPos.getX());
+      Translation2d elevPivotStateSpacePos = new Translation2d(elevatorLength, pivotAngle);
+      double dist = elevPivotStateSpace.getDistance(elevPivotStateSpacePos);
+      if (dist < bestDist) {
+        best = pos;
+        bestDist = dist;
+      }
+    }
+    return best;
+  }
 }

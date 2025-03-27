@@ -126,8 +126,13 @@ public class Superstructure {
     }
     
     @AutoLogOutput
-    public ArmvatorPosition getClosestArmvatorPosition() {
+    public ArmvatorPosition getClosestArmvatorPositionEndeff() {
       return ArmvatorPosition.getNearest(getEndEffPos());
+    }
+
+    @AutoLogOutput
+    public ArmvatorPosition getClosestArmvatorPosition() {
+      return ArmvatorPosition.getNearestStateSpace(getEndEffPos());
     }
 
     public Command waitUntilAtSetpoint() {
