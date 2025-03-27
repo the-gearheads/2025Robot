@@ -203,6 +203,10 @@ public class Telescope extends SubsystemBase {
     return elevatorEncoder.getPosition();
   }
 
+  public Command deHome() {
+    return runOnce(()->{isHomed = false;});
+  }
+
   @AutoLogOutput
   public double getTargetLength() {
     if (mode == RunMode.TRAJECTORY) {
