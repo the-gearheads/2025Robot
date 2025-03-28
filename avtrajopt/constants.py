@@ -17,7 +17,7 @@ endeff_y_min = 0
 elevator_max_accel = 1.3 # m/s^2
 pivot_max_accel = 3 # rad/s^2
 
-elevator_max_vel = 1.3
+elevator_max_vel = 0.9
 pivot_max_vel = 1.3
 
 def pivot_accel_scaling(elevator_length):

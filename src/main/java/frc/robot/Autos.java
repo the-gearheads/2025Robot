@@ -208,8 +208,8 @@ public class Autos {
         stop(),
         AlignToPose.getAutoAlignCommand(swerve, swerve.vision).withTimeout(1.5),
         superstructure.waitUntilAtSetpoint(),
-        stop(),
-        outtakeCoral().withTimeout(2), // mostly for now as we do not have coral sim yet,
+        stop().withTimeout(0.5),
+        outtakeCoral().withTimeout(1), // mostly for now as we do not have coral sim yet,
         reefToHP.cmd()
       )
     );
