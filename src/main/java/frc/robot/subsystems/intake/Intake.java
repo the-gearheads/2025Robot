@@ -39,6 +39,9 @@ public class Intake extends SubsystemBase {
     Logger.recordOutput("Intake/Color/Hue", canandcolor.getHSVHue());
     Logger.recordOutput("Intake/Color/Saturation", canandcolor.getHSVSaturation());
     Logger.recordOutput("Intake/Color/Value", canandcolor.getHSVValue());
+    Logger.recordOutput("Intake/Color/Faults", canandcolor.getActiveFaults());
+    Logger.recordOutput("Intake/Color/StickyFaults", canandcolor.getStickyFaults());
+    Logger.recordOutput("Intake/Color/Connected", canandcolor.isConnected(1));
   }
 
   @AutoLogOutput
@@ -56,6 +59,8 @@ public class Intake extends SubsystemBase {
 
     intake.configure(intakeConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
     intake.setCANTimeout(0);
+
+    canandcolor.clearStickyFaults();
   }
 
   public void setVoltage(double volts) {
