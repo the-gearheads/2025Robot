@@ -226,8 +226,7 @@ public class Autos {
       Commands.sequence(
         stop(),
         AlignToPose.getAutoAlignCommand(swerve, swerve.vision).withTimeout(1.5),
-        superstructure.waitUntilAtSetpoint(),
-        stop(),
+        Commands.deadline(superstructure.waitUntilAtSetpoint(), AlignToPose.getAutoAlignCommand(swerve, swerve.vision)),
         outtakeCoral().withTimeout(2)
       )
     );
