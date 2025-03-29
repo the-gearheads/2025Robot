@@ -10,7 +10,9 @@ import static frc.robot.constants.VisionConstants.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.littletonrobotics.junction.AutoLog;
 import org.littletonrobotics.junction.Logger;
+import org.littletonrobotics.junction.inputs.LoggableInputs;
 import org.littletonrobotics.junction.networktables.LoggedNetworkNumber;
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
@@ -103,14 +105,17 @@ public class Camera {
       return Optional.empty();
     }
 
+    double totalDist = 0;
     for (var target : estimatedPose.targetsUsed) {
-      if (target.bestCameraToTarget.getTranslation().getNorm() > MAX_TAG_DIST) {
-        return Optional.empty();
-      }
+      totalDist += target.bestCameraToTarget.getTranslation().getNorm();
       if(target.getPoseAmbiguity() > MAX_TAG_AMBIGUITY) {
         return Optional.empty();
       }
     }
+    double averageDist = totalDist / estimatedPose.targetsUsed.size();
+    if (averageDist > MAX_AVG_DIST) {
+      return Optional.empty();
+    } 
 
     // advantagekit viz stuff
     ArrayList<Pose3d> allTagPoses = new ArrayList<>();
