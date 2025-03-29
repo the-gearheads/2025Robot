@@ -10,9 +10,7 @@ import static frc.robot.constants.VisionConstants.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.littletonrobotics.junction.AutoLog;
 import org.littletonrobotics.junction.Logger;
-import org.littletonrobotics.junction.inputs.LoggableInputs;
 import org.littletonrobotics.junction.networktables.LoggedNetworkNumber;
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
@@ -145,6 +143,7 @@ public class Camera {
   }
 
   public List<VisionObservations> getObservations(SwerveDrivePoseEstimator poseEstimator, Rotation2d gyroOffset) {
+    boolean posedUnfiltered = false;
     Logger.recordOutput(path + "/isDisabled", isDisabled());
     if(disabled) {
       return List.of();
@@ -178,10 +177,18 @@ public class Camera {
       EstimatedRobotPose pose = poseResult.get();
 
       Logger.recordOutput(path + "/EstPoseUnfiltered", pose.estimatedPose);
+      posedUnfiltered = true;
+
       Optional<Pose3d> filteredPose = filterPose(pose);
       if (filteredPose.isEmpty())
         continue;
-
+      
+      int[] targetsUsed = new int[pose.targetsUsed.size()];
+      for(int i = 0; i < pose.targetsUsed.size(); i++) {
+        targetsUsed[i] = pose.targetsUsed.get(i).getFiducialId();
+      }
+      Logger.recordOutput(path + "/TargetsUsed", targetsUsed);
+  
 
       // calculate stddevs
       int numTargets = pose.targetsUsed.size();
@@ -221,8 +228,11 @@ public class Camera {
       Logger.recordOutput(path + "/NumTargets", 0);
       Logger.recordOutput(path + "/AvgTagDist", -1d);
       Logger.recordOutput(path + "/EstPose", new Pose3d(new Translation3d(-100, -100, -100), new Rotation3d()));
-      Logger.recordOutput(path + "/EstPoseUnfiltered", new Pose3d(new Translation3d(-100, -100, -100), new Rotation3d()));
+      if(!posedUnfiltered) {
+        Logger.recordOutput(path + "/EstPoseUnfiltered", new Pose3d(new Translation3d(-100, -100, -100), new Rotation3d()));
+      }
       Logger.recordOutput(path + "/TagPoses", new Pose3d[0]);
+      Logger.recordOutput(path + "/TargetsUsed", new int[0]);
       return List.of();
     }
 
@@ -239,7 +249,7 @@ public class Camera {
     properties.setCalibError(0.02, 0.05);
     // Set the camera image capture framerate (Note: this is limited by robot loop
     // rate).
-    properties.setFPS(30);
+    properties.setFPS(60);
     // The average and standard deviation in milliseconds of image data latency.
     properties.setAvgLatencyMs(35);
     properties.setLatencyStdDevMs(7);
