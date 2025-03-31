@@ -144,7 +144,7 @@ public class Wrist extends SubsystemBase {
 
   @AutoLogOutput
   public Rotation2d getTargetAngle() {
-    return Rotation2d.fromRadians(pid.getGoal().position);
+    return Rotation2d.fromRadians(pid.getSetpoint().position);
   }
 
   @AutoLogOutput
