@@ -8,7 +8,7 @@ import edu.wpi.first.math.util.Units;
 public class WristConstants {
   public static final int WRIST_PIVOT_ID = 36;
 
-  public static final int WRIST_CURRENT_LIMIT = 30;
+  public static final int WRIST_CURRENT_LIMIT = 20;
  
   public static final double WRIST_GEAR_RATIO = (69.0/1.0) * (2.25/1.0); // ?????????
   // public static final double WRIST_GEAR_RATIO = 129.2;
@@ -20,7 +20,7 @@ public class WristConstants {
   public static final double[] WRIST_PID = {8, 0, 0.2};
   public static final ArmFeedforward WRIST_FF = new ArmFeedforward(0.125, 0.291, 1.2, 0.2);
   public static final double WRIST_FF_OFFSET_RAD = 1.4655;
-  public static final Constraints WRIST_CONSTRAINTS = new Constraints(4, 3);
+  public static final Constraints WRIST_CONSTRAINTS = new Constraints(6, 12);
 
   public static final double MIN_WRIST_ANGLE = Units.degreesToRadians(-80);
   public static final double MAX_WRIST_ANGLE = Units.degreesToRadians(120);
