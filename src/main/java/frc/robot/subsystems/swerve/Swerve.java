@@ -46,7 +46,7 @@ import frc.robot.util.ObjectiveTracker;
 public class Swerve extends SubsystemBase {
 
   static final Lock odometryLock = new ReentrantLock();
-  SwerveDriveKinematics kinematics = new SwerveDriveKinematics(WHEEL_POSITIONS);
+  public SwerveDriveKinematics kinematics = new SwerveDriveKinematics(WHEEL_POSITIONS);
   SwerveDrivePoseEstimator multitagPoseEstimator;
   SwerveDriveOdometry wheelOdometry;
   Field2d field = new Field2d();

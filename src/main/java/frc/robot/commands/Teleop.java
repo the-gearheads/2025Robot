@@ -2,14 +2,22 @@ package frc.robot.commands;
 
 import static frc.robot.constants.MiscConstants.AUTO_ALIGN_ANGLE_THRESHOLD;
 import static frc.robot.constants.MiscConstants.AUTO_ALIGN_DIST_THRESHOLD;
+import static frc.robot.constants.SwerveConstants.DRIVE_FEEDFORWARD;
 import static frc.robot.constants.SwerveConstants.MAX_ROBOT_TRANS_SPEED;
 
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.Pair;
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.controller.ImplicitModelFollower;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.system.LinearSystem;
+import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -93,7 +101,39 @@ public class Teleop extends Command {
         ChassisSpeeds driverSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(new ChassisSpeeds(xSpeed, ySpeed, rotSpeed), fieldAdjustedRobotRot);
         finalSpeeds = driverSpeeds;
     }
-
+    finalSpeeds = implicitModelFollowing(finalSpeeds); // man this is gonna mess with autoalign but here goesssss
+    // swerve.drive(new ChassisSpeeds(1,1, 0));
     swerve.drive(finalSpeeds);
+  }
+
+  SimpleMotorFeedforward desiredFF = new SimpleMotorFeedforward(0, DRIVE_FEEDFORWARD.getKv(), DRIVE_FEEDFORWARD.getKa() * 0.5);
+
+  LinearSystem<N1, N1, N1> currentSystem = LinearSystemId.identifyVelocitySystem(DRIVE_FEEDFORWARD.getKv(), DRIVE_FEEDFORWARD.getKa());
+  LinearSystem<N1, N1, N1> desiredSystem = LinearSystemId.identifyVelocitySystem(desiredFF.getKv(), desiredFF.getKa());
+
+  @SuppressWarnings("unchecked")
+  ImplicitModelFollower<N1, N1, N1>[] followers = new ImplicitModelFollower[] {
+    new ImplicitModelFollower<>(currentSystem, desiredSystem),
+    new ImplicitModelFollower<>(currentSystem, desiredSystem),
+    new ImplicitModelFollower<>(currentSystem, desiredSystem),
+    new ImplicitModelFollower<>(currentSystem, desiredSystem)
+  };
+  public ChassisSpeeds implicitModelFollowing(ChassisSpeeds desiredSpeeds) {
+    var modStates = swerve.getModuleStates();
+
+    var rot = swerve.getPose().getRotation();
+
+    if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red) {
+      rot = rot.rotateBy(Rotation2d.fromDegrees(180));
+    }
+
+    var desiredRobotSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(desiredSpeeds, rot);
+
+    SwerveModuleState[] states = swerve.kinematics.toSwerveModuleStates(desiredRobotSpeeds);
+    for (int i = 0; i < 4; i++) {
+      states[i].speedMetersPerSecond = followers[i].calculate(VecBuilder.fill(modStates[i].speedMetersPerSecond), VecBuilder.fill(desiredFF.calculate(states[i].speedMetersPerSecond))).get(0, 0);
+    }
+
+    return swerve.kinematics.toChassisSpeeds(states);
   }
 }
