@@ -49,21 +49,13 @@ public class Superstructure {
     telescope.setPivotAngleRadSupplier(pivot::getAngleRad);
   }
   
-  private void followSample(ArmvatorSample sample, boolean profiled) {
+  private void followSample(ArmvatorSample sample) {
     Logger.recordOutput("Superstructure/Sample", sample);
-    if(!profiled) {
-      pivot.setMode(RunMode.TRAJECTORY);
-      telescope.setMode(RunMode.TRAJECTORY);
-      pivot.setSample(sample); 
-      telescope.setSample(sample);
-      lastSample = sample;
-    } else {
-      // profiled mode
-      pivot.setMode(RunMode.PROFILED_PID);
-      telescope.setMode(RunMode.PROFILED_PID);
-      pivot.setGoalAngle(sample.armPos());
-      telescope.setGoalPosition(sample.elevatorLen());
-    }
+    pivot.setMode(RunMode.TRAJECTORY);
+    telescope.setMode(RunMode.TRAJECTORY);
+    pivot.setSample(sample); 
+    telescope.setSample(sample);
+    lastSample = sample;
   }
   
   @AutoLogOutput

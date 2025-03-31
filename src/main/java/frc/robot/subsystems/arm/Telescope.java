@@ -123,7 +123,7 @@ public class Telescope extends SubsystemBase {
     double output = ff + pidOutput;
 
     if(mode != RunMode.PROFILED_PID || DriverStation.isDisabled()) {
-      profiledPid.reset(getExtension(), getVelocity());
+      profiledPid.reset(getExtension());
     } 
 
     if(mode != RunMode.TRAJECTORY || DriverStation.isDisabled()) {

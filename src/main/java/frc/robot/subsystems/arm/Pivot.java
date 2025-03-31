@@ -102,7 +102,7 @@ public class Pivot extends SubsystemBase {
     double output = pidOutput + ff;
 
     if(mode != RunMode.PROFILED_PID || DriverStation.isDisabled()) {
-      profiledPid.reset(getAngleRad(), getVelocity());
+      profiledPid.reset(getAngleRad());
     } 
 
     if(mode != RunMode.TRAJECTORY || DriverStation.isDisabled()) {

@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.BiConsumer;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 
@@ -92,16 +91,16 @@ public record ArmvatorTrajectory(String name, List<ArmvatorSample> samples) {
     return before.interpolate(after, t);
   }
   
-  public Command follow(BiConsumer<ArmvatorSample, Boolean> consumer, BooleanSupplier atSetpoint, boolean waitUntilAtStart, boolean waitUntilAtEnd, Subsystem... requirements) {
+  public Command follow(Consumer<ArmvatorSample> consumer, BooleanSupplier atSetpoint, boolean waitUntilAtStart, boolean waitUntilAtEnd, Subsystem... requirements) {
     return follow(consumer, atSetpoint, atSetpoint, waitUntilAtStart, waitUntilAtEnd, requirements);
   }
 
   // Follows an armvator trajectory, sampling periodically. Consumer is expected to actually do the following.
-  public Command follow(BiConsumer<ArmvatorSample, Boolean> consumer, BooleanSupplier atStartSetpoint, BooleanSupplier atEndSetpoint, boolean waitUntilAtStart, boolean waitUntilAtEnd, Subsystem... requirements) {
+  public Command follow(Consumer<ArmvatorSample> consumer, BooleanSupplier atStartSetpoint, BooleanSupplier atEndSetpoint, boolean waitUntilAtStart, boolean waitUntilAtEnd, Subsystem... requirements) {
     Timer timer = new Timer();
 
-    var gotoStartComamnd = Commands.run(() -> {consumer.accept(sampleAt(0), true);}, requirements).until(atStartSetpoint).withName("ArmTrajFollowerGotoStart " + name).withTimeout(0.7);
-    var waitUntilEndCommand = Commands.run(() -> {consumer.accept(sampleAt(getDuration()), true);}, requirements).until(atEndSetpoint).withName("ArmTrajFollowerWaitUntilEnd " + name).withTimeout(0.7);
+    var gotoStartComamnd = Commands.run(() -> {consumer.accept(sampleAt(0));}, requirements).until(atStartSetpoint).withName("ArmTrajFollowerGotoStart " + name).withTimeout(0.7);
+    var waitUntilEndCommand = Commands.run(() -> {consumer.accept(sampleAt(getDuration()));}, requirements).until(atEndSetpoint).withName("ArmTrajFollowerWaitUntilEnd " + name).withTimeout(0.7);
     var trajCommand = new FunctionalCommand(
       // On init
       () -> {
@@ -111,12 +110,12 @@ public record ArmvatorTrajectory(String name, List<ArmvatorSample> samples) {
       () -> {
         double t = timer.get();
         ArmvatorSample sample = sampleAt(t);
-        consumer.accept(sample, false);
+        consumer.accept(sample);
       },
       // On end
       end -> {
         // I think it might be possible to skip the final sample in the case of loop overruns? That'd be bad.
-        consumer.accept(getFinalSample(), false);
+        consumer.accept(getFinalSample());
         timer.stop();
         timer.reset();
       },
