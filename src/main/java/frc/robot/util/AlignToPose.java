@@ -3,6 +3,7 @@ package frc.robot.util;
 import static frc.robot.constants.MiscConstants.*;
 import static frc.robot.constants.SwerveConstants.ALIGNMENT_DRIVE_CONSTRAINTS;
 import static frc.robot.constants.SwerveConstants.ALIGNMENT_ROT_CONSTRAINTS;
+import static frc.robot.constants.VisionConstants.USE_2D_ALIGNMENT_MODE;
 
 import java.util.ArrayList;
 
@@ -146,13 +147,15 @@ public class AlignToPose {
   }
 
   public static void enableReefVision(Vision vision, Rotation2d gyroOffset, int nearestTagId) {
-    vision.setGyroOffset(gyroOffset);
-    vision.setCameraPreference(1);
-    vision.setPoseStrategy(1, PoseStrategy.PNP_DISTANCE_TRIG_SOLVE);
-    vision.setPoseStrategy(2, PoseStrategy.PNP_DISTANCE_TRIG_SOLVE);
-    vision.filterTagById(1, nearestTagId);
-    vision.filterTagById(2, nearestTagId);
-    vision.disableCamera(0);
+    if (USE_2D_ALIGNMENT_MODE) {
+      vision.setGyroOffset(gyroOffset);
+      vision.setCameraPreference(1);
+      vision.setPoseStrategy(1, PoseStrategy.PNP_DISTANCE_TRIG_SOLVE);
+      vision.setPoseStrategy(2, PoseStrategy.PNP_DISTANCE_TRIG_SOLVE);
+      vision.filterTagById(1, nearestTagId);
+      vision.filterTagById(2, nearestTagId);
+      vision.disableCamera(0);
+    }
   }
 
   public static void disableReefVision(Vision vision) {
