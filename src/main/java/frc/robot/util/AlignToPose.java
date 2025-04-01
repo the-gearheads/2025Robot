@@ -134,6 +134,20 @@ public class AlignToPose {
     return bestReefPose.getFirst();
   }
 
+  public static Command getAutoAlignEndsCommand(Swerve swerve, Vision vision) {
+    return swerve.run(() -> {
+      var speeds = getAutoAlignSpeeds(0.0, 0.0, swerve.getPose()).getFirst();
+      swerve.drive(speeds);
+    }).until(() -> {
+      return swerve.atPose(getCoralObjective(swerve.getPose(),0, 0));
+    }).finallyDo(()->{
+      vision.disableIdFiltering(1);
+      vision.disableIdFiltering(2);
+      vision.defaultPoseStrategies();
+      vision.enableCamera(0);
+    });
+  }
+
   public static Command getAutoAlignCommand(Swerve swerve, Vision vision) {
     return swerve.run(() -> {
       var speeds = getAutoAlignSpeeds(0.0, 0.0, swerve.getPose()).getFirst();

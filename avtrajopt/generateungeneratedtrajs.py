@@ -22,7 +22,7 @@ places = {
   "L1": {"pose": endeff_pos(0.0508, 42.1215), "vel": [0, 0]},
   "L2": {"pose": endeff_pos(0.125064, 51.503), "vel": [0, 0]},
   "L3": {"pose": endeff_pos(0.0497, 84.0), "vel": [0, 0]},
-  "L4": {"pose": endeff_pos(0.90657, 85), "vel": [0, 0]},
+  "L4": {"pose": endeff_pos(0.778, 85.5), "vel": [0, 0]},
   "AlgaeL3": {"pose": endeff_pos(0.13378, 90), "vel": [0, 0]},
   "AlgaeL2": {"pose": endeff_pos(0.31199, 48.69), "vel": [0, 0]},
   "HP": {"pose": endeff_pos(0.0508, 37.0), "vel": [0, 0]},

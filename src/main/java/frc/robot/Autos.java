@@ -82,7 +82,7 @@ public class Autos {
 
    /* Outtake Coral, proxied such that we don't have self-cancelling autons */
   private Command outtakeCoral() {
-    return intake.outtakeCoral().asProxy();
+    return intake.outtakeCoral(0.25).asProxy();
   }
 
   private Command waitForCoral() {
@@ -206,10 +206,9 @@ public class Autos {
     startToReef.done().onTrue(
       Commands.sequence(
         stop(),
-        AlignToPose.getAutoAlignCommand(swerve, swerve.vision).withTimeout(1.5),
-        superstructure.waitUntilAtSetpoint(),
-        stop().withTimeout(0.5),
-        outtakeCoral().withTimeout(1), // mostly for now as we do not have coral sim yet,
+        AlignToPose.getAutoAlignEndsCommand(swerve, swerve.vision).withTimeout(1.5),
+        Commands.deadline(superstructure.waitUntilAtSetpoint(), AlignToPose.getAutoAlignEndsCommand(swerve, swerve.vision)),
+        outtakeCoral(),
         reefToHP.cmd()
       )
     );
@@ -218,16 +217,16 @@ public class Autos {
     reefToHP.done().onTrue(Commands.sequence(
       stop(),
       superstructure.waitUntilAtSetpoint(),
-      waitForCoral().withTimeout(3),
+      waitForCoral().withTimeout(2),
       HPToReef.cmd()
     ));
 
     HPToReef.done().onTrue(
       Commands.sequence(
         stop(),
-        AlignToPose.getAutoAlignCommand(swerve, swerve.vision).withTimeout(1.5),
-        Commands.deadline(superstructure.waitUntilAtSetpoint(), AlignToPose.getAutoAlignCommand(swerve, swerve.vision)),
-        outtakeCoral().withTimeout(2)
+        AlignToPose.getAutoAlignEndsCommand(swerve, swerve.vision).withTimeout(1.5),
+        Commands.deadline(superstructure.waitUntilAtSetpoint(), AlignToPose.getAutoAlignEndsCommand(swerve, swerve.vision)),
+        outtakeCoral().withTimeout(1.0)
       )
     );
     

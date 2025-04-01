@@ -1,5 +1,7 @@
 package frc.robot.subsystems.swerve;
 
+import static frc.robot.constants.MiscConstants.SWERVE_ALIGN_DIST_TOLERANCE;
+import static frc.robot.constants.MiscConstants.SWERVE_ALIGN_ROT_TOLERANCE;
 import static frc.robot.constants.SwerveConstants.*;
 import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
@@ -263,6 +265,14 @@ public class Swerve extends SubsystemBase {
 
     Logger.recordOutput("Swerve/Traj/Sample", sample);
     driveFieldRelative(speeds);
+  }
+
+  public boolean atPose(Pose2d pose) {
+    if (getPose().getRotation().getRadians() - pose.getRotation().getRadians() > SWERVE_ALIGN_ROT_TOLERANCE &&
+        getPose().getTranslation().getDistance(pose.getTranslation()) > SWERVE_ALIGN_DIST_TOLERANCE) {
+      return true;
+    }
+    return false;
   }
 
 
