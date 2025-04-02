@@ -6,8 +6,13 @@ package frc.robot;
 
 
 
+import static frc.robot.constants.MiscConstants.AUTO_ALIGN_ENABLED;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -18,6 +23,7 @@ import frc.robot.commands.NTControl.PivotNTControl;
 import frc.robot.commands.NTControl.TelescopeNTControl;
 import frc.robot.commands.NTControl.WristNTControl;
 import frc.robot.constants.ArmConstants;
+import frc.robot.constants.VisionConstants;
 import frc.robot.controllers.Controllers;
 import frc.robot.subsystems.Leds;
 import frc.robot.subsystems.MechanismViz;
@@ -171,8 +177,9 @@ public class RobotContainer {
     Controllers.driverController.getPovUp().whileTrue(intake.runOuttake(6));
 
 
-    Controllers.operatorController.getBtn11().onTrue(Commands.runOnce(()->{swerve.vision.disable();}));
-    Controllers.operatorController.getBtn12().onTrue(Commands.runOnce(()->{swerve.vision.enable();}));
+    Controllers.operatorController.getBtn11().onTrue(Commands.runOnce(()->{AUTO_ALIGN_ENABLED = true;}));
+    Controllers.operatorController.getBtn12().onTrue(Commands.runOnce(()->{AUTO_ALIGN_ENABLED = false;}));
+    Controllers.operatorController.getBtn13().onTrue(Commands.runOnce(()->{VisionConstants.USE_2D_ALIGNMENT_MODE = true;}));
 
     Controllers.operatorController.getBtn21().whileTrue(intake.forceGamePiece(GamePiece.ALGAE));
     Controllers.operatorController.getBtn22().whileTrue(intake.forceGamePiece(GamePiece.CORAL));
@@ -195,10 +202,18 @@ public class RobotContainer {
         })).withInterruptBehavior(InterruptionBehavior.kCancelIncoming)
     );
     
-    Controllers.operatorController.getBtn42().onTrue(new InstantCommand(()-> {swerve.setPose(new Pose2d(7.12387752532959 , 7.599511623382568, Rotation2d.kZero));}));
+    Controllers.operatorController.getBtn41().onTrue(new InstantCommand(()-> {
+      if (DriverStation.getAlliance().get() == Alliance.Red) {
+        swerve.setPose(new Pose2d(new Translation2d(14.372, 14.372), Rotation2d.kZero));
+      } else {
+        swerve.setPose(new Pose2d(new Translation2d(3.174, 3.174), Rotation2d.k180deg));
+      }
+    }));
 
     Controllers.operatorController.getBtn31().onTrue(Commands.runOnce(wrist::syncIntegratedEncoder).andThen(Commands.runOnce(pivot::syncIntegratedEncoder)));
-    Controllers.operatorController.getBtn13().onTrue(telescope.deHome().andThen(telescope.homeIfNeeded()));
+    Controllers.operatorController.getBtn32().onTrue(telescope.deHome().andThen(telescope.homeIfNeeded()));
+    Controllers.operatorController.getBtn33().onTrue(Commands.runOnce(()->{VisionConstants.USE_2D_ALIGNMENT_MODE = false;}));
+
     // Controllers.driverController.getLeftBumper().whileTrue(new AlignToPose(swerve, tracker::getCoralObjective));
   }
 

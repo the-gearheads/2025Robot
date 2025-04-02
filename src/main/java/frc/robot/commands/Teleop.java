@@ -2,6 +2,7 @@ package frc.robot.commands;
 
 import static frc.robot.constants.MiscConstants.AUTO_ALIGN_ANGLE_THRESHOLD;
 import static frc.robot.constants.MiscConstants.AUTO_ALIGN_DIST_THRESHOLD;
+import static frc.robot.constants.MiscConstants.AUTO_ALIGN_ENABLED;
 import static frc.robot.constants.SwerveConstants.MAX_ROBOT_TRANS_SPEED;
 
 import org.littletonrobotics.junction.Logger;
@@ -75,7 +76,8 @@ public class Teleop extends Command {
             .getDistance(swerve.getPose().getTranslation()) < AUTO_ALIGN_DIST_THRESHOLD
             && Math.abs(currentCoralTarget.getRotation().minus(swerve.getPose().getRotation()).getRadians()) < AUTO_ALIGN_ANGLE_THRESHOLD
             && intake.getGamePiece() == GamePiece.CORAL
-            && !tracker.facingReef()) {
+            && !tracker.facingReef()
+            && AUTO_ALIGN_ENABLED) {
         int nearestTagId = ReefPositions.getClosestReefTagId(currentCoralTarget);
         Rotation2d gyroOffset = swerve.getPose().getRotation().minus(swerve.getPoseWheelsOnly().getRotation());
         Logger.recordOutput("AlignToPose/TeleopAligning", true);
