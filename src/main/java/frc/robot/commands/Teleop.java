@@ -14,6 +14,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.constants.VisionConstants;
 import frc.robot.controllers.Controllers;
 import frc.robot.subsystems.intake.GamePiece;
 import frc.robot.subsystems.intake.Intake;
@@ -71,7 +72,8 @@ public class Teleop extends Command {
 
     // decide whether to do autoalign
     Pose2d currentCoralTarget = AlignToPose.getCoralObjective(swerve.getPose(), x, y);
-    
+    Logger.recordOutput("AlignToPose/AlignmentEnabled", AUTO_ALIGN_ENABLED);
+    Logger.recordOutput("AlignToPose/2DAlignmentMode", VisionConstants.USE_2D_ALIGNMENT_MODE);
     if (currentCoralTarget.getTranslation()
             .getDistance(swerve.getPose().getTranslation()) < AUTO_ALIGN_DIST_THRESHOLD
             && Math.abs(currentCoralTarget.getRotation().minus(swerve.getPose().getRotation()).getRadians()) < AUTO_ALIGN_ANGLE_THRESHOLD
