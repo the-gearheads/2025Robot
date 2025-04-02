@@ -189,7 +189,7 @@ public class Pivot extends SubsystemBase {
   }
 
   @AutoLogOutput
-  public Rotation2d getTargetAngle() {
+  public Rotation2d getSetpointAngle() {
     if (mode == RunMode.PROFILED_PID) {
       return new Rotation2d(profiledPid.getSetpoint().position);
     } else if (mode == RunMode.TRAJECTORY) {
@@ -238,7 +238,7 @@ public class Pivot extends SubsystemBase {
   }
 
   @AutoLogOutput
-  public boolean atPidSetpoint() {
+  public boolean atPidGoal() {
     switch(mode) {
       case PROFILED_PID:
       profiledPid.setTolerance(PIVOT_ANGLE_TOLERANCE);
@@ -254,7 +254,7 @@ public class Pivot extends SubsystemBase {
   }
 
   @AutoLogOutput
-  public boolean atTrajStartSetpoint() {
+  public boolean atTrajStartGoal() {
     switch(mode) {
       case PROFILED_PID:
         profiledPid.setTolerance(PIVOT_ANGLE_TRAJ_STRT_TOLERANCE);

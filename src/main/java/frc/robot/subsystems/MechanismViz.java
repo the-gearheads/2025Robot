@@ -88,7 +88,7 @@ public class MechanismViz extends SubsystemBase {
     if(Robot.isReal()) return;
 
     Transform3d[] componentPoses = getComponentPosesFor(telescope.getExtension(), pivot.getAngle(), wrist.getAngle());
-    Transform3d[] setpointPoses = getComponentPosesFor(telescope.getTargetLength(), pivot.getTargetAngle(), wrist.getTargetAngle());
+    Transform3d[] setpointPoses = getComponentPosesFor(telescope.getGoalExtension(), pivot.getSetpointAngle(), wrist.getTargetAngle());
     Logger.recordOutput("MechanismViz/ComponentPoses", componentPoses);
     Logger.recordOutput("MechanismViz/SetpointPoses", setpointPoses);
 

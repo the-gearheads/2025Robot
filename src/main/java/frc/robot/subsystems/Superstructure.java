@@ -60,7 +60,7 @@ public class Superstructure {
   
   @AutoLogOutput
   private boolean atPidEndSetpoint() {
-    boolean atSetpoint = pivot.atPidSetpoint() && telescope.atPidSetpoint() && wrist.atPidSetpoint();
+    boolean atSetpoint = pivot.atPidGoal() && telescope.atPidGoal() && wrist.atPidSetpoint();
     if(pivot.getMode() == RunMode.TRAJECTORY) {
       boolean atEnd = getLastSample().t() >= lastTraj.getDuration();
       return atSetpoint && atEnd;
@@ -70,7 +70,7 @@ public class Superstructure {
 
   @AutoLogOutput
   private boolean atPidStartSetpoint() {
-    return pivot.atTrajStartSetpoint() && telescope.atPidSetpoint();
+    return pivot.atTrajStartGoal() && telescope.atPidGoal();
   }
   
   public Command followAvTrajectory(ArmvatorTrajectory traj) {   

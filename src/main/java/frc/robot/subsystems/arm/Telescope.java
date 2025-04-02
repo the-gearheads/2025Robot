@@ -178,6 +178,7 @@ public class Telescope extends SubsystemBase {
 
   public void setGoalPosition(double setpointLength) {
     profiledPid.setGoal(setpointLength);
+    pid.setSetpoint(setpointLength);
   }
 
   public void resetProfiledPidTo(double length) {
@@ -208,7 +209,7 @@ public class Telescope extends SubsystemBase {
   }
 
   @AutoLogOutput
-  public double getTargetLength() {
+  public double getGoalExtension() {
     if (mode == RunMode.TRAJECTORY) {
       return pid.getSetpoint();
     } else if (mode == RunMode.PROFILED_PID) {
@@ -233,7 +234,7 @@ public class Telescope extends SubsystemBase {
   }
 
   @AutoLogOutput
-  public boolean atPidSetpoint() {
+  public boolean atPidGoal() {
     switch(mode) {
       case PROFILED_PID:
         profiledPid.setTolerance(ELEVATOR_LENGTH_TOLERANCE);
