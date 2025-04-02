@@ -189,14 +189,19 @@ public class Pivot extends SubsystemBase {
   }
 
   @AutoLogOutput
-  public Rotation2d getSetpointAngle() {
+  public Rotation2d getGoalAngle() {
     if (mode == RunMode.PROFILED_PID) {
-      return new Rotation2d(profiledPid.getSetpoint().position);
+      return new Rotation2d(profiledPid.getGoal().position);
     } else if (mode == RunMode.TRAJECTORY) {
       return new Rotation2d(pid.getSetpoint());
     } else {
       return getAngle();
     }
+  }
+
+  @AutoLogOutput
+  public double getProfiliedPidSetpoint() {
+    return profiledPid.getSetpoint().position;
   }
 
   public void setGoalAngle(double angleRad) {

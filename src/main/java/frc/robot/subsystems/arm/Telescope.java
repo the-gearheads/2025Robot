@@ -220,6 +220,11 @@ public class Telescope extends SubsystemBase {
   }
 
   @AutoLogOutput
+  public double getProfiliedPidSetpoint() {
+    return profiledPid.getSetpoint().position;
+  }
+
+  @AutoLogOutput
   public double getTotalLength() {
     return getExtension() + MIN_ABSOLUTE_HEIGHT;
   }
