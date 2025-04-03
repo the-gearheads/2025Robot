@@ -99,8 +99,14 @@ public record ArmvatorTrajectory(String name, List<ArmvatorSample> samples) {
   public Command follow(Consumer<ArmvatorSample> consumer, BooleanSupplier atStartSetpoint, BooleanSupplier atEndSetpoint, boolean waitUntilAtStart, boolean waitUntilAtEnd, Subsystem... requirements) {
     Timer timer = new Timer();
 
-    var gotoStartComamnd = Commands.run(() -> {consumer.accept(sampleAt(0));}, requirements).until(atStartSetpoint).withName("ArmTrajFollowerGotoStart " + name).withTimeout(0.7);
-    var waitUntilEndCommand = Commands.run(() -> {consumer.accept(sampleAt(getDuration()));}, requirements).until(atEndSetpoint).withName("ArmTrajFollowerWaitUntilEnd " + name).withTimeout(0.7);
+    ArmvatorSample start = sampleAt(0);
+    ArmvatorSample end = sampleAt(getDuration());
+    // zero out vel and accel
+    final ArmvatorSample startWaitSample = new ArmvatorSample(start.t(), start.num(), start.armPos(), 0, start.elevatorLen(), 0, 0, 0);
+    final ArmvatorSample endWaitSample = new ArmvatorSample(end.t(), end.num(), end.armPos(), 0, end.elevatorLen(), 0, 0, 0);
+
+    var gotoStartComamnd = Commands.run(() -> {consumer.accept(startWaitSample);}, requirements).until(atStartSetpoint).withName("ArmTrajFollowerGotoStart " + name).withTimeout(0.7);
+    var waitUntilEndCommand = Commands.run(() -> {consumer.accept(endWaitSample);}, requirements).until(atEndSetpoint).withName("ArmTrajFollowerWaitUntilEnd " + name).withTimeout(0.7);
     var trajCommand = new FunctionalCommand(
       // On init
       () -> {
@@ -113,9 +119,9 @@ public record ArmvatorTrajectory(String name, List<ArmvatorSample> samples) {
         consumer.accept(sample);
       },
       // On end
-      end -> {
+      interrupted -> {
         // I think it might be possible to skip the final sample in the case of loop overruns? That'd be bad.
-        consumer.accept(getFinalSample());
+        consumer.accept(endWaitSample);
         timer.stop();
         timer.reset();
       },
