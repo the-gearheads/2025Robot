@@ -70,9 +70,11 @@ public class Autos {
     }));
 
     chooser = new AutoChooser();
-    chooser.addRoutine("Left 2 Coral", ()->{return twoCoral("LEFT_2C4");});
-    chooser.addRoutine("Right 2 Coral", ()->{return twoCoral("RIGHT_2C4");});
-    chooser.addRoutine("Left 3 Coral", ()->{return twoCoral("LEFT_3C4");});
+    chooser.addRoutine("Left 2 Coral", ()->{return twoCoral("LEFT_2C4", false);});
+    chooser.addRoutine("Right 2 Coral", ()->{return twoCoral("RIGHT_2C4", false);});
+    chooser.addRoutine("Left 2 Coral HP", ()->{return twoCoral("LEFT_2C4", true);});
+    chooser.addRoutine("Right 2 Coral HP", ()->{return twoCoral("RIGHT_2C4", true);});
+    chooser.addRoutine("Left 3 Coral", ()->{return threeCoral("LEFT_3C4");});
     chooser.addRoutine("Center 1 Coral", ()->{return center1Coral();});
     SmartDashboard.putData("AutoChooser", chooser);
   }
@@ -191,7 +193,7 @@ public class Autos {
     return routine;
   }
 
-  public AutoRoutine twoCoral(String routineName) {
+  public AutoRoutine twoCoral(String routineName, boolean hpAtEnd) {
     AutoRoutine routine = factory.newRoutine(routineName);
     AutoTrajectory startToReef = routine.trajectory(routineName, 0);
     AutoTrajectory reefToHP = routine.trajectory(routineName, 1);
@@ -208,8 +210,8 @@ public class Autos {
       Commands.sequence(
         stop(),
         AlignToPose.getAutoAlignCommand(swerve, swerve.vision).withTimeout(1.5),
-        Commands.deadline(superstructure.waitUntilAtSetpoint(), AlignToPose.getAutoAlignEndsCommand(swerve, swerve.vision)),
-        outtakeCoral(),
+        Commands.deadline(superstructure.waitUntilAtSetpoint(), AlignToPose.getAutoAlignEndsCommand(swerve, swerve.vision)).withTimeout(3),
+        outtakeCoral().withTimeout(1),
         reefToHP.cmd()
       )
     );
@@ -217,18 +219,24 @@ public class Autos {
     // we -could- hypothetically- wait until we have a game piece, but we could also just rely on pure HP skill
     reefToHP.done().onTrue(Commands.sequence(
       stop(),
-      superstructure.waitUntilAtSetpoint(),
+      superstructure.waitUntilAtSetpoint().withTimeout(3),
       waitForCoral().withTimeout(2),
       HPToReef.cmd()
     ));
 
+    Command hpToReefCommand = Commands.sequence(
+      stop(),
+      AlignToPose.getAutoAlignCommand(swerve, swerve.vision).withTimeout(1.5),
+      Commands.deadline(superstructure.waitUntilAtSetpoint(), AlignToPose.getAutoAlignEndsCommand(swerve, swerve.vision)).withTimeout(3),
+      outtakeCoral().withTimeout(1.0)
+    );
+
+    if(hpAtEnd) {
+      hpToReefCommand = hpToReefCommand.andThen(superstructureGoTo(SuperstructurePosition.HP));
+    }
+
     HPToReef.done().onTrue(
-      Commands.sequence(
-        stop(),
-        AlignToPose.getAutoAlignCommand(swerve, swerve.vision).withTimeout(1.5),
-        Commands.deadline(superstructure.waitUntilAtSetpoint(), AlignToPose.getAutoAlignEndsCommand(swerve, swerve.vision)),
-        outtakeCoral().withTimeout(1.0)
-      )
+      hpToReefCommand
     );
     
     return routine;
