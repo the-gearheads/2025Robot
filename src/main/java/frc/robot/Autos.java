@@ -210,7 +210,7 @@ public class Autos {
       Commands.sequence(
         stop(),
         AlignToPose.getAutoAlignCommand(swerve, swerve.vision).withTimeout(1.5),
-        Commands.deadline(superstructure.waitUntilAtSetpoint(), AlignToPose.getAutoAlignEndsCommand(swerve, swerve.vision)).withTimeout(3),
+        Commands.deadline(superstructure.waitUntilAtSetpoint(), AlignToPose.getAutoAlignCommand(swerve, swerve.vision)).withTimeout(5),
         outtakeCoral().withTimeout(1),
         reefToHP.cmd()
       )
@@ -227,7 +227,7 @@ public class Autos {
     Command hpToReefCommand = Commands.sequence(
       stop(),
       AlignToPose.getAutoAlignCommand(swerve, swerve.vision).withTimeout(1.5),
-      Commands.deadline(superstructure.waitUntilAtSetpoint(), AlignToPose.getAutoAlignEndsCommand(swerve, swerve.vision)).withTimeout(3),
+      Commands.deadline(superstructure.waitUntilAtSetpoint(), AlignToPose.getAutoAlignCommand(swerve, swerve.vision)).withTimeout(3),
       outtakeCoral().withTimeout(1.0)
     );
 
