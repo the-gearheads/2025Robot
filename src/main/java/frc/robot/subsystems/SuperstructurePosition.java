@@ -10,6 +10,8 @@ public enum SuperstructurePosition {
   L2(ArmvatorPosition.L2, Units.degreesToRadians(125.585)),
   L3(ArmvatorPosition.L3, Units.degreesToRadians(-36.0)),
   L4(ArmvatorPosition.L4, Units.degreesToRadians(-43.71)),
+  // old l4 maybe better for autoooo
+  AutoL4(ArmvatorPosition.AutoL4, Units.degreesToRadians(-62.614)),
   AlgaeL3(ArmvatorPosition.AlgaeL3, Units.degreesToRadians(0)),
   AlgaeL2(ArmvatorPosition.AlgaeL2, Units.degreesToRadians(124.36)),
   NET(ArmvatorPosition.NET, Units.degreesToRadians(40)),
