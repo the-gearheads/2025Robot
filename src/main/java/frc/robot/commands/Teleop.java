@@ -40,6 +40,9 @@ public class Teleop extends Command {
 
   @Override
   public void initialize() {
+    if(!DriverStation.isAutonomous()) {
+      VisionConstants.USE_2D_ALIGNMENT_MODE = false;
+    }
     if(DriverStation.isTeleop()) {
       vision.enable();
     }

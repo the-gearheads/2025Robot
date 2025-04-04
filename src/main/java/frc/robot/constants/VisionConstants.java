@@ -19,7 +19,7 @@ public class VisionConstants {
   public static final double MAX_AVG_DIST = 2.7;
   public static final double MAX_TAG_AMBIGUITY = 0.3;
 
-  public static boolean USE_2D_ALIGNMENT_MODE = false;
+  public static boolean USE_2D_ALIGNMENT_MODE = true;
 
   public static final PoseStrategy[] INITAL_CAMERA_STRATEGIES = {PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR};
   public static final Transform3d[] CAMERA_TRANSFORMS = {
