@@ -58,7 +58,7 @@ public class Autos {
     factory.bind("L1", superstructureGoTo(SuperstructurePosition.L1));
     factory.bind("L2", superstructureGoTo(SuperstructurePosition.L2));
     factory.bind("L3", superstructureGoTo(SuperstructurePosition.L3));
-    factory.bind("L4", superstructureGoTo(SuperstructurePosition.AutoL4));
+    factory.bind("L4", superstructureGoTo(SuperstructurePosition.L4));
     factory.bind("HP", superstructureGoTo(SuperstructurePosition.HP));
     factory.bind("AlgaeL2", superstructureGoTo(SuperstructurePosition.AlgaeL2));
     factory.bind("NET", superstructureGoTo(SuperstructurePosition.NET));
