@@ -21,8 +21,10 @@ import com.reduxrobotics.canand.CanandEventLoop;
 
 import edu.wpi.first.hal.AllianceStationID;
 import edu.wpi.first.math.filter.Debouncer;
+import edu.wpi.first.net.WebServer;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.Timer;
@@ -65,6 +67,8 @@ public class Robot extends LoggedRobot {
   @SuppressWarnings("resource")
   public Robot() {
     boolean isReplay = false;
+
+    WebServer.start(5800, Filesystem.getDeployDirectory().getAbsolutePath());
 
     if (!isReplay || isReal()) {
       Logger.addDataReceiver(new WPILOGWriter()); // Log to a USB stick ("/U/logs")

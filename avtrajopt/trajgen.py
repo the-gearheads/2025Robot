@@ -264,7 +264,7 @@ def main(input_file, output_dir):
     # displacement_pivot_elevator[1] += abs(pivot[0, k-1] - pivot[0, k])
   p.minimize(J)
   print(f"Solving trajectory {data["name"]}")
-  exit_status = p.solve(diagnostics = True)
+  exit_status = p.solve(diagnostics = True, acceptable_tolerance=1e-7, tolerance=1e-9)
   if exit_status not in [ExitStatus.SUCCESS, ExitStatus.SOLVED_TO_ACCEPTABLE_TOLERANCE]:
     print(f"Failed to solve trajectory {data["name"]}. Exit condition: {exit_status}")
     return -1
