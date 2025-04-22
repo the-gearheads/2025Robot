@@ -20,6 +20,7 @@ import org.littletonrobotics.urcl.URCL;
 import com.reduxrobotics.canand.CanandEventLoop;
 
 import edu.wpi.first.hal.AllianceStationID;
+import edu.wpi.first.hal.SimDevice;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.net.WebServer;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -117,6 +118,11 @@ public class Robot extends LoggedRobot {
     CommandScheduler.getInstance().onCommandInterrupt((Command command) -> {
         logCommandFunction.accept(command, false, "INTERRUPTED");
     });
+
+    SimDevice.create("SPARK Flex [2]");
+    SimDevice.create("SPARK Flex [4]");
+    SimDevice.create("SPARK Flex [6]");
+    SimDevice.create("SPARK Flex [8]");
 
 
     // Instantiate our RobotContainer. This will perform all our button bindings,

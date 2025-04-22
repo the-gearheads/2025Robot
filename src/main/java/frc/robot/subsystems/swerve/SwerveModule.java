@@ -11,7 +11,6 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import frc.robot.Robot;
 import frc.robot.subsystems.swerve.motors.DriveMotor;
-import frc.robot.subsystems.swerve.motors.DriveMotorSim;
 import frc.robot.subsystems.swerve.motors.SteerMotor;
 import frc.robot.subsystems.swerve.motors.SteerMotorSim;
 
@@ -33,7 +32,7 @@ public class SwerveModule {
       drive = new DriveMotor(MOTOR_IDS[id][0], id, modulePath);
       steer = new SteerMotor(MOTOR_IDS[id][1], id, offset, modulePath);
     } else {
-      drive = new DriveMotorSim(MOTOR_IDS[id][0], id, modulePath);
+      drive = new DriveMotor(MOTOR_IDS[id][0], id, modulePath);
       steer = new SteerMotorSim(MOTOR_IDS[id][1], id, offset, modulePath);
     }
     timestampQueue = SparkOdometryThread.getInstance().makeTimestampQueue();
