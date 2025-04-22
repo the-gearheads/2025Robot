@@ -133,7 +133,7 @@ def round_traj(traj, ndigits):
       waypoint["vel"][1] = round(waypoint["vel"][1], ndigits)
   return new_traj
 
-def main(input_file, output_dir):
+def main(input_file, output_dir, debug = True):
   with open(input_file, 'r') as f:
     data = json.load(f)
   
@@ -233,7 +233,7 @@ def main(input_file, output_dir):
     p.subject_to(elevator_k1[1] == elevator_k[1] + dt[0, k] * accel_k[1])
 
     # Acceleration limits
-    elevator_k[0].set_value(constants.elevator_min_len) # avoid singularities at the initial 0 length state
+    elevator_k[0].set_value((constants.elevator_min_len + constants.elevator_max_len) / 2) # avoid singularities at the initial 0 length state. being at the boundary also sucks
     if data.get("use_pivot_accel_scaling", True):
       pivot_accel_k = constants.pivot_accel_scaling(elevator_k[0])
     else:
@@ -254,18 +254,27 @@ def main(input_file, output_dir):
   # end_wp = waypoints[len(waypoints) - 1]
   # end_state = get_elevator_len_arm_angle(end_wp["pose"][0], end_wp["pose"][1])
   # displacement_pivot_elevator = p.decision_variable(2)
-  for k in range(1, N + 1):
-    J += (pivot[0, k] - pivot[0, k-1])**2
-    J += (elevator[0, k] - elevator[0, k-1])**2
-    # J += (accel[0, k] - accel[0, k-1])**2 + (accel[1, k] - accel[1, k-1])**2
+  ctrl_effort = (accel[0, N] / constants.pivot_max_accel)**2 + (accel[1, N] / constants.elevator_max_accel)**2
+  for k in range(N):
+    # J += (pivot[0, k] - pivot[0, k-1])**2
+    # J += (elevator[0, k] - elevator[0, k-1])**2
+    ctrl_effort += (accel[0, k] / constants.pivot_max_accel)**2 + (accel[1, k] / constants.elevator_max_accel)**2
     # J += (end_state[0] - elevator[0, k]) ** 2
     # J += (end_state[1] - pivot[0, k]) ** 2
     # displacement_pivot_elevator[0] += abs(elevator[0, k-1] - elevator[0, k])
     # displacement_pivot_elevator[1] += abs(pivot[0, k-1] - pivot[0, k])
+  ctrl_effort /= N+1
+  ctrl_effort /= 2 # man idk, this is cost function weighing we're free to do anything!!!
+  J += ctrl_effort
   p.minimize(J)
-  print(f"Solving trajectory {data["name"]}")
-  exit_status = p.solve(diagnostics = True, acceptable_tolerance=1e-7, tolerance=1e-9)
-  if exit_status not in [ExitStatus.SUCCESS, ExitStatus.SOLVED_TO_ACCEPTABLE_TOLERANCE]:
+
+  if debug:
+    print(f"Solving trajectory {data["name"]}")
+  exit_status = p.solve(diagnostics = debug, tolerance=1e-10)
+  if debug:
+    print(f"ctrl effort: {ctrl_effort.value()}, J: {J.value()}, total_time: {total_time.value()}")
+    print(f"pivot vel: {pivot[1, N].value()} elev vel: {elevator[1, N].value()}")
+  if exit_status not in [ExitStatus.SUCCESS]:
     print(f"Failed to solve trajectory {data["name"]}. Exit condition: {exit_status}")
     return -1
   # yay
@@ -292,7 +301,7 @@ def main(input_file, output_dir):
       "elevator_accel": accel[1, k].value(),
     })
     time += dt[0, k].value()
-  trajectory_data = resample_traj(trajectory_data, 0.015)
+  # trajectory_data = resample_traj(trajectory_data, 0.015) # Broken (nonzero end vel)
   trajectory_data = round_traj(trajectory_data, 6)
   with open(f"{output_dir}/{os.path.splitext(os.path.basename(input_file))[0]}.agentraj", "w") as f:
     json.dump(trajectory_data, f, indent = 2)

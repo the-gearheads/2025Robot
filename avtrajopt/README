@@ -3,5 +3,5 @@ yes the code is ugly and the mathematical terminology is a bit wrong probably
 and there's probably an off by one error lurking somewhere
 
 python generateungeneratedtrajs.py
-python generatealltrajs.py trajs ../src/main/deploy/avtrajopt
+python generatealltrajs.py trajs ../src/main/deploy/avtrajopt 0
 python trajviz.py ../src/main/deploy/avtrajopt/*
