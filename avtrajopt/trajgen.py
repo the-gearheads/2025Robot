@@ -214,6 +214,7 @@ def main(input_file, output_dir, debug = True):
     if k > 0 and k not in sample_transition_points:
       p.subject_to(dt[0, k] == dt[0, k-1])
     p.subject_to(dt[0, k] > 0)
+    p.subject_to(dt[0, k] < constants.T_max / N)
     dt[0, k].set_value(constants.dt_initial_guess)
 
   for k in range(N):
@@ -248,32 +249,36 @@ def main(input_file, output_dir, debug = True):
   
   # Now we gotta minimize time
   total_time = sum(dt[0, k] for k in range(N + 1))
-  p.subject_to(total_time <= constants.T_max)
-  J = total_time**2
+  p.subject_to(total_time <= constants.T_max) # despite the individual dt constraint this makes it better behaved??
+  J_time = total_time
+  J = J_time
+
   # # wrong for multiwaypoint
   # end_wp = waypoints[len(waypoints) - 1]
   # end_state = get_elevator_len_arm_angle(end_wp["pose"][0], end_wp["pose"][1])
   # displacement_pivot_elevator = p.decision_variable(2)
+  use_new_ctrl_effort_penalization = True # so much better but lowkey makes the solver tip on the edge of instability
   ctrl_effort = (accel[0, N] / constants.pivot_max_accel)**2 + (accel[1, N] / constants.elevator_max_accel)**2
   for k in range(N):
-    # J += (pivot[0, k] - pivot[0, k-1])**2
-    # J += (elevator[0, k] - elevator[0, k-1])**2
+    if not use_new_ctrl_effort_penalization:
+      J += (pivot[0, k] - pivot[0, k-1])**2
+      J += (elevator[0, k] - elevator[0, k-1])**2
     ctrl_effort += (accel[0, k] / constants.pivot_max_accel)**2 + (accel[1, k] / constants.elevator_max_accel)**2
     # J += (end_state[0] - elevator[0, k]) ** 2
     # J += (end_state[1] - pivot[0, k]) ** 2
     # displacement_pivot_elevator[0] += abs(elevator[0, k-1] - elevator[0, k])
     # displacement_pivot_elevator[1] += abs(pivot[0, k-1] - pivot[0, k])
-  ctrl_effort /= N+1
-  ctrl_effort /= 2 # man idk, this is cost function weighing we're free to do anything!!!
-  J += ctrl_effort
+  ctrl_effort /= ((N+1) * 4) # funky cost function weighing to try and get time and ctrl_effort to be of similar magnitudes. goal is for ctrl_effort to roughly be about, idk, 1/10th as big as J_time
+  if use_new_ctrl_effort_penalization:
+    J += ctrl_effort
   p.minimize(J)
 
   if debug:
     print(f"Solving trajectory {data["name"]}")
   exit_status = p.solve(diagnostics = debug, tolerance=1e-10)
-  if debug:
-    print(f"ctrl effort: {ctrl_effort.value()}, J: {J.value()}, total_time: {total_time.value()}")
-    print(f"pivot vel: {pivot[1, N].value()} elev vel: {elevator[1, N].value()}")
+  if True:
+    print(f"ctrl effort: {ctrl_effort.value()}, J: {J.value()}, J_time = {J_time.value()} total_time: {total_time.value()}")
+    # print(f"pivot vel: {pivot[1, N].value()} elev vel: {elevator[1, N].value()}")
   if exit_status not in [ExitStatus.SUCCESS]:
     print(f"Failed to solve trajectory {data["name"]}. Exit condition: {exit_status}")
     return -1
