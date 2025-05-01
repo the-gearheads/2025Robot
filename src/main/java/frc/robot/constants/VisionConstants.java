@@ -35,6 +35,7 @@ public class VisionConstants {
 
   };
 
+  // really just for sim atp
   public static final CameraIntrinsics[] CAMERA_INTRINSICS = {
       new CameraIntrinsics(  // FRONT_LEFT_2025
           1600, 1200,
