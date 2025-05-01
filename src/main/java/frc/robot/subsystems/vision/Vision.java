@@ -10,8 +10,11 @@ import java.util.List;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedNetworkBoolean;
+import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
+import org.photonvision.targeting.PhotonTrackedTarget;
+import org.photonvision.targeting.TargetCorner;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
@@ -19,6 +22,7 @@ import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.geometry.Twist3d;
 import edu.wpi.first.util.WPIUtilJNI;
@@ -72,7 +76,16 @@ public class Vision extends SubsystemBase {
   private void addVisionMeasurement(SwerveDrivePoseEstimator poseEstimator, Camera cam, VisionObservation observation) {
     poseEstimator.addVisionMeasurement(observation.poseResult().estimatedPose.toPose2d(), observation.poseResult().timestampSeconds, observation.stddevs());
     if(usingGtsam()) {
-      gtsam.sendVisionUpdate(cam.name, observation.poseResult()); // -really- we're just using the corners but this is what we got
+      observation = new VisionObservation(new EstimatedRobotPose(new Pose3d(), WPIUtilJNI.now()-1000, List.of(new PhotonTrackedTarget(
+        0, 0, 0, 0, 12, 0, 0, new Transform3d(), new Transform3d(), 0, List.of(), List.of(
+          new TargetCorner(412.141167882602, 570.0756718167829),
+          new TargetCorner(430.590741584251, 573.280860896092),
+          new TargetCorner(432.5745594541421, 551.2334752216474),
+          new TargetCorner(414.3388689050706, 547.7230749037886
+          )
+        )
+      )), PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR), null);
+      gtsam.sendVisionUpdate(cam.name, observation.poseResult(), cam.camera.getCameraMatrix(), cam.camera.getDistCoeffs()); // -really- we're just using the corners but this is what we got
     }
   }
 
