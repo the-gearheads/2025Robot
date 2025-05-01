@@ -4,16 +4,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
-import org.opencv.calib3d.Calib3d;
-import org.opencv.core.MatOfPoint2f;
-import org.opencv.core.Point;
-import org.opencv.core.TermCriteria;
 import org.photonvision.EstimatedRobotPose;
-import org.photonvision.estimation.OpenCVHelp;
 import org.photonvision.targeting.PhotonTrackedTarget;
-import org.photonvision.targeting.TargetCorner;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -147,29 +140,13 @@ public class GtsamInterface {
         odometryBuffer.addSample(odomTime / 1e6, localOdometryPose);
     }
 
-    public TagDetection undistort(TagDetection in, Optional<Matrix<N3, N3>> intrinsics, Optional<Matrix<N8, N1>> distCoeffsMatrix) {
-        var cameraMat = OpenCVHelp.matrixToMat(intrinsics.get().getStorage());
-        var distCoeffs = OpenCVHelp.matrixToMat(distCoeffsMatrix.get().getStorage());
-
-        var points = new MatOfPoint2f(in.corners.stream().map(it -> new Point(it.x, it.y))
-                    .collect(Collectors.toList()).toArray(new Point[0]));
-        Calib3d.undistortImagePoints(points, points, cameraMat, distCoeffs, new TermCriteria(3, 30, 1e-6));
-
-        cameraMat.release();
-        distCoeffs.release();
-
-        var ret =  new TagDetection(in.id, points.toList().stream().map(it -> new TargetCorner(it.x, it.y)).collect(Collectors.toList()));
-        points.release();
-        return ret;
-    }
-
     /**
      * Update the localizer with new info from this robot loop iteration.
      * 
      * @param camName         The name of the camera
      * @param observation     The vision observation
      */
-    public void sendVisionUpdate(String camName, EstimatedRobotPose observation, Optional<Matrix<N3, N3>> intrinsics, Optional<Matrix<N8, N1>> distCoeffsMatrix) {
+    public void sendVisionUpdate(String camName, EstimatedRobotPose observation) {
 
         var cam = cameras.get(camName);
         if (cam == null) {
@@ -180,8 +157,7 @@ public class GtsamInterface {
         TagDetection[] tags = new TagDetection[observation.targetsUsed.size()];
         for (int i = 0; i < tags.length; i++) {
             PhotonTrackedTarget target = observation.targetsUsed.get(i);
-            tags[i] = new TagDetection(target.getFiducialId(), target.getDetectedCorners());  
-            tags[i] = undistort(tags[i], intrinsics, distCoeffsMatrix);          
+            tags[i] = new TagDetection(target.getFiducialId(), target.getDetectedCorners());            
         }
 
         cam.tagPub.set(tags, timestamp);
