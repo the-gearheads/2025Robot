@@ -64,7 +64,6 @@ public class Vision extends SubsystemBase {
   
     for (int i = 0; i<CAMERA_NAMES.length; i++) {
       cameras[i] = new Camera(field, CAMERA_NAMES[i], CAMERA_TRANSFORMS[i], CAMERA_INTRINSICS[i], ()->swerve.getPoseMultitag().getRotation().getRadians(), ()->swerve.getPoseWheelsOnly().getRotation().getRadians(), swerve::getPose, INITAL_CAMERA_STRATEGIES[i]);
-      gtsam.setCamIntrinsics(CAMERA_NAMES[i], cameras[i].camera.getCameraMatrix(), cameras[i].camera.getDistCoeffs());
       sim.addCamera(cameras[i]);
     }
 
@@ -73,7 +72,7 @@ public class Vision extends SubsystemBase {
   private void addVisionMeasurement(SwerveDrivePoseEstimator poseEstimator, Camera cam, VisionObservation observation) {
     poseEstimator.addVisionMeasurement(observation.poseResult().estimatedPose.toPose2d(), observation.poseResult().timestampSeconds, observation.stddevs());
     if(usingGtsam()) {
-      gtsam.sendVisionUpdate(cam.name, observation.poseResult(), cam.transform); // -really- we're just using the corners but this is what we got
+      gtsam.sendVisionUpdate(cam.name, observation.poseResult()); // -really- we're just using the corners but this is what we got
     }
   }
 
@@ -127,10 +126,14 @@ public class Vision extends SubsystemBase {
       lastOdom = odom;
       // Twist3d odomTwist3d = new Pose3d().log(new Pose3d(new Pose2d().exp(odomTwist2d)));
       Twist3d odomTwist3d = new Twist3d(odomTwist2d.dx, odomTwist2d.dy, 0, 0, 0, odomTwist2d.dtheta);
-      gtsam.sendOdomUpdate(WPIUtilJNI.now(), odomTwist3d, getPoseGtsam());
+      gtsam.sendOdomUpdate(WPIUtilJNI.now(), odomTwist3d, new Pose3d(swerve.getPoseMultitag()));
     }
     for (Camera camera : cameras) {
       camera.logCamTransform(swerve.getPose());
+      if(usingGtsam()) {
+        gtsam.setCamIntrinsics(camera.name, camera.camera.getCameraMatrix(), camera.camera.getDistCoeffs());
+        gtsam.sendRobotToCam(camera.name, camera.transform);
+      }
     }
   }
 

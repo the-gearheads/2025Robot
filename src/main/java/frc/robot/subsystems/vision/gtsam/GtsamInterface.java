@@ -145,12 +145,8 @@ public class GtsamInterface {
      * 
      * @param camName         The name of the camera
      * @param observation     The vision observation
-     * @param robotTcam       Transform from robot to camera optical focal point.
-     *                        This is not latency compensated yet, so maybe don't
-     *                        put your camera on a turret
      */
-    public void sendVisionUpdate(String camName, EstimatedRobotPose observation,
-            Transform3d robotTcam) {
+    public void sendVisionUpdate(String camName, EstimatedRobotPose observation) {
 
         var cam = cameras.get(camName);
         if (cam == null) {
@@ -165,7 +161,14 @@ public class GtsamInterface {
         }
 
         cam.tagPub.set(tags, timestamp);
-        cam.robotTcamPub.set(robotTcam, timestamp);
+    }
+
+    public void sendRobotToCam(String camName, Transform3d robotTcam) {
+        var cam = cameras.get(camName);
+        if (cam == null) {
+            throw new RuntimeException("Camera " + camName + " not in map!");
+        }
+        cam.robotTcamPub.set(robotTcam);
     }
 
     public Pose3d getRawPoseEstimate() {

@@ -36,6 +36,7 @@ import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
+import frc.robot.Robot;
 import frc.robot.util.ReefPositions;
 
 public class Camera {
@@ -111,7 +112,7 @@ public class Camera {
       }
     }
     double averageDist = totalDist / estimatedPose.targetsUsed.size();
-    if (averageDist > MAX_AVG_DIST) {
+    if (averageDist > MAX_AVG_DIST && Robot.isReal()) { // Sim cameras can see almost infinitely far
       return Optional.empty();
     } 
 
