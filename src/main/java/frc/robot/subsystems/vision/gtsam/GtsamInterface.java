@@ -5,17 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import org.opencv.calib3d.Calib3d;
-import org.opencv.core.Mat;
-import org.opencv.core.MatOfPoint2f;
-import org.opencv.core.Point;
-import org.opencv.core.TermCriteria;
-import org.photonvision.estimation.OpenCVHelp;
-import org.photonvision.targeting.TargetCorner;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import java.util.stream.Collectors;
 
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.Matrix;
@@ -35,43 +25,11 @@ import edu.wpi.first.networktables.StructSubscriber;
 
 public class GtsamInterface {
 
-    public static class CameraCalibration {
-        Mat cameraMat;
-        Mat distCoeffs;
-
-        public CameraCalibration(Matrix<N3, N3> camMat, Matrix<?, N1> distCoeffs) {
-            OpenCVHelp.forceLoadOpenCV();
-
-            this.cameraMat = OpenCVHelp.matrixToMat(camMat.getStorage());
-            this.distCoeffs = OpenCVHelp.matrixToMat(distCoeffs.getStorage());
-        }
-
-        public void release() {
-            cameraMat.release();
-            distCoeffs.release();
-        }
-    }
-
     private static class CameraInterface {
         StructArrayPublisher<TagDetection> tagPub;
         DoubleArrayPublisher camIntrinsicsPublisher;
         StructPublisher<Transform3d> robotTcamPub;
         private String name;
-
-        private CameraCalibration cameraCal = null;
-
-        public TagDetection undistort(TagDetection distorted) {
-            if (this.cameraCal == null) {
-                System.err.println("Camera cal still null -- is your camera connected?");
-                return distorted;
-            }
-
-            var mat = new MatOfPoint2f(distorted.corners.stream().map(it -> new Point(it.x, it.y))
-                    .collect(Collectors.toList()).toArray(new Point[0]));
-            Calib3d.undistortImagePoints(mat, mat, cameraCal.cameraMat, cameraCal.distCoeffs, new TermCriteria(3, 30, 1e-6));
-            return new TagDetection(distorted.id,
-                    mat.toList().stream().map(it -> new TargetCorner(it.x, it.y)).collect(Collectors.toList()));
-        }
 
         public CameraInterface(String name) {
             this.name = name;
@@ -109,7 +67,7 @@ public class GtsamInterface {
                 .subscribe(null, PubSubOption.sendAll(true), PubSubOption.keepDuplicates(true));
         String fieldLayout = "";
         try {
-        fieldLayout = new ObjectMapper().writeValueAsString(AprilTagFields.k2024Crescendo.loadAprilTagLayoutField());
+        fieldLayout = new ObjectMapper().writeValueAsString(AprilTagFields.k2025ReefscapeWelded.loadAprilTagLayoutField());
         } catch(Exception e) {
             e.printStackTrace();
         }
@@ -140,14 +98,16 @@ public class GtsamInterface {
             throw new RuntimeException("Camera " + camName + " not in map!");
         }
 
-        cam.camIntrinsicsPublisher.set(new double[] {
-                intrinsics.get().get(0, 0),
-                intrinsics.get().get(1, 1),
-                intrinsics.get().get(0, 2),
-                intrinsics.get().get(1, 2),
-        });
-
-        cam.cameraCal = new CameraCalibration(intrinsics.get(), distCoeffs.get());
+        int distCoeffsSize = distCoeffs.get().getNumRows();
+        double[] out = new double[distCoeffsSize + 4];
+        out[0] = intrinsics.get().get(0, 0);
+        out[1] = intrinsics.get().get(1, 1);
+        out[2] = intrinsics.get().get(0, 2);
+        out[3] = intrinsics.get().get(1, 2);
+        for (int i = 0; i < distCoeffsSize; i++) {
+            out[i + 4] = distCoeffs.get().get(i, 0);
+        }
+        cam.camIntrinsicsPublisher.set(out);
     }
 
     /**
@@ -197,9 +157,18 @@ public class GtsamInterface {
         }
 
         // System.out.println("GtsamInterface.sendVisionUpdate name: " + camName + ", time: " + tagDetTime);
-        cam.tagPub.set(camDetectedTags.stream().map(it -> cam.undistort(it)).collect(Collectors.toList())
-                .toArray(new TagDetection[0]), tagDetTime);
+        cam.tagPub.set(camDetectedTags.toArray(new TagDetection[0]), tagDetTime);
         cam.robotTcamPub.set(robotTcam, tagDetTime);
+    }
+
+    public Pose3d getRawPoseEstimate() {
+        var poseEst = optimizedPoseSub.getAtomic();
+        if (poseEst.timestamp != 0) {
+            return poseEst.value;
+        } else {
+            // System.err.println("No pose estimate yet");
+            return new Pose3d();
+        }
     }
 
     public Pose3d getLatencyCompensatedPoseEstimate() {
