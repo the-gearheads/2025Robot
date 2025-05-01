@@ -142,7 +142,7 @@ public class Camera {
     Logger.recordOutput(path + "/CamTransform", camPose);
   }
 
-  public List<VisionObservations> getObservations(SwerveDrivePoseEstimator poseEstimator, Rotation2d gyroOffset) {
+  public List<VisionObservation> getObservations(SwerveDrivePoseEstimator poseEstimator, Rotation2d gyroOffset) {
     boolean posedUnfiltered = false;
     Logger.recordOutput(path + "/isDisabled", isDisabled());
     if(disabled) {
@@ -150,7 +150,7 @@ public class Camera {
     }
     Logger.recordOutput(path + "/PoseStrategy", estimator.getPrimaryStrategy());
     lastRobotPose = poseEstimator.getEstimatedPosition();
-    List<VisionObservations> visionObservations = new ArrayList<>();
+    List<VisionObservation> visionObservations = new ArrayList<>();
     List<PhotonPipelineResult> pipelineResults = getPipelineResults();
     Optional<EstimatedRobotPose> poseResult;
     for (PhotonPipelineResult result : pipelineResults) {
@@ -219,7 +219,7 @@ public class Camera {
       Logger.recordOutput(path + "/EstPose", pose.estimatedPose);
 
       var stddevs = MatBuilder.fill(Nat.N3(), Nat.N1(), xyStdDev, xyStdDev, thetaStdDev);
-      visionObservations.add(new VisionObservations(pose, stddevs));
+      visionObservations.add(new VisionObservation(pose, stddevs));
     }
 
     if (visionObservations.isEmpty()) {
@@ -273,7 +273,7 @@ public class Camera {
     return disabled;
   } 
 
-  public record VisionObservations(
+  public record VisionObservation(
     EstimatedRobotPose poseResult,
     Matrix<N3, N1> stddevs
   ) {}

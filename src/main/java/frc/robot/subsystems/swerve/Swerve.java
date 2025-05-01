@@ -210,8 +210,22 @@ public class Swerve extends SubsystemBase {
   }
 
   @AutoLogOutput
-  public Pose2d getPose() {
+  public Pose2d getPoseMultitag() {
     return multitagPoseEstimator.getEstimatedPosition();
+  }
+
+  @AutoLogOutput
+  public Pose2d getPoseWheelsOnly() {
+    return wheelOdometry.getPoseMeters();
+  }
+
+  @AutoLogOutput
+  public Pose2d getPose() {
+    if(vision.usingGtsam()) {
+      return vision.getPoseGtsam().toPose2d();
+    } else {
+      return getPoseMultitag();
+    }
   }
 
   public Rotation2d getRotation() {
@@ -242,16 +256,11 @@ public class Swerve extends SubsystemBase {
       module.periodic();
     }
     wheelOdometry.update(getGyroRotation(), getModulePositions());
-    Logger.recordOutput("Swerve/PoseWheelsOnly", getPoseWheelsOnly());
     vision.feedPoseEstimator(multitagPoseEstimator);
     multitagPoseEstimator.update(getGyroRotation(), getModulePositions());
     field.setRobotPose(getPose());
 
     // tracker.getCoralObjective();
-  }
-
-  public Pose2d getPoseWheelsOnly() {
-    return wheelOdometry.getPoseMeters();
   }
 
   public void followTrajectory(SwerveSample sample) {

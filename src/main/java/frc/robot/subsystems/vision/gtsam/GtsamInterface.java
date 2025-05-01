@@ -5,6 +5,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.photonvision.EstimatedRobotPose;
+import org.photonvision.targeting.PhotonTrackedTarget;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import edu.wpi.first.apriltag.AprilTagFields;
@@ -15,6 +18,7 @@ import edu.wpi.first.math.geometry.Twist3d;
 import edu.wpi.first.math.interpolation.TimeInterpolatableBuffer;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.math.numbers.N8;
 import edu.wpi.first.networktables.DoubleArrayPublisher;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.PubSubOption;
@@ -88,7 +92,7 @@ public class GtsamInterface {
      * @param distCoeffs Camera distortion coefficients, of length 4, 5 or 8
      */
     public void setCamIntrinsics(String camName, Optional<Matrix<N3, N3>> intrinsics,
-            Optional<Matrix<?, N1>> distCoeffs) {
+            Optional<Matrix<N8, N1>> distCoeffs) {
         if (intrinsics.isEmpty() || distCoeffs.isEmpty()) {
             return;
         }
@@ -98,7 +102,7 @@ public class GtsamInterface {
             throw new RuntimeException("Camera " + camName + " not in map!");
         }
 
-        int distCoeffsSize = distCoeffs.get().getNumRows();
+        final int distCoeffsSize = 8;
         double[] out = new double[distCoeffsSize + 4];
         out[0] = intrinsics.get().get(0, 0);
         out[1] = intrinsics.get().get(1, 1);
@@ -140,15 +144,12 @@ public class GtsamInterface {
      * Update the localizer with new info from this robot loop iteration.
      * 
      * @param camName         The name of the camera
-     * @param tagDetTime      The time that the frame encoding detected tags
-     *                        collected at, in microseconds. WPIUtilJNI::now is what
-     *                        I used
-     * @param camDetectedTags The list of tags this camera could see
+     * @param observation     The vision observation
      * @param robotTcam       Transform from robot to camera optical focal point.
      *                        This is not latency compensated yet, so maybe don't
      *                        put your camera on a turret
      */
-    public void sendVisionUpdate(String camName, long tagDetTime, List<TagDetection> camDetectedTags,
+    public void sendVisionUpdate(String camName, EstimatedRobotPose observation,
             Transform3d robotTcam) {
 
         var cam = cameras.get(camName);
@@ -156,9 +157,15 @@ public class GtsamInterface {
             throw new RuntimeException("Camera " + camName + " not in map!");
         }
 
-        // System.out.println("GtsamInterface.sendVisionUpdate name: " + camName + ", time: " + tagDetTime);
-        cam.tagPub.set(camDetectedTags.toArray(new TagDetection[0]), tagDetTime);
-        cam.robotTcamPub.set(robotTcam, tagDetTime);
+        long timestamp = Math.round(observation.timestampSeconds * 1e6);
+        TagDetection[] tags = new TagDetection[observation.targetsUsed.size()];
+        for (int i = 0; i < tags.length; i++) {
+            PhotonTrackedTarget target = observation.targetsUsed.get(i);
+            tags[i] = new TagDetection(target.getFiducialId(), target.getDetectedCorners());            
+        }
+
+        cam.tagPub.set(tags, timestamp);
+        cam.robotTcamPub.set(robotTcam, timestamp);
     }
 
     public Pose3d getRawPoseEstimate() {
