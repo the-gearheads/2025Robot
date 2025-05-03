@@ -40,7 +40,7 @@ public class Vision extends SubsystemBase {
   private Camera[] cameras = new Camera[CAMERA_NAMES.length];
   private GtsamInterface gtsam = new GtsamInterface(List.of(CAMERA_NAMES));
 
-  LoggedNetworkBoolean useGtsam = new LoggedNetworkBoolean("Vision/UseGtsam", true);
+  LoggedNetworkBoolean useGtsam = new LoggedNetworkBoolean("AdvantageKit/RealOutputs/Vision/UseGtsam", true);
 
   @AutoLogOutput
   private int cameraPriority = -1;
@@ -127,6 +127,12 @@ public class Vision extends SubsystemBase {
       // Twist3d odomTwist3d = new Pose3d().log(new Pose3d(new Pose2d().exp(odomTwist2d)));
       Twist3d odomTwist3d = new Twist3d(odomTwist2d.dx, odomTwist2d.dy, 0, 0, 0, odomTwist2d.dtheta);
       gtsam.sendOdomUpdate(WPIUtilJNI.now(), odomTwist3d, new Pose3d(swerve.getPoseMultitag()));
+
+      Logger.recordOutput("Vision/Gtsam/PoseEstimate", gtsam.getLatencyCompensatedPoseEstimate());
+      Logger.recordOutput("Vision/Gtsam/RawPoseEstimate", gtsam.getRawPoseEstimate());
+      Logger.recordOutput("Vision/Gtsam/LoopTimeMs", gtsam.getLoopTimeMs());
+      Logger.recordOutput("Vision/Gtsam/ReadyToOptimize", gtsam.isReadyToOptimize());
+      Logger.recordOutput("Vision/Gtsam/HadIssue", gtsam.hadIssue());      
     }
     for (Camera camera : cameras) {
       camera.logCamTransform(swerve.getPose());

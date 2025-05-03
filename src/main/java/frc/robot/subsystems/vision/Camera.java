@@ -67,7 +67,7 @@ public class Camera {
   DoubleSupplier gyroAngleSupplier;
   Rotation2d gyroOffset = new Rotation2d();
 
-  LoggedNetworkNumber headingScaleFactor = new LoggedNetworkNumber("Vision/HeadingScaleFactor", CONSTRAINED_PNP_HEADING_SCALE_FACTOR);
+  LoggedNetworkNumber headingScaleFactor = new LoggedNetworkNumber("AdvantageKit/RealOutputs/Vision/HeadingScaleFactor", CONSTRAINED_PNP_HEADING_SCALE_FACTOR);
 
   public Camera(AprilTagFieldLayout field, String name, Transform3d transform, CameraIntrinsics intrinsics, DoubleSupplier fusedHeadingSupplier, DoubleSupplier gyroAngleSupplier, Supplier<Pose2d> robotPoseSupplier, PoseStrategy strategy) {
     this.name = name;

@@ -19,7 +19,9 @@ import edu.wpi.first.math.interpolation.TimeInterpolatableBuffer;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.numbers.N8;
+import edu.wpi.first.networktables.BooleanSubscriber;
 import edu.wpi.first.networktables.DoubleArrayPublisher;
+import edu.wpi.first.networktables.DoubleSubscriber;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.PubSubOption;
 import edu.wpi.first.networktables.StringPublisher;
@@ -55,6 +57,10 @@ public class GtsamInterface {
     StructSubscriber<Pose3d> optimizedPoseSub;
     StringPublisher fieldLayoutPub;
 
+    DoubleSubscriber loopTimeSub;
+    BooleanSubscriber readyToOptimizeSub;
+    BooleanSubscriber hadIssueSub;
+
     // Estimated odom-only location relative to robot boot. We assume zero slip here
     Pose3d localOdometryPose = new Pose3d();
     TimeInterpolatableBuffer<Pose3d> odometryBuffer = TimeInterpolatableBuffer.createBuffer(5);
@@ -80,6 +86,16 @@ public class GtsamInterface {
                 .publish(PubSubOption.sendAll(true), PubSubOption.keepDuplicates(true));
         fieldLayoutPub.set(fieldLayout);
         cameraNames.stream().map(CameraInterface::new).forEach(it -> cameras.put(it.name, it));
+
+        loopTimeSub = NetworkTableInstance.getDefault()
+                .getDoubleTopic("/gtsam_meme/output/loop_time_ms")
+                .subscribe(0.0, PubSubOption.sendAll(true), PubSubOption.keepDuplicates(true));
+        readyToOptimizeSub = NetworkTableInstance.getDefault()
+                .getBooleanTopic("/gtsam_meme/output/ready_to_optimize")
+                .subscribe(false, PubSubOption.sendAll(true), PubSubOption.keepDuplicates(true));
+        hadIssueSub = NetworkTableInstance.getDefault()
+                .getBooleanTopic("/gtsam_meme/output/had_issue")
+                .subscribe(false, PubSubOption.sendAll(true), PubSubOption.keepDuplicates(true));
     }
 
     /**
@@ -199,5 +215,17 @@ public class GtsamInterface {
             // System.err.println("No pose estimate yet");
             return new Pose3d();
         }
+    }
+
+    public double getLoopTimeMs() {
+        return loopTimeSub.get();
+    }
+
+    public boolean isReadyToOptimize() {
+        return readyToOptimizeSub.get();
+    }
+
+    public boolean hadIssue() {
+        return hadIssueSub.get();
     }
 }
