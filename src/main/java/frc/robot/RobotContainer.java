@@ -185,28 +185,31 @@ public class RobotContainer {
     Controllers.operatorController.getBtn22().whileTrue(intake.forceGamePiece(GamePiece.CORAL));
     Controllers.operatorController.getBtn23().whileTrue(intake.forceGamePiece(GamePiece.EMPTY));
 
-    Controllers.driverController.getABtn().whileTrue(
-      pivot.run(() -> {pivot.setMode(RunMode.VOLTAGE); pivot.setVoltage(-5);})
-        .alongWith(wrist.run(() -> {wrist.setGoal(Rotation2d.fromDegrees(70));}))
-        .alongWith(telescope.run(()->{
-          telescope.setMode(RunMode.PROFILED_PID);
-          telescope.setGoalPosition(ArmConstants.MIN_RELATIVE_HEIGHT);
-        })).withInterruptBehavior(InterruptionBehavior.kCancelIncoming)
-    );
-    Controllers.driverController.getXBtn().whileTrue(
-      pivot.run(() -> {pivot.setMode(RunMode.VOLTAGE); pivot.setVoltage(5);})
-        .alongWith(wrist.run(() -> {wrist.setGoal(Rotation2d.fromDegrees(70));}))
-        .alongWith(telescope.run(()->{
-          telescope.setMode(RunMode.PROFILED_PID);
-          telescope.setGoalPosition(ArmConstants.MIN_RELATIVE_HEIGHT);
-        })).withInterruptBehavior(InterruptionBehavior.kCancelIncoming)
-    );
+    // Controllers.driverController.getABtn().whileTrue(
+    //   pivot.run(() -> {pivot.setMode(RunMode.VOLTAGE); pivot.setVoltage(-5);})
+    //     .alongWith(wrist.run(() -> {wrist.setGoal(Rotation2d.fromDegrees(70));}))
+    //     .alongWith(telescope.run(()->{
+    //       telescope.setMode(RunMode.PROFILED_PID);
+    //       telescope.setGoalPosition(ArmConstants.MIN_RELATIVE_HEIGHT);
+    //     })).withInterruptBehavior(InterruptionBehavior.kCancelIncoming)
+    // );
+    // Controllers.driverController.getXBtn().whileTrue(
+    //   pivot.run(() -> {pivot.setMode(RunMode.VOLTAGE); pivot.setVoltage(5);})
+    //     .alongWith(wrist.run(() -> {wrist.setGoal(Rotation2d.fromDegrees(70));}))
+    //     .alongWith(telescope.run(()->{
+    //       telescope.setMode(RunMode.PROFILED_PID);
+    //       telescope.setGoalPosition(ArmConstants.MIN_RELATIVE_HEIGHT);
+    //     })).withInterruptBehavior(InterruptionBehavior.kCancelIncoming)
+    // );
     
     Controllers.driverController.getYBtn().onTrue(
       superStructure.goTo(SuperstructurePosition.NET)
     );
+    Controllers.driverController.getABtn().onTrue(
+      superStructure.goTo(SuperstructurePosition.L4)
+    );
 
-    Controllers.operatorController.getBtn41().onTrue(new InstantCommand(()-> {
+    Controllers.driverController.getBBtn().onTrue(new InstantCommand(()-> {
       if (DriverStation.getAlliance().get() == Alliance.Red) {
         swerve.setPose(new Pose2d(new Translation2d(14.372, 14.372), Rotation2d.kZero));
       } else {
