@@ -202,6 +202,10 @@ public class RobotContainer {
         })).withInterruptBehavior(InterruptionBehavior.kCancelIncoming)
     );
     
+    Controllers.driverController.getYBtn().onTrue(
+      superStructure.goTo(SuperstructurePosition.NET)
+    );
+
     Controllers.operatorController.getBtn41().onTrue(new InstantCommand(()-> {
       if (DriverStation.getAlliance().get() == Alliance.Red) {
         swerve.setPose(new Pose2d(new Translation2d(14.372, 14.372), Rotation2d.kZero));
