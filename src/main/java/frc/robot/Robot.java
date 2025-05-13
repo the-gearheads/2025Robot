@@ -22,7 +22,6 @@ import com.reduxrobotics.canand.CanandEventLoop;
 import edu.wpi.first.hal.AllianceStationID;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.net.WebServer;
-import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
