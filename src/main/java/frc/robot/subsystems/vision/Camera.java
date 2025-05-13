@@ -114,7 +114,7 @@ public class Camera {
     double averageDist = totalDist / estimatedPose.targetsUsed.size();
     if (averageDist > MAX_AVG_DIST && Robot.isReal()) { // Sim cameras can see almost infinitely far
       return Optional.empty();
-    } 
+    }
 
     // advantagekit viz stuff
     ArrayList<Pose3d> allTagPoses = new ArrayList<>();
@@ -183,13 +183,13 @@ public class Camera {
       Optional<Pose3d> filteredPose = filterPose(pose);
       if (filteredPose.isEmpty())
         continue;
-      
+
       int[] targetsUsed = new int[pose.targetsUsed.size()];
       for(int i = 0; i < pose.targetsUsed.size(); i++) {
         targetsUsed[i] = pose.targetsUsed.get(i).getFiducialId();
       }
       Logger.recordOutput(path + "/TargetsUsed", targetsUsed);
-  
+
 
       // calculate stddevs
       int numTargets = pose.targetsUsed.size();
@@ -272,7 +272,7 @@ public class Camera {
 
   public boolean isDisabled() {
     return disabled;
-  } 
+  }
 
   public record VisionObservation(
     EstimatedRobotPose poseResult,
