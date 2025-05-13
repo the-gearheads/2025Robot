@@ -40,7 +40,7 @@ public class Vision extends SubsystemBase {
   private Camera[] cameras = new Camera[CAMERA_NAMES.length];
   private GtsamInterface gtsam = new GtsamInterface(List.of(CAMERA_NAMES));
 
-  LoggedNetworkBoolean useGtsam = new LoggedNetworkBoolean("AdvantageKit/RealOutputs/Vision/UseGtsam", true);
+  LoggedNetworkBoolean useGtsam = new LoggedNetworkBoolean("AdvantageKit/RealOutputs/Vision/UseGtsam", false);
 
   @AutoLogOutput
   private int cameraPriority = -1;
@@ -49,7 +49,7 @@ public class Vision extends SubsystemBase {
     this.swerve = swerve;
     // might want to remove this before comp
     if(Robot.isSimulation())
-      PhotonCamera.setVersionCheckEnabled(false);  
+      PhotonCamera.setVersionCheckEnabled(false);
 
     String layoutPath = "";
     try {
@@ -61,7 +61,7 @@ public class Vision extends SubsystemBase {
       System.out.println(layoutPath);
     }
 
-  
+
     for (int i = 0; i<CAMERA_NAMES.length; i++) {
       cameras[i] = new Camera(field, CAMERA_NAMES[i], CAMERA_TRANSFORMS[i], CAMERA_INTRINSICS[i], ()->swerve.getPoseMultitag().getRotation().getRadians(), ()->swerve.getPoseWheelsOnly().getRotation().getRadians(), swerve::getPose, INITAL_CAMERA_STRATEGIES[i]);
       sim.addCamera(cameras[i]);
@@ -132,7 +132,7 @@ public class Vision extends SubsystemBase {
       Logger.recordOutput("Vision/Gtsam/RawPoseEstimate", gtsam.getRawPoseEstimate());
       Logger.recordOutput("Vision/Gtsam/LoopTimeMs", gtsam.getLoopTimeMs());
       Logger.recordOutput("Vision/Gtsam/ReadyToOptimize", gtsam.isReadyToOptimize());
-      Logger.recordOutput("Vision/Gtsam/HadIssue", gtsam.hadIssue());      
+      Logger.recordOutput("Vision/Gtsam/HadIssue", gtsam.hadIssue());
     }
     for (Camera camera : cameras) {
       camera.logCamTransform(swerve.getPose());
