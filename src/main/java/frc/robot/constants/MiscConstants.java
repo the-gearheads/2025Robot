@@ -20,7 +20,7 @@ public final class MiscConstants {
   public static final double SWERVE_ALIGN_ROT_TOLERANCE = Units.degreesToRadians(1);
   public static final double SWERVE_ALIGN_DIST_TOLERANCE = Units.inchesToMeters(0.5);
 
-  public static boolean AUTO_ALIGN_ENABLED = false;
+  public static boolean AUTO_ALIGN_ENABLED = true;
 
   // robot constants, unused; for reference
   public static final double ROBOT_MOI = 3.070789055; // kg * m^2   - for rinzlers drive base

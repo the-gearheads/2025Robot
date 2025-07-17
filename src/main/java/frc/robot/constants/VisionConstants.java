@@ -14,7 +14,7 @@ public class VisionConstants {
   // sane values somewhere between 1e-7 and 10000. low == trust initial guess heading less.
   public static final double CONSTRAINED_PNP_HEADING_SCALE_FACTOR = 1;
   ;
-  public static final String[] CAMERA_NAMES = { "FRONT_LEFT_2025",  "BACK_LEFT_2025", "BACK_RIGHT"};
+  public static final String[] CAMERA_NAMES = { "FRONT_LEFT_2025",  "BACK_LEFT_OFFSEASON", "BACK_RIGHT_OFFSEASON"};
 
   public static final double MAX_AVG_DIST = 2.7;
   public static final double MAX_TAG_AMBIGUITY = 0.3;
@@ -26,12 +26,16 @@ public class VisionConstants {
       new Transform3d(  // FRONT_LEFT_2025
           new Translation3d(0.36322, 0.1778, 0.16891),
           new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(-20), Units.degreesToRadians(0))),
-      new Transform3d( // BACK_LEFT_2025
-          new Translation3d(-0.3683, 0.1778, 0.16891),
-          new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(-20), Units.degreesToRadians(180 - 15))),
-      new Transform3d( // BACK_RIGHT
-          new Translation3d(-0.3683, -0.1778, 0.16891),
-          new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(-20), Units.degreesToRadians(15 - 180)))
+      new Transform3d( // BACK_LEFT_OFFSEASON
+          new Translation3d(        -0.1524,
+          0.3048,
+          0.2286),
+          new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(-15), Units.degreesToRadians(6.5 - 180))),
+      new Transform3d( // BACK_RIGHT_OFFSEASON
+      new Translation3d(        -0.1524,
+      -0.3048,
+      0.2286),
+      new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(-15), Units.degreesToRadians(-6.5 - 180))),
 
   };
 

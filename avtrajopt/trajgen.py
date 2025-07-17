@@ -236,6 +236,7 @@ def main(input_file, output_dir, debug = True):
     # Acceleration limits
     elevator_k[0].set_value((constants.elevator_min_len + constants.elevator_max_len) / 2) # avoid singularities at the initial 0 length state. being at the boundary also sucks
     if data.get("use_pivot_accel_scaling", True):
+    # if False:
       pivot_accel_k = constants.pivot_accel_scaling(elevator_k[0])
     else:
       pivot_accel_k = constants.pivot_max_accel

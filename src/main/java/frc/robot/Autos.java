@@ -201,7 +201,7 @@ public class Autos {
 
     routine.active().onTrue(
       Commands.sequence(
-        startToReef.resetOdometry(),
+        // startToReef.resetOdometry(),
         startToReef.cmd()
       )
     );
