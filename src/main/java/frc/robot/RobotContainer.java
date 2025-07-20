@@ -17,10 +17,12 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import frc.robot.commands.Teleop;
 import frc.robot.commands.NTControl.PivotNTControl;
 import frc.robot.commands.NTControl.TelescopeNTControl;
 import frc.robot.commands.NTControl.WristNTControl;
+import frc.robot.constants.ArmConstants;
 import frc.robot.constants.VisionConstants;
 import frc.robot.controllers.Controllers;
 import frc.robot.subsystems.Leds;
@@ -201,22 +203,40 @@ public class RobotContainer {
     Controllers.operatorController.getBtn22().whileTrue(intake.forceGamePiece(GamePiece.CORAL));
     Controllers.operatorController.getBtn23().whileTrue(intake.forceGamePiece(GamePiece.EMPTY));
 
-    // Controllers.driverController.getABtn().whileTrue(
-    //   pivot.run(() -> {pivot.setMode(RunMode.VOLTAGE); pivot.setVoltage(-5);})
-    //     .alongWith(wrist.run(() -> {wrist.setGoal(Rotation2d.fromDegrees(70));}))
-    //     .alongWith(telescope.run(()->{
-    //       telescope.setMode(RunMode.PROFILED_PID);
-    //       telescope.setGoalPosition(ArmConstants.MIN_RELATIVE_HEIGHT);
-    //     })).withInterruptBehavior(InterruptionBehavior.kCancelIncoming)
-    // );
-    // Controllers.driverController.getXBtn().whileTrue(
-    //   pivot.run(() -> {pivot.setMode(RunMode.VOLTAGE); pivot.setVoltage(5);})
-    //     .alongWith(wrist.run(() -> {wrist.setGoal(Rotation2d.fromDegrees(70));}))
-    //     .alongWith(telescope.run(()->{
-    //       telescope.setMode(RunMode.PROFILED_PID);
-    //       telescope.setGoalPosition(ArmConstants.MIN_RELATIVE_HEIGHT);
-    //     })).withInterruptBehavior(InterruptionBehavior.kCancelIncoming)
-    // );
+    Controllers.driverController.getABtn().whileTrue(
+      pivot.run(() -> {pivot.setMode(RunMode.VOLTAGE); pivot.setVoltage(-5);})
+        .alongWith(wrist.run(() -> {wrist.setGoal(Rotation2d.fromDegrees(70));}))
+        .alongWith(telescope.run(()->{
+          telescope.setMode(RunMode.PROFILED_PID);
+          telescope.setGoalPosition(ArmConstants.MIN_RELATIVE_HEIGHT);
+        })).withInterruptBehavior(InterruptionBehavior.kCancelIncoming)
+    );
+    Controllers.driverController.getXBtn().whileTrue(
+      pivot.run(() -> {pivot.setMode(RunMode.VOLTAGE); pivot.setVoltage(5);})
+        .alongWith(wrist.run(() -> {wrist.setGoal(Rotation2d.fromDegrees(70));}))
+        .alongWith(telescope.run(()->{
+          telescope.setMode(RunMode.PROFILED_PID);
+          telescope.setGoalPosition(ArmConstants.MIN_RELATIVE_HEIGHT);
+        })).withInterruptBehavior(InterruptionBehavior.kCancelIncoming)
+    );
+
+    Controllers.driverController.getYBtn().onTrue(
+      pivot.run(() -> {pivot.setMode(RunMode.PROFILED_PID); pivot.setGoalAngle(Rotation2d.fromDegrees(90));})
+        .alongWith(wrist.run(() -> {wrist.setGoal(Rotation2d.fromDegrees(70));}))
+        .alongWith(telescope.run(()->{
+          telescope.setMode(RunMode.PROFILED_PID);
+          telescope.setGoalPosition(ArmConstants.MIN_RELATIVE_HEIGHT);
+        })).withInterruptBehavior(InterruptionBehavior.kCancelIncoming)
+    );
+
+    Controllers.driverController.getYBtn().onTrue(
+      pivot.run(() -> {pivot.setMode(RunMode.PROFILED_PID); pivot.setGoalAngle(Rotation2d.fromDegrees(14));})
+        .alongWith(wrist.run(() -> {wrist.setGoal(Rotation2d.fromDegrees(70));}))
+        .alongWith(telescope.run(()->{
+          telescope.setMode(RunMode.PROFILED_PID);
+          telescope.setGoalPosition(ArmConstants.MIN_RELATIVE_HEIGHT);
+        })).withInterruptBehavior(InterruptionBehavior.kCancelIncoming)
+    );
     
     Controllers.driverController.getYBtn().onTrue(
       superStructure.goTo(SuperstructurePosition.NET)
