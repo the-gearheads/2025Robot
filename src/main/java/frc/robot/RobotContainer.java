@@ -124,6 +124,15 @@ public class RobotContainer {
       })
     );
 
+    Controllers.driverController.getRightPaddle().whileTrue(
+      Commands.deferredProxy(() -> {
+        if (intake.getGamePiece() == GamePiece.EMPTY) {
+          return intake.runIntake();
+        }
+        return Commands.none();
+      })  
+    );
+
     Controllers.driverController.getLeftPaddle().onTrue(
       Commands.deferredProxy(() -> {
       switch(intake.getGamePiece()) {
@@ -140,6 +149,15 @@ public class RobotContainer {
           return superStructure.goTo(SuperstructurePosition.AlgaeL2).alongWith(intake.runIntake());
       }
       })
+    );
+
+    Controllers.driverController.getLeftPaddle().whileTrue(
+      Commands.deferredProxy(() -> {
+        if (intake.getGamePiece() == GamePiece.EMPTY) {
+          return intake.runIntake();
+        }
+        return Commands.none();
+      })  
     );
 
     Controllers.driverController.getRightBumper().onTrue(
