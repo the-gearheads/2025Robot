@@ -7,7 +7,7 @@ public enum ArmvatorPosition {
   L1(new Translation2d(0.715912, 0.647364)),
   L2(new Translation2d(0.625565, 0.830153)),
   L3(new Translation2d(0.100776, 0.958819)),
-  L4(new Translation2d(0.176904, 1.683129)),
+  L4(new Translation2d(0.173966, 1.683435)),
   AlgaeL3(new Translation2d(0.0, 1.04818)),
   AlgaeL2(new Translation2d(0.80958, 0.921202)),
   HP(new Translation2d(0.770843, 0.580872)),
