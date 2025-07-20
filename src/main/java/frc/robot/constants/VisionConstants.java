@@ -13,13 +13,14 @@ import frc.robot.subsystems.vision.CameraIntrinsics;
 public class VisionConstants {
   // sane values somewhere between 1e-7 and 10000. low == trust initial guess heading less.
   public static final double CONSTRAINED_PNP_HEADING_SCALE_FACTOR = 1;
-  ;
+  
   public static final String[] CAMERA_NAMES = { "FRONT_LEFT_2025",  "BACK_LEFT_OFFSEASON", "BACK_RIGHT_OFFSEASON"};
 
   public static final double MAX_AVG_DIST = 2.7;
   public static final double MAX_TAG_AMBIGUITY = 0.3;
 
   public static boolean USE_2D_ALIGNMENT_MODE = true;
+  public static boolean USE_GTSAM_DEFAULT = true; // if this is set to true it will IGNORE all other vision strategies/poses; including 2d alignment mode
 
   public static final PoseStrategy[] INITAL_CAMERA_STRATEGIES = {PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR};
   public static final Transform3d[] CAMERA_TRANSFORMS = {
@@ -39,17 +40,17 @@ public class VisionConstants {
 
   };
 
-  // really just for sim atp
-  public static final CameraIntrinsics[] CAMERA_INTRINSICS = {
+  // ONLY used for sim; these are NOT accurate to the real cameras
+  public static final CameraIntrinsics[] SIM_CAMERA_INTRINSICS = {
       new CameraIntrinsics(  // FRONT_LEFT_2025
           1600, 1200,
           1286.9714942340822, 801.3013669030433, 662.3371068271363, 643.6657753564633,
           new double[] { 0.03330603946791099,-0.028149602298339575,-3.2480645802923945E-4,-9.9467580835956E-5,-0.01790312270432083,-5.6026682560497186E-5,0.004799695107552726,0.002517423938318154 }),
-      new CameraIntrinsics( // BACK LEFT // TODO: this is wrong now
+      new CameraIntrinsics( // BACK_LEFT_OFFSEASON
           1280, 800,
           907.5481543996266, 907.2864231011899, 615.788934769545, 384.31897050631306,
           new double[] { 0.04546920576986492,-0.060969029351137745,5.994746339424619E-5,-5.844773226102312E-4,0.008910675549702082,-0.0021265005451531174,0.00603543079528509,0.0019224441649826043 }),
-      new CameraIntrinsics( // BACK RIGHT
+      new CameraIntrinsics( // BACK_RIGHT_OFFSEASON
           1280, 800,
           903.6362625357887, 904.0894526094557, 659.272169009578, 419.33183667235414,
           new double[] { 0.04817038713247634,-0.06653199679614717,2.440943204330648E-4,-1.1668007422068571E-4,0.010742825203920284,-0.00217144171086648,0.0051145983132926676,0.0012068741948585884 })

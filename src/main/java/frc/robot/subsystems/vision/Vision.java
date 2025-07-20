@@ -40,7 +40,7 @@ public class Vision extends SubsystemBase {
   private Camera[] cameras = new Camera[CAMERA_NAMES.length];
   private GtsamInterface gtsam = new GtsamInterface(List.of(CAMERA_NAMES));
 
-  LoggedNetworkBoolean useGtsam = new LoggedNetworkBoolean("AdvantageKit/RealOutputs/Vision/UseGtsam", true);
+  LoggedNetworkBoolean useGtsam = new LoggedNetworkBoolean("AdvantageKit/RealOutputs/Vision/UseGtsam", USE_GTSAM_DEFAULT);
 
   @AutoLogOutput
   private int cameraPriority = -1;
@@ -63,7 +63,7 @@ public class Vision extends SubsystemBase {
 
 
     for (int i = 0; i<CAMERA_NAMES.length; i++) {
-      cameras[i] = new Camera(field, CAMERA_NAMES[i], CAMERA_TRANSFORMS[i], CAMERA_INTRINSICS[i], ()->swerve.getPoseMultitag().getRotation().getRadians(), ()->swerve.getPoseWheelsOnly().getRotation().getRadians(), swerve::getPose, INITAL_CAMERA_STRATEGIES[i]);
+      cameras[i] = new Camera(field, CAMERA_NAMES[i], CAMERA_TRANSFORMS[i], SIM_CAMERA_INTRINSICS[i], ()->swerve.getPoseMultitag().getRotation().getRadians(), ()->swerve.getPoseWheelsOnly().getRotation().getRadians(), swerve::getPose, INITAL_CAMERA_STRATEGIES[i]);
       sim.addCamera(cameras[i]);
     }
 

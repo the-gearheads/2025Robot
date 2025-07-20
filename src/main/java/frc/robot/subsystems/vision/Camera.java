@@ -44,7 +44,7 @@ public class Camera {
   public final String name;
   public final String path;
   public final Transform3d transform;
-  public final CameraIntrinsics intrinsics;
+  public final CameraIntrinsics simIntrinsics;
 
   public final PhotonCamera camera;
   public final PhotonPoseEstimator estimator;
@@ -69,10 +69,10 @@ public class Camera {
 
   LoggedNetworkNumber headingScaleFactor = new LoggedNetworkNumber("AdvantageKit/RealOutputs/Vision/HeadingScaleFactor", CONSTRAINED_PNP_HEADING_SCALE_FACTOR);
 
-  public Camera(AprilTagFieldLayout field, String name, Transform3d transform, CameraIntrinsics intrinsics, DoubleSupplier fusedHeadingSupplier, DoubleSupplier gyroAngleSupplier, Supplier<Pose2d> robotPoseSupplier, PoseStrategy strategy) {
+  public Camera(AprilTagFieldLayout field, String name, Transform3d transform, CameraIntrinsics simIntrinsics, DoubleSupplier fusedHeadingSupplier, DoubleSupplier gyroAngleSupplier, Supplier<Pose2d> robotPoseSupplier, PoseStrategy strategy) {
     this.name = name;
     this.transform = transform;
-    this.intrinsics = intrinsics;
+    this.simIntrinsics = simIntrinsics;
     this.field = field;
     this.robotPoseSupplier = robotPoseSupplier;
     path = "Vision/" + name.replace("_", "");
@@ -242,8 +242,8 @@ public class Camera {
 
   public SimCameraProperties getSimProperties() {
     SimCameraProperties properties = new SimCameraProperties();
-    properties.setCalibration(intrinsics.resX, intrinsics.resY, intrinsics.getCameraMatrix(),
-        intrinsics.getDistCoeffs());
+    properties.setCalibration(simIntrinsics.resX, simIntrinsics.resY, simIntrinsics.getCameraMatrix(),
+        simIntrinsics.getDistCoeffs());
 
     // Approximate detection noise with average and standard deviation error in
     // pixels.
