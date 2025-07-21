@@ -140,7 +140,7 @@ public class Autos {
     startToReef.done().onTrue(
       Commands.sequence(
         stop(),
-        AlignToPose.getAutoAlignCommand(swerve, swerve.vision).withTimeout(2.5),
+        AlignToPose.getAutoAlignEndsCommand(swerve, swerve.vision).withTimeout(2.5),
         Commands.deadline(superstructure.waitUntilAtSetpoint(), AlignToPose.getAutoAlignCommand(swerve, swerve.vision)).withTimeout(3),
         outtakeCoral().withTimeout(1.0),
         reefToHP.cmd()
@@ -157,7 +157,7 @@ public class Autos {
 
     HPToReef.done().onTrue(Commands.sequence(
       stop(),
-      AlignToPose.getAutoAlignCommand(swerve, swerve.vision).withTimeout(2.5),
+      AlignToPose.getAutoAlignEndsCommand(swerve, swerve.vision).withTimeout(2.5),
       Commands.deadline(superstructure.waitUntilAtSetpoint(), AlignToPose.getAutoAlignCommand(swerve, swerve.vision)).withTimeout(3),
       outtakeCoral().withTimeout(1.0)
     ));
@@ -184,7 +184,7 @@ public class Autos {
       Commands.sequence(
         stop(),
         AlignToPose.getAutoAlignEndsCommand(swerve, swerve.vision).withTimeout(2.5),
-        Commands.deadline(superstructure.waitUntilAtSetpoint(), AlignToPose.getAutoAlignEndsCommand(swerve, swerve.vision)).withTimeout(3),
+        Commands.deadline(superstructure.waitUntilAtSetpoint(), AlignToPose.getAutoAlignCommand(swerve, swerve.vision)).withTimeout(3),
         outtakeCoral().withTimeout(1.0),
         reefToHP.cmd()
       )
@@ -202,10 +202,11 @@ public class Autos {
       Commands.sequence(
         stop(),
         AlignToPose.getAutoAlignEndsCommand(swerve, swerve.vision).withTimeout(2.5),
-        Commands.deadline(superstructure.waitUntilAtSetpoint(), AlignToPose.getAutoAlignEndsCommand(swerve, swerve.vision)).withTimeout(3),
+        Commands.deadline(superstructure.waitUntilAtSetpoint(), AlignToPose.getAutoAlignCommand(swerve, swerve.vision)).withTimeout(3),
         outtakeCoral().withTimeout(1.0),
-        reefToHP2.cmd()
+        reefToHP.cmd()
       )
+
     );
 
     reefToHP2.done().onTrue(Commands.sequence(
@@ -219,8 +220,9 @@ public class Autos {
       Commands.sequence(
         stop(),
         AlignToPose.getAutoAlignEndsCommand(swerve, swerve.vision).withTimeout(2.5),
-        Commands.deadline(superstructure.waitUntilAtSetpoint(), AlignToPose.getAutoAlignEndsCommand(swerve, swerve.vision)).withTimeout(3),
-        outtakeCoral().withTimeout(1.0)
+        Commands.deadline(superstructure.waitUntilAtSetpoint(), AlignToPose.getAutoAlignCommand(swerve, swerve.vision)).withTimeout(3),
+        outtakeCoral().withTimeout(1.0),
+        reefToHP.cmd()
       )
     );
 

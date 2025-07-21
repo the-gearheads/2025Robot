@@ -126,6 +126,7 @@ public class Vision extends SubsystemBase {
       lastOdom = odom;
       // Twist3d odomTwist3d = new Pose3d().log(new Pose3d(new Pose2d().exp(odomTwist2d)));
       Twist3d odomTwist3d = new Twist3d(odomTwist2d.dx, odomTwist2d.dy, 0, 0, 0, odomTwist2d.dtheta);
+      
       gtsam.sendOdomUpdate(WPIUtilJNI.now(), odomTwist3d, new Pose3d(swerve.getPoseMultitag()));
 
       Logger.recordOutput("Vision/Gtsam/PoseEstimate", gtsam.getLatencyCompensatedPoseEstimate());

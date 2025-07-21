@@ -277,8 +277,8 @@ public class Swerve extends SubsystemBase {
   }
 
   public boolean atPose(Pose2d pose) {
-    if (getPose().getRotation().getRadians() - pose.getRotation().getRadians() > SWERVE_ALIGN_ROT_TOLERANCE &&
-        getPose().getTranslation().getDistance(pose.getTranslation()) > SWERVE_ALIGN_DIST_TOLERANCE) {
+    if (Math.abs(getPose().getRotation().getRadians() - pose.getRotation().getRadians()) < SWERVE_ALIGN_ROT_TOLERANCE &&
+        getPose().getTranslation().getDistance(pose.getTranslation()) < SWERVE_ALIGN_DIST_TOLERANCE) {
       return true;
     }
     return false;
