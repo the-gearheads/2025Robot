@@ -110,6 +110,10 @@ public class Swerve extends SubsystemBase {
   public double getGyroVelocity() {
     return gyro.getVelocityYaw();
   }
+  
+  public double getTranslationVelocity() {
+    return Math.sqrt(Math.pow(getRobotRelativeSpeeds().vxMetersPerSecond, 2) + Math.pow(getRobotRelativeSpeeds().vyMetersPerSecond, 2));
+  }
 
   @Override
   public void simulationPeriodic() {
@@ -290,18 +294,24 @@ public class Swerve extends SubsystemBase {
   }
 
   public Command driveToPose(Pose2d pose) {
-    Rotation2d rotationError = getPose().getRotation().minus(pose.getRotation());
-    double targetDist = getPose().getTranslation().getDistance(pose.getTranslation());
-    double driveVel = driveController.calculate(targetDist, 0.0);
-    double rotVel = headingController.calculate(rotationError.getRadians(), 0.0);
+    return this.run(() -> {
+      Rotation2d rotationError = getPose().getRotation().minus(pose.getRotation());
+      double targetDist = getPose().getTranslation().getDistance(pose.getTranslation());
+      double driveVel = driveController.calculate(targetDist, 0.0);
+      double rotVel = headingController.calculate(rotationError.getRadians(), 0.0);
 
-    Rotation2d translationVectorAngleError = getPose().getTranslation().minus(pose.getTranslation()).getAngle();
-    var autoTranslation = new Pose2d(Translation2d.kZero,
-        translationVectorAngleError)
-        .transformBy(new Transform2d(new Translation2d(driveVel, 0.0), Rotation2d.kZero))
-        .getTranslation();
-    ChassisSpeeds autoSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(autoTranslation.getX(), autoTranslation.getY(), rotVel, getPose().getRotation());
-    return this.run(() -> drive(autoSpeeds));
+      Rotation2d translationVectorAngleError = getPose().getTranslation().minus(pose.getTranslation()).getAngle();
+      var autoTranslation = new Pose2d(Translation2d.kZero,
+          translationVectorAngleError)
+          .transformBy(new Transform2d(new Translation2d(driveVel, 0.0), Rotation2d.kZero))
+          .getTranslation();
+      ChassisSpeeds autoSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(autoTranslation.getX(), autoTranslation.getY(), rotVel, getPose().getRotation());
+      drive(autoSpeeds);
+    }).until(() -> {
+      return atPose(pose)
+      && getRobotRelativeSpeeds().omegaRadiansPerSecond < ALIGNMENT_MAX_STOPPED_ROT_SPEED
+          && Math.abs(getTranslationVelocity()) < ALIGNMENT_MAX_STOPPED_TRANS_SPEED;
+    });
   }
 
 

@@ -15,7 +15,6 @@ import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
@@ -63,7 +62,7 @@ public class AlignToPose {
       controllerMagScalingFactor = 1;
     }
     Logger.recordOutput("AlignToPose/ControllerMagnitude", controllerMagnitude);
-    double distScalingFactor = MathUtil.clamp(-0.7679 * targetDist + 1, 0, 1);
+    double distScalingFactor = MathUtil.clamp(-1 * targetDist + 1, 0, 1);
     Logger.recordOutput("AlignToPose/ControllerScalingFactor", controllerMagScalingFactor);
     Logger.recordOutput("AlignToPose/DistanceScalingFactor", distScalingFactor);
     

@@ -15,7 +15,7 @@ public final class MiscConstants {
   public static final double MAX_AUTO_VELOCITY = 2; // m/s;
 
   public static final double AUTO_ALIGN_ANGLE_THRESHOLD = Units.degreesToRadians(25);
-  public static final double AUTO_ALIGN_DIST_THRESHOLD = 0.5;
+  public static final double AUTO_ALIGN_DIST_THRESHOLD = 1;
 
   public static final double SWERVE_ALIGN_ROT_TOLERANCE = Units.degreesToRadians(2);
   public static final double SWERVE_ALIGN_DIST_TOLERANCE = Units.inchesToMeters(0.75);

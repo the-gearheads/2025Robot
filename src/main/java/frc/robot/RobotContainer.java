@@ -8,6 +8,8 @@ package frc.robot;
 
 import static frc.robot.constants.MiscConstants.AUTO_ALIGN_ENABLED;
 
+import org.littletonrobotics.junction.Logger;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -42,6 +44,7 @@ import frc.robot.subsystems.wrist.Wrist;
 import frc.robot.subsystems.wrist.WristSim;
 import frc.robot.util.ArmvatorPosition;
 import frc.robot.util.ObjectiveTracker;
+import frc.robot.util.ReefPositions;
 
 public class RobotContainer {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -268,7 +271,9 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
     // return Commands.runOnce(()->{swerve.vision.disable();}).andThen(autos.getAutonomousRoutine());
-    return autos.getAutonomousRoutine();
+    // return autos.getAutonomousRoutine();
+    Logger.recordOutput("Test/targetPose", ReefPositions.getReefPose(0, 1));
+    return swerve.driveToPose(ReefPositions.getReefPose(0, 1));
     // return sysidAuto.get();
     // return Swerve.wheelRadiusCharacterization(swerve);
     // return Commands.runOnce(()->{swerve.vision.disable();}).andThen(new InstantCommand(()-> {swerve.setPose(new Pose2d(7.12387752532959 , 7.599511623382568, Rotation2d.kZero));})).andThen(swerve.run(() -> {swerve.drive(new ChassisSpeeds(0.5, 0, 0));}).withTimeout(7));
