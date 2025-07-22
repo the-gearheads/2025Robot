@@ -6,6 +6,7 @@ package frc.robot.subsystems.vision;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
@@ -41,6 +42,7 @@ public class Vision extends SubsystemBase {
   private GtsamInterface gtsam = new GtsamInterface(List.of(CAMERA_NAMES));
 
   LoggedNetworkBoolean useGtsam = new LoggedNetworkBoolean("AdvantageKit/RealOutputs/Vision/UseGtsam", Robot.isReal() ? USE_GTSAM_DEFAULT : false);
+  Optional<Pose3d> firstVisionEstimate = Optional.empty(); 
 
   @AutoLogOutput
   private int cameraPriority = -1;
@@ -70,6 +72,10 @@ public class Vision extends SubsystemBase {
   }
 
   private void addVisionMeasurement(SwerveDrivePoseEstimator poseEstimator, Camera cam, VisionObservation observation) {
+    if (firstVisionEstimate.isEmpty()) {
+      firstVisionEstimate = Optional.of(observation.poseResult().estimatedPose);
+      Logger.recordOutput("Vision/FirstVisionEstimate", firstVisionEstimate.get());
+    }
     poseEstimator.addVisionMeasurement(observation.poseResult().estimatedPose.toPose2d(), observation.poseResult().timestampSeconds, observation.stddevs());
     if(usingGtsam()) {
       gtsam.sendVisionUpdate(cam.name, observation.poseResult()); // -really- we're just using the corners but this is what we got
@@ -126,9 +132,9 @@ public class Vision extends SubsystemBase {
       lastOdom = odom;
       // Twist3d odomTwist3d = new Pose3d().log(new Pose3d(new Pose2d().exp(odomTwist2d)));
       Twist3d odomTwist3d = new Twist3d(odomTwist2d.dx, odomTwist2d.dy, 0, 0, 0, odomTwist2d.dtheta);
-      
-      gtsam.sendOdomUpdate(WPIUtilJNI.now(), odomTwist3d, new Pose3d(swerve.getPoseMultitag()));
-
+      if (firstVisionEstimate.isPresent()) {
+        gtsam.sendOdomUpdate(WPIUtilJNI.now(), odomTwist3d, firstVisionEstimate.get());
+      }
       Logger.recordOutput("Vision/Gtsam/PoseEstimate", gtsam.getLatencyCompensatedPoseEstimate());
       Logger.recordOutput("Vision/Gtsam/RawPoseEstimate", gtsam.getRawPoseEstimate());
       Logger.recordOutput("Vision/Gtsam/LoopTimeMs", gtsam.getLoopTimeMs());
