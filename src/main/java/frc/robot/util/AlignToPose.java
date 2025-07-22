@@ -3,6 +3,8 @@ package frc.robot.util;
 import static frc.robot.constants.MiscConstants.*;
 import static frc.robot.constants.SwerveConstants.ALIGNMENT_DRIVE_CONSTRAINTS;
 import static frc.robot.constants.SwerveConstants.ALIGNMENT_ROT_CONSTRAINTS;
+import static frc.robot.constants.SwerveConstants.DRIVE_CONTROLLER_PID;
+import static frc.robot.constants.SwerveConstants.ROT_CONTROLLER_PID;
 import static frc.robot.constants.VisionConstants.USE_2D_ALIGNMENT_MODE;
 
 import java.util.ArrayList;
@@ -24,11 +26,8 @@ import frc.robot.subsystems.swerve.Swerve;
 import frc.robot.subsystems.vision.Vision;
 
 public class AlignToPose {
-  static ProfiledPIDController driveController = new ProfiledPIDController(3.2, 0, 0, ALIGNMENT_DRIVE_CONSTRAINTS);
-  static ProfiledPIDController rotController = new ProfiledPIDController(1.6, 0, 0, ALIGNMENT_ROT_CONSTRAINTS);
-
-  LinearFilter controllerXFilter = LinearFilter.highPass(0.1, 0.02);
-  LinearFilter controllerYFilter = LinearFilter.highPass(0.1, 0.02);
+  static ProfiledPIDController driveController = new ProfiledPIDController(DRIVE_CONTROLLER_PID[0], DRIVE_CONTROLLER_PID[1], DRIVE_CONTROLLER_PID[2], ALIGNMENT_DRIVE_CONSTRAINTS);
+  static ProfiledPIDController rotController = new ProfiledPIDController(ROT_CONTROLLER_PID[0], ROT_CONTROLLER_PID[1], ROT_CONTROLLER_PID[2], ALIGNMENT_ROT_CONSTRAINTS);
 
   static {
     rotController.enableContinuousInput(-Math.PI, Math.PI);

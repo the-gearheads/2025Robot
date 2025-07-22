@@ -19,6 +19,8 @@ import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
@@ -56,7 +58,10 @@ public class Swerve extends SubsystemBase {
   ObjectiveTracker tracker = new ObjectiveTracker(this);
 
   Gyro gyro;
-  PIDController headingController = new PIDController(5.2, 0, 0.5);
+
+  
+  PIDController headingController = new PIDController(ROT_CONTROLLER_PID[0], ROT_CONTROLLER_PID[1], ROT_CONTROLLER_PID[2]);
+  PIDController driveController = new PIDController(DRIVE_CONTROLLER_PID[0], DRIVE_CONTROLLER_PID[1], DRIVE_CONTROLLER_PID[2]);
   SwerveSetpointGenerator setpointGenerator = new SwerveSetpointGenerator(kinematics, WHEEL_POSITIONS);
 
   SwerveModule[] modules = {
@@ -282,6 +287,21 @@ public class Swerve extends SubsystemBase {
       return true;
     }
     return false;
+  }
+
+  public Command driveToPose(Pose2d pose) {
+    Rotation2d rotationError = getPose().getRotation().minus(pose.getRotation());
+    double targetDist = getPose().getTranslation().getDistance(pose.getTranslation());
+    double driveVel = driveController.calculate(targetDist, 0.0);
+    double rotVel = headingController.calculate(rotationError.getRadians(), 0.0);
+
+    Rotation2d translationVectorAngleError = getPose().getTranslation().minus(pose.getTranslation()).getAngle();
+    var autoTranslation = new Pose2d(Translation2d.kZero,
+        translationVectorAngleError)
+        .transformBy(new Transform2d(new Translation2d(driveVel, 0.0), Rotation2d.kZero))
+        .getTranslation();
+    ChassisSpeeds autoSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(autoTranslation.getX(), autoTranslation.getY(), rotVel, getPose().getRotation());
+    return this.run(() -> drive(autoSpeeds));
   }
 
 
