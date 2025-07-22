@@ -99,6 +99,12 @@ public class Autos {
     return Commands.runOnce(() -> swerve.drive(new ChassisSpeeds()));
   }
 
+  private Command number(int num) {
+    return Commands.runOnce(()->{
+      Logger.recordOutput("number", num);
+    });
+  }
+
   public AutoRoutine center1Coral() {
     AutoRoutine routine = factory.newRoutine("CENTER_1C4");
     AutoTrajectory trajectory = routine.trajectory("CENTER_1C4");
@@ -129,6 +135,7 @@ public class Autos {
     AutoTrajectory startToReef = routine.trajectory(routineName, 0);
     AutoTrajectory reefToHP = routine.trajectory(routineName, 1);
     AutoTrajectory HPToReef = routine.trajectory(routineName, 2);
+    AutoTrajectory reefToHP2 = routine.trajectory(routineName, 3);
 
     routine.active().onTrue(
       Commands.sequence(
@@ -140,8 +147,11 @@ public class Autos {
     startToReef.done().onTrue(
       Commands.sequence(
         stop(),
-        AlignToPose.getAutoAlignCommand(swerve, swerve.vision).withTimeout(2.5),
+        number(0),
+        AlignToPose.getAutoAlignEndsCommand(swerve, swerve.vision).withTimeout(2.5),
+        number(1),
         Commands.deadline(superstructure.waitUntilAtSetpoint(), AlignToPose.getAutoAlignCommand(swerve, swerve.vision)).withTimeout(3),
+        number(2),
         outtakeCoral().withTimeout(1.0),
         reefToHP.cmd()
       )
@@ -150,16 +160,17 @@ public class Autos {
     // we -could- hypothetically- wait until we have a game piece, but we could also just rely on pure HP skill
     reefToHP.done().onTrue(Commands.sequence(
       stop(),
-      superstructure.waitUntilAtSetpoint().withTimeout(3),
+      superstructure.waitUntilAtSetpoint().withTimeout(0.5),
       waitForCoral().withTimeout(2),
       HPToReef.cmd()
     ));
 
     HPToReef.done().onTrue(Commands.sequence(
       stop(),
-      AlignToPose.getAutoAlignCommand(swerve, swerve.vision).withTimeout(2.5),
+      AlignToPose.getAutoAlignEndsCommand(swerve, swerve.vision).withTimeout(2.5),
       Commands.deadline(superstructure.waitUntilAtSetpoint(), AlignToPose.getAutoAlignCommand(swerve, swerve.vision)).withTimeout(3),
-      outtakeCoral().withTimeout(1.0)
+      outtakeCoral().withTimeout(1.0),
+      reefToHP2.cmd()
     ));
     
     return routine;
@@ -184,8 +195,11 @@ public class Autos {
       Commands.sequence(
         stop(),
         AlignToPose.getAutoAlignEndsCommand(swerve, swerve.vision).withTimeout(2.5),
-        Commands.deadline(superstructure.waitUntilAtSetpoint(), AlignToPose.getAutoAlignEndsCommand(swerve, swerve.vision)).withTimeout(3),
+        Commands.print("Finished aligning"),
+        Commands.deadline(superstructure.waitUntilAtSetpoint(), AlignToPose.getAutoAlignCommand(swerve, swerve.vision)).withTimeout(3),
+        Commands.print("placing coral"),
         outtakeCoral().withTimeout(1.0),
+        Commands.print("finished outtaking"),
         reefToHP.cmd()
       )
     );
@@ -202,10 +216,11 @@ public class Autos {
       Commands.sequence(
         stop(),
         AlignToPose.getAutoAlignEndsCommand(swerve, swerve.vision).withTimeout(2.5),
-        Commands.deadline(superstructure.waitUntilAtSetpoint(), AlignToPose.getAutoAlignEndsCommand(swerve, swerve.vision)).withTimeout(3),
+        Commands.deadline(superstructure.waitUntilAtSetpoint(), AlignToPose.getAutoAlignCommand(swerve, swerve.vision)).withTimeout(3),
         outtakeCoral().withTimeout(1.0),
-        reefToHP2.cmd()
+        reefToHP.cmd()
       )
+
     );
 
     reefToHP2.done().onTrue(Commands.sequence(
@@ -219,8 +234,9 @@ public class Autos {
       Commands.sequence(
         stop(),
         AlignToPose.getAutoAlignEndsCommand(swerve, swerve.vision).withTimeout(2.5),
-        Commands.deadline(superstructure.waitUntilAtSetpoint(), AlignToPose.getAutoAlignEndsCommand(swerve, swerve.vision)).withTimeout(3),
-        outtakeCoral().withTimeout(1.0)
+        Commands.deadline(superstructure.waitUntilAtSetpoint(), AlignToPose.getAutoAlignCommand(swerve, swerve.vision)).withTimeout(3),
+        outtakeCoral().withTimeout(1.0),
+        reefToHP.cmd()
       )
     );
 
