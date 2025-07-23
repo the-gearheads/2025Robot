@@ -74,6 +74,7 @@ public class Autos {
     chooser.addRoutine("Right 2 Coral", ()->{return twoCoral("RIGHT_2C4");});
     chooser.addRoutine("Left 3 Coral", ()->{return threeCoral("LEFT_3C4");});
     chooser.addRoutine("Center 1 Coral", ()->{return center1Coral();});
+    chooser.addRoutine("test", ()->{return test();});
     SmartDashboard.putData("AutoChooser", chooser);
   }
 
@@ -103,6 +104,18 @@ public class Autos {
     return Commands.runOnce(()->{
       Logger.recordOutput("number", num);
     });
+  }
+
+  public AutoRoutine test() {
+    AutoRoutine routine = factory.newRoutine("test");
+    routine.active().onTrue(
+      Commands.sequence(
+        swerve.driveToPose(new Pose2d(10.0, 1.628, Rotation2d.kZero)),
+        superstructureGoTo(SuperstructurePosition.NET)
+      )
+    );
+
+    return routine;
   }
 
   public AutoRoutine center1Coral() {

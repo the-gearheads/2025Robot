@@ -38,6 +38,10 @@ public class Superstructure {
 
   ArmvatorSample lastSample = new ArmvatorSample(0, 0, 0, 0, 0, 0, 0, 0);
   ArmvatorTrajectory lastTraj = new ArmvatorTrajectory("Aaa", List.of());
+
+  @AutoLogOutput
+  public SuperstructurePosition desiredPosition;
+
   public Superstructure(Pivot pivot, Telescope telescope, Wrist wrist) {
     this.pivot = pivot;
     this.telescope = telescope;
@@ -79,6 +83,7 @@ public class Superstructure {
   
   public Command goTo(SuperstructurePosition pos) {
     return Commands.defer(()-> {
+      desiredPosition = pos;
       var currentPos = ArmvatorPosition.getNearest(getEndEffPos());
       ArmvatorTrajectory traj;
       if (currentPos != pos.armvatorPosition) {
@@ -110,7 +115,7 @@ public class Superstructure {
         return wristMoveCommand.andThen(new ParallelDeadlineGroup(
           followAvTrajectory(traj),
           new WristTrajFollower(traj, pos, wrist, this::getLastSample)
-        ));
+        )).andThen(Commands.runOnce(()-> desiredPosition = null));
       }, Set.of(pivot, telescope, wrist));
     }
     

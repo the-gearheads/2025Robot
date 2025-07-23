@@ -8,7 +8,6 @@ package frc.robot;
 
 import static frc.robot.constants.MiscConstants.AUTO_ALIGN_ENABLED;
 
-import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -44,7 +43,6 @@ import frc.robot.subsystems.wrist.Wrist;
 import frc.robot.subsystems.wrist.WristSim;
 import frc.robot.util.ArmvatorPosition;
 import frc.robot.util.ObjectiveTracker;
-import frc.robot.util.ReefPositions;
 
 public class RobotContainer {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -79,7 +77,7 @@ public class RobotContainer {
     superStructure = new Superstructure(pivot, telescope, wrist);
     autos = new Autos(swerve, superStructure, intake);
     viz = new MechanismViz(swerve, pivot, telescope, wrist);
-    swerve.setDefaultCommand(new Teleop(swerve, intake, tracker));
+    swerve.setDefaultCommand(new Teleop(swerve, intake, tracker, superStructure));
     // swerve.setDefaultCommand(new Teleop(swerve));
     // pivot.setDefaultCommand(new ManualPivot(pivot));
     pivot.setDefaultCommand(new PivotNTControl(pivot));
@@ -104,7 +102,6 @@ public class RobotContainer {
 
     // Find new controllers
     Controllers.updateActiveControllerInstance();
-
     Controllers.driverController.getLeftTriggerBtn().onTrue(superStructure.goTo(SuperstructurePosition.GROUND_INTAKE));
     Controllers.driverController.getLeftTriggerBtn().whileTrue(intake.runIntake());
 
@@ -271,9 +268,9 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
     // return Commands.runOnce(()->{swerve.vision.disable();}).andThen(autos.getAutonomousRoutine());
-    // return autos.getAutonomousRoutine();
-    Logger.recordOutput("Test/targetPose", ReefPositions.getReefPose(0, 1));
-    return swerve.driveToPose(ReefPositions.getReefPose(0, 1));
+    return autos.getAutonomousRoutine();
+    // Logger.recordOutput("Test/targetPose", ReefPositions.getReefPose(0, 1));
+    // return swerve.driveToPose(ReefPositions.getReefPose(0, 1));
     // return sysidAuto.get();
     // return Swerve.wheelRadiusCharacterization(swerve);
     // return Commands.runOnce(()->{swerve.vision.disable();}).andThen(new InstantCommand(()-> {swerve.setPose(new Pose2d(7.12387752532959 , 7.599511623382568, Rotation2d.kZero));})).andThen(swerve.run(() -> {swerve.drive(new ChassisSpeeds(0.5, 0, 0));}).withTimeout(7));

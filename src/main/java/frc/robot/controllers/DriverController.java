@@ -135,6 +135,11 @@ public class DriverController {
     controller.setRumble(RumbleType.kBothRumble, rumble);
   }
 
+  public Trigger getRawButton(int button) {
+    if(isNull()) return emptyTrigger();
+    return new Trigger(() -> controller.getRawButton(button));
+
+  }
   public Command getRumbleCommand(double rumble, double seconds) {
     return Commands.runEnd(()->setRumble(rumble), ()->setRumble(0)).withTimeout(seconds);
   }

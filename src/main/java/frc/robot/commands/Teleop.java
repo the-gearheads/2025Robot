@@ -3,11 +3,16 @@ package frc.robot.commands;
 import static frc.robot.constants.MiscConstants.AUTO_ALIGN_ANGLE_THRESHOLD;
 import static frc.robot.constants.MiscConstants.AUTO_ALIGN_DIST_THRESHOLD;
 import static frc.robot.constants.MiscConstants.AUTO_ALIGN_ENABLED;
+import static frc.robot.constants.MiscConstants.BARGE_CENTER_DIST_X;
+import static frc.robot.constants.MiscConstants.FIELD_CENTER_X;
+import static frc.robot.constants.SwerveConstants.BARGE_ALIGN_CONSTRAINTS;
+import static frc.robot.constants.SwerveConstants.DRIVE_CONTROLLER_PID;
 import static frc.robot.constants.SwerveConstants.MAX_ROBOT_TRANS_SPEED;
 
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.Pair;
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -16,11 +21,14 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.constants.VisionConstants;
 import frc.robot.controllers.Controllers;
+import frc.robot.subsystems.Superstructure;
+import frc.robot.subsystems.SuperstructurePosition;
 import frc.robot.subsystems.intake.GamePiece;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.swerve.Swerve;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.util.AlignToPose;
+import frc.robot.util.ArmvatorPosition;
 import frc.robot.util.ObjectiveTracker;
 import frc.robot.util.ReefPositions;
 
@@ -28,14 +36,17 @@ public class Teleop extends Command {
     Swerve swerve;
     Vision vision;
     Intake intake;
+    Superstructure superStructure;
     ObjectiveTracker tracker;
+    ProfiledPIDController bargeXController = new ProfiledPIDController(DRIVE_CONTROLLER_PID[0], DRIVE_CONTROLLER_PID[1], DRIVE_CONTROLLER_PID[2], BARGE_ALIGN_CONSTRAINTS);
 
-    public Teleop(Swerve swerve, Intake intake, ObjectiveTracker tracker) {
+    public Teleop(Swerve swerve, Intake intake, ObjectiveTracker tracker, Superstructure superStructure) {
         addRequirements(swerve);
         this.swerve = swerve;
         this.vision = swerve.vision;
         this.intake = intake;
         this.tracker = tracker;
+        this.superStructure = superStructure;
     }
 
   @Override
@@ -72,12 +83,35 @@ public class Teleop extends Command {
     rotSpeed *= MAX_ROBOT_TRANS_SPEED;
 
     ChassisSpeeds finalSpeeds;
-
-    // decide whether to do autoalign
     Pose2d currentCoralTarget = AlignToPose.getCoralObjective(swerve.getPose(), x, y);
     Logger.recordOutput("AlignToPose/AlignmentEnabled", AUTO_ALIGN_ENABLED);
     Logger.recordOutput("AlignToPose/2DAlignmentMode", VisionConstants.USE_2D_ALIGNMENT_MODE);
-    if (currentCoralTarget.getTranslation()
+
+    if (intake.getGamePiece() == GamePiece.ALGAE
+        && (SuperstructurePosition.NET.equals(superStructure.desiredPosition)
+            || ArmvatorPosition.NET.equals(superStructure.getClosestArmvatorPosition()))
+        && Controllers.driverController.getRightPaddle().getAsBoolean()) {
+      Logger.recordOutput("AlignToPose/TeleopAligning", "barge");
+      double barge_x_coord;
+      Rotation2d barge_align_angle;
+      if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == DriverStation.Alliance.Red) {
+        barge_x_coord = FIELD_CENTER_X + BARGE_CENTER_DIST_X;
+        barge_align_angle = Rotation2d.kZero;
+      } else {
+        barge_x_coord = FIELD_CENTER_X - BARGE_CENTER_DIST_X;
+        barge_align_angle = Rotation2d.k180deg;
+      }
+      double barge_distance = DriverStation.getAlliance().get() == DriverStation.Alliance.Red
+          ? swerve.getPose().getX() - barge_x_coord
+          : -1 * (swerve.getPose().getX() - barge_x_coord);
+      Logger.recordOutput("AlignToPose/bargeDist", barge_distance);
+      double bargeAlignSpeed = bargeXController.calculate(-1 * barge_distance, 0);
+      Logger.recordOutput("AlignToPose/bargeAlignSpeed", bargeAlignSpeed);
+      swerve.drive(ChassisSpeeds.fromFieldRelativeSpeeds(new ChassisSpeeds(xSpeed + bargeAlignSpeed, ySpeed, rotSpeed),
+          fieldAdjustedRobotRot), barge_align_angle);
+    }
+    // decide whether to do autoalign
+    else if (currentCoralTarget.getTranslation()
             .getDistance(swerve.getPose().getTranslation()) < AUTO_ALIGN_DIST_THRESHOLD
             && Math.abs(currentCoralTarget.getRotation().minus(swerve.getPose().getRotation()).getRadians()) < AUTO_ALIGN_ANGLE_THRESHOLD
             && intake.getGamePiece() == GamePiece.CORAL
@@ -85,22 +119,21 @@ public class Teleop extends Command {
             && AUTO_ALIGN_ENABLED) {
         int nearestTagId = ReefPositions.getClosestReefTagId(currentCoralTarget);
         Rotation2d gyroOffset = swerve.getPose().getRotation().minus(swerve.getPoseWheelsOnly().getRotation());
-        Logger.recordOutput("AlignToPose/TeleopAligning", true);
+        Logger.recordOutput("AlignToPose/TeleopAligning", "coral");
         // turn on 2d vision
         AlignToPose.enableReefVision(vision, gyroOffset, nearestTagId);
 
         // get final speeds
         Pair<ChassisSpeeds, Double> autoAlignSpeeds = AlignToPose.getAutoAlignSpeeds(x, y, swerve.getPose());
         ChassisSpeeds driverSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(new ChassisSpeeds(x * (1 - autoAlignSpeeds.getSecond()), y * (1 - autoAlignSpeeds.getSecond()), rot * (1 - autoAlignSpeeds.getSecond())), fieldAdjustedRobotRot);
-        finalSpeeds = driverSpeeds.plus(autoAlignSpeeds.getFirst());
+        swerve.drive(driverSpeeds.plus(autoAlignSpeeds.getFirst()));
     } else {
-        Logger.recordOutput("AlignToPose/TeleopAligning", false);
+        Logger.recordOutput("AlignToPose/TeleopAligning", "None");
         // return to normal vision
         AlignToPose.disableReefVision(vision);
         ChassisSpeeds driverSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(new ChassisSpeeds(xSpeed, ySpeed, rotSpeed), fieldAdjustedRobotRot);
-        finalSpeeds = driverSpeeds;
+        swerve.drive(driverSpeeds);
     }
 
-    swerve.drive(finalSpeeds);
   }
 }

@@ -126,12 +126,12 @@ public class Swerve extends SubsystemBase {
   }
 
 
-  public void drive(ChassisSpeeds speeds, Double alignToAngle) {
+  public void drive(ChassisSpeeds speeds, Rotation2d alignToAngle) {
     double commandedRot = headingController.calculate(getPose().getRotation().getRadians());
 
     if (alignToAngle != null) {
       Logger.recordOutput("Swerve/PoseRotPidAtSetpoint", headingController.atSetpoint());
-      headingController.setSetpoint(alignToAngle);
+      headingController.setSetpoint(alignToAngle.getRadians());
       if (!headingController.atSetpoint()) {
         speeds.omegaRadiansPerSecond = commandedRot;
       } else {
@@ -166,7 +166,7 @@ public class Swerve extends SubsystemBase {
   }
 
   /* relative to your alliance's DS wall */
-  public void driveAllianceRelative(ChassisSpeeds speeds, Double alignToAngle) {
+  public void driveAllianceRelative(ChassisSpeeds speeds, Rotation2d alignToAngle) {
     var rot = getPose().getRotation();
     if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red) {
       rot = rot.rotateBy(Rotation2d.fromDegrees(180));
@@ -182,7 +182,7 @@ public class Swerve extends SubsystemBase {
     drive(ChassisSpeeds.fromRobotRelativeSpeeds(speeds, rot));
   }
   /* relative to blue ds wall */
-  public void driveFieldRelative(ChassisSpeeds speeds, Double alignToAngle) {
+  public void driveFieldRelative(ChassisSpeeds speeds, Rotation2d alignToAngle) {
     var rot = getPose().getRotation();
     drive(ChassisSpeeds.fromFieldRelativeSpeeds(speeds, rot), alignToAngle);
   }

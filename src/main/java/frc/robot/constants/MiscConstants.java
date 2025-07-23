@@ -22,6 +22,9 @@ public final class MiscConstants {
 
   public static boolean AUTO_ALIGN_ENABLED = true;
 
+  public static final double FIELD_CENTER_X = 8.7741125; // center of the field length wise in m
+  public static final double BARGE_CENTER_DIST_X = 1.12; // how far from the center to align the robot for barge scoring in the X direction
+
   // robot constants, unused; for reference
   public static final double ROBOT_MOI = 3.070789055; // kg * m^2   - for rinzlers drive base
   public static final double ROBOT_MASS = 31.5; // kg
