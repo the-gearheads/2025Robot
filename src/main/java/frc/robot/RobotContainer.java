@@ -224,7 +224,7 @@ public class RobotContainer {
         })).withInterruptBehavior(InterruptionBehavior.kCancelIncoming)
     );
 
-    Controllers.driverController.getYBtn().onTrue(
+    Controllers.driverController.getYBtn().whileTrue(
       pivot.run(() -> {pivot.setMode(RunMode.PROFILED_PID); pivot.setGoalAngle(Rotation2d.fromDegrees(90));})
         .alongWith(wrist.run(() -> {wrist.setGoal(Rotation2d.fromDegrees(70));}))
         .alongWith(telescope.run(()->{
@@ -233,7 +233,7 @@ public class RobotContainer {
         })).withInterruptBehavior(InterruptionBehavior.kCancelIncoming)
     );
 
-    Controllers.driverController.getYBtn().onTrue(
+    Controllers.driverController.getYBtn().whileTrue(
       pivot.run(() -> {pivot.setMode(RunMode.PROFILED_PID); pivot.setGoalAngle(Rotation2d.fromDegrees(14));})
         .alongWith(wrist.run(() -> {wrist.setGoal(Rotation2d.fromDegrees(70));}))
         .alongWith(telescope.run(()->{
