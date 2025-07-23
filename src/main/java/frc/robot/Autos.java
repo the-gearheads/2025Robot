@@ -148,7 +148,6 @@ public class Autos {
     AutoTrajectory startToReef = routine.trajectory(routineName, 0);
     AutoTrajectory reefToHP = routine.trajectory(routineName, 1);
     AutoTrajectory HPToReef = routine.trajectory(routineName, 2);
-    AutoTrajectory reefToHP2 = routine.trajectory(routineName, 3);
 
     routine.active().onTrue(
       Commands.sequence(
@@ -182,8 +181,7 @@ public class Autos {
       stop(),
       AlignToPose.getAutoAlignEndsCommand(swerve, swerve.vision).withTimeout(2.5),
       Commands.deadline(superstructure.waitUntilAtSetpoint(), AlignToPose.getAutoAlignCommand(swerve, swerve.vision)).withTimeout(3),
-      outtakeCoral().withTimeout(1.0),
-      reefToHP2.cmd()
+      outtakeCoral().withTimeout(1.0)
     ));
     
     return routine;
