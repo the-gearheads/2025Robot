@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
+import org.littletonrobotics.junction.AutoLog;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedNetworkBoolean;
@@ -152,6 +153,21 @@ public class Vision extends SubsystemBase {
 
   public Pose3d getPoseGtsam() {
     return gtsam.getLatencyCompensatedPoseEstimate();
+  }
+
+  @AutoLogOutput
+  private boolean isGtsamConnected() {
+    return gtsam.isConnected();
+  }
+
+  @AutoLogOutput
+  private boolean isGtsamReadyToOptimize() {
+    return gtsam.isReadyToOptimize();
+  }
+
+  @AutoLogOutput
+  public boolean canGtsam() {
+    return isGtsamConnected() && isGtsamReadyToOptimize();
   }
 
   public void setPoseStrategy(int cameraIndex, PoseStrategy strategy) {

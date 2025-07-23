@@ -230,7 +230,7 @@ public class Swerve extends SubsystemBase {
 
   @AutoLogOutput
   public Pose2d getPose() {
-    if(vision.usingGtsam()) {
+    if(vision.usingGtsam() && vision.canGtsam()) {
       return vision.getPoseGtsam().toPose2d();
     } else {
       return getPoseMultitag();

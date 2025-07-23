@@ -225,6 +225,16 @@ public class GtsamInterface {
         return readyToOptimizeSub.get();
     }
 
+    public boolean isConnected() {
+        var conns = NetworkTableInstance.getDefault().getConnections();
+        for (var con : conns) {
+            if (con.remote_id.indexOf("gtsam-meme") != -1) { 
+                return true;
+            }
+        }
+        return false;
+    }
+
     public boolean hadIssue() {
         return hadIssueSub.get();
     }
