@@ -11,13 +11,9 @@ import static frc.robot.constants.MiscConstants.AUTO_ALIGN_ENABLED;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import frc.robot.commands.Teleop;
 import frc.robot.commands.NTControl.PivotNTControl;
@@ -215,14 +211,6 @@ public class RobotContainer {
     Controllers.driverController.getABtn().onTrue(
       superStructure.goTo(SuperstructurePosition.L4)
     );
-
-    Controllers.driverController.getBBtn().onTrue(new InstantCommand(()-> {
-      if (DriverStation.getAlliance().get() == Alliance.Red) {
-        swerve.setPose(new Pose2d(new Translation2d(14.372, 14.372), Rotation2d.kZero));
-      } else {
-        swerve.setPose(new Pose2d(new Translation2d(3.174, 3.174), Rotation2d.k180deg));
-      }
-    }));
 
     Controllers.operatorController.getBtn31().onTrue(Commands.runOnce(wrist::syncIntegratedEncoder).andThen(Commands.runOnce(pivot::syncIntegratedEncoder)));
     Controllers.operatorController.getBtn32().onTrue(telescope.deHome().andThen(telescope.homeIfNeeded()));

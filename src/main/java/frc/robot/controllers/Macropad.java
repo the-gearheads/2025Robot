@@ -28,8 +28,6 @@ public class Macropad {
     return joy.getRawAxis(0);
   }
 
-  // TODO: give like, actual names
-
   public Trigger getBtn11() {
     if(isNull()) return emptyTrigger();
     return new Trigger(()->joy.getRawButton(1));
