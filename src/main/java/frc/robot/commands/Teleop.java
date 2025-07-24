@@ -74,13 +74,9 @@ public class Teleop extends Command {
     double y = Controllers.driverController.getTranslateYAxis();
     double rot = Controllers.driverController.getRotateAxis();
 
-    double xSpeed = Math.signum(x) * Math.pow(x, 2);
-    double ySpeed = Math.signum(y) * Math.pow(y, 2);
-    double rotSpeed = Math.signum(rot) * Math.pow(rot, 2);
-
-    xSpeed *= MAX_ROBOT_TRANS_SPEED;
-    ySpeed *= MAX_ROBOT_TRANS_SPEED;
-    rotSpeed *= MAX_ROBOT_TRANS_SPEED;
+    double xSpeed = calculateSpeed(x);
+    double ySpeed = calculateSpeed(y);
+    double rotSpeed = calculateSpeed(rot);
 
     Pose2d currentCoralTarget = AlignToPose.getCoralObjective(swerve.getPose(), x, y);
     Logger.recordOutput("AlignToPose/AlignmentEnabled", AUTO_ALIGN_ENABLED);
@@ -134,5 +130,9 @@ public class Teleop extends Command {
         swerve.drive(driverSpeeds);
     }
 
+  }
+
+  private double calculateSpeed(double val) {
+    return Math.signum(val) * Math.pow(val, 2)*MAX_ROBOT_TRANS_SPEED;
   }
 }
