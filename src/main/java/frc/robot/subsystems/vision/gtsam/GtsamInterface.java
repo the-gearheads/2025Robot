@@ -10,6 +10,7 @@ import org.photonvision.targeting.PhotonTrackedTarget;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose3d;
@@ -77,7 +78,7 @@ public class GtsamInterface {
                 .subscribe(null, PubSubOption.sendAll(true), PubSubOption.keepDuplicates(true));
         String fieldLayout = "";
         try {
-        fieldLayout = new ObjectMapper().writeValueAsString(AprilTagFields.k2025ReefscapeWelded.loadAprilTagLayoutField());
+            fieldLayout = new ObjectMapper().writeValueAsString(AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded));
         } catch(Exception e) {
             e.printStackTrace();
         }
