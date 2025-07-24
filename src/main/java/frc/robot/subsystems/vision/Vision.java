@@ -40,7 +40,7 @@ public class Vision extends SubsystemBase {
   private Camera[] cameras = new Camera[CAMERA_NAMES.length];
   private GtsamInterface gtsam = new GtsamInterface(List.of(CAMERA_NAMES));
 
-  LoggedNetworkBoolean useGtsam = new LoggedNetworkBoolean("AdvantageKit/RealOutputs/Vision/UseGtsam", Robot.isReal() ? USE_GTSAM_DEFAULT : false);
+  LoggedNetworkBoolean useGtsam = new LoggedNetworkBoolean("AdvantageKit/RealOutputs/Vision/UseGtsam", USE_GTSAM_DEFAULT);
   Optional<Pose3d> firstVisionEstimate = Optional.empty(); 
 
   @AutoLogOutput

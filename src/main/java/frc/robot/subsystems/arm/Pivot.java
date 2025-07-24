@@ -7,6 +7,7 @@ import static frc.robot.constants.ArmConstants.*;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
+import com.reduxrobotics.canand.CanandEventLoop;
 import com.reduxrobotics.sensors.canandmag.Canandmag;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
@@ -26,6 +27,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.Robot;
 import frc.robot.subsystems.Superstructure.RunMode;
 import frc.robot.util.ArmvatorSample;
 import frc.robot.util.vendor.ArmfeedforwardSettable;
@@ -167,6 +169,9 @@ public class Pivot extends SubsystemBase {
 
     pivot.setCANTimeout(0);
     pivotFollower.setCANTimeout(0);
+    if(Robot.isSimulation()) {
+      CanandEventLoop.getInstance().setDevicePresenceWarnings(pivotAbsEnc, false);
+    }
   }
 
   @AutoLogOutput

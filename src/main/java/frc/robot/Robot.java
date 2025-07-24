@@ -118,12 +118,12 @@ public class Robot extends LoggedRobot {
         logCommandFunction.accept(command, false, "INTERRUPTED");
     });
 
+    CanandEventLoop.getInstance();
 
     // Instantiate our RobotContainer. This will perform all our button bindings,
     // and put our
     // autonomous chooser on the dashboard.
     robotContainer = new RobotContainer();
-    CanandEventLoop.getInstance();
   }
 
 
@@ -241,7 +241,6 @@ public class Robot extends LoggedRobot {
   public void simulationInit() {
     DriverStationSim.setAllianceStationId(AllianceStationID.Blue1); // default is red grrr
     DriverStation.silenceJoystickConnectionWarning(true);
-    CanandEventLoop.getInstance().setGlobalDevicePresenceWarnings(false);
   }
 
   /** This function is called periodically whilst in simulation. */
