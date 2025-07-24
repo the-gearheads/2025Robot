@@ -16,7 +16,6 @@ import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
-import org.photonvision.estimation.OpenCVHelp;
 import org.photonvision.simulation.SimCameraProperties;
 import org.photonvision.targeting.PhotonPipelineResult;
 
@@ -76,7 +75,6 @@ public class Camera {
     this.field = field;
     this.robotPoseSupplier = robotPoseSupplier;
     path = "Vision/" + name.replace("_", "");
-    OpenCVHelp.forceLoadOpenCV();
 
     camera = new PhotonCamera(name);
     var fallbackStrategy = PoseStrategy.CLOSEST_TO_CAMERA_HEIGHT;
