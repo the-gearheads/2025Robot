@@ -173,13 +173,6 @@ public class Swerve extends SubsystemBase {
     drive(ChassisSpeeds.fromFieldRelativeSpeeds(speeds, rot), alignToAngle);
   }
 
-  public void driveAllianceFlip(ChassisSpeeds speeds) {
-    var rot = getPose().getRotation();
-    if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red) {
-      rot = rot.rotateBy(Rotation2d.fromDegrees(180));
-    }
-    drive(ChassisSpeeds.fromRobotRelativeSpeeds(speeds, rot));
-  }
   /* relative to blue ds wall */
   public void driveFieldRelative(ChassisSpeeds speeds, Rotation2d alignToAngle) {
     var rot = getPose().getRotation();

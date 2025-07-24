@@ -66,15 +66,16 @@ public class RobotContainer {
       pivot = new Pivot();
       telescope = new Telescope();
       wrist = new Wrist();
+      superStructure = new Superstructure(pivot, telescope, wrist);
       intake = new Intake();
     } else {
       pivot = new PivotSim();
       telescope = new TelescopeSim();
       wrist = new WristSim();
-      intake = new IntakeSim();
+      superStructure = new Superstructure(pivot, telescope, wrist);
+      intake = new IntakeSim(swerve, superStructure);
     }
     tracker = new ObjectiveTracker(swerve);
-    superStructure = new Superstructure(pivot, telescope, wrist);
     autos = new Autos(swerve, superStructure, intake);
     viz = new MechanismViz(swerve, pivot, telescope, wrist);
     swerve.setDefaultCommand(new Teleop(swerve, intake, tracker, superStructure));
@@ -238,6 +239,9 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
     // return Commands.runOnce(()->{swerve.vision.disable();}).andThen(autos.getAutonomousRoutine());
+    if(intake instanceof IntakeSim) { 
+      ((IntakeSim)intake).resetSimGamePiece(GamePiece.CORAL);
+    }
     return autos.getAutonomousRoutine();
     // Logger.recordOutput("Test/targetPose", ReefPositions.getReefPose(0, 1));
     // return swerve.driveToPose(ReefPositions.getReefPose(0, 1));

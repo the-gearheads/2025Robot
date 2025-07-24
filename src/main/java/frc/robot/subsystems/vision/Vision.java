@@ -4,7 +4,6 @@
 
 package frc.robot.subsystems.vision;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,7 +32,7 @@ import frc.robot.subsystems.vision.gtsam.GtsamInterface;
 import static frc.robot.constants.VisionConstants.*;
 
 public class Vision extends SubsystemBase {
-  public static AprilTagFieldLayout field;
+  public static AprilTagFieldLayout field = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded);
   private VisionSim sim = new VisionSim();
   private Swerve swerve;
   private Rotation2d gyroOffset;
@@ -53,15 +52,14 @@ public class Vision extends SubsystemBase {
     if(Robot.isSimulation())
       PhotonCamera.setVersionCheckEnabled(false);
 
-    String layoutPath = "";
-    try {
-      field = AprilTagFieldLayout.loadFromResource(AprilTagFields.k2025ReefscapeWelded.m_resourceFile);
-      // layoutPath = new File(Filesystem.getDeployDirectory(), "REEFSCAPE FIELD MAP WITHOUT BARGE TAGS.json").getAbsolutePath();
-      // field = new AprilTagFieldLayout(layoutPath);
-    } catch (IOException e) {
-      System.out.println("ERROR Opening apriltag field layout file");
-      System.out.println(layoutPath);
-    }
+    // String layoutPath = "";
+    // try {
+    //   // layoutPath = new File(Filesystem.getDeployDirectory(), "REEFSCAPE FIELD MAP WITHOUT BARGE TAGS.json").getAbsolutePath();
+    //   // field = new AprilTagFieldLayout(layoutPath);
+    // } catch (IOException e) {
+    //   System.out.println("ERROR Opening apriltag field layout file");
+    //   System.out.println(layoutPath);
+    // }
 
 
     for (int i = 0; i<CAMERA_NAMES.length; i++) {

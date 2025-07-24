@@ -19,7 +19,6 @@ import com.revrobotics.spark.SparkMax;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Robot;
 
 public class Intake extends SubsystemBase {
   SparkMax intake = new SparkMax(INTAKE_ID, MotorType.kBrushless);
@@ -123,9 +122,6 @@ public class Intake extends SubsystemBase {
 
   @AutoLogOutput
   public GamePiece getGamePiecePhosphorus() {
-  if (Robot.isSimulation()) {
-    return GamePiece.ALGAE; // TODO: DELETE
-  }
   if (canandcolor.getProximity() < ALGAE_PROXIMITY_THRESHOLD && getPhosphorusAlgaeDIO()) {
     return GamePiece.ALGAE;
   } else if (canandcolor.getProximity() < CORAL_PROXIMITY_THRESHOLD) {
