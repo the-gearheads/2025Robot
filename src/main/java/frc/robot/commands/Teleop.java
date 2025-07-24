@@ -82,7 +82,6 @@ public class Teleop extends Command {
     ySpeed *= MAX_ROBOT_TRANS_SPEED;
     rotSpeed *= MAX_ROBOT_TRANS_SPEED;
 
-    ChassisSpeeds finalSpeeds;
     Pose2d currentCoralTarget = AlignToPose.getCoralObjective(swerve.getPose(), x, y);
     Logger.recordOutput("AlignToPose/AlignmentEnabled", AUTO_ALIGN_ENABLED);
     Logger.recordOutput("AlignToPose/2DAlignmentMode", VisionConstants.USE_2D_ALIGNMENT_MODE);

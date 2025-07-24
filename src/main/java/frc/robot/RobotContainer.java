@@ -11,7 +11,6 @@ import static frc.robot.constants.MiscConstants.AUTO_ALIGN_ENABLED;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -127,15 +126,6 @@ public class RobotContainer {
       })
     );
 
-    Controllers.driverController.getRightPaddle().whileTrue(
-      Commands.deferredProxy(() -> {
-        if (intake.getGamePiece() == GamePiece.EMPTY) {
-          return intake.runIntake();
-        }
-        return Commands.none();
-      })  
-    );
-
     Controllers.driverController.getLeftPaddle().onTrue(
       Commands.deferredProxy(() -> {
       switch(intake.getGamePiece()) {
@@ -152,15 +142,6 @@ public class RobotContainer {
           return superStructure.goTo(SuperstructurePosition.AlgaeL2).alongWith(intake.runIntake());
       }
       })
-    );
-
-    Controllers.driverController.getLeftPaddle().whileTrue(
-      Commands.deferredProxy(() -> {
-        if (intake.getGamePiece() == GamePiece.EMPTY) {
-          return intake.runIntake();
-        }
-        return Commands.none();
-      })  
     );
 
     Controllers.driverController.getRightBumper().onTrue(
@@ -198,7 +179,7 @@ public class RobotContainer {
     // Controllers.driverController.getPovUp().whileTrue(intake.runOuttake(6));
     Controllers.driverController.getPovRight().onTrue(swerve.driveToPose(new Pose2d(13.081257820129395, 2.02693772315979, Rotation2d.kZero)));
     Controllers.driverController.getPovLeft().onTrue(swerve.driveToPose(new Pose2d(11.514982223510742, 1.9857200384140015, Rotation2d.kZero)));
-    Controllers.driverController.getPovUp().onTrue(swerve.driveToPose(swerve.getPose().transformBy(new Transform2d(0,0, Rotation2d.fromDegrees(200)))));
+    Controllers.driverController.getPovUp().onTrue(swerve.driveToPose(new Pose2d(11.514982223510742, 1.9857200384140015, Rotation2d.k180deg)));
 
 
     Controllers.operatorController.getBtn11().onTrue(Commands.runOnce(()->{AUTO_ALIGN_ENABLED = true;}));
@@ -217,26 +198,9 @@ public class RobotContainer {
           telescope.setGoalPosition(ArmConstants.MIN_RELATIVE_HEIGHT);
         })).withInterruptBehavior(InterruptionBehavior.kCancelIncoming)
     );
+    
     Controllers.driverController.getXBtn().whileTrue(
       pivot.run(() -> {pivot.setMode(RunMode.VOLTAGE); pivot.setVoltage(5);})
-        .alongWith(wrist.run(() -> {wrist.setGoal(Rotation2d.fromDegrees(70));}))
-        .alongWith(telescope.run(()->{
-          telescope.setMode(RunMode.PROFILED_PID);
-          telescope.setGoalPosition(ArmConstants.MIN_RELATIVE_HEIGHT);
-        })).withInterruptBehavior(InterruptionBehavior.kCancelIncoming)
-    );
-
-    Controllers.driverController.getYBtn().whileTrue(
-      pivot.run(() -> {pivot.setMode(RunMode.PROFILED_PID); pivot.setGoalAngle(Rotation2d.fromDegrees(90));})
-        .alongWith(wrist.run(() -> {wrist.setGoal(Rotation2d.fromDegrees(70));}))
-        .alongWith(telescope.run(()->{
-          telescope.setMode(RunMode.PROFILED_PID);
-          telescope.setGoalPosition(ArmConstants.MIN_RELATIVE_HEIGHT);
-        })).withInterruptBehavior(InterruptionBehavior.kCancelIncoming)
-    );
-
-    Controllers.driverController.getYBtn().whileTrue(
-      pivot.run(() -> {pivot.setMode(RunMode.PROFILED_PID); pivot.setGoalAngle(Rotation2d.fromDegrees(14));})
         .alongWith(wrist.run(() -> {wrist.setGoal(Rotation2d.fromDegrees(70));}))
         .alongWith(telescope.run(()->{
           telescope.setMode(RunMode.PROFILED_PID);

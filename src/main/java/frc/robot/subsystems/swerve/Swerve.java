@@ -59,7 +59,6 @@ public class Swerve extends SubsystemBase {
 
   Gyro gyro;
 
-  
   PIDController headingController = new PIDController(ROT_CONTROLLER_PID[0], ROT_CONTROLLER_PID[1], ROT_CONTROLLER_PID[2]);
   PIDController driveController = new PIDController(DRIVE_CONTROLLER_PID[0], DRIVE_CONTROLLER_PID[1], DRIVE_CONTROLLER_PID[2]);
   SwerveSetpointGenerator setpointGenerator = new SwerveSetpointGenerator(kinematics, WHEEL_POSITIONS);
@@ -97,7 +96,7 @@ public class Swerve extends SubsystemBase {
     
     multitagPoseEstimator = new SwerveDrivePoseEstimator(kinematics, getGyroRotation(), getModulePositions(), new Pose2d());
     wheelOdometry = new SwerveDriveOdometry(kinematics, getGyroRotation(), getModulePositions());
-    headingController.enableContinuousInput(0, 2 * Math.PI);
+    headingController.enableContinuousInput(-Math.PI, Math.PI);
     headingController.setTolerance(HEADING_CONTROLLER_TOLERANCE);
 
     rotPid.enableContinuousInput(-Math.PI, Math.PI);
@@ -307,6 +306,11 @@ public class Swerve extends SubsystemBase {
           .getTranslation();
       ChassisSpeeds autoSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(autoTranslation.getX(), autoTranslation.getY(), rotVel, getPose().getRotation());
       drive(autoSpeeds);
+      Logger.recordOutput("Swerve/DriveToPose/targetDist", targetDist);
+      Logger.recordOutput("Swerve/DriveToPose/targetPose", pose);
+      Logger.recordOutput("Swerve/DriveToPose/rotationError", rotationError);
+      Logger.recordOutput("Swerve/DriveToPose/driveVel", driveVel);
+      Logger.recordOutput("Swerve/DriveToPose/rotVel", rotVel);
     }).until(() -> {
       return atPose(pose)
       && getRobotRelativeSpeeds().omegaRadiansPerSecond < ALIGNMENT_MAX_STOPPED_ROT_SPEED
