@@ -79,8 +79,6 @@ public final class SwerveConstants {
     public static double ALIGNMENT_MAX_STOPPED_TRANS_SPEED = 0.25; // m/s robot must be going slower than this in x and y direction to be considered 'stopped' and thus done aligning
     public static double ALIGNMENT_MAX_STOPPED_ROT_SPEED = Units.degreesToRadians(3); // rad/s robot must be going slower than this in x and y direction to be considered 'stopped' and thus done aligning
 
-    public static Constraints BARGE_ALIGN_CONSTRAINTS = new Constraints(0.1, 0.05);
-
     public static final double WHEEL_RADIUS_RAMP_RATE = 0.05; // rad/s^2
     public static final double WHEEL_RADIUS_MAX_VEL = 0.25; // rad/s
 

@@ -5,14 +5,14 @@ import static frc.robot.constants.MiscConstants.AUTO_ALIGN_DIST_THRESHOLD;
 import static frc.robot.constants.MiscConstants.AUTO_ALIGN_ENABLED;
 import static frc.robot.constants.MiscConstants.BARGE_CENTER_DIST_X;
 import static frc.robot.constants.MiscConstants.FIELD_CENTER_X;
-import static frc.robot.constants.SwerveConstants.BARGE_ALIGN_CONSTRAINTS;
 import static frc.robot.constants.SwerveConstants.DRIVE_CONTROLLER_PID;
 import static frc.robot.constants.SwerveConstants.MAX_ROBOT_TRANS_SPEED;
 
 import org.littletonrobotics.junction.Logger;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Pair;
-import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -38,7 +38,7 @@ public class Teleop extends Command {
     Intake intake;
     Superstructure superStructure;
     ObjectiveTracker tracker;
-    ProfiledPIDController bargeXController = new ProfiledPIDController(DRIVE_CONTROLLER_PID[0], DRIVE_CONTROLLER_PID[1], DRIVE_CONTROLLER_PID[2], BARGE_ALIGN_CONSTRAINTS);
+    PIDController bargeXController = new PIDController(DRIVE_CONTROLLER_PID[0], DRIVE_CONTROLLER_PID[1], DRIVE_CONTROLLER_PID[2]);
 
     public Teleop(Swerve swerve, Intake intake, ObjectiveTracker tracker, Superstructure superStructure) {
         addRequirements(swerve);
@@ -105,7 +105,9 @@ public class Teleop extends Command {
           : -1 * (swerve.getPose().getX() - barge_x_coord);
       Logger.recordOutput("AlignToPose/bargeDist", barge_distance);
       double bargeAlignSpeed = bargeXController.calculate(-1 * barge_distance, 0);
+      bargeAlignSpeed = MathUtil.clamp(bargeAlignSpeed, 0, 1);
       Logger.recordOutput("AlignToPose/bargeAlignSpeed", bargeAlignSpeed);
+
       swerve.drive(ChassisSpeeds.fromFieldRelativeSpeeds(new ChassisSpeeds(xSpeed + bargeAlignSpeed, ySpeed, rotSpeed),
           fieldAdjustedRobotRot), barge_align_angle);
     }
@@ -124,7 +126,7 @@ public class Teleop extends Command {
 
         // get final speeds
         Pair<ChassisSpeeds, Double> autoAlignSpeeds = AlignToPose.getAutoAlignSpeeds(x, y, swerve.getPose());
-        ChassisSpeeds driverSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(new ChassisSpeeds(x * (1 - autoAlignSpeeds.getSecond()), y * (1 - autoAlignSpeeds.getSecond()), rot * (1 - autoAlignSpeeds.getSecond())), fieldAdjustedRobotRot);
+        ChassisSpeeds driverSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(new ChassisSpeeds(xSpeed * (1 - autoAlignSpeeds.getSecond()), ySpeed * (1 - autoAlignSpeeds.getSecond()), rotSpeed * (1 - autoAlignSpeeds.getSecond())), fieldAdjustedRobotRot);
         swerve.drive(driverSpeeds.plus(autoAlignSpeeds.getFirst()));
     } else {
         Logger.recordOutput("AlignToPose/TeleopAligning", "None");

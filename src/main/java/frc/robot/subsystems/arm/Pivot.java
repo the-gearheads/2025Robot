@@ -205,7 +205,7 @@ public class Pivot extends SubsystemBase {
   }
 
   @AutoLogOutput
-  public double getProfiliedPidSetpoint() {
+  public double getProfiledPidSetpoint() {
     return profiledPid.getSetpoint().position;
   }
 
