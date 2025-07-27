@@ -21,6 +21,7 @@ public final class MiscConstants {
   public static final double SWERVE_ALIGN_DIST_TOLERANCE = Units.inchesToMeters(0.75);
 
   public static boolean AUTO_ALIGN_ENABLED = true;
+  public static double BARGE_ALIGN_DEBOUNCE_TIME = 0.13;
 
   public static final double FIELD_CENTER_X = 8.7741125; // center of the field length wise in m
   public static final double BARGE_CENTER_DIST_X = 1.12; // how far from the center to align the robot for barge scoring in the X direction

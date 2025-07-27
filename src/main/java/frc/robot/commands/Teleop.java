@@ -5,14 +5,16 @@ import static frc.robot.constants.MiscConstants.AUTO_ALIGN_DIST_THRESHOLD;
 import static frc.robot.constants.MiscConstants.AUTO_ALIGN_ENABLED;
 import static frc.robot.constants.MiscConstants.BARGE_CENTER_DIST_X;
 import static frc.robot.constants.MiscConstants.FIELD_CENTER_X;
+import static frc.robot.constants.SwerveConstants.BARGE_ALIGN_CONSTRAINTS;
 import static frc.robot.constants.SwerveConstants.DRIVE_CONTROLLER_PID;
 import static frc.robot.constants.SwerveConstants.MAX_ROBOT_TRANS_SPEED;
 
 import org.littletonrobotics.junction.Logger;
 
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Pair;
-import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.filter.Debouncer;
+import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -38,7 +40,9 @@ public class Teleop extends Command {
     Intake intake;
     Superstructure superStructure;
     ObjectiveTracker tracker;
-    PIDController bargeXController = new PIDController(DRIVE_CONTROLLER_PID[0], DRIVE_CONTROLLER_PID[1], DRIVE_CONTROLLER_PID[2]);
+    ProfiledPIDController bargeXController = new ProfiledPIDController(DRIVE_CONTROLLER_PID[0], DRIVE_CONTROLLER_PID[1], DRIVE_CONTROLLER_PID[2], BARGE_ALIGN_CONSTRAINTS);
+    boolean isAligning = false;
+    Debouncer bargeAlignPaddleDebouncer = new Debouncer(0.1, DebounceType.kRising);
 
     public Teleop(Swerve swerve, Intake intake, ObjectiveTracker tracker, Superstructure superStructure) {
         addRequirements(swerve);
@@ -57,6 +61,7 @@ public class Teleop extends Command {
     if(DriverStation.isTeleop()) {
       vision.enable();
     }
+
   }
 
   @Override
@@ -86,11 +91,21 @@ public class Teleop extends Command {
     Logger.recordOutput("AlignToPose/AlignmentEnabled", AUTO_ALIGN_ENABLED);
     Logger.recordOutput("AlignToPose/2DAlignmentMode", VisionConstants.USE_2D_ALIGNMENT_MODE);
 
+    boolean algaeAlignCommanded = bargeAlignPaddleDebouncer.calculate(Controllers.driverController.getRightPaddle().getAsBoolean());
     if (intake.getGamePiece() == GamePiece.ALGAE
         && (SuperstructurePosition.NET.equals(superStructure.desiredPosition)
             || ArmvatorPosition.NET.equals(superStructure.getClosestArmvatorPosition()))
-        && Controllers.driverController.getRightPaddle().getAsBoolean()) {
+        && algaeAlignCommanded) {
+        
+      
+      if (isAligning == false) {
+        // we just started the alignment process
+        ChassisSpeeds currentSpeeds = ChassisSpeeds.fromRobotRelativeSpeeds(swerve.getRobotRelativeSpeeds(), swerve.getPose().getRotation());
+        bargeXController.reset(swerve.getPose().getX(), currentSpeeds.vxMetersPerSecond);
+      }
+      isAligning = true;
       Logger.recordOutput("AlignToPose/TeleopAligning", "barge");
+
       double barge_x_coord;
       Rotation2d barge_align_angle;
       if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == DriverStation.Alliance.Red) {
@@ -100,12 +115,9 @@ public class Teleop extends Command {
         barge_x_coord = FIELD_CENTER_X - BARGE_CENTER_DIST_X;
         barge_align_angle = Rotation2d.k180deg;
       }
-      double barge_distance = DriverStation.getAlliance().get() == DriverStation.Alliance.Red
-          ? swerve.getPose().getX() - barge_x_coord
-          : -1 * (swerve.getPose().getX() - barge_x_coord);
-      Logger.recordOutput("AlignToPose/bargeDist", barge_distance);
-      double bargeAlignSpeed = bargeXController.calculate(-1 * barge_distance, 0);
-      bargeAlignSpeed = MathUtil.clamp(bargeAlignSpeed, 0, 1);
+
+      double bargeAlignSpeed = bargeXController.calculate(swerve.getPose().getX(), barge_x_coord);
+      bargeAlignSpeed = (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == DriverStation.Alliance.Red) ? (bargeAlignSpeed * -1) : bargeAlignSpeed;
       Logger.recordOutput("AlignToPose/bargeAlignSpeed", bargeAlignSpeed);
 
       swerve.drive(ChassisSpeeds.fromFieldRelativeSpeeds(new ChassisSpeeds(xSpeed + bargeAlignSpeed, ySpeed, rotSpeed),
@@ -120,6 +132,7 @@ public class Teleop extends Command {
             && AUTO_ALIGN_ENABLED) {
         int nearestTagId = ReefPositions.getClosestReefTagId(currentCoralTarget);
         Rotation2d gyroOffset = swerve.getPose().getRotation().minus(swerve.getPoseWheelsOnly().getRotation());
+        isAligning = true;
         Logger.recordOutput("AlignToPose/TeleopAligning", "coral");
         // turn on 2d vision
         AlignToPose.enableReefVision(vision, gyroOffset, nearestTagId);
@@ -129,6 +142,7 @@ public class Teleop extends Command {
         ChassisSpeeds driverSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(new ChassisSpeeds(xSpeed * (1 - autoAlignSpeeds.getSecond()), ySpeed * (1 - autoAlignSpeeds.getSecond()), rotSpeed * (1 - autoAlignSpeeds.getSecond())), fieldAdjustedRobotRot);
         swerve.drive(driverSpeeds.plus(autoAlignSpeeds.getFirst()));
     } else {
+        isAligning = false;
         Logger.recordOutput("AlignToPose/TeleopAligning", "None");
         // return to normal vision
         AlignToPose.disableReefVision(vision);

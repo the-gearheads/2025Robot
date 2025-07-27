@@ -148,6 +148,6 @@ public class Superstructure {
 
     public void initalizeWristExitAngles() {
       wristSafeExitAngles.put(ArmvatorPosition.L4, new Double[]{Units.degreesToRadians(5), MAX_WRIST_ANGLE});
-      wristSafeExitAngles.put(ArmvatorPosition.NET, new Double[]{Units.degreesToRadians(5), MAX_WRIST_ANGLE});
+      wristSafeExitAngles.put(ArmvatorPosition.NET, new Double[]{Units.degreesToRadians(20), MAX_WRIST_ANGLE});
     }
   }
