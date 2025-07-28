@@ -74,7 +74,7 @@ public class AlignToPose {
     Logger.recordOutput("AlignToPose/driveScaledVel", driveScaledVel);
     
     // actual drive to pose stuff, throw in reef avoidance getDriveTarget stuff
-    Pose2d reefAvoidanceTarget = getDriveTarget(robotPose, currentTarget);
+    Pose2d reefAvoidanceTarget = getReefAvoidanceTarget(robotPose, currentTarget);
     Rotation2d rotationErrorToCurrentTarget = robotPose.getRotation().minus(reefAvoidanceTarget.getRotation());
     Rotation2d translationVectorAngleError = robotPose.getTranslation().minus(reefAvoidanceTarget.getTranslation()).getAngle();
     Logger.recordOutput("AlignToPose/ReefAvoidanceTarget", reefAvoidanceTarget);
@@ -90,7 +90,7 @@ public class AlignToPose {
     return Pair.of(autoSpeeds, totalScalingFactor);
   }
 
-  private static Pose2d getDriveTarget(Pose2d robot, Pose2d goal) {
+  public static Pose2d getReefAvoidanceTarget(Pose2d robot, Pose2d goal) {
     Pose2d offset = robot.relativeTo(goal);
     double xDist = Math.abs(offset.getX());
     double yDist = Math.abs(offset.getY());
@@ -103,7 +103,7 @@ public class AlignToPose {
         1.0);
     return goal.transformBy(
         new Transform2d(
-            shiftXT * 1.5,
+            shiftXT * 2,
             Math.copySign(shiftYT * MAX_REEF_LINEUP_DIST * 1, offset.getY()), new Rotation2d()));
   }
 

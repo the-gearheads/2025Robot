@@ -20,6 +20,7 @@ import frc.robot.subsystems.SuperstructurePosition;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.swerve.Swerve;
 import frc.robot.util.AlignToPose;
+import frc.robot.util.AllianceFlipUtil;
 import frc.robot.util.ReefPositions;
 
 public class Autos {
@@ -74,7 +75,7 @@ public class Autos {
     chooser.addRoutine("Right 2 Coral", ()->{return twoCoral("RIGHT_2C4");});
     chooser.addRoutine("Left 3 Coral", ()->{return threeCoral("LEFT_3C4");});
     chooser.addRoutine("Center 1 Coral", ()->{return center1Coral();});
-    chooser.addRoutine("test", ()->{return test();});
+    chooser.addRoutine("LEFT 3 Coral Drive to Point", ()->{return driveToPoint3Coral();});
     SmartDashboard.putData("AutoChooser", chooser);
   }
 
@@ -106,12 +107,45 @@ public class Autos {
     });
   }
 
-  public AutoRoutine test() {
-    AutoRoutine routine = factory.newRoutine("test");
+  public AutoRoutine driveToPoint3Coral() {
+    Pose2d leftInterFeeder = AllianceFlipUtil.apply(new Pose2d(4.4458, 6.3408, Rotation2d.kCCW_90deg));
+    Pose2d leftFeederStation = AllianceFlipUtil.apply(new Pose2d(1.9518, 6.9753932, Rotation2d.fromDegrees(128)));
+    AutoRoutine routine = factory.newRoutine("LEFT 3 coral drive to point");
     routine.active().onTrue(
       Commands.sequence(
-        swerve.driveToPose(new Pose2d(10.0, 1.628, Rotation2d.kZero)),
-        superstructureGoTo(SuperstructurePosition.NET)
+        swerve.driveToPoseReefAvoidance(ReefPositions.getReefPose(2, -1)).alongWith(
+            superstructureGoTo(SuperstructurePosition.L4)),
+        outtakeCoral().withTimeout(1),
+        
+        Commands.sequence(
+            swerve.driveToPose(leftInterFeeder, false, 0.2, Rotation2d.fromDegrees(10)),
+            swerve.driveToPose(leftFeederStation, true)).alongWith(superstructureGoTo(SuperstructurePosition.HP))
+            .alongWith(intake.runIntake().asProxy()),
+        waitForCoral(),
+
+        swerve.driveToPoseReefAvoidance(ReefPositions.getReefPose(1, 1))
+            .alongWith(superstructureGoTo(SuperstructurePosition.L4)),
+        outtakeCoral().withTimeout(1),
+
+        swerve.driveToPose(leftFeederStation, true)
+            .alongWith(superstructureGoTo(SuperstructurePosition.HP)).alongWith(intake.runIntake().asProxy()),
+        waitForCoral(),
+
+        swerve.driveToPoseReefAvoidance(ReefPositions.getReefPose(1, -1))
+            .alongWith(superstructureGoTo(SuperstructurePosition.L4)),
+        outtakeCoral().withTimeout(1),
+
+        swerve.driveToPose(leftFeederStation, true)
+            .alongWith(superstructureGoTo(SuperstructurePosition.HP)).alongWith(intake.runIntake().asProxy()),
+        waitForCoral()
+        // swerve.driveToPoseReefAvoidance(ReefPositions.getReefPose(1, -1))
+        //   .alongWith(superstructureGoTo(SuperstructurePosition.L4)),
+        // outtakeCoral().withTimeout(1),
+        // superstructureGoTo(SuperstructurePosition.HP)
+        // (swerve.driveToPoseReefAvoidance(leftInterFeeder)
+        // .until(() -> {return swerve.getPose().relativeTo(leftInterFeeder).getTranslation().getNorm() < 0.2;})
+        // .andThen(swerve.driveToPoseReefAvoidance(leftFeederStation)))
+        // .alongWith(superstructureGoTo(SuperstructurePosition.HP))
       )
     );
 

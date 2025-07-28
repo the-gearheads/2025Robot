@@ -74,7 +74,8 @@ public class Intake extends SubsystemBase {
   }
 
   public Command runIntake() {
-    return run(() -> setVoltage(INTAKE_VOLTAGE)).until(this::hasGamePiece).andThen(Commands.waitSeconds(0.1)).andThen(Commands.defer(() -> {
+    return run(() -> setVoltage(INTAKE_VOLTAGE)).until(this::hasGamePiece)
+    .andThen(Commands.waitSeconds(0.1)).andThen(Commands.defer(() -> {
       if(getGamePiece() == GamePiece.ALGAE) {
         return Commands.waitSeconds(0.2);
       } else {

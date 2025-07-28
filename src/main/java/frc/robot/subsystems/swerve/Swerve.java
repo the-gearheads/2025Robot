@@ -27,9 +27,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.units.measure.Voltage;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -45,6 +43,7 @@ import frc.robot.subsystems.swerve.setpointgen.ModuleLimits;
 import frc.robot.subsystems.swerve.setpointgen.SwerveSetpoint;
 import frc.robot.subsystems.swerve.setpointgen.SwerveSetpointGenerator;
 import frc.robot.subsystems.vision.Vision;
+import frc.robot.util.AlignToPose;
 import frc.robot.util.AllianceFlipUtil;
 import frc.robot.util.ObjectiveTracker;
 
@@ -276,14 +275,18 @@ public class Swerve extends SubsystemBase {
   }
 
   public boolean atPose(Pose2d pose) {
-    if (Math.abs(getPose().getRotation().getRadians() - pose.getRotation().getRadians()) < SWERVE_ALIGN_ROT_TOLERANCE &&
-        getPose().getTranslation().getDistance(pose.getTranslation()) < SWERVE_ALIGN_DIST_TOLERANCE) {
+    return atPose(pose, SWERVE_ALIGN_DIST_TOLERANCE, SWERVE_ALIGN_ROT_TOLERANCE);
+  }
+
+  public boolean atPose(Pose2d pose, double distTolerance, Rotation2d rotTolerance) {
+    if (Math.abs(getPose().getRotation().getRadians() - pose.getRotation().getRadians()) < rotTolerance.getRadians() &&
+        getPose().getTranslation().getDistance(pose.getTranslation()) < distTolerance) {
       return true;
     }
     return false;
   }
 
-  public Command driveToPose(Pose2d pose) {
+  public Command driveToPose(Pose2d pose, boolean waitForStop, double distTolerance, Rotation2d rotTolerance) {
     return this.run(() -> {
       Rotation2d rotationError = getPose().getRotation().minus(pose.getRotation());
       double targetDist = getPose().getTranslation().getDistance(pose.getTranslation());
@@ -303,12 +306,46 @@ public class Swerve extends SubsystemBase {
       Logger.recordOutput("Swerve/DriveToPose/driveVel", driveVel);
       Logger.recordOutput("Swerve/DriveToPose/rotVel", rotVel);
     }).until(() -> {
-      return atPose(pose)
+      boolean stopped = waitForStop ? getRobotRelativeSpeeds().omegaRadiansPerSecond < ALIGNMENT_MAX_STOPPED_ROT_SPEED
+      && Math.abs(getTranslationVelocity()) < ALIGNMENT_MAX_STOPPED_TRANS_SPEED : true;
+      return atPose(pose, distTolerance, rotTolerance) && stopped;
+    });
+  }
+
+  public Command driveToPose(Pose2d pose, boolean waitforStop) {
+    return driveToPose(pose, waitforStop, SWERVE_ALIGN_DIST_TOLERANCE, SWERVE_ALIGN_ROT_TOLERANCE);
+  }
+
+  public Command driveToPoseReefAvoidance(Pose2d goalPose) {
+    return this.run(() -> {
+      Pose2d reefAvoidPose = AlignToPose.getReefAvoidanceTarget(getPose(), goalPose);
+
+      Rotation2d rotationError = getPose().getRotation().minus(reefAvoidPose.getRotation());
+      double targetDist = getPose().getTranslation().getDistance(reefAvoidPose.getTranslation());
+      double driveVel = driveController.calculate(targetDist, 0.0);
+      double rotVel = headingController.calculate(rotationError.getRadians(), 0.0);
+
+      Rotation2d translationVectorAngleError = getPose().getTranslation().minus(reefAvoidPose.getTranslation()).getAngle();
+      var autoTranslation = new Pose2d(Translation2d.kZero,
+          translationVectorAngleError)
+          .transformBy(new Transform2d(new Translation2d(driveVel, 0.0), Rotation2d.kZero))
+          .getTranslation();
+      ChassisSpeeds autoSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(autoTranslation.getX(), autoTranslation.getY(), rotVel, getPose().getRotation());
+      drive(autoSpeeds);
+
+      Logger.recordOutput("Swerve/DriveToPose/GoalPose", goalPose);
+      Logger.recordOutput("Swerve/DriveToPose/ReefAvoidPose", reefAvoidPose);
+      Logger.recordOutput("Swerve/DriveToPose/targetDist", targetDist);
+      Logger.recordOutput("Swerve/DriveToPose/rotationError", rotationError);
+      Logger.recordOutput("Swerve/DriveToPose/driveVel", driveVel);
+      Logger.recordOutput("Swerve/DriveToPose/rotVel", rotVel);
+
+    }).until(() -> {
+      return atPose(goalPose)
       && getRobotRelativeSpeeds().omegaRadiansPerSecond < ALIGNMENT_MAX_STOPPED_ROT_SPEED
           && Math.abs(getTranslationVelocity()) < ALIGNMENT_MAX_STOPPED_TRANS_SPEED;
     });
   }
-
 
   public void setDriveVoltage(Voltage volts) {
     for (SwerveModule mod : modules) {
