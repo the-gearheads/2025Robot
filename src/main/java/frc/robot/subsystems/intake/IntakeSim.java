@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.swerve.Swerve;
 import frc.robot.subsystems.vision.Vision;
+import frc.robot.util.AllianceFlipUtil;
 import frc.robot.util.ArmvatorPosition;
 import frc.robot.util.Polygon;
 
@@ -45,9 +46,7 @@ public class IntakeSim extends Intake {
   }
 
   private boolean isInFeederStation(Translation2d pose) {
-    boolean shouldFlip = DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red;
-    // this also would ideally need to be flipped on Y but we don't care about that here
-    Translation2d flippedPose = shouldFlip ? new Translation2d(FL - pose.getX(), pose.getY()) : pose;
+    Translation2d flippedPose = AllianceFlipUtil.apply(pose);
     return feederStation1Polygon.contains(flippedPose) || feederStation2Polygon.contains(flippedPose);
   }
 

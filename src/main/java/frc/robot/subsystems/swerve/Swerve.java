@@ -45,6 +45,7 @@ import frc.robot.subsystems.swerve.setpointgen.ModuleLimits;
 import frc.robot.subsystems.swerve.setpointgen.SwerveSetpoint;
 import frc.robot.subsystems.swerve.setpointgen.SwerveSetpointGenerator;
 import frc.robot.subsystems.vision.Vision;
+import frc.robot.util.AllianceFlipUtil;
 import frc.robot.util.ObjectiveTracker;
 
 public class Swerve extends SubsystemBase {
@@ -166,10 +167,7 @@ public class Swerve extends SubsystemBase {
 
   /* relative to your alliance's DS wall */
   public void driveAllianceRelative(ChassisSpeeds speeds, Rotation2d alignToAngle) {
-    var rot = getPose().getRotation();
-    if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red) {
-      rot = rot.rotateBy(Rotation2d.fromDegrees(180));
-    }
+    var rot = AllianceFlipUtil.apply(getPose().getRotation());
     drive(ChassisSpeeds.fromFieldRelativeSpeeds(speeds, rot), alignToAngle);
   }
 

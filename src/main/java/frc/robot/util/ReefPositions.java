@@ -45,7 +45,6 @@ public class ReefPositions {
 
   public static Pose2d getReefPose(int side, int relativePos) {
       // determine whether to use red or blue reef position
-      flipToRed = DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red;
 
       // initially do all calculations from blue, then flip later
       Translation2d reefCenter = REEF_CENTER_BLUE;
@@ -58,12 +57,8 @@ public class ReefPositions {
       translation = translation.rotateAround(reefCenter, Rotation2d.fromDegrees(-60 * side));
 
       // make pose from translation and correct rotation
-      Pose2d reefPose = new Pose2d(translation,
-              Rotation2d.fromDegrees(-60 * side).plus(Rotation2d.k180deg));
-
-      if (flipToRed) {
-          reefPose = flipPose(reefPose);
-      }
+      Pose2d reefPose = AllianceFlipUtil.apply(new Pose2d(translation,
+              Rotation2d.fromDegrees(-60 * side).plus(Rotation2d.k180deg)));
 
       return reefPose;
   }
@@ -91,13 +86,6 @@ public class ReefPositions {
       out.add(getReefPose(i, 0));
     }
     return out;
-  }
-
-  private static Pose2d flipPose(Pose2d pose) {
-      Translation2d center = REEF_CENTER_BLUE.interpolate(REEF_CENTER_RED, 0.5);
-      Translation2d poseTranslation = pose.getTranslation();
-      poseTranslation = poseTranslation.rotateAround(center, Rotation2d.k180deg);
-      return new Pose2d(poseTranslation, pose.getRotation().rotateBy(Rotation2d.k180deg));
   }
 
   public static int getClosestReefTagId(Pose2d pose) {

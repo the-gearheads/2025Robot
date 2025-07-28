@@ -70,10 +70,7 @@ public class Teleop extends Command {
       swerve.drive(new ChassisSpeeds()); // shouldn't be needed but eh
       return;
     }
-    var fieldAdjustedRobotRot = swerve.getPose().getRotation();
-    if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red) {
-      fieldAdjustedRobotRot = fieldAdjustedRobotRot.rotateBy(Rotation2d.fromDegrees(180));
-    }
+    var fieldAdjustedRobotRot = AllianceFlipUtil.apply(swerve.getPose().getRotation());
 
     double x = Controllers.driverController.getTranslateXAxis();
     double y = Controllers.driverController.getTranslateYAxis();
@@ -88,8 +85,7 @@ public class Teleop extends Command {
     rotSpeed *= MAX_ROBOT_TRANS_SPEED;
 
     Pose2d currentCoralTarget = AlignToPose.getCoralObjective(swerve.getPose(), x, y);
-    Logger.recordOutput("AlignToPose/AlignmentEnabled", AUTO_ALIGN_ENABLED);
-    Logger.recordOutput("AlignToPose/2DAlignmentMode", VisionConstants.USE_2D_ALIGNMENT_MODE);
+    Logger.recordOutput("AlignToPose/AlignmentEnabled", AUTO_ALIGN_ENABLED); 
 
     boolean algaeAlignCommanded = bargeAlignPaddleDebouncer.calculate(Controllers.driverController.getRightPaddle().getAsBoolean());
     if (intake.getGamePiece() == GamePiece.ALGAE
