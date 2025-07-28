@@ -3,8 +3,7 @@ package frc.robot.commands;
 import static frc.robot.constants.MiscConstants.AUTO_ALIGN_ANGLE_THRESHOLD;
 import static frc.robot.constants.MiscConstants.AUTO_ALIGN_DIST_THRESHOLD;
 import static frc.robot.constants.MiscConstants.AUTO_ALIGN_ENABLED;
-import static frc.robot.constants.MiscConstants.BARGE_CENTER_DIST_X;
-import static frc.robot.constants.MiscConstants.FIELD_CENTER_X;
+import static frc.robot.constants.MiscConstants.BARGE_ALIGN_X;
 import static frc.robot.constants.SwerveConstants.BARGE_ALIGN_CONSTRAINTS;
 import static frc.robot.constants.SwerveConstants.DRIVE_CONTROLLER_PID;
 import static frc.robot.constants.SwerveConstants.MAX_ROBOT_TRANS_SPEED;
@@ -30,6 +29,7 @@ import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.swerve.Swerve;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.util.AlignToPose;
+import frc.robot.util.AllianceFlipUtil;
 import frc.robot.util.ArmvatorPosition;
 import frc.robot.util.ObjectiveTracker;
 import frc.robot.util.ReefPositions;
@@ -106,22 +106,13 @@ public class Teleop extends Command {
       isAligning = true;
       Logger.recordOutput("AlignToPose/TeleopAligning", "barge");
 
-      double barge_x_coord;
-      Rotation2d barge_align_angle;
-      if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == DriverStation.Alliance.Red) {
-        barge_x_coord = FIELD_CENTER_X + BARGE_CENTER_DIST_X;
-        barge_align_angle = Rotation2d.kZero;
-      } else {
-        barge_x_coord = FIELD_CENTER_X - BARGE_CENTER_DIST_X;
-        barge_align_angle = Rotation2d.k180deg;
-      }
-
-      double bargeAlignSpeed = bargeXController.calculate(swerve.getPose().getX(), barge_x_coord);
+      double bargeAlignSpeed = bargeXController.calculate(swerve.getPose().getX(), AllianceFlipUtil.applyX(BARGE_ALIGN_X));
+      Rotation2d bargeAlignAngle = AllianceFlipUtil.apply(Rotation2d.k180deg);
       bargeAlignSpeed = (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == DriverStation.Alliance.Red) ? (bargeAlignSpeed * -1) : bargeAlignSpeed;
       Logger.recordOutput("AlignToPose/bargeAlignSpeed", bargeAlignSpeed);
 
       swerve.drive(ChassisSpeeds.fromFieldRelativeSpeeds(new ChassisSpeeds(xSpeed + bargeAlignSpeed, ySpeed, rotSpeed),
-          fieldAdjustedRobotRot), barge_align_angle);
+          fieldAdjustedRobotRot), bargeAlignAngle);
     }
     // decide whether to do autoalign
     else if (currentCoralTarget.getTranslation()
