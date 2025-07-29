@@ -108,44 +108,39 @@ public class Autos {
   }
 
   public AutoRoutine driveToPoint3Coral() {
-    Pose2d leftInterFeeder = AllianceFlipUtil.apply(new Pose2d(4.4458, 6.3408, Rotation2d.kCCW_90deg));
-    Pose2d leftFeederStation = AllianceFlipUtil.apply(new Pose2d(1.9518, 6.9753932, Rotation2d.fromDegrees(128)));
+    Pose2d leftInterFeeder = AllianceFlipUtil.apply(new Pose2d(3.4721243381500244, 6.416472911834, Rotation2d.kCCW_90deg));
+    Pose2d leftFeederStation = AllianceFlipUtil.apply(new Pose2d(1.7206048965454102 , 6.977558135986328, Rotation2d.fromDegrees(128)));
     AutoRoutine routine = factory.newRoutine("LEFT 3 coral drive to point");
     routine.active().onTrue(
       Commands.sequence(
-        swerve.driveToPoseReefAvoidance(ReefPositions.getReefPose(2, -1)).alongWith(
+        swerve.driveToPoseReefAvoidance(ReefPositions.getReefPose(2, -1)).andThen(swerve.stop()).deadlineFor(
             superstructureGoTo(SuperstructurePosition.L4)),
+        superstructure.waitUntilAtSetpoint().withTimeout(1),
         outtakeCoral().withTimeout(1),
         
         Commands.sequence(
-            swerve.driveToPose(leftInterFeeder, false, 0.2, Rotation2d.fromDegrees(10)),
-            swerve.driveToPose(leftFeederStation, true)).alongWith(superstructureGoTo(SuperstructurePosition.HP))
+            swerve.driveToPose(leftInterFeeder, false, 0.4, Rotation2d.fromDegrees(15)),
+            swerve.driveToPose(leftFeederStation, true)).alongWith(superstructureGoTo(SuperstructurePosition.HP)).andThen(swerve.stop())
             .alongWith(intake.runIntake().asProxy()),
         waitForCoral(),
 
-        swerve.driveToPoseReefAvoidance(ReefPositions.getReefPose(1, 1))
-            .alongWith(superstructureGoTo(SuperstructurePosition.L4)),
+        swerve.driveToPoseReefAvoidance(ReefPositions.getReefPose(1, 1)).andThen(swerve.stop())
+            .deadlineFor(superstructureGoTo(SuperstructurePosition.L4)),
+        superstructure.waitUntilAtSetpoint().withTimeout(1),
         outtakeCoral().withTimeout(1),
 
-        swerve.driveToPose(leftFeederStation, true)
-            .alongWith(superstructureGoTo(SuperstructurePosition.HP)).alongWith(intake.runIntake().asProxy()),
+        swerve.driveToPose(leftFeederStation, true).andThen(swerve.stop())
+            .alongWith(superstructureGoTo(SuperstructurePosition.HP))
+            .alongWith(intake.runIntake().asProxy()),
         waitForCoral(),
 
-        swerve.driveToPoseReefAvoidance(ReefPositions.getReefPose(1, -1))
-            .alongWith(superstructureGoTo(SuperstructurePosition.L4)),
+        swerve.driveToPoseReefAvoidance(ReefPositions.getReefPose(1, -1)).andThen(swerve.stop())
+            .deadlineFor(superstructureGoTo(SuperstructurePosition.L4)),
+        superstructure.waitUntilAtSetpoint().withTimeout(1),
         outtakeCoral().withTimeout(1),
-
-        swerve.driveToPose(leftFeederStation, true)
-            .alongWith(superstructureGoTo(SuperstructurePosition.HP)).alongWith(intake.runIntake().asProxy()),
+        swerve.stop(),
+        superstructureGoTo(SuperstructurePosition.HP),
         waitForCoral()
-        // swerve.driveToPoseReefAvoidance(ReefPositions.getReefPose(1, -1))
-        //   .alongWith(superstructureGoTo(SuperstructurePosition.L4)),
-        // outtakeCoral().withTimeout(1),
-        // superstructureGoTo(SuperstructurePosition.HP)
-        // (swerve.driveToPoseReefAvoidance(leftInterFeeder)
-        // .until(() -> {return swerve.getPose().relativeTo(leftInterFeeder).getTranslation().getNorm() < 0.2;})
-        // .andThen(swerve.driveToPoseReefAvoidance(leftFeederStation)))
-        // .alongWith(superstructureGoTo(SuperstructurePosition.HP))
       )
     );
 
@@ -215,7 +210,8 @@ public class Autos {
       stop(),
       AlignToPose.getAutoAlignEndsCommand(swerve, swerve.vision).withTimeout(2.5),
       Commands.deadline(superstructure.waitUntilAtSetpoint(), AlignToPose.getAutoAlignCommand(swerve, swerve.vision)).withTimeout(3),
-      outtakeCoral().withTimeout(1.0)
+      outtakeCoral().withTimeout(1.0),
+      superstructureGoTo(SuperstructurePosition.HP)
     ));
     
     return routine;

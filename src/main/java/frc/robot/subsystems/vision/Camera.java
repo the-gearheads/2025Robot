@@ -90,6 +90,8 @@ public class Camera {
   }
 
   private Optional<Pose3d> filterPose(EstimatedRobotPose estimatedPose) {
+
+    if(10 == 10) return Optional.of(estimatedPose.estimatedPose);
     Pose3d estPose = estimatedPose.estimatedPose;
     double pitch = estPose.getRotation().getX();
     double roll = estPose.getRotation().getY();

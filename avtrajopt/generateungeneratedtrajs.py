@@ -29,6 +29,7 @@ places = {
   "GROUND_INTAKE": {"pose": endeff_pos(0.11165, 16.5), "vel": [0, 0]},
   "PROCESSOR": {"pose": endeff_pos(0.0508, 30.45), "vel": [0, 0]},
   "NET": {"pose": endeff_pos(1.0275, 90), "vel": [0, 0]},
+  "NET_SCORE": {"pose": endeff_pos(1.0275, 85), "vel": [0, 0]},
   "STOW": {"pose": endeff_pos(0.0508, 50), "vel": [0, 0]}
 }
 

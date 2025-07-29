@@ -13,6 +13,7 @@ public enum SuperstructurePosition {
   AlgaeL3(ArmvatorPosition.AlgaeL3, Units.degreesToRadians(0)),
   AlgaeL2(ArmvatorPosition.AlgaeL2, Units.degreesToRadians(124.36)),
   NET(ArmvatorPosition.NET, Units.degreesToRadians(40)),
+  NET_SCORE(ArmvatorPosition.NET_SCORE, Units.degreesToRadians(-10)),
   GROUND_INTAKE(ArmvatorPosition.GROUND_INTAKE, Units.degreesToRadians(110)), 
   PROCESSOR(ArmvatorPosition.PROCESSOR, Units.degreesToRadians(115.55)),
   STOW(ArmvatorPosition.STOW, Units.degreesToRadians(-30));

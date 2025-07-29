@@ -26,6 +26,9 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -77,6 +80,10 @@ public class Swerve extends SubsystemBase {
   SwerveSetpoint lastSetpoint = new SwerveSetpoint(new ChassisSpeeds(), getModuleStates());
   ModuleLimits limits = new ModuleLimits(MAX_ROBOT_TRANS_SPEED, MAX_ROBOT_ACCEL, MAX_MOD_STEER_VEL);
   double lastTime = Timer.getTimestamp();
+
+  TrapezoidProfile drivePIDProfile = new TrapezoidProfile(new Constraints(5, 1));
+  double lastProfileVel = 0.0;
+  double driveProfileLastTime = Timer.getFPGATimestamp();
 
   public Swerve() {
     this.vision = new Vision(this);
@@ -162,6 +169,12 @@ public class Swerve extends SubsystemBase {
 
   public void drive(ChassisSpeeds speeds) {
     drive(speeds, null);
+  }
+
+  public Command stop() {
+    return this.runOnce(() -> {
+      drive(new ChassisSpeeds(0, 0, 0));
+    });
   }
 
   /* relative to your alliance's DS wall */
@@ -287,16 +300,34 @@ public class Swerve extends SubsystemBase {
   }
 
   public Command driveToPose(Pose2d pose, boolean waitForStop, double distTolerance, Rotation2d rotTolerance) {
+    lastProfileVel = 0.0;
+    driveProfileLastTime = Timer.getFPGATimestamp();
+  
     return this.run(() -> {
+
+      // accel limiting stuff
+      double now = Timer.getFPGATimestamp();
+      double dt = now - lastTime;
+      lastTime = now;
+
       Rotation2d rotationError = getPose().getRotation().minus(pose.getRotation());
       double targetDist = getPose().getTranslation().getDistance(pose.getTranslation());
       double driveVel = driveController.calculate(targetDist, 0.0);
       double rotVel = headingController.calculate(rotationError.getRadians(), 0.0);
 
+      State setpoint = drivePIDProfile.calculate(0.02,
+          /* goal = */ new TrapezoidProfile.State(0.0, 0.0),
+          /* initial = */ new TrapezoidProfile.State(targetDist, lastProfileVel));
+
+      Logger.recordOutput("Swerve/DriveToPose/setpointPos", setpoint.position);
+      Logger.recordOutput("Swerve/DriveToPose/setpointVel", setpoint.velocity);
+      double targetVel = setpoint.velocity;
+      lastProfileVel = targetVel;
+
       Rotation2d translationVectorAngleError = getPose().getTranslation().minus(pose.getTranslation()).getAngle();
       var autoTranslation = new Pose2d(Translation2d.kZero,
           translationVectorAngleError)
-          .transformBy(new Transform2d(new Translation2d(driveVel, 0.0), Rotation2d.kZero))
+          .transformBy(new Transform2d(new Translation2d(targetVel, 0.0), Rotation2d.kZero))
           .getTranslation();
       ChassisSpeeds autoSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(autoTranslation.getX(), autoTranslation.getY(), rotVel, getPose().getRotation());
       drive(autoSpeeds);
@@ -330,6 +361,7 @@ public class Swerve extends SubsystemBase {
           translationVectorAngleError)
           .transformBy(new Transform2d(new Translation2d(driveVel, 0.0), Rotation2d.kZero))
           .getTranslation();
+      
       ChassisSpeeds autoSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(autoTranslation.getX(), autoTranslation.getY(), rotVel, getPose().getRotation());
       drive(autoSpeeds);
 
