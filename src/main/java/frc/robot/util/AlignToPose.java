@@ -139,7 +139,6 @@ public class AlignToPose {
     }).until(() -> {
       return swerve.atPose(getCoralObjective(swerve.getPose(),0, 0));
     }).finallyDo(()->{
-      System.out.println("AlignToPose/AutoAlignEndsCommand: Finished aLignment");
       vision.disableIdFiltering(1);
       vision.disableIdFiltering(2);
       vision.defaultPoseStrategies();
