@@ -84,6 +84,7 @@ public class Teleop extends Command {
     rotSpeed *= MAX_ROBOT_TRANS_SPEED;
 
     Pose2d currentCoralTarget = AlignToPose.getCoralObjective(swerve.getPose(), x, y);
+    Pose2d currentL2Target = AlignToPose.getL2Objective(swerve.getPose(), x, y);
     Logger.recordOutput("AlignToPose/AlignmentEnabled", AUTO_ALIGN_ENABLED); 
 
     boolean algaeAlignCommanded = bargeAlignPaddleDebouncer.calculate(Controllers.driverController.getRightPaddle().getAsBoolean());
@@ -114,7 +115,7 @@ public class Teleop extends Command {
             .getDistance(swerve.getPose().getTranslation()) < AUTO_ALIGN_DIST_THRESHOLD
             && Math.abs(currentCoralTarget.getRotation().minus(swerve.getPose().getRotation()).getRadians()) < AUTO_ALIGN_ANGLE_THRESHOLD
             && intake.getGamePiece() == GamePiece.CORAL
-            && !tracker.facingReef()
+            && (!tracker.facingReef())
             && AUTO_ALIGN_ENABLED) {
         int nearestTagId = ReefPositions.getClosestReefTagId(currentCoralTarget);
         Rotation2d gyroOffset = swerve.getPose().getRotation().minus(swerve.getPoseWheelsOnly().getRotation());
@@ -124,10 +125,34 @@ public class Teleop extends Command {
         AlignToPose.enableReefVision(vision, gyroOffset, nearestTagId);
 
         // get final speeds
-        Pair<ChassisSpeeds, Double> autoAlignSpeeds = AlignToPose.getAutoAlignSpeeds(x, y, swerve.getPose());
+        Pair<ChassisSpeeds, Double> autoAlignSpeeds = AlignToPose.getAutoAlignSpeeds(x, y, swerve.getPose(), false);
         ChassisSpeeds driverSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(new ChassisSpeeds(xSpeed * (1 - autoAlignSpeeds.getSecond()), ySpeed * (1 - autoAlignSpeeds.getSecond()), rotSpeed * (1 - autoAlignSpeeds.getSecond())), fieldAdjustedRobotRot);
         swerve.drive(driverSpeeds.plus(autoAlignSpeeds.getFirst()));
-    } else {
+      } else if (currentL2Target.getTranslation()
+          .getDistance(swerve.getPose().getTranslation()) < AUTO_ALIGN_DIST_THRESHOLD
+          && Math.abs(currentL2Target.getRotation().minus(swerve.getPose().getRotation())
+              .getRadians()) < AUTO_ALIGN_ANGLE_THRESHOLD
+          && superStructure.getClosestArmvatorPosition() == ArmvatorPosition.L2
+          && intake.getGamePiece() == GamePiece.CORAL
+          && (tracker.facingReef())
+          && AUTO_ALIGN_ENABLED) {
+        int nearestTagId = ReefPositions.getClosestReefTagId(currentCoralTarget);
+        Rotation2d gyroOffset = swerve.getPose().getRotation().minus(swerve.getPoseWheelsOnly().getRotation());
+        isAligning = true;
+        Logger.recordOutput("AlignToPose/TeleopAligning", "coral L2");
+        // turn on 2d vision
+        AlignToPose.enableReefVision(vision, gyroOffset, nearestTagId);
+
+        // get final speeds
+        Pair<ChassisSpeeds, Double> autoAlignSpeeds = AlignToPose.getAutoAlignSpeeds(x, y, swerve.getPose(), true);
+        ChassisSpeeds driverSpeeds = ChassisSpeeds
+            .fromFieldRelativeSpeeds(
+                new ChassisSpeeds(xSpeed * (1 - autoAlignSpeeds.getSecond()),
+                    ySpeed * (1 - autoAlignSpeeds.getSecond()), rotSpeed * (1 - autoAlignSpeeds.getSecond())),
+                fieldAdjustedRobotRot);
+        swerve.drive(driverSpeeds.plus(autoAlignSpeeds.getFirst()));
+
+      } else {
         isAligning = false;
         Logger.recordOutput("AlignToPose/TeleopAligning", "None");
         // return to normal vision

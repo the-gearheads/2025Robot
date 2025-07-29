@@ -46,8 +46,10 @@ public class AlignToPose {
    * distance to target pose
    * (also the same controller vector?)
    */
-  public static Pair<ChassisSpeeds, Double> getAutoAlignSpeeds(double controllerX, double controllerY, Pose2d robotPose) {
+  public static Pair<ChassisSpeeds, Double> getAutoAlignSpeeds(double controllerX, double controllerY, Pose2d robotPose, boolean L2Align) {
     Pose2d currentTarget = getCoralObjective(robotPose, controllerX, controllerY);
+    if (L2Align) currentTarget = getL2Objective(robotPose, controllerX, controllerY);
+
     Logger.recordOutput("AlignToPose/currentTarget", currentTarget);
 
     double controllerMagnitude = MathUtil.clamp((Math.abs(controllerX) + Math.abs(controllerY)) / 2, 0, 0.33);
@@ -132,9 +134,13 @@ public class AlignToPose {
     return bestReefPose.getFirst();
   }
 
+  public static Pose2d getL2Objective(Pose2d robotPose, double controllerX, double controllerY) {
+    return getCoralObjective(robotPose, controllerX, controllerY).plus(new Transform2d(new Translation2d(0, 0), Rotation2d.k180deg));
+  }
+
   public static Command getAutoAlignEndsCommand(Swerve swerve, Vision vision) {
     return swerve.run(() -> {
-      var speeds = getAutoAlignSpeeds(0.0, 0.0, swerve.getPose()).getFirst();
+      var speeds = getAutoAlignSpeeds(0.0, 0.0, swerve.getPose(), false).getFirst();
       swerve.drive(speeds);
     }).until(() -> {
       return swerve.atPose(getCoralObjective(swerve.getPose(),0, 0));
@@ -148,7 +154,7 @@ public class AlignToPose {
 
   public static Command getAutoAlignCommand(Swerve swerve, Vision vision) {
     return swerve.run(() -> {
-      var speeds = getAutoAlignSpeeds(0.0, 0.0, swerve.getPose()).getFirst();
+      var speeds = getAutoAlignSpeeds(0.0, 0.0, swerve.getPose(), false).getFirst();
       swerve.drive(speeds);
     }).finallyDo(()->{
       vision.disableIdFiltering(1);
