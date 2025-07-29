@@ -75,7 +75,8 @@ public class Autos {
     chooser = new AutoChooser();
     chooser.addRoutine("Left 2 Coral", ()->{return twoCoral("LEFT_2C4");});
     chooser.addRoutine("Right 2 Coral", ()->{return twoCoral("RIGHT_2C4");});
-    chooser.addRoutine("Center 1 Coral", ()->{return center1Coral();});
+    chooser.addRoutine("Center 1 Coral", ()->{return center1Coral(true);});
+    chooser.addRoutine("Center 1 Coral Vision", ()->{return center1Coral(false);});
     chooser.addRoutine("L3C", ()->{return driveToPoint3Coral(Side.LEFT);});
     chooser.addRoutine("R3C", ()->{return driveToPoint3Coral(Side.RIGHT);});
     SmartDashboard.putData("AutoChooser", chooser);
@@ -162,14 +163,17 @@ public class Autos {
     return routine;
   }
 
-  public AutoRoutine center1Coral() {
+  public AutoRoutine center1Coral(boolean disableVision) {
     AutoRoutine routine = factory.newRoutine("CENTER_1C4");
     AutoTrajectory trajectory = routine.trajectory("CENTER_1C4");
 
     routine.active().onTrue(
       Commands.sequence(
         trajectory.resetOdometry(),
-        Commands.runOnce(()->swerve.vision.disable()),
+        Commands.deferredProxy(()->{
+          if (disableVision) return Commands.runOnce(() ->swerve.vision.disable());
+          return Commands.none();
+        }),
         superstructureGoTo(SuperstructurePosition.L4),
         trajectory.cmd()
       )
@@ -178,7 +182,10 @@ public class Autos {
     trajectory.done().onTrue(
       Commands.sequence(
         stop(),
-        // possibly an auto align
+        Commands.deferredProxy(()->{
+          if (disableVision) return Commands.none();
+          return AlignToPose.getAutoAlignEndsCommand(swerve, swerve.vision).withTimeout(2.5).andThen(stop());
+        }),
         outtakeCoral().withTimeout(2),
         Commands.runOnce(()->swerve.vision.enable())
       )
