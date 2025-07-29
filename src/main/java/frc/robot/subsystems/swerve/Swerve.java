@@ -12,7 +12,6 @@ import java.util.concurrent.locks.ReentrantLock;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
-
 import choreo.trajectory.SwerveSample;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
@@ -27,7 +26,6 @@ import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.Timer;
@@ -81,7 +79,7 @@ public class Swerve extends SubsystemBase {
   ModuleLimits limits = new ModuleLimits(MAX_ROBOT_TRANS_SPEED, MAX_ROBOT_ACCEL, MAX_MOD_STEER_VEL);
   double lastTime = Timer.getTimestamp();
 
-  TrapezoidProfile drivePIDProfile = new TrapezoidProfile(new Constraints(5, 1));
+  TrapezoidProfile drivePIDProfile = new TrapezoidProfile(DRIVE_TO_POINT_CONSTRAINTS);
   double lastProfileVel = 0.0;
   double driveProfileLastTime = Timer.getFPGATimestamp();
 
@@ -315,9 +313,9 @@ public class Swerve extends SubsystemBase {
       double driveVel = driveController.calculate(targetDist, 0.0);
       double rotVel = headingController.calculate(rotationError.getRadians(), 0.0);
 
-      State setpoint = drivePIDProfile.calculate(0.02,
-          /* goal = */ new TrapezoidProfile.State(0.0, 0.0),
-          /* initial = */ new TrapezoidProfile.State(targetDist, lastProfileVel));
+      State setpoint = drivePIDProfile.calculate(dt,
+      /* initial = */ new TrapezoidProfile.State(targetDist, lastProfileVel),
+          /* goal = */ new TrapezoidProfile.State(0.0, 0.0));
 
       Logger.recordOutput("Swerve/DriveToPose/setpointPos", setpoint.position);
       Logger.recordOutput("Swerve/DriveToPose/setpointVel", setpoint.velocity);

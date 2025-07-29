@@ -113,7 +113,7 @@ public class Autos {
     AutoRoutine routine = factory.newRoutine("LEFT 3 coral drive to point");
     routine.active().onTrue(
       Commands.sequence(
-        swerve.driveToPoseReefAvoidance(ReefPositions.getReefPose(2, -1)).andThen(swerve.stop()).deadlineFor(
+        swerve.driveToPose(ReefPositions.getReefPose(2, -1), true).andThen(swerve.stop()).deadlineFor(
             superstructureGoTo(SuperstructurePosition.L4)),
         superstructure.waitUntilAtSetpoint().withTimeout(1),
         outtakeCoral().withTimeout(1),
@@ -124,7 +124,7 @@ public class Autos {
             .alongWith(intake.runIntake().asProxy()),
         waitForCoral(),
 
-        swerve.driveToPoseReefAvoidance(ReefPositions.getReefPose(1, 1)).andThen(swerve.stop())
+        swerve.driveToPose(ReefPositions.getReefPose(1, 1), true).andThen(swerve.stop())
             .deadlineFor(superstructureGoTo(SuperstructurePosition.L4)),
         superstructure.waitUntilAtSetpoint().withTimeout(1),
         outtakeCoral().withTimeout(1),
@@ -134,7 +134,7 @@ public class Autos {
             .alongWith(intake.runIntake().asProxy()),
         waitForCoral(),
 
-        swerve.driveToPoseReefAvoidance(ReefPositions.getReefPose(1, -1)).andThen(swerve.stop())
+        swerve.driveToPose(ReefPositions.getReefPose(1, -1), true).andThen(swerve.stop())
             .deadlineFor(superstructureGoTo(SuperstructurePosition.L4)),
         superstructure.waitUntilAtSetpoint().withTimeout(1),
         outtakeCoral().withTimeout(1),
