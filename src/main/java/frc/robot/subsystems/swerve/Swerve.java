@@ -1,5 +1,7 @@
 package frc.robot.subsystems.swerve;
 
+import static frc.robot.constants.MiscConstants.ROBOT_MASS;
+import static frc.robot.constants.MiscConstants.ROBOT_MOI;
 import static frc.robot.constants.MiscConstants.SWERVE_ALIGN_DIST_TOLERANCE;
 import static frc.robot.constants.MiscConstants.SWERVE_ALIGN_ROT_TOLERANCE;
 import static frc.robot.constants.SwerveConstants.*;
@@ -11,6 +13,13 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
+
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.config.ModuleConfig;
+import com.pathplanner.lib.config.PIDConstants;
+import com.pathplanner.lib.config.RobotConfig;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.pathplanner.lib.path.PathConstraints;
 
 import choreo.trajectory.SwerveSample;
 import edu.wpi.first.math.controller.PIDController;
@@ -25,9 +34,12 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -105,6 +117,32 @@ public class Swerve extends SubsystemBase {
     headingController.setTolerance(HEADING_CONTROLLER_TOLERANCE);
 
     rotPid.enableContinuousInput(-Math.PI, Math.PI);
+
+    RobotConfig config = new RobotConfig(ROBOT_MASS, ROBOT_MOI, new ModuleConfig(WHEEL_RADIUS, MAX_MOD_SPEED, 1.4, DCMotor.getNeoVortex(1), DRIVE_CURRENT_LIMIT, 4), WHEEL_POSITIONS);
+
+    AutoBuilder.configure(
+            this::getPose, 
+            this::setPose, // techinically this doesnt work bc gtsam but we dont need it
+            this::getRobotRelativeSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
+            (speeds, feedforwards) -> drive(speeds), 
+            new PPHolonomicDriveController( 
+                    new PIDConstants(XY_PATH_FOLLOWING_PID[0], XY_PATH_FOLLOWING_PID[1], XY_PATH_FOLLOWING_PID[2]),
+                    new PIDConstants(ROT_PATH_FOLLOWING_PID[0], ROT_PATH_FOLLOWING_PID[1], ROT_PATH_FOLLOWING_PID[2])
+            ),
+            config, // The robot configuration
+            () -> {
+              // Boolean supplier that controls when the path will be mirrored for the red alliance
+              // This will flip the path being followed to the red side of the field.
+              // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
+
+              var alliance = DriverStation.getAlliance();
+              if (alliance.isPresent()) {
+                return alliance.get() == DriverStation.Alliance.Red;
+              }
+              return false;
+            },
+            this // Reference to this subsystem to set requirements
+    );
   }
 
   public Rotation2d getGyroRotation() {
@@ -491,4 +529,16 @@ public class Swerve extends SubsystemBase {
     }
     Logger.recordOutput("Swerve/IsBraken", willBrake);
   }
+
+  public Command pathFindToPose(Pose2d targetPose) {
+    PathConstraints constraints = new PathConstraints(2.0, 2.0,
+        Units.degreesToRadians(540), Units.degreesToRadians(720));
+    
+    return AutoBuilder.pathfindToPose(
+        targetPose,
+        constraints,
+        0.0
+    );
+  }
+
 }

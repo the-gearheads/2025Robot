@@ -24,6 +24,8 @@ import frc.robot.subsystems.swerve.Swerve;
 import frc.robot.util.AlignToPose;
 import frc.robot.util.AllianceFlipUtil;
 import frc.robot.util.ReefPositions;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Autos {
   Swerve swerve;
@@ -79,6 +81,7 @@ public class Autos {
     chooser.addRoutine("Center 1 Coral Vision", ()->{return center1Coral(false);});
     chooser.addRoutine("L3C", ()->{return driveToPoint3Coral(Side.LEFT);});
     chooser.addRoutine("R3C", ()->{return driveToPoint3Coral(Side.RIGHT);});
+    chooser.addRoutine("test", ()->{return test();});
     SmartDashboard.putData("AutoChooser", chooser);
   }
 
@@ -109,6 +112,80 @@ public class Autos {
     return Commands.runOnce(()->{
       Logger.recordOutput("number", num);
     });
+  }
+
+  public AutoRoutine test() {
+    Pose2d feederStation = AllianceFlipUtil.apply(new Pose2d(1.7206048965454102 , 6.977558135986328, Rotation2d.fromDegrees(128)));
+    Pose2d[] reefPolesAutoScore = {
+      ReefPositions.getReefPoseAutoScore(0, 1),
+      ReefPositions.getReefPoseAutoScore(1, 1),
+      ReefPositions.getReefPoseAutoScore(2, 1),
+      ReefPositions.getReefPoseAutoScore(3, 1),
+      ReefPositions.getReefPoseAutoScore(4, 1),
+      ReefPositions.getReefPoseAutoScore(5, 1),
+      ReefPositions.getReefPoseAutoScore(0, -1),
+      ReefPositions.getReefPoseAutoScore(1, -1),
+      ReefPositions.getReefPoseAutoScore(2, -1),
+      ReefPositions.getReefPoseAutoScore(3, -1),
+      ReefPositions.getReefPoseAutoScore(4, -1),
+      ReefPositions.getReefPoseAutoScore(5, -1),
+    };
+    Pose2d[] reefPoles = {
+      ReefPositions.getReefPose(0, 1),
+      ReefPositions.getReefPose(1, 1),
+      ReefPositions.getReefPose(2, 1),
+      ReefPositions.getReefPose(3, 1),
+      ReefPositions.getReefPose(4, 1),
+      ReefPositions.getReefPose(5, 1),
+      ReefPositions.getReefPose(0, -1),
+      ReefPositions.getReefPose(1, -1),
+      ReefPositions.getReefPose(2, -1),
+      ReefPositions.getReefPose(3, -1),
+      ReefPositions.getReefPose(4, -1),
+      ReefPositions.getReefPose(5, -1),
+    };
+    List<Command> sequences = new ArrayList<>();
+    for (int i = 0; i < reefPoles.length; i++) {
+      Command driveAndOuttake = Commands.sequence(
+        swerve.pathFindToPose(reefPolesAutoScore[i]).andThen(swerve.driveToPose(reefPoles[i], true))
+             .andThen(swerve.stop())
+             .deadlineFor(superstructureGoTo(SuperstructurePosition.L4)),
+        superstructure.waitUntilAtSetpoint().withTimeout(1),
+        outtakeCoral().withTimeout(1)
+      );
+      
+      // For all but the last reef pole, add the intake phase and waiting for a game piece.
+      if (i < reefPoles.length - 1) {
+        driveAndOuttake = Commands.sequence(
+          driveAndOuttake,
+          swerve.pathFindToPose(feederStation)
+               .andThen(swerve.stop())
+               .alongWith(superstructureGoTo(SuperstructurePosition.HP))
+               .alongWith(intake.runIntake().asProxy()),
+          waitForCoral()
+        );
+      }
+      
+      sequences.add(driveAndOuttake);
+    }
+
+    AutoRoutine routine = factory.newRoutine("test");
+    routine.active().onTrue(Commands.sequence(sequences.toArray(new Command[0])));
+    // routine.active().onTrue(
+    //   Commands.sequence(
+    //     swerve.driveToPose(reefPoles[0], true).andThen(swerve.stop())
+    //         .deadlineFor(superstructureGoTo(SuperstructurePosition.L4)),
+    //     superstructure.waitUntilAtSetpoint().withTimeout(1),
+    //     outtakeCoral().withTimeout(1),
+
+    //     swerve.driveToPose(feederStation, true).andThen(swerve.stop())
+    //         .alongWith(superstructureGoTo(SuperstructurePosition.HP))
+    //         .alongWith(intake.runIntake().asProxy()),
+    //     waitForCoral()
+    //   )
+    // );
+
+    return routine;
   }
 
   public AutoRoutine driveToPoint3Coral(Side side) {

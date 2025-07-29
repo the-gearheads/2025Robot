@@ -61,10 +61,38 @@ public class ReefPositions {
       return reefPose;
   }
 
+  public static Pose2d getReefPoseAutoScore(int side, int relativePos) {
+      // determine whether to use red or blue reef position
+
+      // initially do all calculations from blue, then flip later
+      Translation2d reefCenter = REEF_CENTER_BLUE;
+
+      // robot position centered on close reef side
+      Translation2d translation = reefCenter.plus(new Translation2d(REEF_APOTHEM.unaryMinus().minus(Inches.of(24)), Meters.zero()));
+      // translate to correct branch (left, right, center)
+      translation = translation.plus(CENTERED_TO_LEFT_BRANCH.times(relativePos));
+      // rotate to correct side
+      translation = translation.rotateAround(reefCenter, Rotation2d.fromDegrees(-60 * side));
+
+      // make pose from translation and correct rotation
+      Pose2d reefPose = AllianceFlipUtil.apply(new Pose2d(translation,
+              Rotation2d.fromDegrees(-60 * side).plus(Rotation2d.k180deg)));
+
+      return reefPose;
+  }
+
   public static List<Pose2d> getReefPoses(int relativePos) {
     Pose2d[] out = new Pose2d[8];
     for (int i = 0; i < 8; i++) { 
       out[i] = getReefPose(i, relativePos);
+    }
+    return List.of(out);
+  }
+
+  public static List<Pose2d> getReefPosesAutoScore(int relativePos) {
+    Pose2d[] out = new Pose2d[8];
+    for (int i = 0; i < 8; i++) { 
+      out[i] = getReefPoseAutoScore(i, relativePos);
     }
     return List.of(out);
   }

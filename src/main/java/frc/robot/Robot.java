@@ -17,6 +17,9 @@ import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 import org.littletonrobotics.urcl.URCL;
 
+import com.pathplanner.lib.commands.PathfindingCommand;
+import com.pathplanner.lib.pathfinding.LocalADStar;
+import com.pathplanner.lib.pathfinding.Pathfinding;
 import com.reduxrobotics.canand.CanandEventLoop;
 
 import edu.wpi.first.hal.AllianceStationID;
@@ -124,6 +127,8 @@ public class Robot extends LoggedRobot {
     // and put our
     // autonomous chooser on the dashboard.
     robotContainer = new RobotContainer();
+    Pathfinding.setPathfinder(new LocalADStar());
+    PathfindingCommand.warmupCommand().schedule();
   }
 
 
