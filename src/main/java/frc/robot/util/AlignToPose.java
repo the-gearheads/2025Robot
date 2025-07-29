@@ -92,6 +92,7 @@ public class AlignToPose {
     return Pair.of(autoSpeeds, totalScalingFactor);
   }
 
+  // if you change any of the numbers in here auto will break
   public static Pose2d getReefAvoidanceTarget(Pose2d robot, Pose2d goal) {
     Pose2d offset = robot.relativeTo(goal);
     double xDist = Math.abs(offset.getX());
@@ -105,7 +106,7 @@ public class AlignToPose {
         1.0);
     return goal.transformBy(
         new Transform2d(
-            shiftXT * 2,
+            shiftXT * 1.5,
             Math.copySign(shiftYT * MAX_REEF_LINEUP_DIST * 1, offset.getY()), new Rotation2d()));
   }
 

@@ -59,8 +59,8 @@ public final class SwerveConstants {
     public static final int STEER_CURRENT_LIMIT = 20;
     
     public static final double MAX_MOD_SPEED = DRIVE_FREE_SPD;  // m/s, placeholders
-    public static final double MAX_ROBOT_TRANS_SPEED = DRIVE_FEEDFORWARD.maxAchievableVelocity(12, 0.1); // m/s
-    public static final double MAX_ROBOT_ACCEL = DRIVE_FEEDFORWARD.maxAchievableAcceleration(12, MAX_ROBOT_TRANS_SPEED-1); // m/s^2, 1 is a fudge factor
+    public static final double MAX_ROBOT_TRANS_SPEED = DRIVE_FEEDFORWARD.maxAchievableVelocity(12, 0.1); // 4.75 m/s
+    public static final double MAX_ROBOT_ACCEL = DRIVE_FEEDFORWARD.maxAchievableAcceleration(12, MAX_ROBOT_TRANS_SPEED-1); // 8.47 m/s^2, 1 is a fudge factor
     public static final double MAX_MOD_STEER_VEL = Units.degreesToRadians(1040); // I think? Going from 0-90 went at ~200deg/s
     
     public static final double MAX_ROBOT_ROT_SPEED = MAX_ROBOT_TRANS_SPEED / 0.4585738763; // rad/s, 0.45 is radius of robot, spd/r is rad/s
@@ -73,14 +73,15 @@ public final class SwerveConstants {
     public static double[] DRIVE_CONTROLLER_PID = {5, 0, 0.3};
     public static double[] ROT_CONTROLLER_PID = {3.2, 0, 0};
 
-    public static Constraints ALIGNMENT_DRIVE_CONSTRAINTS = new Constraints(5, 2);
-    public static Constraints ALIGNMENT_ROT_CONSTRAINTS = new Constraints(6, 2);
+    public static Constraints ALIGNMENT_DRIVE_CONSTRAINTS = new Constraints(MAX_ROBOT_TRANS_SPEED, 2);
+    public static Constraints ALIGNMENT_ROT_CONSTRAINTS = new Constraints(MAX_ROBOT_TRANS_SPEED, 2);
 
-    public static Constraints DRIVE_TO_POINT_CONSTRAINTS = new Constraints(5, 2);
+    public static Constraints DRIVE_TO_POINT_REEF_AVOID_CONSTRAINTS = new Constraints(6, 3);
+    public static Constraints DRIVE_TO_POINT_CONSTRAINTS = new Constraints(6.5, 3.6);
     public static Constraints BARGE_ALIGN_CONSTRAINTS = new Constraints(1, 0.5);
 
-    public static double ALIGNMENT_MAX_STOPPED_TRANS_SPEED = 0.25; // m/s robot must be going slower than this in x and y direction to be considered 'stopped' and thus done aligning
-    public static double ALIGNMENT_MAX_STOPPED_ROT_SPEED = Units.degreesToRadians(3); // rad/s robot must be going slower than this in x and y direction to be considered 'stopped' and thus done aligning
+    public static double ALIGNMENT_MAX_STOPPED_TRANS_SPEED = 0.1; // m/s robot must be going slower than this in x and y direction to be considered 'stopped' and thus done aligning
+    public static double ALIGNMENT_MAX_STOPPED_ROT_SPEED = Units.degreesToRadians(1); // rad/s robot must be going slower than this in x and y direction to be considered 'stopped' and thus done aligning
 
     public static final double WHEEL_RADIUS_RAMP_RATE = 0.05; // rad/s^2
     public static final double WHEEL_RADIUS_MAX_VEL = 0.25; // rad/s

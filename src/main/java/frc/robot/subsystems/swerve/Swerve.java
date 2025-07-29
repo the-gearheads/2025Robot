@@ -80,6 +80,7 @@ public class Swerve extends SubsystemBase {
   double lastTime = Timer.getTimestamp();
 
   TrapezoidProfile drivePIDProfile = new TrapezoidProfile(DRIVE_TO_POINT_CONSTRAINTS);
+  TrapezoidProfile driveReefAvoidPIDProfile = new TrapezoidProfile(DRIVE_TO_POINT_REEF_AVOID_CONSTRAINTS);
   double lastProfileVel = 0.0;
   double driveProfileLastTime = Timer.getFPGATimestamp();
 
@@ -115,6 +116,7 @@ public class Swerve extends SubsystemBase {
     return gyro.getVelocityYaw();
   }
   
+  @AutoLogOutput
   public double getTranslationVelocity() {
     return Math.sqrt(Math.pow(getRobotRelativeSpeeds().vxMetersPerSecond, 2) + Math.pow(getRobotRelativeSpeeds().vyMetersPerSecond, 2));
   }
@@ -346,18 +348,34 @@ public class Swerve extends SubsystemBase {
   }
 
   public Command driveToPoseReefAvoidance(Pose2d goalPose) {
+    lastProfileVel = 0.0;
+    driveProfileLastTime = Timer.getFPGATimestamp();
     return this.run(() -> {
       Pose2d reefAvoidPose = AlignToPose.getReefAvoidanceTarget(getPose(), goalPose);
 
+      // accel limiting stuff
+      double now = Timer.getFPGATimestamp();
+      double dt = now - lastTime;
+      lastTime = now;
+
       Rotation2d rotationError = getPose().getRotation().minus(reefAvoidPose.getRotation());
       double targetDist = getPose().getTranslation().getDistance(reefAvoidPose.getTranslation());
-      double driveVel = driveController.calculate(targetDist, 0.0);
       double rotVel = headingController.calculate(rotationError.getRadians(), 0.0);
+
+      State setpoint = driveReefAvoidPIDProfile.calculate(dt,
+      /* initial = */ new TrapezoidProfile.State(targetDist, lastProfileVel),
+          /* goal = */ new TrapezoidProfile.State(0.0, 0.0));
+
+      Logger.recordOutput("Swerve/DriveToPose/setpointPos", setpoint.position);
+      Logger.recordOutput("Swerve/DriveToPose/setpointVel", setpoint.velocity);
+
+      double targetVel = setpoint.velocity;
+      lastProfileVel = targetVel;
 
       Rotation2d translationVectorAngleError = getPose().getTranslation().minus(reefAvoidPose.getTranslation()).getAngle();
       var autoTranslation = new Pose2d(Translation2d.kZero,
           translationVectorAngleError)
-          .transformBy(new Transform2d(new Translation2d(driveVel, 0.0), Rotation2d.kZero))
+          .transformBy(new Transform2d(new Translation2d(targetVel, 0.0), Rotation2d.kZero))
           .getTranslation();
       
       ChassisSpeeds autoSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(autoTranslation.getX(), autoTranslation.getY(), rotVel, getPose().getRotation());
@@ -367,7 +385,6 @@ public class Swerve extends SubsystemBase {
       Logger.recordOutput("Swerve/DriveToPose/ReefAvoidPose", reefAvoidPose);
       Logger.recordOutput("Swerve/DriveToPose/targetDist", targetDist);
       Logger.recordOutput("Swerve/DriveToPose/rotationError", rotationError);
-      Logger.recordOutput("Swerve/DriveToPose/driveVel", driveVel);
       Logger.recordOutput("Swerve/DriveToPose/rotVel", rotVel);
 
     }).until(() -> {

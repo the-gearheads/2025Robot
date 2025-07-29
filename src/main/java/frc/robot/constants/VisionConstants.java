@@ -40,11 +40,11 @@ public class VisionConstants {
 
   };
 
-  // ONLY used for sim; these are NOT accurate to the real cameras
-  public static final CameraIntrinsics[] SIM_CAMERA_INTRINSICS = {
+  // ONLY used for sim; these are NOT accurate to the real cameras TODO: NOOOO TEHY ARE USED FOR GTSAM WHY MICHAELLL
+  public static final CameraIntrinsics[] CAMERA_INTRINSICS = {
       new CameraIntrinsics(  // FRONT_LEFT_2025
           1600, 1200,
-          1286.9714942340822, 801.3013669030433, 662.3371068271363, 643.6657753564633,
+          1286.9714942340822, 1286.958397164024, 801.3013669030433, 643.6657753564633,
           new double[] { 0.03330603946791099,-0.028149602298339575,-3.2480645802923945E-4,-9.9467580835956E-5,-0.01790312270432083,-5.6026682560497186E-5,0.004799695107552726,0.002517423938318154 }),
       new CameraIntrinsics( // BACK_LEFT_OFFSEASON
           1280, 800,
