@@ -77,6 +77,7 @@ public class AlignToPose {
     
     // actual drive to pose stuff, throw in reef avoidance getDriveTarget stuff
     Pose2d reefAvoidanceTarget = getReefAvoidanceTarget(robotPose, currentTarget);
+    if (L2Align) reefAvoidanceTarget = currentTarget; // broken because rotation is flipped and idk what that magic code does so cant touch it
     Rotation2d rotationErrorToCurrentTarget = robotPose.getRotation().minus(reefAvoidanceTarget.getRotation());
     Rotation2d translationVectorAngleError = robotPose.getTranslation().minus(reefAvoidanceTarget.getTranslation()).getAngle();
     Logger.recordOutput("AlignToPose/ReefAvoidanceTarget", reefAvoidanceTarget);

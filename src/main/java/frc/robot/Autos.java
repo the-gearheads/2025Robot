@@ -136,8 +136,8 @@ public class Autos {
         outtakeCoral().withTimeout(1),
         
         Commands.sequence(
-            swerve.driveToPose(interFeeder, false, 0.4, Rotation2d.fromDegrees(15)),
-            swerve.driveToPose(feederStation, true).andThen(swerve.stop()).alongWith(superstructureGoTo(SuperstructurePosition.HP)))
+            (swerve.driveToPose(interFeeder, false, 0.4, Rotation2d.fromDegrees(15)).andThen(
+            swerve.driveToPose(feederStation, true).andThen(swerve.stop())).alongWith(superstructureGoTo(SuperstructurePosition.HP))))
             .alongWith(intake.runIntake().asProxy()),
         waitForCoral(),
 
