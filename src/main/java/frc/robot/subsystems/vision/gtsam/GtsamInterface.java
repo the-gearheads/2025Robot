@@ -140,21 +140,26 @@ public class GtsamInterface {
      * @param odom     The twist encoding chassis movement from last
      *                 timestamp to now. I use
      *                 SwerveDriveKinematics::toTwist2d
-     * @param guess    An (optional, possibly null) initial guess at robot
-     *                 pose from solvePNP or prior knowledge.
      */
-    public void sendOdomUpdate(long odomTime, Twist3d odom,
-            Pose3d guess) {
+    public void sendOdomUpdate(long odomTime, Twist3d odom) {
 
         // System.out.println("GtsamInterface.sendOdomUpdate time: " + odomTime);
         odomPub.set(odom, odomTime);
 
-        if (guess != null) {
-            guessPub.set(guess, odomTime);
-        }
-
         localOdometryPose = localOdometryPose.exp(odom);
         odometryBuffer.addSample(odomTime / 1e6, localOdometryPose);
+    }
+
+    /**
+     * Update the localizer with a new prior. Only updates if not ready to optimize
+     * by default.
+     * @param guess    An (optional, possibly null) initial guess at robot
+     *                 pose from solvePNP or prior knowledge.
+     */
+    public void sendPrior(long guessTime, Pose3d guess, boolean evenIfReadyToOptimize) {
+        if((isConnected() && !isReadyToOptimize()) || evenIfReadyToOptimize) {
+            guessPub.set(guess, guessTime);
+        }
     }
 
     /**

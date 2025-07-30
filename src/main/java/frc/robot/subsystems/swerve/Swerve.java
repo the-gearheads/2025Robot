@@ -20,6 +20,8 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Twist2d;
+import edu.wpi.first.math.geometry.Twist3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
@@ -28,6 +30,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.util.WPIUtilJNI;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -246,6 +249,8 @@ public class Swerve extends SubsystemBase {
   public void setPose(Pose2d pose) {
     multitagPoseEstimator.resetPosition(getGyroRotation(), getModulePositions(), pose);
     wheelOdometry.resetPosition(getGyroRotation(), getModulePositions(), pose);
+    lastOdom = pose; // avoid large jumps in twist when resetting pose
+    vision.resetGtsamPose(pose);
   }
 
   public double getCurrentDraw() {
@@ -261,6 +266,10 @@ public class Swerve extends SubsystemBase {
     gyro.reset();
   }
 
+  Twist3d odomTwist = new Twist3d();
+  Pose2d lastOdom = new Pose2d();
+  long odomTwistTime = 0;
+
   public void periodic() {
     // gyro.log();
     for (SwerveModule module : modules) {
@@ -272,6 +281,22 @@ public class Swerve extends SubsystemBase {
     field.setRobotPose(getPose());
 
     // tracker.getCoralObjective();
+
+    // calculate twist3d
+    Pose2d odom = getPoseWheelsOnly();
+    Twist2d odomTwist2d = lastOdom.log(odom);
+    odomTwist = new Twist3d(odomTwist2d.dx, odomTwist2d.dy, 0, 0, 0, odomTwist2d.dtheta);
+    odomTwistTime = WPIUtilJNI.now();
+    lastOdom = odom;
+  }
+
+  @AutoLogOutput
+  public Twist3d getTwist3d() {
+    return odomTwist;
+  }
+
+  public long getTwist3dTimestamp() { 
+    return odomTwistTime;
   }
 
   public void followTrajectory(SwerveSample sample) {

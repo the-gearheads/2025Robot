@@ -10,6 +10,7 @@ import java.util.Optional;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedNetworkBoolean;
+import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 
@@ -19,8 +20,6 @@ import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Twist2d;
-import edu.wpi.first.math.geometry.Twist3d;
 import edu.wpi.first.util.WPIUtilJNI;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -41,7 +40,7 @@ public class Vision extends SubsystemBase {
   private GtsamInterface gtsam = new GtsamInterface(List.of(CAMERA_NAMES));
 
   LoggedNetworkBoolean useGtsam = new LoggedNetworkBoolean("AdvantageKit/RealOutputs/Vision/UseGtsam", USE_GTSAM_DEFAULT);
-  Optional<Pose3d> firstVisionEstimate = Optional.empty(); 
+  Optional<EstimatedRobotPose> gtsamNotReadyInitialGuess = Optional.empty(); 
 
   @AutoLogOutput
   private int cameraPriority = -1;
@@ -70,10 +69,7 @@ public class Vision extends SubsystemBase {
   }
 
   private void addVisionMeasurement(SwerveDrivePoseEstimator poseEstimator, Camera cam, VisionObservation observation) {
-    if (firstVisionEstimate.isEmpty()) {
-      firstVisionEstimate = Optional.of(observation.poseResult().estimatedPose);
-      Logger.recordOutput("Vision/FirstVisionEstimate", firstVisionEstimate.get());
-    }
+    gtsamNotReadyInitialGuess = Optional.of(observation.poseResult());
     poseEstimator.addVisionMeasurement(observation.poseResult().estimatedPose.toPose2d(), observation.poseResult().timestampSeconds, observation.stddevs());
     if(usingGtsam()) {
       gtsam.sendVisionUpdate(cam.name, observation.poseResult()); // -really- we're just using the corners but this is what we got
@@ -120,19 +116,15 @@ public class Vision extends SubsystemBase {
     return posed;
   }
 
-  Pose2d lastOdom = new Pose2d();
   @Override
   public void periodic() {
     sim.periodic(swerve.getPoseWheelsOnly());
     if(usingGtsam()) {
-      Pose2d odom = swerve.getPoseWheelsOnly();
-      Twist2d odomTwist2d = lastOdom.log(odom);
-      lastOdom = odom;
-      // Twist3d odomTwist3d = new Pose3d().log(new Pose3d(new Pose2d().exp(odomTwist2d)));
-      Twist3d odomTwist3d = new Twist3d(odomTwist2d.dx, odomTwist2d.dy, 0, 0, 0, odomTwist2d.dtheta);
-      if (firstVisionEstimate.isPresent()) {
-        gtsam.sendOdomUpdate(WPIUtilJNI.now(), odomTwist3d, firstVisionEstimate.get());
+      if (gtsamNotReadyInitialGuess.isPresent()) {
+        var guess = gtsamNotReadyInitialGuess.get();
+        gtsam.sendPrior((long)(guess.timestampSeconds * 1e6), guess.estimatedPose, false);
       }
+      gtsam.sendOdomUpdate(swerve.getTwist3dTimestamp(), swerve.getTwist3d());
       Logger.recordOutput("Vision/Gtsam/PoseEstimate", gtsam.getLatencyCompensatedPoseEstimate());
       Logger.recordOutput("Vision/Gtsam/RawPoseEstimate", gtsam.getRawPoseEstimate());
       Logger.recordOutput("Vision/Gtsam/LoopTimeMs", gtsam.getLoopTimeMs());
@@ -146,6 +138,10 @@ public class Vision extends SubsystemBase {
         gtsam.sendRobotToCam(camera.name, camera.transform);
       }
     }
+  }
+
+  public void resetGtsamPose(Pose2d pose) {
+    gtsam.sendPrior(WPIUtilJNI.now(), new Pose3d(pose), true);
   }
 
   public Pose3d getPoseGtsam() {
