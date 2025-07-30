@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.littletonrobotics.junction.Logger;
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
@@ -22,6 +23,7 @@ import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.numbers.N8;
 import edu.wpi.first.networktables.BooleanSubscriber;
 import edu.wpi.first.networktables.DoubleArrayPublisher;
+import edu.wpi.first.networktables.DoubleArraySubscriber;
 import edu.wpi.first.networktables.DoubleSubscriber;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.PubSubOption;
@@ -56,7 +58,9 @@ public class GtsamInterface {
     StructPublisher<Pose3d> guessPub;
     Map<String, CameraInterface> cameras = new HashMap<>();
     StructSubscriber<Pose3d> optimizedPoseSub;
+    DoubleArraySubscriber poseStddevSub;
     StringPublisher fieldLayoutPub;
+    // StructArraySubscriber<Pose3d> optimizedTrajSub;
 
     DoubleSubscriber loopTimeSub;
     BooleanSubscriber readyToOptimizeSub;
@@ -76,6 +80,13 @@ public class GtsamInterface {
         optimizedPoseSub = NetworkTableInstance.getDefault()
                 .getStructTopic("/gtsam_meme/output/optimized_pose", Pose3d.struct)
                 .subscribe(null, PubSubOption.sendAll(true), PubSubOption.keepDuplicates(true));
+        poseStddevSub = NetworkTableInstance.getDefault()
+                .getDoubleArrayTopic("/gtsam_meme/output/pose_stddev")
+                .subscribe(null, PubSubOption.sendAll(true), PubSubOption.keepDuplicates(true));
+        // optimizedTrajSub = NetworkTableInstance.getDefault()
+        //         .getStructArrayTopic("/gtsam_meme/output/optimized_traj", Pose3d.struct)
+        //         .subscribe(null, PubSubOption.sendAll(true), PubSubOption.keepDuplicates(true));
+
         String fieldLayout = "";
         try {
             fieldLayout = new ObjectMapper().writeValueAsString(AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded));
@@ -153,11 +164,12 @@ public class GtsamInterface {
     /**
      * Update the localizer with a new prior. Only updates if not ready to optimize
      * by default.
-     * @param guess    An (optional, possibly null) initial guess at robot
+     * @param guess    An initial guess at robot
      *                 pose from solvePNP or prior knowledge.
      */
     public void sendPrior(long guessTime, Pose3d guess, boolean evenIfReadyToOptimize) {
         if((isConnected() && !isReadyToOptimize()) || evenIfReadyToOptimize) {
+            Logger.recordOutput("Vision/Gtsam/Prior", guess);
             guessPub.set(guess, guessTime);
         }
     }
@@ -222,6 +234,14 @@ public class GtsamInterface {
             return new Pose3d();
         }
     }
+
+    public double[] getPoseStddevs() {
+        return poseStddevSub.get();
+    }
+
+    // public Pose3d[] getOptimizedTraj() {
+    //     return optimizedTrajSub.get();
+    // }
 
     public double getLoopTimeMs() {
         return loopTimeSub.get();
