@@ -1,5 +1,8 @@
 package frc.robot;
 
+import static frc.robot.constants.MiscConstants.SWERVE_ALIGN_DIST_TOLERANCE;
+import static frc.robot.constants.MiscConstants.SWERVE_ALIGN_ROT_TOLERANCE;
+
 import org.littletonrobotics.junction.Logger;
 
 import choreo.auto.AutoChooser;
@@ -114,7 +117,7 @@ public class Autos {
   public AutoRoutine driveToPoint3Coral(Side side) {
     AprilTagFieldLayout field = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded);
     Pose2d interFeeder = AllianceFlipUtil.apply(new Pose2d(3.4721243381500244, 6.416472911834, Rotation2d.kCCW_90deg));
-    Pose2d feederStation = AllianceFlipUtil.apply(new Pose2d(1.5771644115447998 , 6.858926773071289, Rotation2d.fromDegrees(128)));
+    Pose2d feederStation = AllianceFlipUtil.apply(new Pose2d(1.8026756048202515,6.893536567687988, Rotation2d.fromDegrees(128)));
     Pose2d reefPole1 = ReefPositions.getReefPose(2, -1);
     Pose2d reefPole2 = ReefPositions.getReefPose(1, 1);
     Pose2d reefPole3 = ReefPositions.getReefPose(1, -1);
@@ -136,7 +139,7 @@ public class Autos {
         outtakeCoral().withTimeout(1),
         
         Commands.sequence(
-            (swerve.driveToPose(interFeeder, false, 0.4, Rotation2d.fromDegrees(15)).andThen(
+            (swerve.driveToPose(interFeeder, false, 0.7, Rotation2d.fromDegrees(25)).andThen(
             swerve.driveToPose(feederStation, true).andThen(swerve.stop())).alongWith(superstructureGoTo(SuperstructurePosition.HP))))
             .alongWith(intake.runIntake().asProxy()),
         waitForCoral(),
@@ -151,7 +154,7 @@ public class Autos {
             .alongWith(intake.runIntake().asProxy()),
         waitForCoral().deadlineFor(swerve.driveToPose(feederStation, true).andThen(swerve.stop())),
 
-        swerve.driveToPoseReefAvoidance(reefPole3).andThen(swerve.stop())
+        swerve.driveToPoseReefAvoidance(reefPole3, SWERVE_ALIGN_DIST_TOLERANCE + 0.1, SWERVE_ALIGN_ROT_TOLERANCE.plus(Rotation2d.fromDegrees(2))).andThen(swerve.stop())
             .deadlineFor(superstructureGoTo(SuperstructurePosition.L4)),
         superstructure.waitUntilAtSetpoint().withTimeout(1),
         outtakeCoral().withTimeout(1),

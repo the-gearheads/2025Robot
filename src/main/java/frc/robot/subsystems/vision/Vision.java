@@ -128,7 +128,6 @@ public class Vision extends SubsystemBase {
       Logger.recordOutput("Vision/Gtsam/PoseEstimate", gtsam.getLatencyCompensatedPoseEstimate());
       Logger.recordOutput("Vision/Gtsam/RawPoseEstimate", gtsam.getRawPoseEstimate());
       Logger.recordOutput("Vision/Gtsam/LoopTimeMs", gtsam.getLoopTimeMs());
-      Logger.recordOutput("Vision/Gtsam/ReadyToOptimize", gtsam.isReadyToOptimize());
       Logger.recordOutput("Vision/Gtsam/HadIssue", gtsam.hadIssue());
       Logger.recordOutput("Vision/Gtsam/PoseStddev", gtsam.getPoseStddevs());
       // Logger.recordOutput("Vision/Gtsam/OptimizedTraj", gtsam.getOptimizedTraj());
@@ -150,10 +149,12 @@ public class Vision extends SubsystemBase {
     return gtsam.getLatencyCompensatedPoseEstimate();
   }
 
+  @AutoLogOutput
   private boolean isGtsamConnected() {
     return gtsam.isConnected();
   }
 
+  @AutoLogOutput
   private boolean isGtsamReadyToOptimize() {
     return gtsam.isReadyToOptimize();
   }

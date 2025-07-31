@@ -373,6 +373,10 @@ public class Swerve extends SubsystemBase {
   }
 
   public Command driveToPoseReefAvoidance(Pose2d goalPose) {
+    return driveToPoseReefAvoidance(goalPose, SWERVE_ALIGN_DIST_TOLERANCE, SWERVE_ALIGN_ROT_TOLERANCE);
+  }
+
+  public Command driveToPoseReefAvoidance(Pose2d goalPose, double distTolerance, Rotation2d rotTolerance) {
     lastProfileVel = 0.0;
     driveProfileLastTime = Timer.getFPGATimestamp();
     return this.run(() -> {
@@ -413,7 +417,7 @@ public class Swerve extends SubsystemBase {
       Logger.recordOutput("Swerve/DriveToPose/rotVel", rotVel);
 
     }).until(() -> {
-      return atPose(goalPose)
+      return atPose(goalPose, distTolerance, rotTolerance)
       && getRobotRelativeSpeeds().omegaRadiansPerSecond < ALIGNMENT_MAX_STOPPED_ROT_SPEED
           && Math.abs(getTranslationVelocity()) < ALIGNMENT_MAX_STOPPED_TRANS_SPEED;
     });

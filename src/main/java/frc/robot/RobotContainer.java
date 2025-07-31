@@ -9,7 +9,6 @@ package frc.robot;
 import static frc.robot.constants.MiscConstants.AUTO_ALIGN_ENABLED;
 
 
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -171,12 +170,12 @@ public class RobotContainer {
     // Controllers.driverController.getRightBumper().whileTrue(new AlignToPose(swerve));
     // Controllers.driverController.getPovLeft().whileTrue(Commands.runEnd(() -> {intake.setVoltage(-12);}, ()->{intake.setVoltage(0);}, intake));
     // Controllers.driverController.getPovRight().whileTrue(Commands.runEnd(() -> {intake.setVoltage(12);}, ()->{intake.setVoltage(0);}, intake));
-    // Controllers.driverController.getPovLeft().whileTrue(intake.runIntake());
-    // Controllers.driverController.getPovRight().whileTrue(intake.runOuttake(12));
-    // Controllers.driverController.getPovUp().whileTrue(intake.runOuttake(6));
-    Controllers.driverController.getPovRight().onTrue(swerve.driveToPose(new Pose2d(13.081257820129395, 2.02693772315979, Rotation2d.kZero), true));
-    Controllers.driverController.getPovLeft().onTrue(swerve.driveToPose(new Pose2d(11.514982223510742, 1.9857200384140015, Rotation2d.kZero), true));
-    Controllers.driverController.getPovUp().onTrue(swerve.driveToPose(new Pose2d(11.514982223510742, 1.9857200384140015, Rotation2d.k180deg), true));
+    Controllers.driverController.getPovLeft().whileTrue(intake.runIntake());
+    Controllers.driverController.getPovRight().whileTrue(intake.runOuttake(12));
+    Controllers.driverController.getPovUp().whileTrue(intake.runOuttake(6));
+    // Controllers.driverController.getPovRight().onTrue(swerve.driveToPose(new Pose2d(13.081257820129395, 2.02693772315979, Rotation2d.kZero), true));
+    // Controllers.driverController.getPovLeft().onTrue(swerve.driveToPose(new Pose2d(11.514982223510742, 1.9857200384140015, Rotation2d.kZero), true));
+    // Controllers.driverController.getPovUp().onTrue(swerve.driveToPose(new Pose2d(11.514982223510742, 1.9857200384140015, Rotation2d.k180deg), true));
 
 
     Controllers.operatorController.getBtn11().onTrue(Commands.runOnce(()->{AUTO_ALIGN_ENABLED = true;}));

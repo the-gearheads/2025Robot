@@ -11,7 +11,7 @@ public final class MiscConstants {
   public static final double DISTANCE_TO_REEF = Units.inchesToMeters(15.75);
   public static final double AUTO_ALIGN_FILTER_ANGLE = Units.degreesToRadians(70);
   public static final double REEF_FACE_LENGTH = Units.inchesToMeters(36.792600);
-  public static final double MAX_REEF_LINEUP_DIST = 0.6;
+  public static final double MAX_REEF_LINEUP_DIST = 0.7;
   public static final double VECTOR_ERROR_SCALAR = 10;
   public static final double MAX_AUTO_VELOCITY = 2; // m/s;
 

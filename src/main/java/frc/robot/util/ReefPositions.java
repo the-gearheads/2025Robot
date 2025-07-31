@@ -35,7 +35,7 @@ public class ReefPositions {
   // private static final Distance REEF_APOTHEM = Meters.of(
   //         Vision.field.getTagPose(18).get().toPose2d().getTranslation().getDistance(REEF_CENTER_BLUE))
   //         .plus(Meters.of(MiscConstants.DISTANCE_TO_REEF));
-  private static final Distance REEF_APOTHEM = Inches.of(33.75 + 15.75 + 2);
+  private static final Distance REEF_APOTHEM = Inches.of(33.75 + 15.75 + 2); // 1 inch a fudge factor
 // 33 .75 + 15.75
   // translation to move from centered on a side to scoring position for the left branch
   private static final Translation2d CENTERED_TO_LEFT_BRANCH = new Translation2d(Meters.of(0),
