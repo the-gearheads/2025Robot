@@ -161,7 +161,7 @@ public class Vision extends SubsystemBase {
 
   @AutoLogOutput
   public boolean canGtsam() {
-    return isGtsamConnected() && isGtsamReadyToOptimize();
+    return usingGtsam() && isGtsamConnected() && isGtsamReadyToOptimize();
   }
 
   public void setPoseStrategy(int cameraIndex, PoseStrategy strategy) {
