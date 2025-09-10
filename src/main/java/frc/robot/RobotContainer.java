@@ -204,12 +204,12 @@ public class RobotContainer {
         })).withInterruptBehavior(InterruptionBehavior.kCancelIncoming)
     );
     
-    Controllers.driverController.getYBtn().onTrue(
-      superStructure.goTo(SuperstructurePosition.NET)
-    );
-    Controllers.driverController.getABtn().onTrue(
-      superStructure.goTo(SuperstructurePosition.L4)
-    );
+    // Controllers.driverController.getYBtn().onTrue(
+    //   superStructure.goTo(SuperstructurePosition.NET)
+    // );
+    // Controllers.driverController.getABtn().onTrue(
+    //   superStructure.goTo(SuperstructurePosition.L4)
+    // );
 
     Controllers.operatorController.getBtn31().onTrue(Commands.runOnce(wrist::syncIntegratedEncoder).andThen(Commands.runOnce(pivot::syncIntegratedEncoder)));
     Controllers.operatorController.getBtn32().onTrue(telescope.deHome().andThen(telescope.homeIfNeeded()));
