@@ -20,7 +20,7 @@ public class VisionConstants {
   public static final double MAX_TAG_AMBIGUITY = 0.3;
 
   public static boolean USE_2D_ALIGNMENT_MODE = true;
-  public static boolean USE_GTSAM_DEFAULT = true; // if this is set to true it will IGNORE all other vision strategies/poses; including 2d alignment mode
+  public static boolean USE_GTSAM_DEFAULT = false; // if this is set to true it will IGNORE all other vision strategies/poses; including 2d alignment mode
 
   public static final PoseStrategy[] INITAL_CAMERA_STRATEGIES = {PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR};
   public static final Transform3d[] CAMERA_TRANSFORMS = {
